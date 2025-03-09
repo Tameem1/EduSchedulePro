@@ -49,6 +49,8 @@ export default function BookAppointment() {
     return format(time, "h:mm a");
   };
 
+  const [successMessage, setSuccessMessage] = React.useState<string | null>(null);
+  
   const bookAppointmentMutation = useMutation({
     mutationFn: async () => {
       if (!selectedTime) return null;
@@ -58,10 +60,16 @@ export default function BookAppointment() {
       return res.json();
     },
     onSuccess: () => {
+      // Show both toast and success message
       toast({
         title: "Appointment Requested",
         description: "Thank you for making an appointment. A teacher will contact you soon!",
+        duration: 5000, // Show for 5 seconds
       });
+      
+      // Set success message that will display in the UI
+      setSuccessMessage("Thank you for making an appointment. A teacher will contact you soon!");
+      
       queryClient.invalidateQueries({ queryKey: ["/api/students", user!.id, "appointments"] });
     },
   });
@@ -111,6 +119,12 @@ export default function BookAppointment() {
           >
             Request Appointment
           </Button>
+          
+          {successMessage && (
+            <div className="mt-4 p-4 bg-green-100 border border-green-400 text-green-700 rounded-md">
+              {successMessage}
+            </div>
+          )}
 
           {appointments && appointments.length > 0 && (
             <div className="mt-8">
