@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import { useAuth } from "@/hooks/use-auth";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -13,10 +13,10 @@ import type { Appointment } from "@shared/schema";
 function generateTimeSlots() {
   const slots = [];
   const now = new Date();
-  const startHour = 9; // 9 AM
-  const endHour = 17; // 5 PM
+  const startHour = 7; // 7 AM
+  const endHour = 24; // 12 AM (midnight)
 
-  for (let hour = startHour; hour <= endHour; hour++) {
+  for (let hour = startHour; hour < endHour; hour++) {
     const time = new Date();
     time.setHours(hour, 0, 0, 0);
 
