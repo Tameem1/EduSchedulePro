@@ -111,8 +111,74 @@ export default function ManagerAppointments() {
         </Link>
       </div>
 
-      {/* Appointments Table */}
+      {/* Teacher Availability Table */}
       <Card className="mb-6">
+        <CardHeader>
+          <CardTitle>توفر المعلمين</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>المعلم</TableHead>
+                <TableHead>الأوقات المتاحة</TableHead>
+                <TableHead>عدد المواعيد</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {teachers?.map((teacher) => {
+                const teacherAvailabilities = availabilities?.filter(
+                  (a) => a.teacherId === teacher.id
+                );
+                const teacherAppointments = appointments?.filter(
+                  (a) => a.teacherId === teacher.id
+                );
+
+                return (
+                  <TableRow key={teacher.id}>
+                    <TableCell>{teacher.username}</TableCell>
+                    <TableCell>
+                      {teacherAvailabilities?.length > 0 ? (
+                        <div className="space-y-1">
+                          {teacherAvailabilities.map((avail) => (
+                            <div
+                              key={avail.id}
+                              className="text-sm flex items-center"
+                            >
+                              <div className="w-2 h-2 bg-green-500 rounded-full ml-2"></div>
+                              <span>
+                                {format(new Date(avail.startTime), "h:mm a")} -{" "}
+                                {format(new Date(avail.endTime), "h:mm a")}
+                              </span>
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <span className="text-muted-foreground text-sm">
+                          لا توجد أوقات متاحة
+                        </span>
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center">
+                        <span className="font-medium">{teacherAppointments?.length || 0}</span>
+                        {teacherAppointments?.length > 0 && (
+                          <Badge variant="outline" className="mr-2">
+                            {teacherAppointments.length > 2 ? "مرتفع" : "طبيعي"}
+                          </Badge>
+                        )}
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
+            </TableBody>
+          </Table>
+        </CardContent>
+      </Card>
+
+      {/* Appointments Table */}
+      <Card>
         <CardHeader>
           <CardTitle>المواعيد</CardTitle>
         </CardHeader>
