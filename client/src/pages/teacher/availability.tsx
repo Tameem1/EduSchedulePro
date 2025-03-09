@@ -272,8 +272,8 @@ export default function TeacherAvailability() {
             onClick={submitAvailabilities}
           >
             {addAvailabilityMutation.isPending 
-              ? "حفظ التوفر..."  {/* Saving Availability... */}
-              : "حفظ كل التوفر"} {/* Save All Availability */}
+              ? "حفظ التوفر..."  
+              : "حفظ كل التوفر"}
           </Button>
 
           {displayAvailabilities.length > 0 && (
