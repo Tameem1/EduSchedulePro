@@ -40,61 +40,157 @@ export default function ManagerAppointments() {
     { id: "t2", username: "فاطمة العلي" },
     { id: "t3", username: "محمد القحطاني" },
     { id: "t4", username: "نورة السعيد" },
-    { id: "t5", username: "خالد المطيري" }
+    { id: "t5", username: "خالد المطيري" },
   ];
 
   // Sample availability data
   const sampleAvailabilities = React.useMemo(() => {
     const today = new Date();
     return [
-      { 
-        id: "a1", 
-        teacherId: "t1", 
-        startTime: new Date(today.getFullYear(), today.getMonth(), today.getDate(), 8, 0).toISOString(),
-        endTime: new Date(today.getFullYear(), today.getMonth(), today.getDate(), 10, 0).toISOString()
+      {
+        id: "a1",
+        teacherId: "t1",
+        startTime: new Date(
+          today.getFullYear(),
+          today.getMonth(),
+          today.getDate(),
+          8,
+          0,
+        ).toISOString(),
+        endTime: new Date(
+          today.getFullYear(),
+          today.getMonth(),
+          today.getDate(),
+          10,
+          0,
+        ).toISOString(),
       },
-      { 
-        id: "a2", 
-        teacherId: "t1", 
-        startTime: new Date(today.getFullYear(), today.getMonth(), today.getDate(), 13, 0).toISOString(),
-        endTime: new Date(today.getFullYear(), today.getMonth(), today.getDate(), 15, 0).toISOString()
+      {
+        id: "a2",
+        teacherId: "t1",
+        startTime: new Date(
+          today.getFullYear(),
+          today.getMonth(),
+          today.getDate(),
+          13,
+          0,
+        ).toISOString(),
+        endTime: new Date(
+          today.getFullYear(),
+          today.getMonth(),
+          today.getDate(),
+          15,
+          0,
+        ).toISOString(),
       },
-      { 
-        id: "a3", 
-        teacherId: "t2", 
-        startTime: new Date(today.getFullYear(), today.getMonth(), today.getDate(), 9, 30).toISOString(),
-        endTime: new Date(today.getFullYear(), today.getMonth(), today.getDate(), 11, 30).toISOString()
+      {
+        id: "a3",
+        teacherId: "t2",
+        startTime: new Date(
+          today.getFullYear(),
+          today.getMonth(),
+          today.getDate(),
+          9,
+          30,
+        ).toISOString(),
+        endTime: new Date(
+          today.getFullYear(),
+          today.getMonth(),
+          today.getDate(),
+          11,
+          30,
+        ).toISOString(),
       },
-      { 
-        id: "a4", 
-        teacherId: "t2", 
-        startTime: new Date(today.getFullYear(), today.getMonth(), today.getDate(), 16, 0).toISOString(),
-        endTime: new Date(today.getFullYear(), today.getMonth(), today.getDate(), 18, 0).toISOString()
+      {
+        id: "a4",
+        teacherId: "t2",
+        startTime: new Date(
+          today.getFullYear(),
+          today.getMonth(),
+          today.getDate(),
+          16,
+          0,
+        ).toISOString(),
+        endTime: new Date(
+          today.getFullYear(),
+          today.getMonth(),
+          today.getDate(),
+          18,
+          0,
+        ).toISOString(),
       },
-      { 
-        id: "a5", 
-        teacherId: "t3", 
-        startTime: new Date(today.getFullYear(), today.getMonth(), today.getDate(), 11, 0).toISOString(),
-        endTime: new Date(today.getFullYear(), today.getMonth(), today.getDate(), 13, 0).toISOString()
+      {
+        id: "a5",
+        teacherId: "t3",
+        startTime: new Date(
+          today.getFullYear(),
+          today.getMonth(),
+          today.getDate(),
+          11,
+          0,
+        ).toISOString(),
+        endTime: new Date(
+          today.getFullYear(),
+          today.getMonth(),
+          today.getDate(),
+          13,
+          0,
+        ).toISOString(),
       },
-      { 
-        id: "a6", 
-        teacherId: "t4", 
-        startTime: new Date(today.getFullYear(), today.getMonth(), today.getDate(), 14, 0).toISOString(),
-        endTime: new Date(today.getFullYear(), today.getMonth(), today.getDate(), 16, 30).toISOString()
+      {
+        id: "a6",
+        teacherId: "t4",
+        startTime: new Date(
+          today.getFullYear(),
+          today.getMonth(),
+          today.getDate(),
+          14,
+          0,
+        ).toISOString(),
+        endTime: new Date(
+          today.getFullYear(),
+          today.getMonth(),
+          today.getDate(),
+          16,
+          30,
+        ).toISOString(),
       },
-      { 
-        id: "a7", 
-        teacherId: "t4", 
-        startTime: new Date(today.getFullYear(), today.getMonth(), today.getDate(), 18, 0).toISOString(),
-        endTime: new Date(today.getFullYear(), today.getMonth(), today.getDate(), 20, 0).toISOString()
+      {
+        id: "a7",
+        teacherId: "t4",
+        startTime: new Date(
+          today.getFullYear(),
+          today.getMonth(),
+          today.getDate(),
+          18,
+          0,
+        ).toISOString(),
+        endTime: new Date(
+          today.getFullYear(),
+          today.getMonth(),
+          today.getDate(),
+          20,
+          0,
+        ).toISOString(),
       },
-      { 
-        id: "a8", 
-        teacherId: "t5", 
-        startTime: new Date(today.getFullYear(), today.getMonth(), today.getDate(), 7, 30).toISOString(),
-        endTime: new Date(today.getFullYear(), today.getMonth(), today.getDate(), 9, 30).toISOString()
-      }
+      {
+        id: "a8",
+        teacherId: "t5",
+        startTime: new Date(
+          today.getFullYear(),
+          today.getMonth(),
+          today.getDate(),
+          7,
+          30,
+        ).toISOString(),
+        endTime: new Date(
+          today.getFullYear(),
+          today.getMonth(),
+          today.getDate(),
+          9,
+          30,
+        ).toISOString(),
+      },
     ];
   }, []);
 
@@ -104,16 +200,18 @@ export default function ManagerAppointments() {
     { teacherId: "t2", count: 2 },
     { teacherId: "t3", count: 1 },
     { teacherId: "t4", count: 4 },
-    { teacherId: "t5", count: 0 }
+    { teacherId: "t5", count: 0 },
   ];
 
   // Use real data if available, otherwise use sample data
   const displayTeachers = React.useMemo(() => {
-    return (teachers && teachers.length > 0) ? teachers : sampleTeachers;
+    return teachers && teachers.length > 0 ? teachers : sampleTeachers;
   }, [teachers]);
 
   const displayAvailabilities = React.useMemo(() => {
-    return (availabilities && availabilities.length > 0) ? availabilities : sampleAvailabilities;
+    return availabilities && availabilities.length > 0
+      ? availabilities
+      : sampleAvailabilities;
   }, [availabilities, sampleAvailabilities]);
 
   // State for teacher assignment dialog
@@ -126,14 +224,14 @@ export default function ManagerAppointments() {
 
     const appointmentDate = new Date(appointmentTime);
 
-    return displayTeachers.filter(teacher => {
+    return displayTeachers.filter((teacher) => {
       // Find teacher availabilities
       const teacherAvailabilities = displayAvailabilities.filter(
-        (a) => a.teacherId === teacher.id
+        (a) => a.teacherId === teacher.id,
       );
 
       // Check if the teacher is available at the appointment time
-      return teacherAvailabilities.some(availability => {
+      return teacherAvailabilities.some((availability) => {
         const startTime = new Date(availability.startTime);
         const endTime = new Date(availability.endTime);
         return appointmentDate >= startTime && appointmentDate <= endTime;
@@ -150,7 +248,9 @@ export default function ManagerAppointments() {
   // Handle assigning a teacher
   const handleAssignTeacher = (teacherId) => {
     // In a real app, this would make an API call to update the appointment
-    console.log(`Assigning teacher ${teacherId} to appointment ${selectedAppointment.id}`);
+    console.log(
+      `Assigning teacher ${teacherId} to appointment ${selectedAppointment.id}`,
+    );
     setAssignDialogOpen(false);
   };
 
@@ -171,60 +271,106 @@ export default function ManagerAppointments() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>الإجراءات</TableHead>
-                <TableHead>الحالة</TableHead>
-                <TableHead>الطالب</TableHead>
-                <TableHead>المعلم</TableHead>
-                <TableHead>الوقت</TableHead>
                 <TableHead>ID</TableHead>
+                <TableHead>الطالب</TableHead>
+                <TableHead>الوقت</TableHead>
+                <TableHead>المعلم</TableHead>
+                <TableHead>الحالة</TableHead>
+                <TableHead>الإجراءات</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {(appointments?.length ? appointments : [
-                    { id: 1, studentName: "Michael Johnson", studentId: 101, startTime: new Date().setHours(10, 0), teacherId: 201, status: "matched" },
-                    { id: 2, studentName: "Sarah Chen", studentId: 102, startTime: new Date().setHours(11, 30), teacherId: 202, status: "pending" },
-                    { id: 3, studentName: "David Wilson", studentId: 103, startTime: new Date().setHours(13, 0), teacherId: null, status: "unassigned" },
-                    { id: 4, studentName: "Emma Thompson", studentId: 104, startTime: new Date().setHours(14, 30), teacherId: 203, status: "completed" },
-                    { id: 5, studentName: "James Rodriguez", studentId: 105, startTime: new Date().setHours(16, 0), teacherId: 201, status: "matched" }
-                  ]).map((appointment) => (
+              {(appointments?.length
+                ? appointments
+                : [
+                    {
+                      id: 1,
+                      studentName: "عمر",
+                      studentId: 101,
+                      startTime: new Date().setHours(10, 0),
+                      teacherId: 201,
+                      status: "matched",
+                    },
+                    {
+                      id: 2,
+                      studentName: "محمد",
+                      studentId: 102,
+                      startTime: new Date().setHours(11, 30),
+                      teacherId: 202,
+                      status: "pending",
+                    },
+                    {
+                      id: 3,
+                      studentName: "احمد",
+                      studentId: 103,
+                      startTime: new Date().setHours(13, 0),
+                      teacherId: null,
+                      status: "unassigned",
+                    },
+                    {
+                      id: 4,
+                      studentName: "كريم",
+                      studentId: 104,
+                      startTime: new Date().setHours(14, 30),
+                      teacherId: 203,
+                      status: "completed",
+                    },
+                    {
+                      id: 5,
+                      studentName: "ياسر",
+                      studentId: 105,
+                      startTime: new Date().setHours(16, 0),
+                      teacherId: 201,
+                      status: "matched",
+                    },
+                  ]
+              ).map((appointment) => (
                 <TableRow key={appointment.id} dir="rtl">
                   <TableCell>#{appointment.id}</TableCell>
-                  <TableCell>{appointment.studentName || `Student ${appointment.studentId}`}</TableCell>
-                  <TableCell>{format(new Date(appointment.startTime), "h:mm a")}</TableCell>
+                  <TableCell>
+                    {appointment.studentName ||
+                      `Student ${appointment.studentId}`}
+                  </TableCell>
+                  <TableCell>
+                    {format(new Date(appointment.startTime), "h:mm a")}
+                  </TableCell>
                   <TableCell>
                     {appointment.teacherId
-                      ? appointment.teacherId === 201 ? "Ms. Johnson" 
-                        : appointment.teacherId === 202 ? "Mr. Smith"
-                        : appointment.teacherId === 203 ? "Dr. Williams"
-                        : `Teacher ${appointment.teacherId}`
+                      ? appointment.teacherId === 201
+                        ? "أحمد الأحمدي"
+                        : appointment.teacherId === 202
+                          ? "محمد القحطاني"
+                          : appointment.teacherId === 203
+                            ? "خالد المطيري"
+                            : `Teacher ${appointment.teacherId}`
                       : "غير معين"}
                   </TableCell>
                   <TableCell>
                     <Badge
                       className={
-                        appointment.status === 'pending'
-                          ? 'bg-yellow-100 text-yellow-800'
-                          : appointment.status === 'matched'
-                          ? 'bg-green-100 text-green-800'
-                          : appointment.status === 'unassigned'
-                          ? 'bg-gray-100 text-gray-800'
-                          : 'bg-blue-100 text-blue-800'
+                        appointment.status === "pending"
+                          ? "bg-yellow-100 text-yellow-800"
+                          : appointment.status === "matched"
+                            ? "bg-green-100 text-green-800"
+                            : appointment.status === "unassigned"
+                              ? "bg-gray-100 text-gray-800"
+                              : "bg-blue-100 text-blue-800"
                       }
                     >
-                      {appointment.status === 'pending'
-                        ? 'قيد الانتظار'
-                        : appointment.status === 'matched'
-                        ? 'تم التطابق'
-                        : appointment.status === 'unassigned'
-                        ? 'غير معين'
-                        : appointment.status === 'completed'
-                        ? 'مكتمل'
-                        : appointment.status}
+                      {appointment.status === "pending"
+                        ? "قيد الانتظار"
+                        : appointment.status === "matched"
+                          ? "تم التطابق"
+                          : appointment.status === "unassigned"
+                            ? "غير معين"
+                            : appointment.status === "completed"
+                              ? "مكتمل"
+                              : appointment.status}
                     </Badge>
                   </TableCell>
                   <TableCell dir="rtl">
-                    <Button 
-                      size="sm" 
+                    <Button
+                      size="sm"
                       variant="outline"
                       onClick={() => handleAssignClick(appointment)}
                     >
@@ -246,20 +392,24 @@ export default function ManagerAppointments() {
           <Table dir="rtl">
             <TableHeader>
               <TableRow>
-                <TableHead>المواعيد اليوم</TableHead>
-                <TableHead>الأوقات المتاحة</TableHead>
                 <TableHead>المعلم</TableHead>
+                <TableHead>الأوقات المتاحة</TableHead>
+                <TableHead>المواعيد اليوم</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {displayTeachers.map((teacher) => {
                 const teacherAvailabilities = displayAvailabilities.filter(
-                  (a) => a.teacherId === teacher.id
+                  (a) => a.teacherId === teacher.id,
                 );
 
                 // Get appointment count for this teacher (from real or sample data)
-                const appointmentCount = appointments?.filter(a => a.teacherId === teacher.id)?.length || 
-                  sampleAppointments.find(a => a.teacherId === teacher.id)?.count || 0;
+                const appointmentCount =
+                  appointments?.filter((a) => a.teacherId === teacher.id)
+                    ?.length ||
+                  sampleAppointments.find((a) => a.teacherId === teacher.id)
+                    ?.count ||
+                  0;
 
                 return (
                   <TableRow key={teacher.id} dir="rtl">
@@ -268,22 +418,32 @@ export default function ManagerAppointments() {
                       {teacherAvailabilities?.length > 0 ? (
                         <div className="space-y-1">
                           {teacherAvailabilities.map((avail, idx) => (
-                            <div key={idx} className="text-sm flex items-center">
+                            <div
+                              key={idx}
+                              className="text-sm flex items-center"
+                            >
                               <div className="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
                               <span>
-                                {format(new Date(avail.startTime), "h:mm a")} - {format(new Date(avail.endTime), "h:mm a")}
+                                {format(new Date(avail.startTime), "h:mm a")} -{" "}
+                                {format(new Date(avail.endTime), "h:mm a")}
                               </span>
                               {idx === 0 && teacher.id === "t1" && (
-                                <span className="text-xs text-blue-500 ml-2">Morning slot</span>
+                                <span className="text-xs text-blue-500 ml-2">
+                                  Morning slot
+                                </span>
                               )}
                               {idx === 1 && teacher.id === "t1" && (
-                                <span className="text-xs text-blue-500 ml-2">Afternoon slot</span>
+                                <span className="text-xs text-blue-500 ml-2">
+                                  Afternoon slot
+                                </span>
                               )}
                             </div>
                           ))}
                         </div>
                       ) : (
-                        <span className="text-muted-foreground text-sm">لا توجد تواريخ متاحة</span>
+                        <span className="text-muted-foreground text-sm">
+                          لا توجد تواريخ متاحة
+                        </span>
                       )}
                     </TableCell>
                     <TableCell>
@@ -318,23 +478,28 @@ export default function ManagerAppointments() {
                   الطالب: {selectedAppointment.studentName}
                 </p>
                 <p className="text-sm text-muted-foreground">
-                  الوقت: {format(new Date(selectedAppointment.startTime), "h:mm a")}
+                  الوقت:{" "}
+                  {format(new Date(selectedAppointment.startTime), "h:mm a")}
                 </p>
               </div>
 
               <div className="mb-4">
                 <p className="font-medium mb-2">المعلمون المتاحون</p>
                 <div className="space-y-2">
-                  {findAvailableTeachers(selectedAppointment.startTime).map(teacher => (
-                      <div 
-                        key={teacher.id} 
+                  {findAvailableTeachers(selectedAppointment.startTime).map(
+                    (teacher) => (
+                      <div
+                        key={teacher.id}
                         className="flex items-center justify-between p-2 border rounded hover:bg-gray-50 cursor-pointer"
                         onClick={() => handleAssignTeacher(teacher.id)}
                       >
                         <span>{teacher.username}</span>
-                        <Button size="sm" variant="secondary">اختيار</Button>
+                        <Button size="sm" variant="secondary">
+                          اختيار
+                        </Button>
                       </div>
-                    ))}
+                    ),
+                  )}
                 </div>
               </div>
 
