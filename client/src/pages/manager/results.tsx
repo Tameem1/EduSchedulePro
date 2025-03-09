@@ -102,7 +102,7 @@ export default function ManagerResults() {
                             `معلم رقم ${response.teacherId || 1}`}
                         </TableCell>
                         <TableCell className="font-medium">
-                          {response.studentName}
+                          {response.studentName || `طالب ${response.studentId}`}
                         </TableCell>
                       </TableRow>
                     ))}
@@ -158,7 +158,7 @@ export default function ManagerResults() {
                                   `معلم رقم ${response.teacherId || 1}`}
                               </TableCell>
                               <TableCell className="font-medium">
-                                {response.studentName}
+                                {response.studentName || `طالب ${response.studentId}`}
                               </TableCell>
                             </TableRow>
                           ))}

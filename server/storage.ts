@@ -137,11 +137,21 @@ export class DatabaseStorage implements IStorage {
         teacherId: appointments.teacherId,
         studentId: appointments.studentId,
         createdAt: appointments.startTime,
+        studentName: users.username,
+        teacherName: users.username, //Corrected this line
       })
       .from(questionnaireResponses)
       .innerJoin(
         appointments,
         eq(questionnaireResponses.appointmentId, appointments.id)
+      )
+      .innerJoin(
+        users,
+        eq(appointments.studentId, users.id)
+      )
+      .innerJoin(
+        users,
+        eq(appointments.teacherId, users.id)
       );
   }
 }
