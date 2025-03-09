@@ -298,15 +298,15 @@ export default function TeacherAvailability() {
                     </div>
                     {availability.id >= 100 && (
                       <div className="flex mt-2 items-center">
-                        <p className="text-xs text-gray-500">(مثال على فترات التوفر)</p> {/* (Example availability slot) */}
+                        <p className="text-xs text-gray-500">(مثال على فترات التوفر)</p>
                         {availability.id === 101 && (
-                          <span className="text-xs text-blue-500 ml-2">جلسة الصباح</span> {/* Morning session */}
+                          <span className="text-xs text-blue-500 ml-2">جلسة الصباح</span>
                         )}
                         {availability.id === 102 && (
-                          <span className="text-xs text-blue-500 ml-2">جلسة الظهيرة</span> {/* Afternoon session */}
+                          <span className="text-xs text-blue-500 ml-2">جلسة الظهيرة</span>
                         )}
                         {availability.id === 103 && (
-                          <span className="text-xs text-blue-500 ml-2">جلسة المساء</span> {/* Evening session */}
+                          <span className="text-xs text-blue-500 ml-2">جلسة المساء</span>
                         )}
                       </div>
                     )}
