@@ -1,62 +1,93 @@
+
 import * as React from 'react';
 import { useAuth } from "@/hooks/use-auth";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Slider } from "@/components/ui/slider";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
-import { format, addHours } from "date-fns";
+import { format, addMinutes, parse, isAfter, isBefore } from "date-fns";
 import { Link } from "wouter";
+import { X } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import type { Availability } from "@shared/schema";
 
-// Generate time slots for today
-// Calculate the number of 30-minute slots between 7 AM and 11:30 PM
+// Start and end times for availability
 const START_HOUR = 7; // 7 AM
-const END_HOUR = 23.5; // 11:30 PM
-const TOTAL_SLOTS = (END_HOUR - START_HOUR) * 2; // 2 slots per hour (30 min each)
+const END_HOUR = 23; // 11 PM
+
+// Generate available time slots in 30-minute increments
+const generateTimeOptions = () => {
+  const options = [];
+  const now = new Date();
+  const currentHours = now.getHours();
+  const currentMinutes = now.getMinutes();
+
+  for (let hour = START_HOUR; hour <= END_HOUR; hour++) {
+    for (let minute of [0, 30]) {
+      // Skip past times for today
+      if (hour < currentHours || (hour === currentHours && minute <= currentMinutes)) {
+        continue;
+      }
+      
+      const time = new Date();
+      time.setHours(hour, minute, 0, 0);
+      options.push({
+        value: format(time, "HH:mm"),
+        label: format(time, "h:mm a")
+      });
+    }
+  }
+  
+  return options;
+};
 
 export default function TeacherAvailability() {
   const { user } = useAuth();
   const { toast } = useToast();
-  const [sliderValue, setSliderValue] = React.useState<number[]>([0]);
-  const [selectedTime, setSelectedTime] = React.useState<Date | null>(null);
+  const [timeRanges, setTimeRanges] = React.useState<Array<{id: string, start: string, end: string}>>([]);
+  const timeOptions = React.useMemo(() => generateTimeOptions(), []);
   
-  // Convert slider value to time and update the selected time
-  React.useEffect(() => {
-    if (sliderValue[0] !== undefined) {
-      const now = new Date();
-      const selectedSlot = sliderValue[0];
-      
-      // Calculate hours and minutes from the slot
-      const totalHours = START_HOUR + (selectedSlot / 2);
-      const hours = Math.floor(totalHours);
-      const minutes = (totalHours - hours) * 60;
-      
-      const time = new Date(now);
-      time.setHours(hours, minutes, 0, 0);
-      
-      // Only use times in the future
-      if (time > now) {
-        setSelectedTime(time);
-      } else {
-        // Find the next available slot if current time is in the past
-        const currentHour = now.getHours();
-        const currentMinute = now.getMinutes();
-        const currentTotalMinutes = currentHour * 60 + currentMinute;
-        const nextSlot = Math.ceil((currentTotalMinutes - (START_HOUR * 60)) / 30) + 1;
-        
-        if (nextSlot <= TOTAL_SLOTS) {
-          setSliderValue([nextSlot]);
-        }
-      }
-    }
-  }, [sliderValue]);
+  // Add a new time range
+  const addTimeRange = () => {
+    const newId = Math.random().toString(36).substring(2, 9);
+    setTimeRanges([...timeRanges, { id: newId, start: "", end: "" }]);
+  };
+  
+  // Remove a time range
+  const removeTimeRange = (id: string) => {
+    setTimeRanges(timeRanges.filter(range => range.id !== id));
+  };
+  
+  // Update a time range
+  const updateTimeRange = (id: string, field: 'start' | 'end', value: string) => {
+    setTimeRanges(timeRanges.map(range => 
+      range.id === id ? { ...range, [field]: value } : range
+    ));
+  };
+  
+  // Check if a time range is valid
+  const isValidTimeRange = (start: string, end: string) => {
+    if (!start || !end) return false;
+    
+    const today = new Date();
+    const startTime = parse(start, "HH:mm", today);
+    const endTime = parse(end, "HH:mm", today);
+    
+    return isAfter(endTime, startTime);
+  };
 
   const addAvailabilityMutation = useMutation({
-    mutationFn: async (timeString: string) => {
-      const startTime = new Date(timeString);
-      const endTime = addHours(startTime, 1);
+    mutationFn: async (range: {start: string, end: string}) => {
+      const today = new Date();
+      const startTime = parse(range.start, "HH:mm", today);
+      const endTime = parse(range.end, "HH:mm", today);
 
       const res = await apiRequest("POST", "/api/availabilities", {
         startTime: startTime.toISOString(),
@@ -77,6 +108,28 @@ export default function TeacherAvailability() {
     queryKey: ["/api/teachers", user!.id, "availabilities"],
   });
 
+  // Submit all valid time ranges
+  const submitAvailabilities = async () => {
+    const validRanges = timeRanges.filter(range => isValidTimeRange(range.start, range.end));
+    
+    if (validRanges.length === 0) {
+      toast({
+        title: "No Valid Time Ranges",
+        description: "Please add at least one valid time range.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    // Submit each range sequentially
+    for (const range of validRanges) {
+      await addAvailabilityMutation.mutateAsync(range);
+    }
+    
+    // Clear the form after successful submission
+    setTimeRanges([]);
+  };
+
   return (
     <div className="container mx-auto p-8">
       <div className="flex justify-between items-center mb-8">
@@ -85,45 +138,99 @@ export default function TeacherAvailability() {
           <Button>Go to Questionnaire</Button>
         </Link>
       </div>
-
+      
       <Card>
         <CardHeader>
           <CardTitle>Add Availability</CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">
-          <div className="space-y-2">
-            <p className="text-sm text-muted-foreground">Select an available time slot</p>
-            <div className="py-6 px-1">
-              <Slider
-                min={0}
-                max={TOTAL_SLOTS - 1}
-                step={1}
-                value={sliderValue}
-                onValueChange={setSliderValue}
-              />
-              
-              <div className="mt-6 flex justify-between">
-                <span className="text-sm">7:00 AM</span>
-                <span className="text-sm">11:30 PM</span>
+          <div className="space-y-4">
+            <p className="text-sm text-muted-foreground">
+              Add your available time slots for today. You can add multiple time ranges.
+            </p>
+            
+            {timeRanges.length === 0 && (
+              <div className="text-center py-4 border border-dashed rounded-md">
+                <p className="text-muted-foreground">No time ranges added yet</p>
               </div>
-              
-              <div className="mt-6 text-center bg-muted p-4 rounded-md">
-                <p className="text-xl font-semibold">
-                  {selectedTime ? format(selectedTime, "h:mm a") : "Select a time"}
-                </p>
-                <p className="text-xs text-muted-foreground mt-1">
-                  Move the slider to select your preferred time
-                </p>
+            )}
+            
+            {timeRanges.map((range) => (
+              <div key={range.id} className="flex items-center space-x-2 p-3 border rounded-md bg-muted/30">
+                <div className="grid grid-cols-2 gap-2 flex-1">
+                  <div>
+                    <label className="text-xs text-muted-foreground mb-1 block">
+                      Start Time
+                    </label>
+                    <Select
+                      value={range.start}
+                      onValueChange={(value) => updateTimeRange(range.id, 'start', value)}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select start time" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {timeOptions.map(option => (
+                          <SelectItem key={option.value} value={option.value}>
+                            {option.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <label className="text-xs text-muted-foreground mb-1 block">
+                      End Time
+                    </label>
+                    <Select
+                      value={range.end}
+                      onValueChange={(value) => updateTimeRange(range.id, 'end', value)}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select end time" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {timeOptions.map(option => (
+                          <SelectItem key={option.value} value={option.value}>
+                            {option.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  className="shrink-0" 
+                  onClick={() => removeTimeRange(range.id)}
+                >
+                  <X className="h-4 w-4" />
+                </Button>
               </div>
-            </div>
+            ))}
+            
+            <Button
+              variant="outline"
+              className="w-full"
+              onClick={addTimeRange}
+            >
+              Add Time Range
+            </Button>
           </div>
 
           <Button 
             className="w-full"
-            disabled={!selectedTime || addAvailabilityMutation.isPending}
-            onClick={() => selectedTime && addAvailabilityMutation.mutate(selectedTime.toISOString())}
+            disabled={
+              timeRanges.length === 0 || 
+              !timeRanges.some(range => isValidTimeRange(range.start, range.end)) ||
+              addAvailabilityMutation.isPending
+            }
+            onClick={submitAvailabilities}
           >
-            Add Availability
+            {addAvailabilityMutation.isPending 
+              ? "Saving Availability..." 
+              : "Save All Availability"}
           </Button>
 
           {availabilities && availabilities.length > 0 && (
@@ -132,8 +239,19 @@ export default function TeacherAvailability() {
               <div className="space-y-2">
                 {availabilities.map((availability) => (
                   <div key={availability.id} className="p-4 border rounded-md">
-                    <p>Start: {format(new Date(availability.startTime), "h:mm a")}</p>
-                    <p>End: {format(new Date(availability.endTime), "h:mm a")}</p>
+                    <div className="flex justify-between items-center">
+                      <div>
+                        <p className="font-medium">
+                          {format(new Date(availability.startTime), "h:mm a")} - {format(new Date(availability.endTime), "h:mm a")}
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          {format(new Date(availability.startTime), "EEEE, MMMM d, yyyy")}
+                        </p>
+                      </div>
+                      <div className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded">
+                        Available
+                      </div>
+                    </div>
                   </div>
                 ))}
               </div>
