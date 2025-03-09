@@ -96,13 +96,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Student routes
   app.post("/api/appointments", async (req, res) => {
-    if (!req.isAuthenticated() || req.user.role !== "student") {
+    if (!req.isAuthenticated()) {
+      return res.sendStatus(401);
+    }
+
+    if (req.user.role !== "student") {
       return res.sendStatus(403);
     }
 
     try {
+      const { startTime, teacherId } = req.body;
+
+      // Convert startTime to Date if it's a string
+      const appointmentStartTime = new Date(startTime);
+
       const parsedData = insertAppointmentSchema.parse({
-        ...req.body,
+        startTime: appointmentStartTime,
+        teacherId: teacherId,
         studentId: req.user.id,
         status: "pending",
       });
