@@ -117,6 +117,13 @@ export class DatabaseStorage implements IStorage {
       .returning();
     return updatedAppointment;
   }
+
+  async getAppointmentsByTeacher(teacherId: number): Promise<Appointment[]> {
+    return await db
+      .select()
+      .from(appointments)
+      .where(eq(appointments.teacherId, teacherId));
+  }
 }
 
 export const storage = new DatabaseStorage();

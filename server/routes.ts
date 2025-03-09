@@ -147,6 +147,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
     try {
       const parsedData = insertQuestionnaireSchema.parse(req.body);
+
+      // Update appointment status to completed
+      await storage.updateAppointment(parsedData.appointmentId, {
+        status: "completed"
+      });
+
+      // Create questionnaire response
       const response = await storage.createQuestionnaireResponse(parsedData);
       res.json(response);
     } catch (error) {
@@ -206,6 +213,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ error: "Failed to update appointment" });
     }
   });
+
+  // Get teacher's appointments
+  app.get("/api/teachers/:id/appointments", async (req, res) => {
+    if (!req.isAuthenticated() || req.user.role !== "teacher") {
+      return res.sendStatus(403);
+    }
+
+    try {
+      const teacherId = parseInt(req.params.id);
+      const appointments = await storage.getAppointmentsByTeacher(teacherId);
+      res.json(appointments);
+    } catch (error) {
+      console.error("Error fetching teacher appointments:", error);
+      res.status(500).json({ error: "Failed to fetch appointments" });
+    }
+  });
+
 
   const httpServer = createServer(app);
   return httpServer;

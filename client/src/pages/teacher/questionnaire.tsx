@@ -1,68 +1,44 @@
 import * as React from "react";
 import { useAuth } from "@/hooks/use-auth";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
   CardDescription,
-  CardFooter,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { apiRequest } from "@/lib/queryClient";
+import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
-import { useForm } from "react-hook-form";
-import { Form, FormField, FormItem, FormLabel } from "@/components/ui/form";
-import { Textarea } from "@/components/ui/textarea";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { insertQuestionnaireSchema } from "@shared/schema";
-import type { QuestionnaireResponse } from "@shared/schema";
 import { format } from "date-fns";
-import { Slider } from "@/components/ui/slider";
-import { Label } from "@/components/ui/label";
-
-const questions = [
-  "How was the student's engagement during the session?",
-  "What topics were covered in the session?",
-  "What areas need improvement?",
-  "Any recommendations for future sessions?",
-];
-
-const sampleAppointments = [
-  { id: 1, studentName: "محمد", time: "2024-03-08T10:00:00", completed: false },
-  { id: 2, studentName: "احمد", time: "2024-03-08T11:00:00", completed: true },
-  {
-    id: 3,
-    studentName: "محمود",
-    time: "2024-03-08T12:00:00",
-    completed: false,
-  },
-];
+import { Textarea } from "@/components/ui/textarea";
+import type { Appointment } from "@shared/schema";
 
 export default function TeacherQuestionnaire() {
   const { user } = useAuth();
   const { toast } = useToast();
-  const [currentAppointment, setCurrentAppointment] = React.useState(null);
+  const [currentAppointment, setCurrentAppointment] = React.useState<Appointment | null>(null);
   const [formData, setFormData] = React.useState({
     question1: "",
     question2: "",
     question3: "",
     question4: "",
-    rating: 5,
   });
 
-  const form = useForm({
-    resolver: zodResolver(insertQuestionnaireSchema),
-    defaultValues: {
-      studentName: "",
-      question1: "",
-      question2: "",
-      question3: "",
-      question4: "",
-      appointmentId: 1, // Default value for appointmentId
+  // Fetch teacher's appointments
+  const { data: appointments, isLoading } = useQuery<Appointment[]>({
+    queryKey: ["/api/teachers", user?.id, "appointments"],
+    queryFn: async () => {
+      if (!user?.id) return [];
+      const res = await apiRequest("GET", `/api/teachers/${user.id}/appointments`);
+      if (!res.ok) {
+        throw new Error("Failed to fetch appointments");
+      }
+      return res.json();
     },
+    enabled: !!user?.id,
   });
 
   const submitQuestionnaireMutation = useMutation({
@@ -70,46 +46,62 @@ export default function TeacherQuestionnaire() {
       const res = await apiRequest(
         "POST",
         "/api/questionnaire-responses",
-        data,
+        {
+          ...data,
+          appointmentId: currentAppointment?.id,
+        }
       );
+      if (!res.ok) {
+        const error = await res.json();
+        throw new Error(error.error || "Failed to submit questionnaire");
+      }
       return res.json();
     },
     onSuccess: () => {
-      // Show toast notification
       toast({
-        title: "Questionnaire Submitted",
-        description: "Your responses have been recorded successfully.",
-        duration: 5000, // Longer duration
+        title: "تم إرسال التقييم",
+        description: "تم حفظ إجاباتك بنجاح",
       });
 
-      // Set success message for visual feedback
-      //setSuccessMessage("Questionnaire submitted successfully!");
-
-      // Reset form
-      form.reset({
-        studentName: "",
+      // Reset form and current appointment
+      setFormData({
         question1: "",
         question2: "",
         question3: "",
         question4: "",
-        appointmentId: 1, // Reset to default
+      });
+      setCurrentAppointment(null);
+
+      // Invalidate appointments query to refresh the list
+      queryClient.invalidateQueries({ 
+        queryKey: ["/api/teachers", user?.id, "appointments"] 
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "خطأ في إرسال التقييم",
+        description: error.message,
+        variant: "destructive",
       });
     },
   });
 
-  const handleSubmit = (data: any) => {
-    // Add appointmentId if not present
-    const formData = {
-      ...data,
-      appointmentId: data.appointmentId || 1,
-    };
-
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
     submitQuestionnaireMutation.mutate(formData);
   };
 
-  const handleChange = (name: string, value: any) => {
-    setFormData({ ...formData, [name]: value });
-  };
+  if (isLoading) {
+    return (
+      <div className="container mx-auto p-4">
+        <Card>
+          <CardContent className="p-6">
+            <div className="text-center">جاري التحميل...</div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto p-4">
@@ -126,71 +118,80 @@ export default function TeacherQuestionnaire() {
               <div className="bg-muted/50 p-4 rounded-md mb-4">
                 <p>
                   <span className="font-semibold">الطالب:</span>{" "}
-                  {currentAppointment.studentName}
+                  طالب {currentAppointment.studentId}
                 </p>
                 <p>
                   <span className="font-semibold">الوقت:</span>{" "}
-                  {format(new Date(currentAppointment.time), "h:mm a")}
+                  {format(new Date(currentAppointment.startTime), "h:mm a")}
                 </p>
               </div>
 
-              <div>
-                <Label htmlFor="question1"> هل تمت متابعة الطالب ؟</Label>
-                <Textarea
-                  id="question1"
-                  placeholder="نعم/لا"
-                  value={formData.question1}
-                  onChange={(e) => handleChange("question1", e.target.value)}
-                  required
-                />
+              <div className="space-y-4">
+                <div>
+                  <label className="text-sm font-medium block mb-2">
+                    هل تمت متابعة الطالب؟
+                  </label>
+                  <Textarea
+                    value={formData.question1}
+                    onChange={(e) =>
+                      setFormData({ ...formData, question1: e.target.value })
+                    }
+                    placeholder="نعم/لا"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className="text-sm font-medium block mb-2">
+                    هل استجاب الطالب للمتابعة؟
+                  </label>
+                  <Textarea
+                    value={formData.question2}
+                    onChange={(e) =>
+                      setFormData({ ...formData, question2: e.target.value })
+                    }
+                    placeholder="نعم/لا"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className="text-sm font-medium block mb-2">
+                    ماذا سمع؟
+                  </label>
+                  <Textarea
+                    value={formData.question3}
+                    onChange={(e) =>
+                      setFormData({ ...formData, question3: e.target.value })
+                    }
+                    placeholder="سورة الاسراء"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className="text-sm font-medium block mb-2">
+                    ملاحظات الجلسة
+                  </label>
+                  <Textarea
+                    value={formData.question4}
+                    onChange={(e) =>
+                      setFormData({ ...formData, question4: e.target.value })
+                    }
+                    placeholder="أي ملاحظات إضافية عن الجلسة"
+                    required
+                  />
+                </div>
               </div>
 
-              <div>
-                <Label htmlFor="question2">هل استجاب الطالب للمتابعة؟</Label>
-                <Textarea
-                  id="question2"
-                  placeholder="نعم/لا"
-                  value={formData.question2}
-                  onChange={(e) => handleChange("question2", e.target.value)}
-                  required
-                />
-              </div>
-
-              <div>
-                <Label htmlFor="question3">ماذا سمع؟ </Label>
-                <Textarea
-                  id="question3"
-                  placeholder="سورة الاسراء"
-                  value={formData.question3}
-                  onChange={(e) => handleChange("question3", e.target.value)}
-                  required
-                />
-              </div>
-
-              <div>
-                <Label htmlFor="question4"> الوظيفة</Label>
-                <Textarea
-                  id="question4"
-                  placeholder="سورة الاسراء"
-                  value={formData.question4}
-                  onChange={(e) => handleChange("question4", e.target.value)}
-                  required
-                />
-              </div>
-
-              <div>
-                <Label htmlFor="question4"> ملاحظات الجلسة</Label>
-                <Textarea
-                  id="question4"
-                  placeholder="ما الذي يجب أن يكون محور تركيز الموعد التالي؟"
-                  value={formData.question4}
-                  onChange={(e) => handleChange("question4", e.target.value)}
-                  required
-                />
-              </div>
-
-              <Button type="submit" className="w-full">
-                إرسال التقييم
+              <Button
+                type="submit"
+                className="w-full"
+                disabled={submitQuestionnaireMutation.isPending}
+              >
+                {submitQuestionnaireMutation.isPending
+                  ? "جاري الإرسال..."
+                  : "إرسال التقييم"}
               </Button>
             </form>
           ) : (
@@ -198,36 +199,45 @@ export default function TeacherQuestionnaire() {
               <div className="text-center space-y-4">
                 <h3 className="text-lg font-medium">اختر موعداً</h3>
                 <p className="text-muted-foreground">
-                  اختر موعداً من اليوم لإكمال الاستبيان
+                  اختر موعداً لإكمال الاستبيان
                 </p>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-2xl mx-auto mt-6">
-                  {sampleAppointments.map((appointment) => (
+                  {appointments?.map((appointment) => (
                     <Card
                       key={appointment.id}
-                      className="cursor-pointer hover:border-primary"
-                      onClick={() => setCurrentAppointment(appointment)}
+                      className={`cursor-pointer hover:border-primary ${
+                        appointment.status === "completed" ? "opacity-50" : ""
+                      }`}
+                      onClick={() => {
+                        if (appointment.status !== "completed") {
+                          setCurrentAppointment(appointment);
+                        }
+                      }}
                     >
-                      <CardHeader className="pb-2">
-                        <CardTitle className="text-base">
-                          {format(new Date(appointment.time), "h:mm a")}
-                        </CardTitle>
-                        <CardDescription>
-                          الطالب: {appointment.studentName}
-                        </CardDescription>
-                      </CardHeader>
-                      <CardFooter className="pt-2">
-                        {appointment.completed ? (
+                      <CardContent className="p-4">
+                        <div className="flex justify-between items-center">
+                          <div>
+                            <p className="font-medium">
+                              {format(new Date(appointment.startTime), "h:mm a")}
+                            </p>
+                            <p className="text-sm text-muted-foreground">
+                              طالب {appointment.studentId}
+                            </p>
+                          </div>
                           <Badge
-                            variant="outline"
-                            className="bg-green-50 text-green-700 hover:bg-green-50"
+                            variant={
+                              appointment.status === "completed"
+                                ? "secondary"
+                                : "outline"
+                            }
                           >
-                            مكتمل
+                            {appointment.status === "completed"
+                              ? "مكتمل"
+                              : "بانتظار التقييم"}
                           </Badge>
-                        ) : (
-                          <Badge variant="outline">قيد الانتظار</Badge>
-                        )}
-                      </CardFooter>
+                        </div>
+                      </CardContent>
                     </Card>
                   ))}
                 </div>
