@@ -4,14 +4,13 @@ import { useAuth } from "@/hooks/use-auth";
 import { useMutation } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
-import { Form, FormField, FormItem, FormLabel } from "@/components/ui/form";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { useForm } from "react-hook-form";
+import { Form, FormField, FormItem, FormLabel } from "@/components/ui/form";
+import { Textarea } from "@/components/ui/textarea";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { insertQuestionnaireSchema } from "@shared/schema";
-import { Link } from "wouter";
 import type { QuestionnaireResponse } from "@shared/schema";
 
 const questions = [
@@ -34,11 +33,12 @@ export default function TeacherQuestionnaire() {
       question2: "",
       question3: "",
       question4: "",
+      appointmentId: 1, // Default value for appointmentId
     },
   });
 
   const submitQuestionnaireMutation = useMutation({
-    mutationFn: async (data: QuestionnaireResponse) => {
+    mutationFn: async (data: any) => {
       const res = await apiRequest("POST", "/api/questionnaire-responses", data);
       return res.json();
     },
@@ -60,19 +60,23 @@ export default function TeacherQuestionnaire() {
         question2: "",
         question3: "",
         question4: "",
+        appointmentId: 1, // Reset to default
       });
     },
   });
 
-  return (
-    <div className="container mx-auto p-8">
-      <div className="flex justify-between items-center mb-8">
-        <h1 className="text-2xl font-bold">Session Questionnaire</h1>
-        <Link href="/teacher/availability">
-          <Button variant="outline">Back to Availability</Button>
-        </Link>
-      </div>
+  const handleSubmit = (data: any) => {
+    // Add appointmentId if not present
+    const formData = {
+      ...data,
+      appointmentId: data.appointmentId || 1,
+    };
+    
+    submitQuestionnaireMutation.mutate(formData);
+  };
 
+  return (
+    <div className="container mx-auto p-4">
       <Card>
         <CardHeader>
           <CardTitle>Post-Session Questions</CardTitle>
@@ -85,7 +89,7 @@ export default function TeacherQuestionnaire() {
           )}
           
           <Form {...form}>
-            <form onSubmit={form.handleSubmit((data) => submitQuestionnaireMutation.mutate(data as QuestionnaireResponse))} className="space-y-6">
+            <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
               <FormField
                 control={form.control}
                 name="studentName"
@@ -105,7 +109,7 @@ export default function TeacherQuestionnaire() {
                 <FormField
                   key={index}
                   control={form.control}
-                  name={`question${index + 1}` as keyof QuestionnaireResponse}
+                  name={`question${index + 1}` as any}
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>{question}</FormLabel>
@@ -114,7 +118,7 @@ export default function TeacherQuestionnaire() {
                   )}
                 />
               ))}
-
+              
               <Button 
                 type="submit" 
                 className="w-full"
