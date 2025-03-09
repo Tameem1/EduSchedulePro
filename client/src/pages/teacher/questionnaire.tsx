@@ -27,6 +27,7 @@ export default function TeacherQuestionnaire() {
   const form = useForm({
     resolver: zodResolver(insertQuestionnaireSchema),
     defaultValues: {
+      studentName: "",
       question1: "",
       question2: "",
       question3: "",
@@ -42,7 +43,8 @@ export default function TeacherQuestionnaire() {
     onSuccess: () => {
       toast({
         title: "Questionnaire Submitted",
-        description: "Your responses have been recorded.",
+        description: "Your responses have been recorded successfully.",
+        duration: 3000,
       });
       form.reset();
     },
@@ -64,6 +66,21 @@ export default function TeacherQuestionnaire() {
         <CardContent>
           <Form {...form}>
             <form onSubmit={form.handleSubmit((data) => submitQuestionnaireMutation.mutate(data as QuestionnaireResponse))} className="space-y-6">
+              <FormField
+                control={form.control}
+                name="studentName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Student Name</FormLabel>
+                    <input
+                      {...field}
+                      className="w-full rounded-md border border-input bg-background px-3 py-2"
+                      placeholder="Enter student name"
+                    />
+                  </FormItem>
+                )}
+              />
+              
               {questions.map((question, index) => (
                 <FormField
                   key={index}

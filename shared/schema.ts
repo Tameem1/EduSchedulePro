@@ -44,7 +44,9 @@ export const questionnaireResponses = pgTable("questionnaire_responses", {
 export const insertUserSchema = createInsertSchema(users);
 export const insertAvailabilitySchema = createInsertSchema(availabilities);
 export const insertAppointmentSchema = createInsertSchema(appointments);
-export const insertQuestionnaireSchema = createInsertSchema(questionnaireResponses);
+export const insertQuestionnaireSchema = createInsertSchema(questionnaireResponses, {
+  studentName: z.string().min(1, "Student name is required")
+});
 
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type User = typeof users.$inferSelect;
