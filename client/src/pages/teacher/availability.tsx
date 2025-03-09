@@ -92,8 +92,8 @@ export default function TeacherAvailability() {
     },
     onSuccess: () => {
       toast({
-        title: "Availability Added",
-        description: "Your availability has been updated.",
+        title: "تم إضافة التوفر", // Added Availability
+        description: "تم تحديث توفرك.", // Your availability has been updated.
       });
       queryClient.invalidateQueries({ queryKey: ["/api/teachers", user!.id, "availabilities"] });
     },
@@ -126,7 +126,7 @@ export default function TeacherAvailability() {
         endTime: new Date(today.getFullYear(), today.getMonth(), today.getDate(), 20, 0, 0).toISOString() 
       },
     ];
-    
+
     // Only show examples if there are no real availabilities
     return (availabilities && availabilities.length > 0) ? availabilities : exampleAvailabilities;
   }, [availabilities, user?.id]);
@@ -138,8 +138,8 @@ export default function TeacherAvailability() {
 
     if (validRanges.length === 0) {
       toast({
-        title: "No Valid Time Ranges",
-        description: "Please add at least one valid time range.",
+        title: "لا توجد فترات زمنية صالحة", // No Valid Time Ranges
+        description: "يرجى إضافة فترة زمنية صالحة واحدة على الأقل.", // Please add at least one valid time range.
         variant: "destructive",
       });
       return;
@@ -157,20 +157,20 @@ export default function TeacherAvailability() {
   return (
     <div className="container mx-auto p-8">
       <div className="flex justify-between items-center mb-8">
-        <h1 className="text-2xl font-bold">Manage Today's Availability</h1>
+        <h1 className="text-2xl font-bold">إدارة توفر اليوم</h1> {/* Manage Today's Availability */}
         <Link href="/teacher/questionnaire">
-          <Button>Go to Questionnaire</Button>
+          <Button>الذهاب إلى الاستبيان</Button> {/* Go to Questionnaire */}
         </Link>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle>Add Availability</CardTitle>
+          <CardTitle>إضافة توفر</CardTitle> {/* Add Availability */}
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="space-y-4">
             <p className="text-sm text-muted-foreground">
-              Add your available time slots for today. You can add multiple time ranges.
+              أضف فتراتك الزمنية المتاحة لهذا اليوم. يمكنك إضافة العديد من الفترات الزمنية. {/* Add your available time slots for today. You can add multiple time ranges. */}
             </p>
 
             {timeRanges.length === 0 && (
@@ -179,7 +179,7 @@ export default function TeacherAvailability() {
                 className="text-center py-6 border border-dashed rounded-md cursor-pointer hover:bg-muted/50 transition-colors"
               >
                 <Plus className="mx-auto h-6 w-6 text-muted-foreground mb-2" />
-                <p className="text-muted-foreground">Click to add a time range</p>
+                <p className="text-muted-foreground">انقر لإضافة نطاق زمني</p> {/* Click to add a time range */}
               </div>
             )}
 
@@ -188,14 +188,14 @@ export default function TeacherAvailability() {
                 <div className="grid grid-cols-2 gap-4 flex-1">
                   <div>
                     <label className="text-xs text-muted-foreground mb-1 block">
-                      Start Time
+                      وقت البدء {/* Start Time */}
                     </label>
                     <Select
                       value={range.start}
                       onValueChange={(value) => updateTimeRange(range.id, 'start', value)}
                     >
                       <SelectTrigger>
-                        <SelectValue placeholder="Select start time" />
+                        <SelectValue placeholder="حدد وقت البدء" /> {/* Select start time */}
                       </SelectTrigger>
                       <SelectContent>
                         {timeOptions.map((option) => (
@@ -208,14 +208,14 @@ export default function TeacherAvailability() {
                   </div>
                   <div>
                     <label className="text-xs text-muted-foreground mb-1 block">
-                      End Time
+                      وقت الانتهاء {/* End Time */}
                     </label>
                     <Select
                       value={range.end}
                       onValueChange={(value) => updateTimeRange(range.id, 'end', value)}
                     >
                       <SelectTrigger>
-                        <SelectValue placeholder="Select end time" />
+                        <SelectValue placeholder="حدد وقت الانتهاء" /> {/* Select end time */}
                       </SelectTrigger>
                       <SelectContent>
                         {timeOptions.map((option) => (
@@ -257,7 +257,7 @@ export default function TeacherAvailability() {
                 className="mt-2"
               >
                 <Plus className="h-4 w-4 mr-2" />
-                Add Another Time Range
+                إضافة نطاق زمني آخر {/* Add Another Time Range */}
               </Button>
             )}
           </div>
@@ -272,13 +272,13 @@ export default function TeacherAvailability() {
             onClick={submitAvailabilities}
           >
             {addAvailabilityMutation.isPending 
-              ? "Saving Availability..." 
-              : "Save All Availability"}
+              ? "حفظ التوفر..."  {/* Saving Availability... */}
+              : "حفظ كل التوفر"} {/* Save All Availability */}
           </Button>
 
           {displayAvailabilities.length > 0 && (
             <div className="mt-8">
-              <h3 className="text-lg font-semibold mb-4">Your Available Slots Today</h3>
+              <h3 className="text-lg font-semibold mb-4">فتراتك المتاحة اليوم</h3> {/* Your Available Slots Today */}
               <div className="space-y-2">
                 {displayAvailabilities.map((availability) => (
                   <div key={availability.id} className="p-4 border rounded-md hover:bg-gray-50 transition-colors">
@@ -293,20 +293,20 @@ export default function TeacherAvailability() {
                       </div>
                       <div className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded flex items-center">
                         <span className="w-2 h-2 bg-green-500 rounded-full mr-1"></span>
-                        Available
+                        متوفر {/* Available */}
                       </div>
                     </div>
                     {availability.id >= 100 && (
                       <div className="flex mt-2 items-center">
-                        <p className="text-xs text-gray-500">(Example availability slot)</p>
+                        <p className="text-xs text-gray-500">(مثال على فترات التوفر)</p> {/* (Example availability slot) */}
                         {availability.id === 101 && (
-                          <span className="text-xs text-blue-500 ml-2">Morning session</span>
+                          <span className="text-xs text-blue-500 ml-2">جلسة الصباح</span> {/* Morning session */}
                         )}
                         {availability.id === 102 && (
-                          <span className="text-xs text-blue-500 ml-2">Afternoon session</span>
+                          <span className="text-xs text-blue-500 ml-2">جلسة الظهيرة</span> {/* Afternoon session */}
                         )}
                         {availability.id === 103 && (
-                          <span className="text-xs text-blue-500 ml-2">Evening session</span>
+                          <span className="text-xs text-blue-500 ml-2">جلسة المساء</span> {/* Evening session */}
                         )}
                       </div>
                     )}
@@ -315,7 +315,7 @@ export default function TeacherAvailability() {
               </div>
               {displayAvailabilities.every(a => a.id >= 100) && (
                 <p className="text-sm text-muted-foreground mt-4">
-                  These are example availability slots. Add your own slots using the form above.
+                  هذه أمثلة على فترات التوفر. أضف فتراتك الخاصة باستخدام النموذج أعلاه. {/* These are example availability slots. Add your own slots using the form above. */}
                 </p>
               )}
             </div>

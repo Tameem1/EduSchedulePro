@@ -1,4 +1,3 @@
-
 import * as React from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -34,7 +33,7 @@ export default function ManagerAppointments() {
   const { data: availabilities } = useQuery({
     queryKey: ["/api/availabilities"],
   });
-  
+
   // Sample teacher data for demonstration purposes
   const sampleTeachers = [
     { id: "t1", username: "John Smith" },
@@ -43,7 +42,7 @@ export default function ManagerAppointments() {
     { id: "t4", username: "Sarah Williams" },
     { id: "t5", username: "David Rodriguez" }
   ];
-  
+
   // Sample availability data
   const sampleAvailabilities = React.useMemo(() => {
     const today = new Date();
@@ -98,7 +97,7 @@ export default function ManagerAppointments() {
       }
     ];
   }, []);
-  
+
   // Sample appointment counts
   const sampleAppointments = [
     { teacherId: "t1", count: 3 },
@@ -107,12 +106,12 @@ export default function ManagerAppointments() {
     { teacherId: "t4", count: 4 },
     { teacherId: "t5", count: 0 }
   ];
-  
+
   // Use real data if available, otherwise use sample data
   const displayTeachers = React.useMemo(() => {
     return (teachers && teachers.length > 0) ? teachers : sampleTeachers;
   }, [teachers]);
-  
+
   const displayAvailabilities = React.useMemo(() => {
     return (availabilities && availabilities.length > 0) ? availabilities : sampleAvailabilities;
   }, [availabilities, sampleAvailabilities]);
@@ -124,15 +123,15 @@ export default function ManagerAppointments() {
   // Function to find available teachers for a specific time
   const findAvailableTeachers = (appointmentTime) => {
     if (!appointmentTime) return [];
-    
+
     const appointmentDate = new Date(appointmentTime);
-    
+
     return displayTeachers.filter(teacher => {
       // Find teacher availabilities
       const teacherAvailabilities = displayAvailabilities.filter(
         (a) => a.teacherId === teacher.id
       );
-      
+
       // Check if the teacher is available at the appointment time
       return teacherAvailabilities.some(availability => {
         const startTime = new Date(availability.startTime);
@@ -163,7 +162,7 @@ export default function ManagerAppointments() {
           <Button>View Results</Button>
         </Link>
       </div>
-      
+
       <Card className="mb-6">
         <CardHeader>
           <CardTitle>Today's Appointments</CardTitle>
@@ -212,7 +211,15 @@ export default function ManagerAppointments() {
                           : 'bg-blue-100 text-blue-800'
                       }
                     >
-                      {appointment.status}
+                      {appointment.status === 'pending'
+                        ? 'قيد الانتظار'
+                        : appointment.status === 'matched'
+                        ? 'تم التطابق'
+                        : appointment.status === 'unassigned'
+                        ? 'غير معين'
+                        : appointment.status === 'completed'
+                        ? 'مكتمل'
+                        : appointment.status}
                     </Badge>
                   </TableCell>
                   <TableCell>
@@ -221,7 +228,7 @@ export default function ManagerAppointments() {
                       variant="outline"
                       onClick={() => handleAssignClick(appointment)}
                     >
-                      Assign
+                      تعيين
                     </Button>
                   </TableCell>
                 </TableRow>
@@ -301,7 +308,7 @@ export default function ManagerAppointments() {
       <Dialog open={assignDialogOpen} onOpenChange={setAssignDialogOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>Assign Teacher</DialogTitle>
+            <DialogTitle>تعيين معلم</DialogTitle>
           </DialogHeader>
           {selectedAppointment && (
             <div className="py-4">
@@ -314,12 +321,11 @@ export default function ManagerAppointments() {
                   Time: {format(new Date(selectedAppointment.startTime), "h:mm a")}
                 </p>
               </div>
-              
+
               <div className="mb-4">
                 <p className="font-medium mb-2">Available Teachers</p>
                 <div className="space-y-2">
-                  {findAvailableTeachers(selectedAppointment.startTime).length > 0 ? (
-                    findAvailableTeachers(selectedAppointment.startTime).map(teacher => (
+                  {findAvailableTeachers(selectedAppointment.startTime).map(teacher => (
                       <div 
                         key={teacher.id} 
                         className="flex items-center justify-between p-2 border rounded hover:bg-gray-50 cursor-pointer"
@@ -328,13 +334,10 @@ export default function ManagerAppointments() {
                         <span>{teacher.username}</span>
                         <Button size="sm" variant="secondary">Select</Button>
                       </div>
-                    ))
-                  ) : (
-                    <p className="text-sm text-muted-foreground">No teachers available at this time</p>
-                  )}
+                    ))}
                 </div>
               </div>
-              
+
               <div className="flex justify-end">
                 <DialogClose asChild>
                   <Button variant="outline">Cancel</Button>

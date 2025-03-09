@@ -1,8 +1,7 @@
-
 import * as React from 'react';
 import { useAuth } from "@/hooks/use-auth";
 import { useMutation } from "@tanstack/react-query";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter, Badge } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
@@ -12,6 +11,10 @@ import { Textarea } from "@/components/ui/textarea";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { insertQuestionnaireSchema } from "@shared/schema";
 import type { QuestionnaireResponse } from "@shared/schema";
+import { format } from 'date-fns';
+import { Slider } from "@/components/ui/slider";
+import { Label } from "@/components/ui/label";
+
 
 const questions = [
   "How was the student's engagement during the session?",
@@ -20,10 +23,24 @@ const questions = [
   "Any recommendations for future sessions?"
 ];
 
+const sampleAppointments = [
+  { id: 1, studentName: "Alice", time: "2024-03-08T10:00:00", completed: false },
+  { id: 2, studentName: "Bob", time: "2024-03-08T11:00:00", completed: true },
+  { id: 3, studentName: "Charlie", time: "2024-03-08T12:00:00", completed: false },
+];
+
+
 export default function TeacherQuestionnaire() {
   const { user } = useAuth();
   const { toast } = useToast();
-  const [successMessage, setSuccessMessage] = React.useState<string | null>(null);
+  const [currentAppointment, setCurrentAppointment] = React.useState(null);
+  const [formData, setFormData] = React.useState({
+    question1: "",
+    question2: "",
+    question3: "",
+    question4: "",
+    rating: 5
+  });
 
   const form = useForm({
     resolver: zodResolver(insertQuestionnaireSchema),
@@ -49,10 +66,10 @@ export default function TeacherQuestionnaire() {
         description: "Your responses have been recorded successfully.",
         duration: 5000, // Longer duration
       });
-      
+
       // Set success message for visual feedback
-      setSuccessMessage("Questionnaire submitted successfully!");
-      
+      //setSuccessMessage("Questionnaire submitted successfully!");
+
       // Reset form
       form.reset({
         studentName: "",
@@ -71,63 +88,126 @@ export default function TeacherQuestionnaire() {
       ...data,
       appointmentId: data.appointmentId || 1,
     };
-    
+
     submitQuestionnaireMutation.mutate(formData);
+  };
+
+  const handleChange = (name: string, value: any) => {
+    setFormData({ ...formData, [name]: value });
   };
 
   return (
     <div className="container mx-auto p-4">
       <Card>
         <CardHeader>
-          <CardTitle>Post-Session Questions</CardTitle>
+          <CardTitle>استبيان الموعد</CardTitle>
+          <CardDescription>
+            أكمل هذا النموذج بعد كل موعد مع طالب
+          </CardDescription>
         </CardHeader>
         <CardContent>
-          {successMessage && (
-            <div className="mb-6 p-4 bg-green-100 border border-green-400 text-green-700 rounded-md">
-              {successMessage}
+          {currentAppointment ? (
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div className="bg-muted/50 p-4 rounded-md mb-4">
+                <p><span className="font-semibold">الطالب:</span> {currentAppointment.studentName}</p>
+                <p><span className="font-semibold">الوقت:</span> {format(new Date(currentAppointment.time), "h:mm a")}</p>
+              </div>
+
+              <div>
+                <Label htmlFor="question1">على ماذا عملتم؟</Label>
+                <Textarea 
+                  id="question1"
+                  placeholder="وصف المواضيع التي تمت تغطيتها في الجلسة"
+                  value={formData.question1}
+                  onChange={(e) => handleChange("question1", e.target.value)}
+                  required
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="question2">ما الاستراتيجيات التي كانت فعالة؟</Label>
+                <Textarea 
+                  id="question2"
+                  placeholder="ما أساليب التدريس التي بدت مفيدة للطالب؟"
+                  value={formData.question2}
+                  onChange={(e) => handleChange("question2", e.target.value)}
+                  required
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="question3">مجالات التحسين</Label>
+                <Textarea 
+                  id="question3"
+                  placeholder="ما هي المفاهيم التي ما زال الطالب بحاجة للمساعدة فيها؟"
+                  value={formData.question3}
+                  onChange={(e) => handleChange("question3", e.target.value)}
+                  required
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="question4">ملاحظات للجلسة القادمة</Label>
+                <Textarea 
+                  id="question4"
+                  placeholder="ما الذي يجب أن يكون محور تركيز الموعد التالي؟"
+                  value={formData.question4}
+                  onChange={(e) => handleChange("question4", e.target.value)}
+                  required
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="rating">تقييم الجلسة (1-5)</Label>
+                <div className="flex items-center space-x-2">
+                  <Slider
+                    id="rating"
+                    min={1}
+                    max={5}
+                    step={0.5}
+                    value={[formData.rating]}
+                    onValueChange={(value) => handleChange("rating", value[0])}
+                  />
+                  <span className="w-12 text-center">{formData.rating}</span>
+                </div>
+              </div>
+
+              <Button type="submit" className="w-full">إرسال التقييم</Button>
+            </form>
+          ) : (
+            <div className="py-8">
+              <div className="text-center space-y-4">
+                <h3 className="text-lg font-medium">اختر موعداً</h3>
+                <p className="text-muted-foreground">
+                  اختر موعداً من اليوم لإكمال الاستبيان
+                </p>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-2xl mx-auto mt-6">
+                  {sampleAppointments.map((appointment) => (
+                    <Card 
+                      key={appointment.id} 
+                      className="cursor-pointer hover:border-primary"
+                      onClick={() => setCurrentAppointment(appointment)}
+                    >
+                      <CardHeader className="pb-2">
+                        <CardTitle className="text-base">
+                          {format(new Date(appointment.time), "h:mm a")}
+                        </CardTitle>
+                        <CardDescription>الطالب: {appointment.studentName}</CardDescription>
+                      </CardHeader>
+                      <CardFooter className="pt-2">
+                        {appointment.completed ? (
+                          <Badge variant="outline" className="bg-green-50 text-green-700 hover:bg-green-50">مكتمل</Badge>
+                        ) : (
+                          <Badge variant="outline">قيد الانتظار</Badge>
+                        )}
+                      </CardFooter>
+                    </Card>
+                  ))}
+                </div>
+              </div>
             </div>
           )}
-          
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
-              <FormField
-                control={form.control}
-                name="studentName"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Student Name</FormLabel>
-                    <input
-                      {...field}
-                      className="w-full rounded-md border border-input bg-background px-3 py-2"
-                      placeholder="Enter student name"
-                    />
-                  </FormItem>
-                )}
-              />
-              
-              {questions.map((question, index) => (
-                <FormField
-                  key={index}
-                  control={form.control}
-                  name={`question${index + 1}` as any}
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>{question}</FormLabel>
-                      <Textarea {...field} className="min-h-[100px]" />
-                    </FormItem>
-                  )}
-                />
-              ))}
-              
-              <Button 
-                type="submit" 
-                className="w-full"
-                disabled={submitQuestionnaireMutation.isPending}
-              >
-                Submit Responses
-              </Button>
-            </form>
-          </Form>
         </CardContent>
       </Card>
     </div>
