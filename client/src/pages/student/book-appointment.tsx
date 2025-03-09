@@ -79,7 +79,7 @@ export default function BookAppointment() {
   });
 
   return (
-    <div className="container mx-auto p-8">
+    <div className="container mx-auto p-4">
       <Card>
         <CardHeader>
           <CardTitle>Book an Appointment for Today</CardTitle>
