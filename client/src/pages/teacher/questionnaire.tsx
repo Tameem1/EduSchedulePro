@@ -1,3 +1,4 @@
+import React from 'react';
 import { useAuth } from "@/hooks/use-auth";
 import { useMutation } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -10,6 +11,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { insertQuestionnaireSchema } from "@shared/schema";
 import { Link } from "wouter";
+import type { QuestionnaireResponse } from "@shared/schema";
 
 const questions = [
   "How was the student's engagement during the session?",
@@ -33,7 +35,7 @@ export default function TeacherQuestionnaire() {
   });
 
   const submitQuestionnaireMutation = useMutation({
-    mutationFn: async (data: any) => {
+    mutationFn: async (data: QuestionnaireResponse) => {
       const res = await apiRequest("POST", "/api/questionnaire-responses", data);
       return res.json();
     },
@@ -61,12 +63,12 @@ export default function TeacherQuestionnaire() {
         </CardHeader>
         <CardContent>
           <Form {...form}>
-            <form onSubmit={form.handleSubmit((data) => submitQuestionnaireMutation.mutate(data))} className="space-y-6">
+            <form onSubmit={form.handleSubmit((data) => submitQuestionnaireMutation.mutate(data as QuestionnaireResponse))} className="space-y-6">
               {questions.map((question, index) => (
                 <FormField
                   key={index}
                   control={form.control}
-                  name={`question${index + 1}` as any}
+                  name={`question${index + 1}` as keyof QuestionnaireResponse}
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>{question}</FormLabel>
@@ -75,7 +77,7 @@ export default function TeacherQuestionnaire() {
                   )}
                 />
               ))}
-              
+
               <Button 
                 type="submit" 
                 className="w-full"

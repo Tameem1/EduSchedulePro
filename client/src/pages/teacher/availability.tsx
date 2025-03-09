@@ -1,3 +1,4 @@
+import React from 'react';
 import { useAuth } from "@/hooks/use-auth";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -7,6 +8,7 @@ import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
 import { Link } from "wouter";
+import type { Availability } from "@shared/schema";
 
 export default function TeacherAvailability() {
   const { user } = useAuth();
@@ -34,7 +36,7 @@ export default function TeacherAvailability() {
     },
   });
 
-  const { data: availabilities } = useQuery({
+  const { data: availabilities } = useQuery<Availability[]>({
     queryKey: ["/api/teachers", user!.id, "availabilities"],
   });
 
@@ -58,7 +60,7 @@ export default function TeacherAvailability() {
             onSelect={setSelectedDate}
             className="rounded-md border"
           />
-          
+
           <Button 
             className="w-full"
             disabled={!selectedDate || addAvailabilityMutation.isPending}
@@ -71,7 +73,7 @@ export default function TeacherAvailability() {
             <div className="mt-8">
               <h3 className="text-lg font-semibold mb-4">Your Available Slots</h3>
               <div className="space-y-2">
-                {availabilities.map((availability: any) => (
+                {availabilities.map((availability) => (
                   <div key={availability.id} className="p-4 border rounded-md">
                     <p>Start: {format(new Date(availability.startTime), "PPP p")}</p>
                     <p>End: {format(new Date(availability.endTime), "p")}</p>

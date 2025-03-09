@@ -1,3 +1,4 @@
+import React from 'react';
 import { useAuth } from "@/hooks/use-auth";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { Calendar } from "@/components/ui/calendar";
@@ -6,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
+import type { Appointment } from "@shared/schema";
 
 export default function BookAppointment() {
   const { user } = useAuth();
@@ -28,7 +30,7 @@ export default function BookAppointment() {
     },
   });
 
-  const { data: appointments } = useQuery({
+  const { data: appointments } = useQuery<Appointment[]>({
     queryKey: ["/api/students", user!.id, "appointments"],
   });
 
@@ -45,7 +47,7 @@ export default function BookAppointment() {
             onSelect={setSelectedDate}
             className="rounded-md border"
           />
-          
+
           <Button 
             className="w-full"
             disabled={!selectedDate || bookAppointmentMutation.isPending}
@@ -58,7 +60,7 @@ export default function BookAppointment() {
             <div className="mt-8">
               <h3 className="text-lg font-semibold mb-4">Your Appointments</h3>
               <div className="space-y-2">
-                {appointments.map((appointment: any) => (
+                {appointments.map((appointment) => (
                   <div key={appointment.id} className="p-4 border rounded-md">
                     <p>Date: {format(new Date(appointment.startTime), "PPP")}</p>
                     <p>Status: {appointment.status}</p>
