@@ -22,7 +22,9 @@ export default function ManagerAppointments() {
     queryKey: ["/api/users/teachers"],
   });
 
-  const { data: availabilities } = useQuery({
+  import * as React from "react";
+
+const { data: availabilities } = useQuery({
     queryKey: ["/api/availabilities"],
   });
   
