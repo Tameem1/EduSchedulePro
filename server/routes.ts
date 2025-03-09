@@ -113,7 +113,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const parsedData = insertAppointmentSchema.parse({
         startTime: appointmentStartTime,
         studentId: req.user.id,
-        status: "pending",
+        status: "pending"
       });
 
       const appointment = await storage.createAppointment(parsedData);

@@ -36,7 +36,7 @@ export const availabilities = pgTable("availabilities", {
 export const appointments = pgTable("appointments", {
   id: serial("id").primaryKey(),
   studentId: integer("student_id").references(() => users.id).notNull(),
-  teacherId: integer("teacher_id").references(() => users.id).notNull(),
+  teacherId: integer("teacher_id").references(() => users.id), 
   startTime: timestamp("start_time").notNull(),
   status: appointmentStatusEnum("status").notNull().default('pending')
 });
@@ -89,7 +89,7 @@ export const questionnaireResponsesRelations = relations(questionnaireResponses,
 // Create Zod schemas for validation
 export const insertUserSchema = createInsertSchema(users);
 export const insertAvailabilitySchema = createInsertSchema(availabilities);
-export const insertAppointmentSchema = createInsertSchema(appointments);
+export const insertAppointmentSchema = createInsertSchema(appointments).omit({ teacherId: true });
 export const insertQuestionnaireSchema = createInsertSchema(questionnaireResponses);
 
 // Export types
