@@ -184,7 +184,7 @@ export default function ManagerAppointments() {
               {(appointments?.length ? appointments : [
                     { id: 1, studentName: "Michael Johnson", studentId: 101, startTime: new Date().setHours(10, 0), teacherId: 201, status: "matched" },
                     { id: 2, studentName: "Sarah Chen", studentId: 102, startTime: new Date().setHours(11, 30), teacherId: 202, status: "pending" },
-                    { id: 3, studentName: "David Wilson", studentId: 103, startTime: new Date().setHours(13, 0), teacherId: null, status: "pending" },
+                    { id: 3, studentName: "David Wilson", studentId: 103, startTime: new Date().setHours(13, 0), teacherId: null, status: "unassigned" },
                     { id: 4, studentName: "Emma Thompson", studentId: 104, startTime: new Date().setHours(14, 30), teacherId: 203, status: "completed" },
                     { id: 5, studentName: "James Rodriguez", studentId: 105, startTime: new Date().setHours(16, 0), teacherId: 201, status: "matched" }
                   ]).map((appointment) => (
@@ -207,6 +207,8 @@ export default function ManagerAppointments() {
                           ? 'bg-yellow-100 text-yellow-800'
                           : appointment.status === 'matched'
                           ? 'bg-green-100 text-green-800'
+                          : appointment.status === 'unassigned'
+                          ? 'bg-gray-100 text-gray-800'
                           : 'bg-blue-100 text-blue-800'
                       }
                     >
