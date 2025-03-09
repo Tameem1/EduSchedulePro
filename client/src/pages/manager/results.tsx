@@ -130,19 +130,22 @@ export default function ManagerResults() {
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>الطالب</TableHead>
-                      <TableHead>الوقت</TableHead>
-                      <TableHead>المعلم</TableHead>
-                      <TableHead>التقييم الإجمالي</TableHead>
                       <TableHead>الإجراءات</TableHead>
+                      <TableHead>التقييم الإجمالي</TableHead>
+                      <TableHead>المعلم</TableHead>
+                      <TableHead>الوقت</TableHead>
+                      <TableHead>الطالب</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {todayResponses.map((response: any) => (
                       <TableRow key={response.id}>
-                        <TableCell className="font-medium">{response.studentName}</TableCell>
-                        <TableCell>{format(new Date(response.createdAt || new Date()), "h:mm a", { locale: arSA })}</TableCell>
-                        <TableCell>{response.teacherName || `معلم رقم ${response.teacherId || 1}`}</TableCell>
+                        <TableCell>
+                          <div className="flex space-x-2">
+                            <Button variant="outline" size="sm">عرض التفاصيل</Button>
+                            <Button variant="outline" size="sm">تصدير</Button>
+                          </div>
+                        </TableCell>
                         <TableCell>
                           <div className="flex items-center">
                             <span className="text-sm font-medium">{response.rating || "4.5"}/5</span>
@@ -160,12 +163,9 @@ export default function ManagerResults() {
                             </div>
                           </div>
                         </TableCell>
-                        <TableCell>
-                          <div className="flex space-x-2">
-                            <Button variant="outline" size="sm">عرض التفاصيل</Button>
-                            <Button variant="outline" size="sm">تصدير</Button>
-                          </div>
-                        </TableCell>
+                        <TableCell>{response.teacherName || `معلم رقم ${response.teacherId || 1}`}</TableCell>
+                        <TableCell>{format(new Date(response.createdAt || new Date()), "h:mm a", { locale: arSA })}</TableCell>
+                        <TableCell className="font-medium">{response.studentName}</TableCell>
                       </TableRow>
                     ))}
                   </TableBody>
@@ -195,26 +195,26 @@ export default function ManagerResults() {
                       <Table>
                         <TableHeader>
                           <TableRow>
-                            <TableHead>الطالب</TableHead>
-                            <TableHead>الوقت</TableHead>
-                            <TableHead>المعلم</TableHead>
-                            <TableHead>التقييم</TableHead>
                             <TableHead>الإجراءات</TableHead>
+                            <TableHead>التقييم</TableHead>
+                            <TableHead>المعلم</TableHead>
+                            <TableHead>الوقت</TableHead>
+                            <TableHead>الطالب</TableHead>
                           </TableRow>
                         </TableHeader>
                         <TableBody>
                           {groupedResponses[date].map((response: any) => (
                             <TableRow key={response.id}>
-                              <TableCell className="font-medium">{response.studentName}</TableCell>
-                              <TableCell>{format(new Date(response.createdAt || new Date()), "h:mm a", { locale: arSA })}</TableCell>
-                              <TableCell>{response.teacherName || `معلم رقم ${response.teacherId || 1}`}</TableCell>
-                              <TableCell>{response.rating || "4.5"}/5</TableCell>
                               <TableCell>
                                 <div className="flex space-x-2">
                                   <Button variant="outline" size="sm">عرض</Button>
                                   <Button variant="outline" size="sm">تصدير</Button>
                                 </div>
                               </TableCell>
+                              <TableCell>{response.rating || "4.5"}/5</TableCell>
+                              <TableCell>{response.teacherName || `معلم رقم ${response.teacherId || 1}`}</TableCell>
+                              <TableCell>{format(new Date(response.createdAt || new Date()), "h:mm a", { locale: arSA })}</TableCell>
+                              <TableCell className="font-medium">{response.studentName}</TableCell>
                             </TableRow>
                           ))}
                         </TableBody>

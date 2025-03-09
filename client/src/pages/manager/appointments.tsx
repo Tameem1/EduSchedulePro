@@ -155,7 +155,7 @@ export default function ManagerAppointments() {
   };
 
   return (
-    <div className="container mx-auto p-4">
+    <div dir="rtl" className="container mx-auto p-4"> {/* Added dir="rtl" here */}
       <div className="flex justify-between items-center mb-4">
         <h1 className="text-2xl font-bold">Appointment Management</h1>
         <Link href="/manager/results">
@@ -171,12 +171,12 @@ export default function ManagerAppointments() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>ID</TableHead>
-                <TableHead>Student</TableHead>
-                <TableHead>Time</TableHead>
-                <TableHead>Teacher</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Actions</TableHead>
+                <TableHead>Actions</TableHead> {/* Reordered */}
+                <TableHead>Status</TableHead> {/* Reordered */}
+                <TableHead>Student</TableHead> {/* Reordered */}
+                <TableHead>Teacher</TableHead> {/* Reordered */}
+                <TableHead>Time</TableHead> {/* Reordered */}
+                <TableHead>ID</TableHead> {/* Reordered */}
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -187,7 +187,7 @@ export default function ManagerAppointments() {
                     { id: 4, studentName: "Emma Thompson", studentId: 104, startTime: new Date().setHours(14, 30), teacherId: 203, status: "completed" },
                     { id: 5, studentName: "James Rodriguez", studentId: 105, startTime: new Date().setHours(16, 0), teacherId: 201, status: "matched" }
                   ]).map((appointment) => (
-                <TableRow key={appointment.id}>
+                <TableRow key={appointment.id} dir="rtl"> {/* Added dir="rtl" here */}
                   <TableCell>#{appointment.id}</TableCell>
                   <TableCell>{appointment.studentName || `Student ${appointment.studentId}`}</TableCell>
                   <TableCell>{format(new Date(appointment.startTime), "h:mm a")}</TableCell>
@@ -222,7 +222,7 @@ export default function ManagerAppointments() {
                         : appointment.status}
                     </Badge>
                   </TableCell>
-                  <TableCell>
+                  <TableCell dir="rtl"> {/* Added dir="rtl" here */}
                     <Button 
                       size="sm" 
                       variant="outline"
@@ -243,12 +243,12 @@ export default function ManagerAppointments() {
           <CardTitle>Teacher Availability</CardTitle>
         </CardHeader>
         <CardContent>
-          <Table>
+          <Table dir="rtl"> {/* Added dir="rtl" here */}
             <TableHeader>
               <TableRow>
-                <TableHead>Teacher</TableHead>
-                <TableHead>Available Times</TableHead>
                 <TableHead>Appointments Today</TableHead>
+                <TableHead>Available Times</TableHead>
+                <TableHead>Teacher</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -262,7 +262,7 @@ export default function ManagerAppointments() {
                   sampleAppointments.find(a => a.teacherId === teacher.id)?.count || 0;
 
                 return (
-                  <TableRow key={teacher.id}>
+                  <TableRow key={teacher.id} dir="rtl"> {/* Added dir="rtl" here */}
                     <TableCell>{teacher.username}</TableCell>
                     <TableCell>
                       {teacherAvailabilities?.length > 0 ? (
@@ -306,7 +306,7 @@ export default function ManagerAppointments() {
 
       {/* Teacher Assignment Dialog */}
       <Dialog open={assignDialogOpen} onOpenChange={setAssignDialogOpen}>
-        <DialogContent className="sm:max-w-md">
+        <DialogContent className="sm:max-w-md" dir="rtl"> {/* Added dir="rtl" here */}
           <DialogHeader>
             <DialogTitle>تعيين معلم</DialogTitle>
           </DialogHeader>
