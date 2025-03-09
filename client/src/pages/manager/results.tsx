@@ -28,6 +28,13 @@ export default function ManagerResults() {
     return acc;
   }, {});
 
+  const todayResponses = responses?.filter((r: any) =>
+    format(new Date(r.createdAt), "yyyy-MM-dd") === format(new Date(), "yyyy-MM-dd")
+  );
+
+  const allDates = Object.keys(groupedResponses || {});
+
+
   return (
     <div className="container mx-auto p-8">
       <div className="flex justify-between items-center mb-8">
@@ -44,29 +51,186 @@ export default function ManagerResults() {
         </TabsList>
 
         <TabsContent value="today">
-          <ResultsTable responses={responses?.filter((r: any) => 
-            format(new Date(r.createdAt), "yyyy-MM-dd") === format(new Date(), "yyyy-MM-dd")
-          )} />
+          <Card>
+            <CardHeader>
+              <CardTitle>Today's Session Reports</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {todayResponses.length > 0 ? (
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Student</TableHead>
+                      <TableHead>Time</TableHead>
+                      <TableHead>Teacher</TableHead>
+                      <TableHead>Overall Rating</TableHead>
+                      <TableHead>Actions</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {todayResponses.map((response: any) => (
+                      <TableRow key={response.id}>
+                        <TableCell className="font-medium">{response.studentName}</TableCell>
+                        <TableCell>{format(new Date(response.createdAt || new Date()), "h:mm a")}</TableCell>
+                        <TableCell>{response.teacherName || `Teacher #${response.teacherId || 1}`}</TableCell>
+                        <TableCell>
+                          <div className="flex items-center">
+                            <span className="text-sm font-medium">{response.rating || "4.5"}/5</span>
+                            <div className="ml-2 flex">
+                              {Array(5).fill(0).map((_, i) => (
+                                <svg
+                                  key={i}
+                                  className={`w-4 h-4 ${i < Math.floor(response.rating || 4.5) ? "text-yellow-400" : "text-gray-300"}`}
+                                  fill="currentColor"
+                                  viewBox="0 0 20 20"
+                                >
+                                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                </svg>
+                              ))}
+                            </div>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex space-x-2">
+                            <Button variant="outline" size="sm">View Details</Button>
+                            <Button variant="outline" size="sm">Export</Button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              ) : (
+                <div className="text-center py-8">
+                  <p className="text-muted-foreground">No reports submitted today</p>
+                </div>
+              )}
+            </CardContent>
+          </Card>
         </TabsContent>
 
         <TabsContent value="history">
-          {groupedResponses && Object.entries(groupedResponses)
-            .sort(([dateA], [dateB]) => new Date(dateB).getTime() - new Date(dateA).getTime())
-            .map(([date, dayResponses]) => (
-              <Card key={date} className="mb-6">
-                <CardHeader>
-                  <CardTitle>{format(new Date(date), "MMMM d, yyyy")}</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <ResultsTable responses={dayResponses} />
-                </CardContent>
-              </Card>
-            ))}
+          <Card>
+            <CardHeader>
+              <CardTitle>All Session Reports</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {allDates.length > 0 ? (
+                <div className="space-y-6">
+                  {allDates.map(date => (
+                    <div key={date} className="border-b pb-4 mb-4 last:border-0">
+                      <h3 className="text-lg font-medium mb-3">{format(new Date(date), "PPPP")}</h3>
+                      <Table>
+                        <TableHeader>
+                          <TableRow>
+                            <TableHead>Student</TableHead>
+                            <TableHead>Time</TableHead>
+                            <TableHead>Teacher</TableHead>
+                            <TableHead>Rating</TableHead>
+                            <TableHead>Actions</TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          {groupedResponses[date].map((response: any) => (
+                            <TableRow key={response.id}>
+                              <TableCell className="font-medium">{response.studentName}</TableCell>
+                              <TableCell>{format(new Date(response.createdAt || new Date()), "h:mm a")}</TableCell>
+                              <TableCell>{response.teacherName || `Teacher #${response.teacherId || 1}`}</TableCell>
+                              <TableCell>{response.rating || "4.5"}/5</TableCell>
+                              <TableCell>
+                                <div className="flex space-x-2">
+                                  <Button variant="outline" size="sm">View</Button>
+                                  <Button variant="outline" size="sm">Export</Button>
+                                </div>
+                              </TableCell>
+                            </TableRow>
+                          ))}
+                        </TableBody>
+                      </Table>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-8">
+                  <p className="text-muted-foreground">No historical reports available</p>
+                </div>
+              )}
+            </CardContent>
+          </Card>
         </TabsContent>
       </Tabs>
     </div>
   );
 }
+
+// Sample data for demonstration purposes
+const sampleResponses = [
+  {
+    id: 1,
+    appointmentId: 1,
+    studentName: "Alex Garcia",
+    teacherId: 1,
+    teacherName: "Ms. Johnson",
+    question1: "I learned about fractions and how to add them.",
+    question2: "The teacher explained concepts very clearly.",
+    question3: "I still need help with division of fractions.",
+    question4: "I would like to practice more word problems.",
+    rating: "5",
+    createdAt: new Date().setHours(9, 30, 0, 0),
+  },
+  {
+    id: 2,
+    appointmentId: 2,
+    studentName: "Jamie Wong",
+    teacherId: 2,
+    teacherName: "Mr. Smith",
+    question1: "We reviewed my essay and worked on structure.",
+    question2: "The feedback on my thesis statement was very helpful.",
+    question3: "I need to work on my conclusion paragraphs.",
+    question4: "I would like more examples of strong essays.",
+    rating: "4",
+    createdAt: new Date().setHours(11, 0, 0, 0),
+  },
+  {
+    id: 3,
+    appointmentId: 3,
+    studentName: "Taylor Swift",
+    teacherId: 1,
+    teacherName: "Ms. Johnson",
+    question1: "We worked on solving algebraic equations.",
+    question2: "The step-by-step approach was very helpful.",
+    question3: "I still struggle with word problems.",
+    question4: "I would like more practice with complex equations.",
+    rating: "4.5",
+    createdAt: new Date(new Date().setDate(new Date().getDate() - 1)),
+  },
+  {
+    id: 4,
+    appointmentId: 4,
+    studentName: "Jordan Lee",
+    teacherId: 3,
+    teacherName: "Dr. Williams",
+    question1: "We reviewed my science project proposal.",
+    question2: "I got good feedback on my experimental design.",
+    question3: "I need help with analyzing the data.",
+    question4: "I would like more resources on scientific writing.",
+    rating: "5",
+    createdAt: new Date(new Date().setDate(new Date().getDate() - 1)),
+  },
+  {
+    id: 5,
+    appointmentId: 5,
+    studentName: "Casey Smith",
+    teacherId: 2,
+    teacherName: "Mr. Smith",
+    question1: "We practiced vocabulary for my Spanish test.",
+    question2: "The conversation practice was very helpful.",
+    question3: "I need to work on verb conjugations.",
+    question4: "I would like more listening comprehension exercises.",
+    rating: "4",
+    createdAt: new Date(new Date().setDate(new Date().getDate() - 2)),
+  },
+];
 
 function ResultsTable({ responses }: { responses: any[] }) {
   if (!responses?.length) {
