@@ -63,13 +63,13 @@ export default function BookAppointment() {
     onSuccess: () => {
       // Show both toast and success message
       toast({
-        title: "Appointment Requested",
-        description: "Thank you for making an appointment. A teacher will contact you soon!",
+        title: "تم طلب الموعد",
+        description: "شكراً على حجز موعد. سيتصل بك أحد المعلمين قريباً!",
         duration: 5000, // Show for 5 seconds
       });
       
       // Set success message that will display in the UI
-      setSuccessMessage("Thank you for making an appointment. A teacher will contact you soon!");
+      setSuccessMessage("شكراً على حجز موعد. سيتصل بك أحد المعلمين قريباً!");
       
       queryClient.invalidateQueries({ queryKey: ["/api/students", user!.id, "appointments"] });
     },
@@ -83,11 +83,11 @@ export default function BookAppointment() {
     <div className="container mx-auto p-4">
       <Card>
         <CardHeader>
-          <CardTitle>Book an Appointment for Today</CardTitle>
+          <CardTitle>حجز موعد لليوم</CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="space-y-2">
-            <p className="text-sm text-muted-foreground">Select an available time slot</p>
+            <p className="text-sm text-muted-foreground">حدد فترة زمنية متاحة</p>
             <div className="py-6 px-1">
               <Slider
                 min={0}
@@ -98,16 +98,16 @@ export default function BookAppointment() {
               />
               
               <div className="mt-6 flex justify-between">
-                <span className="text-sm">7:00 AM</span>
-                <span className="text-sm">11:30 PM</span>
+                <span className="text-sm">7:00 صباحاً</span>
+                <span className="text-sm">11:30 مساءً</span>
               </div>
               
               <div className="mt-6 text-center bg-muted p-4 rounded-md">
                 <p className="text-xl font-semibold">
-                  {selectedTime ? format(selectedTime, "h:mm a") : "Select a time"}
+                  {selectedTime ? format(selectedTime, "h:mm a") : "اختر وقتاً"}
                 </p>
                 <p className="text-xs text-muted-foreground mt-1">
-                  Move the slider to select your preferred time
+                  حرك المؤشر لاختيار الوقت المفضل لديك
                 </p>
               </div>
             </div>
@@ -118,7 +118,7 @@ export default function BookAppointment() {
             disabled={!selectedTime || bookAppointmentMutation.isPending}
             onClick={() => bookAppointmentMutation.mutate()}
           >
-            Request Appointment
+            طلب موعد
           </Button>
           
           {successMessage && (
@@ -128,13 +128,18 @@ export default function BookAppointment() {
           )}
 
           <div className="mt-8">
-            <h3 className="text-lg font-semibold mb-4">Your Appointments</h3>
+            <h3 className="text-lg font-semibold mb-4">مواعيدك</h3>
             <div className="space-y-2">
               {(appointments && appointments.length > 0) ? (
                 appointments.map((appointment) => (
                   <div key={appointment.id} className="p-4 border rounded-md">
-                    <p>Time: {format(new Date(appointment.startTime), "h:mm a")}</p>
-                    <p>Status: {appointment.status}</p>
+                    <p>الوقت: {format(new Date(appointment.startTime), "h:mm a")}</p>
+                    <p>الحالة: {
+                      appointment.status === "pending" ? "قيد الانتظار" :
+                      appointment.status === "matched" ? "تم التطابق" :
+                      appointment.status === "completed" ? "مكتمل" :
+                      appointment.status
+                    }</p>
                   </div>
                 ))
               ) : (
@@ -144,9 +149,14 @@ export default function BookAppointment() {
                   { id: 102, startTime: new Date(new Date().setDate(new Date().getDate() + 1)).setHours(10, 0), status: "matched" }
                 ].map((appointment) => (
                   <div key={appointment.id} className="p-4 border rounded-md bg-gray-50">
-                    <p>Time: {format(new Date(appointment.startTime), "h:mm a")}</p>
-                    <p>Status: {appointment.status}</p>
-                    <p className="text-xs text-gray-500 mt-1">(Example)</p>
+                    <p>الوقت: {format(new Date(appointment.startTime), "h:mm a")}</p>
+                    <p>الحالة: {
+                      appointment.status === "pending" ? "قيد الانتظار" :
+                      appointment.status === "matched" ? "تم التطابق" :
+                      appointment.status === "completed" ? "مكتمل" :
+                      appointment.status
+                    }</p>
+                    <p className="text-xs text-gray-500 mt-1">(مثال)</p>
                   </div>
                 ))
               )}
