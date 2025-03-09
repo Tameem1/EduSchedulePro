@@ -230,6 +230,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Get all questionnaire responses
+  app.get("/api/questionnaire-responses", async (req, res) => {
+    if (!req.isAuthenticated() || req.user.role !== "manager") {
+      return res.sendStatus(403);
+    }
+
+    try {
+      const responses = await storage.getAllQuestionnaireResponses();
+      res.json(responses);
+    } catch (error) {
+      console.error("Error fetching questionnaire responses:", error);
+      res.status(500).json({ error: "Failed to fetch responses" });
+    }
+  });
 
   const httpServer = createServer(app);
   return httpServer;

@@ -124,6 +124,26 @@ export class DatabaseStorage implements IStorage {
       .from(appointments)
       .where(eq(appointments.teacherId, teacherId));
   }
+
+  async getAllQuestionnaireResponses(): Promise<QuestionnaireResponse[]> {
+    return await db
+      .select({
+        id: questionnaireResponses.id,
+        appointmentId: questionnaireResponses.appointmentId,
+        question1: questionnaireResponses.question1,
+        question2: questionnaireResponses.question2,
+        question3: questionnaireResponses.question3,
+        question4: questionnaireResponses.question4,
+        teacherId: appointments.teacherId,
+        studentId: appointments.studentId,
+        createdAt: appointments.startTime,
+      })
+      .from(questionnaireResponses)
+      .innerJoin(
+        appointments,
+        eq(questionnaireResponses.appointmentId, appointments.id)
+      );
+  }
 }
 
 export const storage = new DatabaseStorage();
