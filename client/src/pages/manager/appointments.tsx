@@ -1,3 +1,4 @@
+
 import * as React from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -13,6 +14,13 @@ import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
 import { Link } from "wouter";
 import { Badge } from "@/components/ui/badge";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogClose,
+} from "@/components/ui/dialog";
 
 export default function ManagerAppointments() {
   const { data: appointments } = useQuery({
@@ -23,7 +31,7 @@ export default function ManagerAppointments() {
     queryKey: ["/api/users/teachers"],
   });
 
-const { data: availabilities } = useQuery({
+  const { data: availabilities } = useQuery({
     queryKey: ["/api/availabilities"],
   });
   
@@ -109,15 +117,46 @@ const { data: availabilities } = useQuery({
     return (availabilities && availabilities.length > 0) ? availabilities : sampleAvailabilities;
   }, [availabilities, sampleAvailabilities]);
 
-  return (
-    <div className="container mx-auto p-8">
-      <div className="flex justify-between items-center mb-8">
-        <h1 className="text-2xl font-bold">Appointment Management</h1>
-        <Link href="/manager/results">
-          <Button>View Results</Button>
-        </Link>
-      </div>
+  // State for teacher assignment dialog
+  const [assignDialogOpen, setAssignDialogOpen] = React.useState(false);
+  const [selectedAppointment, setSelectedAppointment] = React.useState(null);
 
+  // Function to find available teachers for a specific time
+  const findAvailableTeachers = (appointmentTime) => {
+    if (!appointmentTime) return [];
+    
+    const appointmentDate = new Date(appointmentTime);
+    
+    return displayTeachers.filter(teacher => {
+      // Find teacher availabilities
+      const teacherAvailabilities = displayAvailabilities.filter(
+        (a) => a.teacherId === teacher.id
+      );
+      
+      // Check if the teacher is available at the appointment time
+      return teacherAvailabilities.some(availability => {
+        const startTime = new Date(availability.startTime);
+        const endTime = new Date(availability.endTime);
+        return appointmentDate >= startTime && appointmentDate <= endTime;
+      });
+    });
+  };
+
+  // Handle opening the assign dialog
+  const handleAssignClick = (appointment) => {
+    setSelectedAppointment(appointment);
+    setAssignDialogOpen(true);
+  };
+
+  // Handle assigning a teacher
+  const handleAssignTeacher = (teacherId) => {
+    // In a real app, this would make an API call to update the appointment
+    console.log(`Assigning teacher ${teacherId} to appointment ${selectedAppointment.id}`);
+    setAssignDialogOpen(false);
+  };
+
+  return (
+    <div className="container mx-auto p-4">
       <Card className="mb-6">
         <CardHeader>
           <CardTitle>Today's Appointments</CardTitle>
@@ -168,10 +207,13 @@ const { data: availabilities } = useQuery({
                     </Badge>
                   </TableCell>
                   <TableCell>
-                    <div className="flex gap-1">
-                      <Button size="sm" variant="outline">Assign</Button>
-                      <Button size="sm" variant="outline">Details</Button>
-                    </div>
+                    <Button 
+                      size="sm" 
+                      variant="outline"
+                      onClick={() => handleAssignClick(appointment)}
+                    >
+                      Assign
+                    </Button>
                   </TableCell>
                 </TableRow>
               ))}
@@ -245,6 +287,54 @@ const { data: availabilities } = useQuery({
           </Table>
         </CardContent>
       </Card>
+
+      {/* Teacher Assignment Dialog */}
+      <Dialog open={assignDialogOpen} onOpenChange={setAssignDialogOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Assign Teacher</DialogTitle>
+          </DialogHeader>
+          {selectedAppointment && (
+            <div className="py-4">
+              <div className="mb-4">
+                <p className="font-medium">Appointment Details</p>
+                <p className="text-sm text-muted-foreground">
+                  Student: {selectedAppointment.studentName}
+                </p>
+                <p className="text-sm text-muted-foreground">
+                  Time: {format(new Date(selectedAppointment.startTime), "h:mm a")}
+                </p>
+              </div>
+              
+              <div className="mb-4">
+                <p className="font-medium mb-2">Available Teachers</p>
+                <div className="space-y-2">
+                  {findAvailableTeachers(selectedAppointment.startTime).length > 0 ? (
+                    findAvailableTeachers(selectedAppointment.startTime).map(teacher => (
+                      <div 
+                        key={teacher.id} 
+                        className="flex items-center justify-between p-2 border rounded hover:bg-gray-50 cursor-pointer"
+                        onClick={() => handleAssignTeacher(teacher.id)}
+                      >
+                        <span>{teacher.username}</span>
+                        <Button size="sm" variant="secondary">Select</Button>
+                      </div>
+                    ))
+                  ) : (
+                    <p className="text-sm text-muted-foreground">No teachers available at this time</p>
+                  )}
+                </div>
+              </div>
+              
+              <div className="flex justify-end">
+                <DialogClose asChild>
+                  <Button variant="outline">Cancel</Button>
+                </DialogClose>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
