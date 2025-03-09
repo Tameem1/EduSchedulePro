@@ -132,8 +132,16 @@ export default function TeacherAvailability() {
     },
   });
 
-  const { data: availabilities, isLoading } = useQuery<Availability[]>({
-    queryKey: ["/api/teachers", user!.id, "availabilities"],
+  const { data: availabilities, isLoading: isLoadingAvailabilities } = useQuery<Availability[]>({
+    queryKey: ["/api/teachers", user.id, "availabilities"],
+    queryFn: async () => {
+      const res = await apiRequest("GET", `/api/teachers/${user.id}/availabilities`);
+      if (!res.ok) {
+        const error = await res.json();
+        throw new Error(error.error || "Failed to fetch availabilities");
+      }
+      return res.json();
+    },
     enabled: !!user?.id,
   });
 
@@ -281,7 +289,11 @@ export default function TeacherAvailability() {
               : "حفظ كل التوفر"}
           </Button>
 
-          {availabilities && availabilities.length > 0 && (
+          {isLoadingAvailabilities ? (
+            <div className="mt-8 flex items-center justify-center">
+              <Loader2 className="h-8 w-8 animate-spin" />
+            </div>
+          ) : availabilities && availabilities.length > 0 ? (
             <div className="mt-8">
               <h3 className="text-lg font-semibold mb-4">فتراتك المتاحة اليوم</h3>
               <div className="space-y-2">
@@ -304,6 +316,10 @@ export default function TeacherAvailability() {
                   </div>
                 ))}
               </div>
+            </div>
+          ) : (
+            <div className="mt-8 text-center text-muted-foreground">
+              لا توجد فترات متاحة. أضف فترات جديدة باستخدام النموذج أعلاه.
             </div>
           )}
         </CardContent>
