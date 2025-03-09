@@ -60,7 +60,7 @@ export default function BookAppointment() {
     onSuccess: () => {
       toast({
         title: "Appointment Requested",
-        description: "A teacher will contact you soon.",
+        description: "Thank you for making an appointment. A teacher will contact you soon!",
       });
       queryClient.invalidateQueries({ queryKey: ["/api/students", user!.id, "appointments"] });
     },
