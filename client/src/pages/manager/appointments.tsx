@@ -111,6 +111,68 @@ export default function ManagerAppointments() {
         </Link>
       </div>
 
+      {/* Appointments Table */}
+      <Card>
+        <CardHeader>
+          <CardTitle>المواعيد</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>الوقت</TableHead>
+                <TableHead>الطالب</TableHead>
+                <TableHead>المعلم</TableHead>
+                <TableHead>الحالة</TableHead>
+                <TableHead>الإجراءات</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {appointments?.map((appointment) => (
+                <TableRow key={appointment.id}>
+                  <TableCell>
+                    {format(new Date(appointment.startTime), "h:mm a")}
+                  </TableCell>
+                  <TableCell>
+                    طالب {appointment.studentId}
+                  </TableCell>
+                  <TableCell>
+                    {appointment.teacherId ? `معلم ${appointment.teacherId}` : "غير معين"}
+                  </TableCell>
+                  <TableCell>
+                    <Badge 
+                      variant={
+                        appointment.status === "pending" ? "warning" :
+                        appointment.status === "matched" ? "success" :
+                        "default"
+                      }
+                    >
+                      {appointment.status === "pending" ? "قيد الانتظار" :
+                       appointment.status === "matched" ? "تم التطابق" :
+                       "مكتمل"}
+                    </Badge>
+                  </TableCell>
+                  <TableCell>
+                    {appointment.status === "pending" && (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => {
+                          setSelectedAppointment(appointment);
+                          setIsAssignDialogOpen(true);
+                        }}
+                      >
+                        تعيين معلم
+                      </Button>
+                    )}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </CardContent>
+      </Card>
+
       {/* Teacher Availability Table */}
       <Card className="mb-6">
         <CardHeader>
@@ -172,68 +234,6 @@ export default function ManagerAppointments() {
                   </TableRow>
                 );
               })}
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
-
-      {/* Appointments Table */}
-      <Card>
-        <CardHeader>
-          <CardTitle>المواعيد</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>الوقت</TableHead>
-                <TableHead>الطالب</TableHead>
-                <TableHead>المعلم</TableHead>
-                <TableHead>الحالة</TableHead>
-                <TableHead>الإجراءات</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {appointments?.map((appointment) => (
-                <TableRow key={appointment.id}>
-                  <TableCell>
-                    {format(new Date(appointment.startTime), "h:mm a")}
-                  </TableCell>
-                  <TableCell>
-                    طالب {appointment.studentId}
-                  </TableCell>
-                  <TableCell>
-                    {appointment.teacherId ? `معلم ${appointment.teacherId}` : "غير معين"}
-                  </TableCell>
-                  <TableCell>
-                    <Badge 
-                      variant={
-                        appointment.status === "pending" ? "warning" :
-                        appointment.status === "matched" ? "success" :
-                        "default"
-                      }
-                    >
-                      {appointment.status === "pending" ? "قيد الانتظار" :
-                       appointment.status === "matched" ? "تم التطابق" :
-                       "مكتمل"}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>
-                    {appointment.status === "pending" && (
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => {
-                          setSelectedAppointment(appointment);
-                          setIsAssignDialogOpen(true);
-                        }}
-                      >
-                        تعيين معلم
-                      </Button>
-                    )}
-                  </TableCell>
-                </TableRow>
-              ))}
             </TableBody>
           </Table>
         </CardContent>
