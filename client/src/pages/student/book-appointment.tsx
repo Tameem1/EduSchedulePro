@@ -33,21 +33,7 @@ export default function BookAppointment() {
       
       const time = new Date(now);
       time.setHours(hours, minutes, 0, 0);
-      
-      // Only use times in the future
-      if (time > now) {
-        setSelectedTime(time);
-      } else {
-        // Find the next available slot if current time is in the past
-        const currentHour = now.getHours();
-        const currentMinute = now.getMinutes();
-        const currentTotalMinutes = currentHour * 60 + currentMinute;
-        const nextSlot = Math.ceil((currentTotalMinutes - (START_HOUR * 60)) / 30) + 1;
-        
-        if (nextSlot <= TOTAL_SLOTS) {
-          setSliderValue([nextSlot]);
-        }
-      }
+      setSelectedTime(time);
     }
   }, [sliderValue]);
   
