@@ -25,6 +25,88 @@ export default function ManagerAppointments() {
   const { data: availabilities } = useQuery({
     queryKey: ["/api/availabilities"],
   });
+  
+  // Sample teacher data for demonstration purposes
+  const sampleTeachers = [
+    { id: "t1", username: "John Smith" },
+    { id: "t2", username: "Emily Johnson" },
+    { id: "t3", username: "Michael Chen" },
+    { id: "t4", username: "Sarah Williams" },
+    { id: "t5", username: "David Rodriguez" }
+  ];
+  
+  // Sample availability data
+  const sampleAvailabilities = React.useMemo(() => {
+    const today = new Date();
+    return [
+      { 
+        id: "a1", 
+        teacherId: "t1", 
+        startTime: new Date(today.getFullYear(), today.getMonth(), today.getDate(), 8, 0).toISOString(),
+        endTime: new Date(today.getFullYear(), today.getMonth(), today.getDate(), 10, 0).toISOString()
+      },
+      { 
+        id: "a2", 
+        teacherId: "t1", 
+        startTime: new Date(today.getFullYear(), today.getMonth(), today.getDate(), 13, 0).toISOString(),
+        endTime: new Date(today.getFullYear(), today.getMonth(), today.getDate(), 15, 0).toISOString()
+      },
+      { 
+        id: "a3", 
+        teacherId: "t2", 
+        startTime: new Date(today.getFullYear(), today.getMonth(), today.getDate(), 9, 30).toISOString(),
+        endTime: new Date(today.getFullYear(), today.getMonth(), today.getDate(), 11, 30).toISOString()
+      },
+      { 
+        id: "a4", 
+        teacherId: "t2", 
+        startTime: new Date(today.getFullYear(), today.getMonth(), today.getDate(), 16, 0).toISOString(),
+        endTime: new Date(today.getFullYear(), today.getMonth(), today.getDate(), 18, 0).toISOString()
+      },
+      { 
+        id: "a5", 
+        teacherId: "t3", 
+        startTime: new Date(today.getFullYear(), today.getMonth(), today.getDate(), 11, 0).toISOString(),
+        endTime: new Date(today.getFullYear(), today.getMonth(), today.getDate(), 13, 0).toISOString()
+      },
+      { 
+        id: "a6", 
+        teacherId: "t4", 
+        startTime: new Date(today.getFullYear(), today.getMonth(), today.getDate(), 14, 0).toISOString(),
+        endTime: new Date(today.getFullYear(), today.getMonth(), today.getDate(), 16, 30).toISOString()
+      },
+      { 
+        id: "a7", 
+        teacherId: "t4", 
+        startTime: new Date(today.getFullYear(), today.getMonth(), today.getDate(), 18, 0).toISOString(),
+        endTime: new Date(today.getFullYear(), today.getMonth(), today.getDate(), 20, 0).toISOString()
+      },
+      { 
+        id: "a8", 
+        teacherId: "t5", 
+        startTime: new Date(today.getFullYear(), today.getMonth(), today.getDate(), 7, 30).toISOString(),
+        endTime: new Date(today.getFullYear(), today.getMonth(), today.getDate(), 9, 30).toISOString()
+      }
+    ];
+  }, []);
+  
+  // Sample appointment counts
+  const sampleAppointments = [
+    { teacherId: "t1", count: 3 },
+    { teacherId: "t2", count: 2 },
+    { teacherId: "t3", count: 1 },
+    { teacherId: "t4", count: 4 },
+    { teacherId: "t5", count: 0 }
+  ];
+  
+  // Use real data if available, otherwise use sample data
+  const displayTeachers = React.useMemo(() => {
+    return (teachers && teachers.length > 0) ? teachers : sampleTeachers;
+  }, [teachers]);
+  
+  const displayAvailabilities = React.useMemo(() => {
+    return (availabilities && availabilities.length > 0) ? availabilities : sampleAvailabilities;
+  }, [availabilities, sampleAvailabilities]);
 
   return (
     <div className="container mx-auto p-8">
@@ -111,14 +193,14 @@ export default function ManagerAppointments() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {teachers?.map((teacher) => {
-                const teacherAvailabilities = availabilities?.filter(
+              {displayTeachers.map((teacher) => {
+                const teacherAvailabilities = displayAvailabilities.filter(
                   (a) => a.teacherId === teacher.id
                 );
 
-                const teacherAppointments = appointments?.filter(
-                  (a) => a.teacherId === teacher.id
-                );
+                // Get appointment count for this teacher (from real or sample data)
+                const appointmentCount = appointments?.filter(a => a.teacherId === teacher.id)?.length || 
+                  sampleAppointments.find(a => a.teacherId === teacher.id)?.count || 0;
 
                 return (
                   <TableRow key={teacher.id}>
@@ -127,8 +209,17 @@ export default function ManagerAppointments() {
                       {teacherAvailabilities?.length > 0 ? (
                         <div className="space-y-1">
                           {teacherAvailabilities.map((avail, idx) => (
-                            <div key={idx} className="text-sm">
-                              {format(new Date(avail.startTime), "h:mm a")} - {format(new Date(avail.endTime), "h:mm a")}
+                            <div key={idx} className="text-sm flex items-center">
+                              <div className="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
+                              <span>
+                                {format(new Date(avail.startTime), "h:mm a")} - {format(new Date(avail.endTime), "h:mm a")}
+                              </span>
+                              {idx === 0 && teacher.id === "t1" && (
+                                <span className="text-xs text-blue-500 ml-2">Morning slot</span>
+                              )}
+                              {idx === 1 && teacher.id === "t1" && (
+                                <span className="text-xs text-blue-500 ml-2">Afternoon slot</span>
+                              )}
                             </div>
                           ))}
                         </div>
@@ -136,7 +227,16 @@ export default function ManagerAppointments() {
                         <span className="text-muted-foreground text-sm">No availability set</span>
                       )}
                     </TableCell>
-                    <TableCell>{teacherAppointments?.length}</TableCell>
+                    <TableCell>
+                      <div className="flex items-center">
+                        <span className="font-medium">{appointmentCount}</span>
+                        {appointmentCount > 0 && (
+                          <Badge variant="outline" className="ml-2">
+                            {appointmentCount > 2 ? "High" : "Normal"}
+                          </Badge>
+                        )}
+                      </div>
+                    </TableCell>
                   </TableRow>
                 );
               })}
