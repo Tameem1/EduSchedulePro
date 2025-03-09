@@ -1,4 +1,3 @@
-
 import * as React from 'react';
 import { useAuth } from "@/hooks/use-auth";
 import { useMutation, useQuery } from "@tanstack/react-query";
@@ -26,12 +25,12 @@ const END_HOUR = 23; // 11 PM
 function generateTimeOptions() {
   const options = [];
   const currentDate = new Date();
-  
+
   for (let hour = START_HOUR; hour <= END_HOUR; hour++) {
     for (let minute = 0; minute < 60; minute += 15) {
       // Skip the last slot at 11:00 PM
       if (hour === END_HOUR && minute > 0) continue;
-      
+
       const time = new Date(currentDate);
       time.setHours(hour, minute, 0, 0);
       options.push({
@@ -40,7 +39,7 @@ function generateTimeOptions() {
       });
     }
   }
-  
+
   return options;
 }
 
@@ -49,33 +48,33 @@ export default function TeacherAvailability() {
   const { toast } = useToast();
   const [timeRanges, setTimeRanges] = React.useState<Array<{id: string, start: string, end: string}>>([]);
   const timeOptions = React.useMemo(() => generateTimeOptions(), []);
-  
+
   // Add a new time range
   const addTimeRange = () => {
     const newId = Math.random().toString(36).substring(2, 9);
     setTimeRanges([...timeRanges, { id: newId, start: "", end: "" }]);
   };
-  
+
   // Remove a time range
   const removeTimeRange = (id: string) => {
     setTimeRanges(timeRanges.filter(range => range.id !== id));
   };
-  
+
   // Update a time range
   const updateTimeRange = (id: string, field: 'start' | 'end', value: string) => {
     setTimeRanges(timeRanges.map(range => 
       range.id === id ? { ...range, [field]: value } : range
     ));
   };
-  
+
   // Check if a time range is valid
   const isValidTimeRange = (start: string, end: string) => {
     if (!start || !end) return false;
-    
+
     const today = new Date();
     const startTime = parse(start, "HH:mm", today);
     const endTime = parse(end, "HH:mm", today);
-    
+
     return isAfter(endTime, startTime);
   };
 
@@ -84,7 +83,7 @@ export default function TeacherAvailability() {
       const today = new Date();
       const startTime = parse(range.start, "HH:mm", today);
       const endTime = parse(range.end, "HH:mm", today);
-      
+
       const res = await apiRequest("POST", "/api/availabilities", {
         startTime: startTime.toISOString(),
         endTime: endTime.toISOString(),
@@ -104,10 +103,21 @@ export default function TeacherAvailability() {
     queryKey: ["/api/teachers", user!.id, "availabilities"],
   });
 
+  const displayAvailabilities = React.useMemo(() => {
+    const today = new Date();
+    const exampleAvailabilities = [
+      { id: 101, startTime: new Date(today.getFullYear(), today.getMonth(), today.getDate(), 9, 0, 0).toISOString(), endTime: new Date(today.getFullYear(), today.getMonth(), today.getDate(), 10, 0, 0).toISOString() },
+      { id: 102, startTime: new Date(today.getFullYear(), today.getMonth(), today.getDate(), 14, 0, 0).toISOString(), endTime: new Date(today.getFullYear(), today.getMonth(), today.getDate(), 15, 0, 0).toISOString() },
+    ];
+    return (availabilities || []).concat(exampleAvailabilities);
+
+  }, [availabilities]);
+
+
   // Submit all valid time ranges
   const submitAvailabilities = async () => {
     const validRanges = timeRanges.filter(range => isValidTimeRange(range.start, range.end));
-    
+
     if (validRanges.length === 0) {
       toast({
         title: "No Valid Time Ranges",
@@ -116,12 +126,12 @@ export default function TeacherAvailability() {
       });
       return;
     }
-    
+
     // Submit each range sequentially
     for (const range of validRanges) {
       await addAvailabilityMutation.mutateAsync(range);
     }
-    
+
     // Clear the form after successful submission
     setTimeRanges([]);
   };
@@ -134,7 +144,7 @@ export default function TeacherAvailability() {
           <Button>Go to Questionnaire</Button>
         </Link>
       </div>
-      
+
       <Card>
         <CardHeader>
           <CardTitle>Add Availability</CardTitle>
@@ -144,7 +154,7 @@ export default function TeacherAvailability() {
             <p className="text-sm text-muted-foreground">
               Add your available time slots for today. You can add multiple time ranges.
             </p>
-            
+
             {timeRanges.length === 0 && (
               <div 
                 onClick={addTimeRange}
@@ -154,7 +164,7 @@ export default function TeacherAvailability() {
                 <p className="text-muted-foreground">Click to add a time range</p>
               </div>
             )}
-            
+
             {timeRanges.map((range) => (
               <div key={range.id} className="flex items-center space-x-2 p-4 border rounded-md bg-muted/30">
                 <div className="grid grid-cols-2 gap-4 flex-1">
@@ -209,7 +219,7 @@ export default function TeacherAvailability() {
                     </Select>
                   </div>
                 </div>
-                
+
                 <Button
                   variant="ghost"
                   size="icon"
@@ -220,7 +230,7 @@ export default function TeacherAvailability() {
                 </Button>
               </div>
             ))}
-            
+
             {timeRanges.length > 0 && (
               <Button 
                 variant="outline" 
@@ -233,7 +243,7 @@ export default function TeacherAvailability() {
               </Button>
             )}
           </div>
-          
+
           <Button 
             className="w-full"
             disabled={
@@ -247,12 +257,12 @@ export default function TeacherAvailability() {
               ? "Saving Availability..." 
               : "Save All Availability"}
           </Button>
-          
-          {availabilities && availabilities.length > 0 && (
+
+          {availabilities && displayAvailabilities.length > 0 && (
             <div className="mt-8">
               <h3 className="text-lg font-semibold mb-4">Your Available Slots Today</h3>
               <div className="space-y-2">
-                {availabilities.map((availability) => (
+                {displayAvailabilities.map((availability) => (
                   <div key={availability.id} className="p-4 border rounded-md">
                     <div className="flex justify-between items-center">
                       <div>
@@ -267,6 +277,9 @@ export default function TeacherAvailability() {
                         Available
                       </div>
                     </div>
+                    {availability.id >= 100 && (
+                      <p className="text-xs text-gray-500 mt-1">(Example)</p>
+                    )}
                   </div>
                 ))}
               </div>
