@@ -6,6 +6,8 @@ import { insertAppointmentSchema, insertAvailabilitySchema, insertQuestionnaireS
 import { db } from "./db";
 import { eq } from 'drizzle-orm';
 import { users, availabilities } from "@shared/schema";
+import { sendTelegramNotification } from "./telegram"; // Import the Telegram notification function
+
 
 export async function registerRoutes(app: Express): Promise<Server> {
   setupAuth(app);
@@ -192,7 +194,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // New endpoint to assign teacher to appointment
+  // New endpoint to assign teacher to appointment  WITH TELEGRAM NOTIFICATION
   app.patch("/api/appointments/:id", async (req, res) => {
     if (!req.isAuthenticated() || req.user.role !== "manager") {
       return res.sendStatus(403);
@@ -206,6 +208,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
         teacherId,
         status
       });
+
+      // Send Telegram notification after successful update
+      const teacher = await db.select().from(users).where(eq(users.id, teacherId)).limit(1).then(r=>r[0]);
+      if (teacher && teacher.telegramId) {
+        await sendTelegramNotification(teacher.telegramId, `You have a new appointment!`);
+      }
+
 
       res.json(appointment);
     } catch (error) {

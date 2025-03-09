@@ -21,7 +21,8 @@ export const users = pgTable("users", {
   id: serial("id").primaryKey(),
   username: text("username").notNull().unique(),
   password: text("password").notNull(),
-  role: userRoleEnum("role").notNull()
+  role: userRoleEnum("role").notNull(),
+  telegramId: text("telegram_id")
 });
 
 // Teacher availability slots
