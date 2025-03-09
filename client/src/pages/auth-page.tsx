@@ -39,7 +39,7 @@ export default function AuthPage() {
   });
 
   if (user) {
-    const roleRedirects = {
+    const roleRedirects: Record<UserRole, string> = {
       [UserRole.STUDENT]: "/",
       [UserRole.TEACHER]: "/teacher/availability",
       [UserRole.MANAGER]: "/manager/appointments",
@@ -55,19 +55,19 @@ export default function AuthPage() {
             <CardContent className="pt-6">
               <Tabs defaultValue="login">
                 <TabsList className="w-full">
-                  <TabsTrigger value="login" className="flex-1">Login</TabsTrigger>
-                  <TabsTrigger value="register" className="flex-1">Register</TabsTrigger>
+                  <TabsTrigger value="login" className="flex-1">تسجيل الدخول</TabsTrigger>
+                  <TabsTrigger value="register" className="flex-1">تسجيل جديد</TabsTrigger>
                 </TabsList>
 
                 <TabsContent value="login">
                   <form onSubmit={loginForm.handleSubmit((data) => loginMutation.mutate(data))}>
                     <div className="space-y-4">
                       <div>
-                        <Label htmlFor="username">Username</Label>
+                        <Label htmlFor="username">اسم المستخدم</Label>
                         <Input {...loginForm.register("username")} />
                       </div>
                       <div>
-                        <Label htmlFor="password">Password</Label>
+                        <Label htmlFor="password">كلمة المرور</Label>
                         <Input type="password" {...loginForm.register("password")} />
                       </div>
                       <Button 
@@ -75,7 +75,7 @@ export default function AuthPage() {
                         className="w-full"
                         disabled={loginMutation.isPending}
                       >
-                        Login
+                        {loginMutation.isPending ? "جاري تسجيل الدخول..." : "تسجيل الدخول"}
                       </Button>
                     </div>
                   </form>
@@ -85,26 +85,26 @@ export default function AuthPage() {
                   <form onSubmit={registerForm.handleSubmit((data) => registerMutation.mutate(data))}>
                     <div className="space-y-4">
                       <div>
-                        <Label htmlFor="username">Username</Label>
+                        <Label htmlFor="username">اسم المستخدم</Label>
                         <Input {...registerForm.register("username")} />
                       </div>
                       <div>
-                        <Label htmlFor="password">Password</Label>
+                        <Label htmlFor="password">كلمة المرور</Label>
                         <Input type="password" {...registerForm.register("password")} />
                       </div>
                       <div>
-                        <Label htmlFor="role">Role</Label>
+                        <Label htmlFor="role">نوع الحساب</Label>
                         <Select 
-                          onValueChange={(value) => registerForm.setValue("role", value as UserRoleType)}
+                          onValueChange={(value) => registerForm.setValue("role", value as UserRole)}
                           defaultValue={registerForm.getValues("role")}
                         >
                           <SelectTrigger>
-                            <SelectValue placeholder="Select a role" />
+                            <SelectValue placeholder="اختر نوع الحساب" />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value={UserRole.STUDENT}>Student</SelectItem>
-                            <SelectItem value={UserRole.TEACHER}>Teacher</SelectItem>
-                            <SelectItem value={UserRole.MANAGER}>Manager</SelectItem>
+                            <SelectItem value={UserRole.STUDENT}>طالب</SelectItem>
+                            <SelectItem value={UserRole.TEACHER}>معلم</SelectItem>
+                            <SelectItem value={UserRole.MANAGER}>مدير</SelectItem>
                           </SelectContent>
                         </Select>
                       </div>
@@ -113,7 +113,7 @@ export default function AuthPage() {
                         className="w-full"
                         disabled={registerMutation.isPending}
                       >
-                        Register
+                        {registerMutation.isPending ? "جاري إنشاء الحساب..." : "إنشاء حساب"}
                       </Button>
                     </div>
                   </form>
@@ -126,15 +126,15 @@ export default function AuthPage() {
         <div className="flex-1 hidden lg:block">
           <div className="h-full flex flex-col justify-center">
             <h1 className="text-4xl font-bold mb-4">
-              Appointment Scheduling System
+              نظام حجز المواعيد
             </h1>
             <p className="text-lg text-gray-600">
-              Welcome to our appointment scheduling system. Register or login to:
+              مرحباً بك في نظام حجز المواعيد. قم بتسجيل الدخول أو إنشاء حساب جديد لـ:
             </p>
             <ul className="mt-4 space-y-2 text-gray-600">
-              <li>• Book appointments as a student</li>
-              <li>• Manage your availability as a teacher</li>
-              <li>• Oversee all appointments as a manager</li>
+              <li>• حجز المواعيد كطالب</li>
+              <li>• إدارة جدولك كمعلم</li>
+              <li>• الإشراف على جميع المواعيد كمدير</li>
             </ul>
           </div>
         </div>

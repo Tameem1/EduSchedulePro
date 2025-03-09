@@ -1,4 +1,3 @@
-
 import * as React from 'react';
 import { useAuth } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
@@ -18,11 +17,18 @@ export function Navbar() {
 
   if (!user) return null;
 
+  // Translate role names to Arabic
+  const roleInArabic = {
+    student: "الطالب",
+    teacher: "المعلم",
+    manager: "المدير"
+  }[user.role] || user.role;
+
   return (
     <div className="bg-background border-b py-2 px-4 mb-4">
       <div className="container mx-auto flex justify-between items-center">
         <div className="font-semibold">
-          {user.role.charAt(0).toUpperCase() + user.role.slice(1)} Dashboard
+          {`لوحة تحكم ${roleInArabic}`}
         </div>
         <Button 
           variant="outline" 
@@ -30,7 +36,7 @@ export function Navbar() {
           onClick={handleLogout}
           disabled={logoutMutation.isPending}
         >
-          {logoutMutation.isPending ? "Logging out..." : "Logout"}
+          {logoutMutation.isPending ? "جاري تسجيل الخروج..." : "تسجيل الخروج"}
         </Button>
       </div>
     </div>
