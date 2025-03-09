@@ -105,13 +105,31 @@ export default function TeacherAvailability() {
 
   const displayAvailabilities = React.useMemo(() => {
     const today = new Date();
+    // Sample availability slots as examples
     const exampleAvailabilities = [
-      { id: 101, startTime: new Date(today.getFullYear(), today.getMonth(), today.getDate(), 9, 0, 0).toISOString(), endTime: new Date(today.getFullYear(), today.getMonth(), today.getDate(), 10, 0, 0).toISOString() },
-      { id: 102, startTime: new Date(today.getFullYear(), today.getMonth(), today.getDate(), 14, 0, 0).toISOString(), endTime: new Date(today.getFullYear(), today.getMonth(), today.getDate(), 15, 0, 0).toISOString() },
+      { 
+        id: 101, 
+        teacherId: user?.id || "example", 
+        startTime: new Date(today.getFullYear(), today.getMonth(), today.getDate(), 9, 0, 0).toISOString(),
+        endTime: new Date(today.getFullYear(), today.getMonth(), today.getDate(), 10, 0, 0).toISOString() 
+      },
+      { 
+        id: 102, 
+        teacherId: user?.id || "example", 
+        startTime: new Date(today.getFullYear(), today.getMonth(), today.getDate(), 14, 0, 0).toISOString(), 
+        endTime: new Date(today.getFullYear(), today.getMonth(), today.getDate(), 15, 0, 0).toISOString() 
+      },
+      { 
+        id: 103, 
+        teacherId: user?.id || "example", 
+        startTime: new Date(today.getFullYear(), today.getMonth(), today.getDate(), 18, 30, 0).toISOString(), 
+        endTime: new Date(today.getFullYear(), today.getMonth(), today.getDate(), 20, 0, 0).toISOString() 
+      },
     ];
-    return (availabilities || []).concat(exampleAvailabilities);
-
-  }, [availabilities]);
+    
+    // Only show examples if there are no real availabilities
+    return (availabilities && availabilities.length > 0) ? availabilities : exampleAvailabilities;
+  }, [availabilities, user?.id]);
 
 
   // Submit all valid time ranges
@@ -258,12 +276,12 @@ export default function TeacherAvailability() {
               : "Save All Availability"}
           </Button>
 
-          {availabilities && displayAvailabilities.length > 0 && (
+          {displayAvailabilities.length > 0 && (
             <div className="mt-8">
               <h3 className="text-lg font-semibold mb-4">Your Available Slots Today</h3>
               <div className="space-y-2">
                 {displayAvailabilities.map((availability) => (
-                  <div key={availability.id} className="p-4 border rounded-md">
+                  <div key={availability.id} className="p-4 border rounded-md hover:bg-gray-50 transition-colors">
                     <div className="flex justify-between items-center">
                       <div>
                         <p className="font-medium">
@@ -273,16 +291,33 @@ export default function TeacherAvailability() {
                           {format(new Date(availability.startTime), "EEEE, MMMM d, yyyy")}
                         </p>
                       </div>
-                      <div className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded">
+                      <div className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded flex items-center">
+                        <span className="w-2 h-2 bg-green-500 rounded-full mr-1"></span>
                         Available
                       </div>
                     </div>
                     {availability.id >= 100 && (
-                      <p className="text-xs text-gray-500 mt-1">(Example)</p>
+                      <div className="flex mt-2 items-center">
+                        <p className="text-xs text-gray-500">(Example availability slot)</p>
+                        {availability.id === 101 && (
+                          <span className="text-xs text-blue-500 ml-2">Morning session</span>
+                        )}
+                        {availability.id === 102 && (
+                          <span className="text-xs text-blue-500 ml-2">Afternoon session</span>
+                        )}
+                        {availability.id === 103 && (
+                          <span className="text-xs text-blue-500 ml-2">Evening session</span>
+                        )}
+                      </div>
                     )}
                   </div>
                 ))}
               </div>
+              {displayAvailabilities.every(a => a.id >= 100) && (
+                <p className="text-sm text-muted-foreground mt-4">
+                  These are example availability slots. Add your own slots using the form above.
+                </p>
+              )}
             </div>
           )}
         </CardContent>
