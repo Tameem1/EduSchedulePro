@@ -36,11 +36,11 @@ export default function ManagerAppointments() {
 
   // Sample teacher data for demonstration purposes
   const sampleTeachers = [
-    { id: "t1", username: "John Smith" },
-    { id: "t2", username: "Emily Johnson" },
-    { id: "t3", username: "Michael Chen" },
-    { id: "t4", username: "Sarah Williams" },
-    { id: "t5", username: "David Rodriguez" }
+    { id: "t1", username: "أحمد الأحمدي" },
+    { id: "t2", username: "فاطمة العلي" },
+    { id: "t3", username: "محمد القحطاني" },
+    { id: "t4", username: "نورة السعيد" },
+    { id: "t5", username: "خالد المطيري" }
   ];
 
   // Sample availability data
