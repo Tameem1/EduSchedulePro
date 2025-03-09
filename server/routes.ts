@@ -20,9 +20,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
 
     try {
-      console.log("Creating availability for teacher:", req.user.id, "with data:", req.body);
+      const { startTime, endTime } = req.body;
+      console.log("Creating availability for teacher:", req.user.id, "with data:", {
+        startTime,
+        endTime,
+        teacherId: req.user.id
+      });
+
+      // Parse the ISO strings into Date objects
       const parsedData = insertAvailabilitySchema.parse({
-        ...req.body,
+        startTime: new Date(startTime),
+        endTime: new Date(endTime),
         teacherId: req.user.id,
       });
 

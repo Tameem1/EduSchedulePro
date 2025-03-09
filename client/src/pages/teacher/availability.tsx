@@ -62,7 +62,7 @@ export default function TeacherAvailability() {
 
   // Update a time range
   const updateTimeRange = (id: string, field: 'start' | 'end', value: string) => {
-    setTimeRanges(timeRanges.map(range => 
+    setTimeRanges(timeRanges.map(range =>
       range.id === id ? { ...range, [field]: value } : range
     ));
   };
@@ -81,13 +81,25 @@ export default function TeacherAvailability() {
   const addAvailabilityMutation = useMutation({
     mutationFn: async (range: {start: string, end: string}) => {
       const today = new Date();
-      const startTime = parse(range.start, "HH:mm", today);
-      const endTime = parse(range.end, "HH:mm", today);
+      const [startHours, startMinutes] = range.start.split(':').map(Number);
+      const [endHours, endMinutes] = range.end.split(':').map(Number);
+
+      const startTime = new Date(today);
+      startTime.setHours(startHours, startMinutes, 0, 0);
+
+      const endTime = new Date(today);
+      endTime.setHours(endHours, endMinutes, 0, 0);
 
       const res = await apiRequest("POST", "/api/availabilities", {
         startTime: startTime.toISOString(),
         endTime: endTime.toISOString(),
       });
+
+      if (!res.ok) {
+        const error = await res.json();
+        throw new Error(error.error || "Failed to add availability");
+      }
+
       return res.json();
     },
     onSuccess: () => {
@@ -97,10 +109,18 @@ export default function TeacherAvailability() {
       });
       queryClient.invalidateQueries({ queryKey: ["/api/teachers", user!.id, "availabilities"] });
     },
+    onError: (error) => {
+      toast({
+        title: "خطأ في إضافة التوفر",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
   });
 
-  const { data: availabilities } = useQuery<Availability[]>({
+  const { data: availabilities, isLoading } = useQuery<Availability[]>({
     queryKey: ["/api/teachers", user!.id, "availabilities"],
+    enabled: !!user?.id,
   });
 
   // Submit all valid time ranges
@@ -145,7 +165,7 @@ export default function TeacherAvailability() {
             </p>
 
             {timeRanges.length === 0 && (
-              <div 
+              <div
                 onClick={addTimeRange}
                 className="text-center py-6 border border-dashed rounded-md cursor-pointer hover:bg-muted/50 transition-colors"
               >
@@ -195,8 +215,8 @@ export default function TeacherAvailability() {
                             parse(range.start, "HH:mm", new Date())
                           ) : false;
                           return (
-                            <SelectItem 
-                              key={option.value} 
+                            <SelectItem
+                              key={option.value}
                               value={option.value}
                               disabled={isDisabled}
                             >
@@ -221,8 +241,8 @@ export default function TeacherAvailability() {
             ))}
 
             {timeRanges.length > 0 && (
-              <Button 
-                variant="outline" 
+              <Button
+                variant="outline"
                 size="sm"
                 onClick={addTimeRange}
                 className="mt-2"
@@ -233,17 +253,17 @@ export default function TeacherAvailability() {
             )}
           </div>
 
-          <Button 
+          <Button
             className="w-full"
             disabled={
-              timeRanges.length === 0 || 
+              timeRanges.length === 0 ||
               !timeRanges.some(range => isValidTimeRange(range.start, range.end)) ||
               addAvailabilityMutation.isPending
             }
             onClick={submitAvailabilities}
           >
-            {addAvailabilityMutation.isPending 
-              ? "حفظ التوفر..."  
+            {addAvailabilityMutation.isPending
+              ? "حفظ التوفر..."
               : "حفظ كل التوفر"}
           </Button>
 
