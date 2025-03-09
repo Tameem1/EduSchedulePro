@@ -189,18 +189,21 @@ export default function TeacherAvailability() {
                         <SelectValue placeholder="حدد وقت الانتهاء" />
                       </SelectTrigger>
                       <SelectContent>
-                        {timeOptions.map((option) => (
-                          <SelectItem 
-                            key={option.value} 
-                            value={option.value}
-                            disabled={range.start && !isAfter(
-                              parse(option.value, "HH:mm", new Date()),
-                              parse(range.start, "HH:mm", new Date())
-                            )}
-                          >
-                            {option.label}
-                          </SelectItem>
-                        ))}
+                        {timeOptions.map((option) => {
+                          const isDisabled = range.start ? !isAfter(
+                            parse(option.value, "HH:mm", new Date()),
+                            parse(range.start, "HH:mm", new Date())
+                          ) : false;
+                          return (
+                            <SelectItem 
+                              key={option.value} 
+                              value={option.value}
+                              disabled={isDisabled}
+                            >
+                              {option.label}
+                            </SelectItem>
+                          );
+                        })}
                       </SelectContent>
                     </Select>
                   </div>

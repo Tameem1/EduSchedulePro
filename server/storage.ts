@@ -5,88 +5,100 @@ import {
   Appointment,
   QuestionnaireResponse,
   InsertUser,
+  users,
+  availabilities,
+  appointments,
+  questionnaireResponses
 } from "@shared/schema";
 import session from "express-session";
 import createMemoryStore from "memorystore";
+import { drizzle } from 'drizzle-orm/node-postgres';
+import { eq } from 'drizzle-orm';
+import pg from 'pg';
 
 const MemoryStore = createMemoryStore(session);
 
-export class MemStorage implements IStorage {
-  private users: Map<number, User>;
-  private availabilities: Map<number, Availability>;
-  private appointments: Map<number, Appointment>;
-  private questionnaireResponses: Map<number, QuestionnaireResponse>;
+// Initialize PostgreSQL connection
+const pool = new pg.Pool({
+  connectionString: process.env.DATABASE_URL,
+});
+
+const db = drizzle(pool);
+
+export class DatabaseStorage implements IStorage {
   sessionStore: session.Store;
-  currentId: number;
 
   constructor() {
-    this.users = new Map();
-    this.availabilities = new Map();
-    this.appointments = new Map();
-    this.questionnaireResponses = new Map();
-    this.currentId = 1;
     this.sessionStore = new MemoryStore({
       checkPeriod: 86400000,
     });
   }
 
   async getUser(id: number): Promise<User | undefined> {
-    return this.users.get(id);
+    const [user] = await db.select().from(users).where(eq(users.id, id));
+    return user;
   }
 
   async getUserByUsername(username: string): Promise<User | undefined> {
-    return Array.from(this.users.values()).find(
-      (user) => user.username === username
-    );
+    const [user] = await db.select().from(users).where(eq(users.username, username));
+    return user;
   }
 
   async createUser(insertUser: InsertUser): Promise<User> {
-    const id = this.currentId++;
-    const user = { ...insertUser, id };
-    this.users.set(id, user);
+    const [user] = await db.insert(users).values(insertUser).returning();
     return user;
   }
 
   async createAvailability(availability: Omit<Availability, "id">): Promise<Availability> {
-    const id = this.currentId++;
-    const newAvailability = { ...availability, id };
-    this.availabilities.set(id, newAvailability);
+    const [newAvailability] = await db
+      .insert(availabilities)
+      .values(availability)
+      .returning();
     return newAvailability;
   }
 
   async getAvailabilitiesByTeacher(teacherId: number): Promise<Availability[]> {
-    return Array.from(this.availabilities.values()).filter(
-      (a) => a.teacherId === teacherId
-    );
+    return await db
+      .select()
+      .from(availabilities)
+      .where(eq(availabilities.teacherId, teacherId));
   }
 
   async createAppointment(appointment: Omit<Appointment, "id">): Promise<Appointment> {
-    const id = this.currentId++;
-    const newAppointment = { ...appointment, id };
-    this.appointments.set(id, newAppointment);
+    const [newAppointment] = await db
+      .insert(appointments)
+      .values({
+        ...appointment,
+        status: appointment.status || 'pending'
+      })
+      .returning();
     return newAppointment;
   }
 
   async getAppointmentsByStudent(studentId: number): Promise<Appointment[]> {
-    return Array.from(this.appointments.values()).filter(
-      (a) => a.studentId === studentId
-    );
+    return await db
+      .select()
+      .from(appointments)
+      .where(eq(appointments.studentId, studentId));
   }
 
   async createQuestionnaireResponse(
     response: Omit<QuestionnaireResponse, "id">
   ): Promise<QuestionnaireResponse> {
-    const id = this.currentId++;
-    const newResponse = { ...response, id };
-    this.questionnaireResponses.set(id, newResponse);
+    const [newResponse] = await db
+      .insert(questionnaireResponses)
+      .values(response)
+      .returning();
     return newResponse;
   }
 
   async getQuestionnaireResponse(appointmentId: number): Promise<QuestionnaireResponse | undefined> {
-    return Array.from(this.questionnaireResponses.values()).find(
-      (r) => r.appointmentId === appointmentId
-    );
+    const [response] = await db
+      .select()
+      .from(questionnaireResponses)
+      .where(eq(questionnaireResponses.appointmentId, appointmentId));
+    return response;
   }
 }
 
-export const storage = new MemStorage();
+export const storage = new DatabaseStorage();
