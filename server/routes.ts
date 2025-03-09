@@ -3,9 +3,42 @@ import { createServer, type Server } from "http";
 import { setupAuth } from "./auth";
 import { storage } from "./storage";
 import { insertAppointmentSchema, insertAvailabilitySchema, insertQuestionnaireSchema } from "@shared/schema";
+import { db } from "./db";
+import { eq } from 'drizzle-orm';
+import { users, availabilities } from "@shared/schema";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   setupAuth(app);
+
+  // New endpoint to fetch all teachers
+  app.get("/api/users/teachers", async (req, res) => {
+    if (!req.isAuthenticated()) {
+      return res.sendStatus(401);
+    }
+
+    try {
+      const teachers = await db.select().from(users).where(eq(users.role, "teacher"));
+      res.json(teachers);
+    } catch (error) {
+      console.error("Error fetching teachers:", error);
+      res.status(500).json({ error: "Failed to fetch teachers" });
+    }
+  });
+
+  // New endpoint to fetch all availabilities
+  app.get("/api/availabilities", async (req, res) => {
+    if (!req.isAuthenticated()) {
+      return res.sendStatus(401);
+    }
+
+    try {
+      const allAvailabilities = await db.select().from(availabilities);
+      res.json(allAvailabilities);
+    } catch (error) {
+      console.error("Error fetching availabilities:", error);
+      res.status(500).json({ error: "Failed to fetch availabilities" });
+    }
+  });
 
   // Teacher routes
   app.post("/api/availabilities", async (req, res) => {
