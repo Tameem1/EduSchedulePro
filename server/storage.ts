@@ -13,7 +13,7 @@ import {
 import session from "express-session";
 import createMemoryStore from "memorystore";
 import { drizzle } from 'drizzle-orm/node-postgres';
-import { eq } from 'drizzle-orm';
+import { eq, and } from 'drizzle-orm';
 import pg from 'pg';
 
 const MemoryStore = createMemoryStore(session);
@@ -85,6 +85,16 @@ export class DatabaseStorage implements IStorage {
   async createQuestionnaireResponse(
     response: Omit<QuestionnaireResponse, "id">
   ): Promise<QuestionnaireResponse> {
+    // First get the appointment to ensure it exists
+    const [appointment] = await db
+      .select()
+      .from(appointments)
+      .where(eq(appointments.id, response.appointmentId));
+
+    if (!appointment) {
+      throw new Error("Appointment not found");
+    }
+
     const [newResponse] = await db
       .insert(questionnaireResponses)
       .values(response)
@@ -108,7 +118,7 @@ export class DatabaseStorage implements IStorage {
 
   async updateAppointment(
     id: number,
-    data: { teacherId: number; status: string }
+    data: { teacherId?: number; status: string }
   ): Promise<Appointment> {
     const [updatedAppointment] = await db
       .update(appointments)
@@ -126,6 +136,9 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getAllQuestionnaireResponses(): Promise<QuestionnaireResponse[]> {
+    const studentAlias = 'student';
+    const teacherAlias = 'teacher';
+
     return await db
       .select({
         id: questionnaireResponses.id,
@@ -137,8 +150,8 @@ export class DatabaseStorage implements IStorage {
         teacherId: appointments.teacherId,
         studentId: appointments.studentId,
         createdAt: appointments.startTime,
-        studentName: users.username,
-        teacherName: users.username, //Corrected this line
+        studentName: { student: users }.student.username,
+        teacherName: { teacher: users }.teacher.username,
       })
       .from(questionnaireResponses)
       .innerJoin(
@@ -146,12 +159,12 @@ export class DatabaseStorage implements IStorage {
         eq(questionnaireResponses.appointmentId, appointments.id)
       )
       .innerJoin(
-        users,
-        eq(appointments.studentId, users.id)
+        { student: users },
+        eq(appointments.studentId, { student: users }.student.id)
       )
       .innerJoin(
-        users,
-        eq(appointments.teacherId, users.id)
+        { teacher: users },
+        eq(appointments.teacherId, { teacher: users }.teacher.id)
       );
   }
 }
