@@ -6,9 +6,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
-import { format, addMinutes, parse, isAfter, isBefore } from "date-fns";
+import { format, parse, isAfter } from "date-fns";
 import { Link } from "wouter";
-import { X } from "lucide-react";
+import { X, Plus } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -22,21 +22,17 @@ import type { Availability } from "@shared/schema";
 const START_HOUR = 7; // 7 AM
 const END_HOUR = 23; // 11 PM
 
-// Generate available time slots in 30-minute increments
-const generateTimeOptions = () => {
+// Generate available time slots in 15-minute increments
+function generateTimeOptions() {
   const options = [];
-  const now = new Date();
-  const currentHours = now.getHours();
-  const currentMinutes = now.getMinutes();
-
+  const currentDate = new Date();
+  
   for (let hour = START_HOUR; hour <= END_HOUR; hour++) {
-    for (let minute of [0, 30]) {
-      // Skip past times for today
-      if (hour < currentHours || (hour === currentHours && minute <= currentMinutes)) {
-        continue;
-      }
+    for (let minute = 0; minute < 60; minute += 15) {
+      // Skip the last slot at 11:00 PM
+      if (hour === END_HOUR && minute > 0) continue;
       
-      const time = new Date();
+      const time = new Date(currentDate);
       time.setHours(hour, minute, 0, 0);
       options.push({
         value: format(time, "HH:mm"),
@@ -46,7 +42,7 @@ const generateTimeOptions = () => {
   }
   
   return options;
-};
+}
 
 export default function TeacherAvailability() {
   const { user } = useAuth();
@@ -88,7 +84,7 @@ export default function TeacherAvailability() {
       const today = new Date();
       const startTime = parse(range.start, "HH:mm", today);
       const endTime = parse(range.end, "HH:mm", today);
-
+      
       const res = await apiRequest("POST", "/api/availabilities", {
         startTime: startTime.toISOString(),
         endTime: endTime.toISOString(),
@@ -150,14 +146,18 @@ export default function TeacherAvailability() {
             </p>
             
             {timeRanges.length === 0 && (
-              <div className="text-center py-4 border border-dashed rounded-md">
-                <p className="text-muted-foreground">No time ranges added yet</p>
+              <div 
+                onClick={addTimeRange}
+                className="text-center py-6 border border-dashed rounded-md cursor-pointer hover:bg-muted/50 transition-colors"
+              >
+                <Plus className="mx-auto h-6 w-6 text-muted-foreground mb-2" />
+                <p className="text-muted-foreground">Click to add a time range</p>
               </div>
             )}
             
             {timeRanges.map((range) => (
-              <div key={range.id} className="flex items-center space-x-2 p-3 border rounded-md bg-muted/30">
-                <div className="grid grid-cols-2 gap-2 flex-1">
+              <div key={range.id} className="flex items-center space-x-2 p-4 border rounded-md bg-muted/30">
+                <div className="grid grid-cols-2 gap-4 flex-1">
                   <div>
                     <label className="text-xs text-muted-foreground mb-1 block">
                       Start Time
@@ -170,7 +170,7 @@ export default function TeacherAvailability() {
                         <SelectValue placeholder="Select start time" />
                       </SelectTrigger>
                       <SelectContent>
-                        {timeOptions.map(option => (
+                        {timeOptions.map((option) => (
                           <SelectItem key={option.value} value={option.value}>
                             {option.label}
                           </SelectItem>
@@ -190,8 +190,18 @@ export default function TeacherAvailability() {
                         <SelectValue placeholder="Select end time" />
                       </SelectTrigger>
                       <SelectContent>
-                        {timeOptions.map(option => (
-                          <SelectItem key={option.value} value={option.value}>
+                        {timeOptions.map((option) => (
+                          <SelectItem 
+                            key={option.value} 
+                            value={option.value}
+                            disabled={
+                              range.start && 
+                              !isAfter(
+                                parse(option.value, "HH:mm", new Date()),
+                                parse(range.start, "HH:mm", new Date())
+                              )
+                            }
+                          >
                             {option.label}
                           </SelectItem>
                         ))}
@@ -199,26 +209,31 @@ export default function TeacherAvailability() {
                     </Select>
                   </div>
                 </div>
-                <Button 
-                  variant="ghost" 
-                  size="icon" 
-                  className="shrink-0" 
+                
+                <Button
+                  variant="ghost"
+                  size="icon"
                   onClick={() => removeTimeRange(range.id)}
+                  className="flex-shrink-0"
                 >
                   <X className="h-4 w-4" />
                 </Button>
               </div>
             ))}
             
-            <Button
-              variant="outline"
-              className="w-full"
-              onClick={addTimeRange}
-            >
-              Add Time Range
-            </Button>
+            {timeRanges.length > 0 && (
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={addTimeRange}
+                className="mt-2"
+              >
+                <Plus className="h-4 w-4 mr-2" />
+                Add Another Time Range
+              </Button>
+            )}
           </div>
-
+          
           <Button 
             className="w-full"
             disabled={
@@ -232,7 +247,7 @@ export default function TeacherAvailability() {
               ? "Saving Availability..." 
               : "Save All Availability"}
           </Button>
-
+          
           {availabilities && availabilities.length > 0 && (
             <div className="mt-8">
               <h3 className="text-lg font-semibold mb-4">Your Available Slots Today</h3>
