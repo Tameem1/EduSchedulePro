@@ -1,4 +1,5 @@
-import React from 'react';
+
+import * as React from 'react';
 import { useAuth } from "@/hooks/use-auth";
 import { useMutation } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -23,6 +24,7 @@ const questions = [
 export default function TeacherQuestionnaire() {
   const { user } = useAuth();
   const { toast } = useToast();
+  const [successMessage, setSuccessMessage] = React.useState<string | null>(null);
 
   const form = useForm({
     resolver: zodResolver(insertQuestionnaireSchema),
@@ -41,12 +43,24 @@ export default function TeacherQuestionnaire() {
       return res.json();
     },
     onSuccess: () => {
+      // Show toast notification
       toast({
         title: "Questionnaire Submitted",
         description: "Your responses have been recorded successfully.",
-        duration: 3000,
+        duration: 5000, // Longer duration
       });
-      form.reset();
+      
+      // Set success message for visual feedback
+      setSuccessMessage("Questionnaire submitted successfully!");
+      
+      // Reset form
+      form.reset({
+        studentName: "",
+        question1: "",
+        question2: "",
+        question3: "",
+        question4: "",
+      });
     },
   });
 
@@ -64,6 +78,12 @@ export default function TeacherQuestionnaire() {
           <CardTitle>Post-Session Questions</CardTitle>
         </CardHeader>
         <CardContent>
+          {successMessage && (
+            <div className="mb-6 p-4 bg-green-100 border border-green-400 text-green-700 rounded-md">
+              {successMessage}
+            </div>
+          )}
+          
           <Form {...form}>
             <form onSubmit={form.handleSubmit((data) => submitQuestionnaireMutation.mutate(data as QuestionnaireResponse))} className="space-y-6">
               <FormField
