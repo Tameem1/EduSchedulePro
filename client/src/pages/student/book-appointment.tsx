@@ -3,42 +3,71 @@ import { useAuth } from "@/hooks/use-auth";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Slider } from "@/components/ui/slider";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
-import { format } from "date-fns";
+import { format, setHours, setMinutes } from "date-fns";
 import type { Appointment } from "@shared/schema";
 
-// Generate time slots for today
-function generateTimeSlots() {
-  const slots = [];
-  const now = new Date();
-  const startHour = 7; // 7 AM
-  const endHour = 24; // 12 AM (midnight)
-
-  for (let hour = startHour; hour < endHour; hour++) {
-    const time = new Date();
-    time.setHours(hour, 0, 0, 0);
-
-    // Only include future times for today
-    if (time > now) {
-      slots.push(time);
-    }
-  }
-  return slots;
-}
+// Calculate the number of 30-minute slots between 7 AM and 11:30 PM
+const START_HOUR = 7; // 7 AM
+const END_HOUR = 23.5; // 11:30 PM
+const TOTAL_SLOTS = (END_HOUR - START_HOUR) * 2; // 2 slots per hour (30 min each)
 
 export default function BookAppointment() {
   const { user } = useAuth();
   const { toast } = useToast();
-  const [selectedTime, setSelectedTime] = React.useState<string>();
-  const timeSlots = generateTimeSlots();
+  const [sliderValue, setSliderValue] = React.useState<number[]>([0]);
+  const [selectedTime, setSelectedTime] = React.useState<Date | null>(null);
+  
+  // Convert slider value to time and update the selected time
+  React.useEffect(() => {
+    if (sliderValue[0] !== undefined) {
+      const now = new Date();
+      const selectedSlot = sliderValue[0];
+      
+      // Calculate hours and minutes from the slot
+      const totalHours = START_HOUR + (selectedSlot / 2);
+      const hours = Math.floor(totalHours);
+      const minutes = (totalHours - hours) * 60;
+      
+      const time = new Date(now);
+      time.setHours(hours, minutes, 0, 0);
+      
+      // Only use times in the future
+      if (time > now) {
+        setSelectedTime(time);
+      } else {
+        // Find the next available slot if current time is in the past
+        const currentHour = now.getHours();
+        const currentMinute = now.getMinutes();
+        const currentTotalMinutes = currentHour * 60 + currentMinute;
+        const nextSlot = Math.ceil((currentTotalMinutes - (START_HOUR * 60)) / 30) + 1;
+        
+        if (nextSlot <= TOTAL_SLOTS) {
+          setSliderValue([nextSlot]);
+        }
+      }
+    }
+  }, [sliderValue]);
+  
+  // Format the time display for the slider
+  const formatTimeLabel = (value: number) => {
+    const totalHours = START_HOUR + (value / 2);
+    const hours = Math.floor(totalHours);
+    const minutes = (totalHours - hours) * 60;
+    
+    const time = new Date();
+    time.setHours(hours, minutes, 0, 0);
+    
+    return format(time, "h:mm a");
+  };
 
   const bookAppointmentMutation = useMutation({
-    mutationFn: async (timeString: string) => {
-      const time = new Date(timeString);
+    mutationFn: async () => {
+      if (!selectedTime) return null;
       const res = await apiRequest("POST", "/api/appointments", {
-        startTime: time.toISOString(),
+        startTime: selectedTime.toISOString(),
       });
       return res.json();
     },
@@ -64,30 +93,35 @@ export default function BookAppointment() {
         <CardContent className="space-y-6">
           <div className="space-y-2">
             <p className="text-sm text-muted-foreground">Select an available time slot</p>
-            <Select
-              value={selectedTime}
-              onValueChange={setSelectedTime}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Select a time" />
-              </SelectTrigger>
-              <SelectContent>
-                {timeSlots.map((time) => (
-                  <SelectItem 
-                    key={time.toISOString()} 
-                    value={time.toISOString()}
-                  >
-                    {format(time, "h:mm a")}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <div className="py-6 px-1">
+              <Slider
+                min={0}
+                max={TOTAL_SLOTS - 1}
+                step={1}
+                value={sliderValue}
+                onValueChange={setSliderValue}
+              />
+              
+              <div className="mt-6 flex justify-between">
+                <span className="text-sm">7:00 AM</span>
+                <span className="text-sm">11:30 PM</span>
+              </div>
+              
+              <div className="mt-6 text-center bg-muted p-4 rounded-md">
+                <p className="text-xl font-semibold">
+                  {selectedTime ? format(selectedTime, "h:mm a") : "Select a time"}
+                </p>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Move the slider to select your preferred time
+                </p>
+              </div>
+            </div>
           </div>
 
           <Button 
             className="w-full"
             disabled={!selectedTime || bookAppointmentMutation.isPending}
-            onClick={() => selectedTime && bookAppointmentMutation.mutate(selectedTime)}
+            onClick={() => bookAppointmentMutation.mutate()}
           >
             Request Appointment
           </Button>
