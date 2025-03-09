@@ -1,3 +1,4 @@
+import * as React from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -21,8 +22,6 @@ export default function ManagerAppointments() {
   const { data: teachers } = useQuery({
     queryKey: ["/api/users/teachers"],
   });
-
-  import * as React from "react";
 
 const { data: availabilities } = useQuery({
     queryKey: ["/api/availabilities"],
