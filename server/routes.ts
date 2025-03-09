@@ -105,14 +105,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
 
     try {
-      const { startTime, teacherId } = req.body;
+      const { startTime } = req.body;
 
       // Convert startTime to Date if it's a string
       const appointmentStartTime = new Date(startTime);
 
       const parsedData = insertAppointmentSchema.parse({
         startTime: appointmentStartTime,
-        teacherId: teacherId,
         studentId: req.user.id,
         status: "pending",
       });

@@ -3,29 +3,24 @@ import { useAuth } from "@/hooks/use-auth";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Slider } from "@/components/ui/slider";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
 import { Redirect } from "wouter";
 import { Loader2 } from "lucide-react";
-import type { Appointment, User } from "@shared/schema";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import type { Appointment } from "@shared/schema";
 
 // Start and end times for availability
 const START_HOUR = 7; // 7 AM
 const END_HOUR = 23; // 11 PM
+const TOTAL_SLOTS = (END_HOUR - START_HOUR) * 2; // 2 slots per hour (30 min each)
 
 export default function BookAppointment() {
   const { user, isLoading: isAuthLoading } = useAuth();
   const { toast } = useToast();
+  const [sliderValue, setSliderValue] = React.useState<number[]>([0]);
   const [selectedTime, setSelectedTime] = React.useState<Date | null>(null);
-  const [selectedTeacherId, setSelectedTeacherId] = React.useState<number | null>(null);
 
   // If still loading auth state, show loading indicator
   if (isAuthLoading) {
@@ -41,27 +36,42 @@ export default function BookAppointment() {
     return <Redirect to="/auth" />;
   }
 
-  // Fetch available teachers
-  const { data: teachers, isLoading: isLoadingTeachers } = useQuery<User[]>({
-    queryKey: ["/api/users/teachers"],
-    queryFn: async () => {
-      const res = await apiRequest("GET", "/api/users/teachers");
-      if (!res.ok) {
-        throw new Error("Failed to fetch teachers");
-      }
-      return res.json();
-    },
-  });
+
+  // Convert slider value to time and update the selected time
+  React.useEffect(() => {
+    if (sliderValue[0] !== undefined) {
+      const now = new Date();
+      const selectedSlot = sliderValue[0];
+
+      // Calculate hours and minutes from the slot
+      const totalHours = START_HOUR + selectedSlot / 2;
+      const hours = Math.floor(totalHours);
+      const minutes = (totalHours - hours) * 60;
+
+      const time = new Date(now);
+      time.setHours(hours, minutes, 0, 0);
+      setSelectedTime(time);
+    }
+  }, [sliderValue]);
+
+  // Format the time display for the slider
+  const formatTimeLabel = (value: number) => {
+    const totalHours = START_HOUR + value / 2;
+    const hours = Math.floor(totalHours);
+    const minutes = (totalHours - hours) * 60;
+
+    const time = new Date();
+    time.setHours(hours, minutes, 0, 0);
+
+    return format(time, "h:mm a");
+  };
 
   const bookAppointmentMutation = useMutation({
     mutationFn: async () => {
-      if (!selectedTime || !selectedTeacherId) {
-        throw new Error("Please select both a time and a teacher");
-      }
+      if (!selectedTime) throw new Error("Please select a time");
 
       const res = await apiRequest("POST", "/api/appointments", {
-        startTime: selectedTime,
-        teacherId: selectedTeacherId,
+        startTime: selectedTime.toISOString(),
       });
 
       if (!res.ok) {
@@ -81,9 +91,9 @@ export default function BookAppointment() {
         queryKey: ["/api/students", user.id, "appointments"] 
       });
 
-      // Reset form
+      // Reset slider
+      setSliderValue([0]);
       setSelectedTime(null);
-      setSelectedTeacherId(null);
     },
     onError: (error) => {
       toast({
@@ -107,24 +117,6 @@ export default function BookAppointment() {
     },
   });
 
-  // Generate time slots
-  const timeSlots = React.useMemo(() => {
-    const slots = [];
-    const today = new Date();
-
-    for (let hour = START_HOUR; hour <= END_HOUR; hour++) {
-      for (let minute = 0; minute < 60; minute += 30) {
-        const time = new Date(today);
-        time.setHours(hour, minute, 0, 0);
-        slots.push({
-          value: time.toISOString(),
-          label: format(time, "h:mm a")
-        });
-      }
-    }
-    return slots;
-  }, []);
-
   return (
     <div className="container mx-auto p-4">
       <Card>
@@ -132,51 +124,34 @@ export default function BookAppointment() {
           <CardTitle>حجز موعد</CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">
-          <div className="space-y-4">
-            {/* Teacher Selection */}
-            <div>
-              <label className="text-sm font-medium mb-2 block">اختر المعلم</label>
-              <Select
-                value={selectedTeacherId?.toString()}
-                onValueChange={(value) => setSelectedTeacherId(Number(value))}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="اختر معلماً" />
-                </SelectTrigger>
-                <SelectContent>
-                  {teachers?.map((teacher) => (
-                    <SelectItem key={teacher.id} value={teacher.id.toString()}>
-                      {teacher.username}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+          <div className="space-y-2">
+            <p className="text-sm text-muted-foreground">
+              اختر الوقت المناسب لك
+            </p>
 
-            {/* Time Selection */}
-            <div>
-              <label className="text-sm font-medium mb-2 block">اختر الوقت</label>
-              <Select
-                value={selectedTime?.toISOString()}
-                onValueChange={(value) => setSelectedTime(new Date(value))}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="اختر وقتاً" />
-                </SelectTrigger>
-                <SelectContent>
-                  {timeSlots.map((slot) => (
-                    <SelectItem key={slot.value} value={slot.value}>
-                      {slot.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+            <div className="py-6">
+              <Slider
+                min={0}
+                max={TOTAL_SLOTS - 1}
+                step={1}
+                value={sliderValue}
+                onValueChange={setSliderValue}
+              />
+
+              <div className="mt-6 text-center bg-muted/50 p-4 rounded-md">
+                <p className="text-xl font-semibold">
+                  {selectedTime ? format(selectedTime, "h:mm a") : "اختر وقتاً"}
+                </p>
+                <p className="text-xs text-muted-foreground mt-1">
+                  حرك المؤشر لاختيار الوقت المناسب لك
+                </p>
+              </div>
             </div>
           </div>
 
           <Button
             className="w-full"
-            disabled={!selectedTime || !selectedTeacherId || bookAppointmentMutation.isPending}
+            disabled={!selectedTime || bookAppointmentMutation.isPending}
             onClick={() => bookAppointmentMutation.mutate()}
           >
             {bookAppointmentMutation.isPending ? "جاري الحجز..." : "حجز موعد"}
