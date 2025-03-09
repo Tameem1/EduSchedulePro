@@ -127,19 +127,31 @@ export default function BookAppointment() {
             </div>
           )}
 
-          {appointments && appointments.length > 0 && (
-            <div className="mt-8">
-              <h3 className="text-lg font-semibold mb-4">Your Appointments</h3>
-              <div className="space-y-2">
-                {appointments.map((appointment) => (
+          <div className="mt-8">
+            <h3 className="text-lg font-semibold mb-4">Your Appointments</h3>
+            <div className="space-y-2">
+              {(appointments && appointments.length > 0) ? (
+                appointments.map((appointment) => (
                   <div key={appointment.id} className="p-4 border rounded-md">
                     <p>Time: {format(new Date(appointment.startTime), "h:mm a")}</p>
                     <p>Status: {appointment.status}</p>
                   </div>
-                ))}
-              </div>
+                ))
+              ) : (
+                // Example appointments if none are available
+                [
+                  { id: 101, startTime: new Date().setHours(14, 30), status: "pending" },
+                  { id: 102, startTime: new Date(new Date().setDate(new Date().getDate() + 1)).setHours(10, 0), status: "matched" }
+                ].map((appointment) => (
+                  <div key={appointment.id} className="p-4 border rounded-md bg-gray-50">
+                    <p>Time: {format(new Date(appointment.startTime), "h:mm a")}</p>
+                    <p>Status: {appointment.status}</p>
+                    <p className="text-xs text-gray-500 mt-1">(Example)</p>
+                  </div>
+                ))
+              )}
             </div>
-          )}
+          </div>
         </CardContent>
       </Card>
     </div>
