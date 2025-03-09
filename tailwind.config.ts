@@ -64,27 +64,37 @@ export default {
       },
       keyframes: {
         "accordion-down": {
-          from: {
-            height: "0",
-          },
-          to: {
-            height: "var(--radix-accordion-content-height)",
-          },
+          from: { height: "0" },
+          to: { height: "var(--radix-accordion-content-height)" },
         },
         "accordion-up": {
-          from: {
-            height: "var(--radix-accordion-content-height)",
-          },
-          to: {
-            height: "0",
-          },
+          from: { height: "var(--radix-accordion-content-height)" },
+          to: { height: "0" },
         },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
       },
+      // Add RTL-specific utilities
+      textAlign: {
+        start: "start",
+        end: "end",
+      },
+      margin: {
+        start: "margin-inline-start",
+        end: "margin-inline-end",
+      },
+      padding: {
+        start: "padding-inline-start",
+        end: "padding-inline-end",
+      },
     },
   },
-  plugins: [require("tailwindcss-animate"), require("@tailwindcss/typography")],
+  plugins: [
+    require("tailwindcss-animate"),
+    require("@tailwindcss/typography"),
+    // Add RTL plugin
+    require("tailwindcss-dir")(),
+  ],
 } satisfies Config;
