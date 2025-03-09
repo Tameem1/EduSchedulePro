@@ -1,7 +1,14 @@
-import * as React from 'react';
+import * as React from "react";
 import { useAuth } from "@/hooks/use-auth";
 import { useMutation } from "@tanstack/react-query";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardFooter,
+} from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { apiRequest } from "@/lib/queryClient";
@@ -12,24 +19,27 @@ import { Textarea } from "@/components/ui/textarea";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { insertQuestionnaireSchema } from "@shared/schema";
 import type { QuestionnaireResponse } from "@shared/schema";
-import { format } from 'date-fns';
+import { format } from "date-fns";
 import { Slider } from "@/components/ui/slider";
 import { Label } from "@/components/ui/label";
-
 
 const questions = [
   "How was the student's engagement during the session?",
   "What topics were covered in the session?",
   "What areas need improvement?",
-  "Any recommendations for future sessions?"
+  "Any recommendations for future sessions?",
 ];
 
 const sampleAppointments = [
-  { id: 1, studentName: "Alice", time: "2024-03-08T10:00:00", completed: false },
-  { id: 2, studentName: "Bob", time: "2024-03-08T11:00:00", completed: true },
-  { id: 3, studentName: "Charlie", time: "2024-03-08T12:00:00", completed: false },
+  { id: 1, studentName: "محمد", time: "2024-03-08T10:00:00", completed: false },
+  { id: 2, studentName: "احمد", time: "2024-03-08T11:00:00", completed: true },
+  {
+    id: 3,
+    studentName: "محمود",
+    time: "2024-03-08T12:00:00",
+    completed: false,
+  },
 ];
-
 
 export default function TeacherQuestionnaire() {
   const { user } = useAuth();
@@ -40,7 +50,7 @@ export default function TeacherQuestionnaire() {
     question2: "",
     question3: "",
     question4: "",
-    rating: 5
+    rating: 5,
   });
 
   const form = useForm({
@@ -57,7 +67,11 @@ export default function TeacherQuestionnaire() {
 
   const submitQuestionnaireMutation = useMutation({
     mutationFn: async (data: any) => {
-      const res = await apiRequest("POST", "/api/questionnaire-responses", data);
+      const res = await apiRequest(
+        "POST",
+        "/api/questionnaire-responses",
+        data,
+      );
       return res.json();
     },
     onSuccess: () => {
@@ -110,15 +124,21 @@ export default function TeacherQuestionnaire() {
           {currentAppointment ? (
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="bg-muted/50 p-4 rounded-md mb-4">
-                <p><span className="font-semibold">الطالب:</span> {currentAppointment.studentName}</p>
-                <p><span className="font-semibold">الوقت:</span> {format(new Date(currentAppointment.time), "h:mm a")}</p>
+                <p>
+                  <span className="font-semibold">الطالب:</span>{" "}
+                  {currentAppointment.studentName}
+                </p>
+                <p>
+                  <span className="font-semibold">الوقت:</span>{" "}
+                  {format(new Date(currentAppointment.time), "h:mm a")}
+                </p>
               </div>
 
               <div>
-                <Label htmlFor="question1">على ماذا عملتم؟</Label>
-                <Textarea 
+                <Label htmlFor="question1"> هل تمت متابعة الطالب ؟</Label>
+                <Textarea
                   id="question1"
-                  placeholder="وصف المواضيع التي تمت تغطيتها في الجلسة"
+                  placeholder="نعم/لا"
                   value={formData.question1}
                   onChange={(e) => handleChange("question1", e.target.value)}
                   required
@@ -126,10 +146,10 @@ export default function TeacherQuestionnaire() {
               </div>
 
               <div>
-                <Label htmlFor="question2">ما الاستراتيجيات التي كانت فعالة؟</Label>
-                <Textarea 
+                <Label htmlFor="question2">هل استجاب الطالب للمتابعة؟</Label>
+                <Textarea
                   id="question2"
-                  placeholder="ما أساليب التدريس التي بدت مفيدة للطالب؟"
+                  placeholder="نعم/لا"
                   value={formData.question2}
                   onChange={(e) => handleChange("question2", e.target.value)}
                   required
@@ -137,10 +157,10 @@ export default function TeacherQuestionnaire() {
               </div>
 
               <div>
-                <Label htmlFor="question3">مجالات التحسين</Label>
-                <Textarea 
+                <Label htmlFor="question3">ماذا سمع؟ </Label>
+                <Textarea
                   id="question3"
-                  placeholder="ما هي المفاهيم التي ما زال الطالب بحاجة للمساعدة فيها؟"
+                  placeholder="سورة الاسراء"
                   value={formData.question3}
                   onChange={(e) => handleChange("question3", e.target.value)}
                   required
@@ -148,8 +168,19 @@ export default function TeacherQuestionnaire() {
               </div>
 
               <div>
-                <Label htmlFor="question4">ملاحظات للجلسة القادمة</Label>
-                <Textarea 
+                <Label htmlFor="question4"> الوظيفة</Label>
+                <Textarea
+                  id="question4"
+                  placeholder="سورة الاسراء"
+                  value={formData.question4}
+                  onChange={(e) => handleChange("question4", e.target.value)}
+                  required
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="question4"> ملاحظات الجلسة</Label>
+                <Textarea
                   id="question4"
                   placeholder="ما الذي يجب أن يكون محور تركيز الموعد التالي؟"
                   value={formData.question4}
@@ -158,22 +189,9 @@ export default function TeacherQuestionnaire() {
                 />
               </div>
 
-              <div>
-                <Label htmlFor="rating">تقييم الجلسة (1-5)</Label>
-                <div className="flex items-center space-x-2">
-                  <Slider
-                    id="rating"
-                    min={1}
-                    max={5}
-                    step={0.5}
-                    value={[formData.rating]}
-                    onValueChange={(value) => handleChange("rating", value[0])}
-                  />
-                  <span className="w-12 text-center">{formData.rating}</span>
-                </div>
-              </div>
-
-              <Button type="submit" className="w-full">إرسال التقييم</Button>
+              <Button type="submit" className="w-full">
+                إرسال التقييم
+              </Button>
             </form>
           ) : (
             <div className="py-8">
@@ -185,8 +203,8 @@ export default function TeacherQuestionnaire() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-2xl mx-auto mt-6">
                   {sampleAppointments.map((appointment) => (
-                    <Card 
-                      key={appointment.id} 
+                    <Card
+                      key={appointment.id}
                       className="cursor-pointer hover:border-primary"
                       onClick={() => setCurrentAppointment(appointment)}
                     >
@@ -194,11 +212,18 @@ export default function TeacherQuestionnaire() {
                         <CardTitle className="text-base">
                           {format(new Date(appointment.time), "h:mm a")}
                         </CardTitle>
-                        <CardDescription>الطالب: {appointment.studentName}</CardDescription>
+                        <CardDescription>
+                          الطالب: {appointment.studentName}
+                        </CardDescription>
                       </CardHeader>
                       <CardFooter className="pt-2">
                         {appointment.completed ? (
-                          <Badge variant="outline" className="bg-green-50 text-green-700 hover:bg-green-50">مكتمل</Badge>
+                          <Badge
+                            variant="outline"
+                            className="bg-green-50 text-green-700 hover:bg-green-50"
+                          >
+                            مكتمل
+                          </Badge>
                         ) : (
                           <Badge variant="outline">قيد الانتظار</Badge>
                         )}
