@@ -9,7 +9,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Redirect } from "wouter";
-import { insertUserSchema, UserRole } from "@shared/schema";
+import { insertUserSchema, UserRole, type UserRoleType } from "@shared/schema";
 
 const loginSchema = insertUserSchema.pick({ 
   username: true, 
@@ -34,12 +34,12 @@ export default function AuthPage() {
     defaultValues: {
       username: "",
       password: "",
-      role: UserRole.STUDENT,
+      role: UserRole.STUDENT as UserRoleType,
     },
   });
 
   if (user) {
-    const roleRedirects: Record<UserRole, string> = {
+    const roleRedirects: Record<UserRoleType, string> = {
       [UserRole.STUDENT]: "/",
       [UserRole.TEACHER]: "/teacher/availability",
       [UserRole.MANAGER]: "/manager/appointments",
@@ -95,7 +95,7 @@ export default function AuthPage() {
                       <div>
                         <Label htmlFor="role">نوع الحساب</Label>
                         <Select 
-                          onValueChange={(value) => registerForm.setValue("role", value as UserRole)}
+                          onValueChange={(value) => registerForm.setValue("role", value as UserRoleType)}
                           defaultValue={registerForm.getValues("role")}
                         >
                           <SelectTrigger>
