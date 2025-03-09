@@ -136,9 +136,6 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getAllQuestionnaireResponses(): Promise<QuestionnaireResponse[]> {
-    const studentAlias = 'student';
-    const teacherAlias = 'teacher';
-
     return await db
       .select({
         id: questionnaireResponses.id,
@@ -150,8 +147,7 @@ export class DatabaseStorage implements IStorage {
         teacherId: appointments.teacherId,
         studentId: appointments.studentId,
         createdAt: appointments.startTime,
-        studentName: { student: users }.student.username,
-        teacherName: { teacher: users }.teacher.username,
+        studentName: users.username,
       })
       .from(questionnaireResponses)
       .innerJoin(
@@ -159,12 +155,8 @@ export class DatabaseStorage implements IStorage {
         eq(questionnaireResponses.appointmentId, appointments.id)
       )
       .innerJoin(
-        { student: users },
-        eq(appointments.studentId, { student: users }.student.id)
-      )
-      .innerJoin(
-        { teacher: users },
-        eq(appointments.teacherId, { teacher: users }.teacher.id)
+        users,
+        eq(appointments.studentId, users.id)
       );
   }
 }
