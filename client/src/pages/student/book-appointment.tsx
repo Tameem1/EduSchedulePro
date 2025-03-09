@@ -6,19 +6,56 @@ import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
-import { format, setHours, setMinutes } from "date-fns";
-import type { Appointment } from "@shared/schema";
+import { format, parse, isAfter } from "date-fns";
+import { Redirect } from "wouter";
+import { Loader2 } from "lucide-react";
+import type { Appointment, Availability } from "@shared/schema";
 
-// Calculate the number of 30-minute slots between 7 AM and 11:30 PM
+// Start and end times for availability
 const START_HOUR = 7; // 7 AM
-const END_HOUR = 23.5; // 11:30 PM
-const TOTAL_SLOTS = (END_HOUR - START_HOUR) * 2; // 2 slots per hour (30 min each)
+const END_HOUR = 23; // 11 PM
+
+// Generate available time slots in 15-minute increments
+function generateTimeOptions() {
+  const options = [];
+  const currentDate = new Date();
+
+  for (let hour = START_HOUR; hour <= END_HOUR; hour++) {
+    for (let minute = 0; minute < 60; minute += 15) {
+      // Skip the last slot at 11:00 PM
+      if (hour === END_HOUR && minute > 0) continue;
+
+      const time = new Date(currentDate);
+      time.setHours(hour, minute, 0, 0);
+      options.push({
+        value: format(time, "HH:mm"),
+        label: format(time, "h:mm a")
+      });
+    }
+  }
+
+  return options;
+}
 
 export default function BookAppointment() {
-  const { user } = useAuth();
+  const { user, isLoading: isAuthLoading } = useAuth();
   const { toast } = useToast();
   const [sliderValue, setSliderValue] = React.useState<number[]>([0]);
   const [selectedTime, setSelectedTime] = React.useState<Date | null>(null);
+
+  // If still loading auth state, show loading indicator
+  if (isAuthLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin" />
+      </div>
+    );
+  }
+
+  // If not authenticated or not a student, redirect to login
+  if (!user || user.role !== 'student') {
+    return <Redirect to="/auth" />;
+  }
 
   // Convert slider value to time and update the selected time
   React.useEffect(() => {
@@ -27,7 +64,7 @@ export default function BookAppointment() {
       const selectedSlot = sliderValue[0];
 
       // Calculate hours and minutes from the slot
-      const totalHours = START_HOUR + selectedSlot / 2;
+      const totalHours = START_HOUR + selectedSlot / 4; // 4 slots per hour (15 min each)
       const hours = Math.floor(totalHours);
       const minutes = (totalHours - hours) * 60;
 
@@ -39,7 +76,7 @@ export default function BookAppointment() {
 
   // Format the time display for the slider
   const formatTimeLabel = (value: number) => {
-    const totalHours = START_HOUR + value / 2;
+    const totalHours = START_HOUR + value / 4;
     const hours = Math.floor(totalHours);
     const minutes = (totalHours - hours) * 60;
 
@@ -49,70 +86,80 @@ export default function BookAppointment() {
     return format(time, "h:mm a");
   };
 
-  const [successMessage, setSuccessMessage] = React.useState<string | null>(
-    null,
-  );
-
   const bookAppointmentMutation = useMutation({
     mutationFn: async () => {
-      if (!selectedTime) return null;
+      if (!selectedTime) throw new Error("Please select a time");
+
       const res = await apiRequest("POST", "/api/appointments", {
         startTime: selectedTime.toISOString(),
       });
+
+      if (!res.ok) {
+        const error = await res.json();
+        throw new Error(error.error || "Failed to book appointment");
+      }
+
       return res.json();
     },
     onSuccess: () => {
-      // Show both toast and success message
       toast({
-        title: "تم طلب الموعد",
-        description: "شكراً على حجز موعد. سيتصل بك أحد المعلمين قريباً!",
-        duration: 5000, // Show for 5 seconds
+        title: "تم حجز الموعد",
+        description: "تم تسجيل طلبك بنجاح. سيتم تعيين معلم قريباً.",
       });
 
-      // Set success message that will display in the UI
-      setSuccessMessage("شكراً على حجز موعد. سيتصل بك أحد المعلمين قريباً!");
-
-      queryClient.invalidateQueries({
-        queryKey: ["/api/students", user!.id, "appointments"],
+      queryClient.invalidateQueries({ 
+        queryKey: ["/api/students", user.id, "appointments"] 
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "خطأ في حجز الموعد",
+        description: error.message,
+        variant: "destructive",
       });
     },
   });
 
-  const { data: appointments } = useQuery<Appointment[]>({
-    queryKey: ["/api/students", user!.id, "appointments"],
+  // Fetch student's appointments
+  const { data: appointments, isLoading: isLoadingAppointments } = useQuery<Appointment[]>({
+    queryKey: ["/api/students", user.id, "appointments"],
+    queryFn: async () => {
+      const res = await apiRequest("GET", `/api/students/${user.id}/appointments`);
+      if (!res.ok) {
+        const error = await res.json();
+        throw new Error(error.error || "Failed to fetch appointments");
+      }
+      return res.json();
+    },
   });
 
   return (
     <div className="container mx-auto p-4">
       <Card>
         <CardHeader>
-          <CardTitle>حجز موعد لليوم</CardTitle>
+          <CardTitle>حجز موعد</CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="space-y-2">
             <p className="text-sm text-muted-foreground">
-              حدد فترة زمنية متاحة
+              اختر الوقت المناسب لك
             </p>
-            <div className="py-6 px-1">
+
+            <div className="py-6">
               <Slider
                 min={0}
-                max={TOTAL_SLOTS - 1}
+                max={(END_HOUR - START_HOUR) * 4} // 4 slots per hour
                 step={1}
                 value={sliderValue}
                 onValueChange={setSliderValue}
               />
 
-              <div className="mt-6 flex justify-between">
-                <span className="text-sm">11:30 مساءً</span>
-                <span className="text-sm">7:00 صباحاً</span>
-              </div>
-
-              <div className="mt-6 text-center bg-muted p-4 rounded-md">
+              <div className="mt-6 text-center bg-muted/50 p-4 rounded-md">
                 <p className="text-xl font-semibold">
                   {selectedTime ? format(selectedTime, "h:mm a") : "اختر وقتاً"}
                 </p>
                 <p className="text-xs text-muted-foreground mt-1">
-                  حرك المؤشر لاختيار الوقت المفضل لديك
+                  حرك المؤشر لاختيار الوقت المناسب لك
                 </p>
               </div>
             </div>
@@ -123,74 +170,51 @@ export default function BookAppointment() {
             disabled={!selectedTime || bookAppointmentMutation.isPending}
             onClick={() => bookAppointmentMutation.mutate()}
           >
-            طلب موعد
+            {bookAppointmentMutation.isPending ? "جاري الحجز..." : "حجز موعد"}
           </Button>
 
-          {successMessage && (
-            <div className="mt-4 p-4 bg-green-100 border border-green-400 text-green-700 rounded-md">
-              {successMessage}
-            </div>
-          )}
-
+          {/* Display appointments */}
           <div className="mt-8">
             <h3 className="text-lg font-semibold mb-4">مواعيدك</h3>
-            <div className="space-y-2">
-              {appointments && appointments.length > 0
-                ? appointments.map((appointment) => (
-                    <div key={appointment.id} className="p-4 border rounded-md">
-                      <p>
-                        الوقت:{" "}
-                        {format(new Date(appointment.startTime), "h:mm a")}
-                      </p>
-                      <p>
-                        الحالة:{" "}
-                        {appointment.status === "pending"
+            {isLoadingAppointments ? (
+              <div className="flex justify-center">
+                <Loader2 className="h-8 w-8 animate-spin" />
+              </div>
+            ) : appointments && appointments.length > 0 ? (
+              <div className="space-y-2">
+                {appointments.map((appointment) => (
+                  <div key={appointment.id} className="p-4 border rounded-md">
+                    <div className="flex justify-between items-center">
+                      <div>
+                        <p className="font-medium">
+                          {format(new Date(appointment.startTime), "h:mm a")}
+                        </p>
+                        <p className="text-sm text-muted-foreground">
+                          {format(new Date(appointment.startTime), "EEEE, MMMM d")}
+                        </p>
+                      </div>
+                      <div className={`px-2 py-1 rounded-full text-sm ${
+                        appointment.status === "pending" 
+                          ? "bg-yellow-100 text-yellow-800" 
+                          : appointment.status === "matched"
+                            ? "bg-green-100 text-green-800"
+                            : "bg-blue-100 text-blue-800"
+                      }`}>
+                        {appointment.status === "pending" 
                           ? "قيد الانتظار"
                           : appointment.status === "matched"
                             ? "تم التطابق"
-                            : appointment.status === "completed"
-                              ? "مكتمل"
-                              : appointment.status}
-                      </p>
+                            : "مكتمل"}
+                      </div>
                     </div>
-                  ))
-                : // Example appointments if none are available
-                  [
-                    {
-                      id: 101,
-                      startTime: new Date().setHours(14, 30),
-                      status: "pending",
-                    },
-                    {
-                      id: 102,
-                      startTime: new Date(
-                        new Date().setDate(new Date().getDate() + 1),
-                      ).setHours(10, 0),
-                      status: "matched",
-                    },
-                  ].map((appointment) => (
-                    <div
-                      key={appointment.id}
-                      className="p-4 border rounded-md bg-gray-50"
-                    >
-                      <p>
-                        الوقت:{" "}
-                        {format(new Date(appointment.startTime), "h:mm a")}
-                      </p>
-                      <p>
-                        الحالة:{" "}
-                        {appointment.status === "pending"
-                          ? "قيد الانتظار"
-                          : appointment.status === "matched"
-                            ? "تم التطابق"
-                            : appointment.status === "completed"
-                              ? "مكتمل"
-                              : appointment.status}
-                      </p>
-                      <p className="text-xs text-gray-500 mt-1">(مثال)</p>
-                    </div>
-                  ))}
-            </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-center text-muted-foreground">
+                لا توجد مواعيد مسجلة
+              </p>
+            )}
           </div>
         </CardContent>
       </Card>
