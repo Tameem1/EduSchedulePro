@@ -155,28 +155,28 @@ export default function ManagerAppointments() {
   };
 
   return (
-    <div dir="rtl" className="container mx-auto p-4"> {/* Added dir="rtl" here */}
+    <div dir="rtl" className="container mx-auto p-4">
       <div className="flex justify-between items-center mb-4">
-        <h1 className="text-2xl font-bold">Appointment Management</h1>
+        <h1 className="text-2xl font-bold">إدارة المواعيد</h1>
         <Link href="/manager/results">
-          <Button>View Results</Button>
+          <Button>عرض النتائج</Button>
         </Link>
       </div>
 
       <Card className="mb-6">
         <CardHeader>
-          <CardTitle>Today's Appointments</CardTitle>
+          <CardTitle>المواعيد اليوم</CardTitle>
         </CardHeader>
         <CardContent>
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Actions</TableHead> {/* Reordered */}
-                <TableHead>Status</TableHead> {/* Reordered */}
-                <TableHead>Student</TableHead> {/* Reordered */}
-                <TableHead>Teacher</TableHead> {/* Reordered */}
-                <TableHead>Time</TableHead> {/* Reordered */}
-                <TableHead>ID</TableHead> {/* Reordered */}
+                <TableHead>الإجراءات</TableHead>
+                <TableHead>الحالة</TableHead>
+                <TableHead>الطالب</TableHead>
+                <TableHead>المعلم</TableHead>
+                <TableHead>الوقت</TableHead>
+                <TableHead>ID</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -187,7 +187,7 @@ export default function ManagerAppointments() {
                     { id: 4, studentName: "Emma Thompson", studentId: 104, startTime: new Date().setHours(14, 30), teacherId: 203, status: "completed" },
                     { id: 5, studentName: "James Rodriguez", studentId: 105, startTime: new Date().setHours(16, 0), teacherId: 201, status: "matched" }
                   ]).map((appointment) => (
-                <TableRow key={appointment.id} dir="rtl"> {/* Added dir="rtl" here */}
+                <TableRow key={appointment.id} dir="rtl">
                   <TableCell>#{appointment.id}</TableCell>
                   <TableCell>{appointment.studentName || `Student ${appointment.studentId}`}</TableCell>
                   <TableCell>{format(new Date(appointment.startTime), "h:mm a")}</TableCell>
@@ -197,7 +197,7 @@ export default function ManagerAppointments() {
                         : appointment.teacherId === 202 ? "Mr. Smith"
                         : appointment.teacherId === 203 ? "Dr. Williams"
                         : `Teacher ${appointment.teacherId}`
-                      : "Unassigned"}
+                      : "غير معين"}
                   </TableCell>
                   <TableCell>
                     <Badge
@@ -222,7 +222,7 @@ export default function ManagerAppointments() {
                         : appointment.status}
                     </Badge>
                   </TableCell>
-                  <TableCell dir="rtl"> {/* Added dir="rtl" here */}
+                  <TableCell dir="rtl">
                     <Button 
                       size="sm" 
                       variant="outline"
@@ -240,15 +240,15 @@ export default function ManagerAppointments() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Teacher Availability</CardTitle>
+          <CardTitle>توفر المعلمين</CardTitle>
         </CardHeader>
         <CardContent>
-          <Table dir="rtl"> {/* Added dir="rtl" here */}
+          <Table dir="rtl">
             <TableHeader>
               <TableRow>
-                <TableHead>Appointments Today</TableHead>
-                <TableHead>Available Times</TableHead>
-                <TableHead>Teacher</TableHead>
+                <TableHead>المواعيد اليوم</TableHead>
+                <TableHead>الأوقات المتاحة</TableHead>
+                <TableHead>المعلم</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -262,7 +262,7 @@ export default function ManagerAppointments() {
                   sampleAppointments.find(a => a.teacherId === teacher.id)?.count || 0;
 
                 return (
-                  <TableRow key={teacher.id} dir="rtl"> {/* Added dir="rtl" here */}
+                  <TableRow key={teacher.id} dir="rtl">
                     <TableCell>{teacher.username}</TableCell>
                     <TableCell>
                       {teacherAvailabilities?.length > 0 ? (
@@ -283,7 +283,7 @@ export default function ManagerAppointments() {
                           ))}
                         </div>
                       ) : (
-                        <span className="text-muted-foreground text-sm">No availability set</span>
+                        <span className="text-muted-foreground text-sm">لا توجد تواريخ متاحة</span>
                       )}
                     </TableCell>
                     <TableCell>
@@ -291,7 +291,7 @@ export default function ManagerAppointments() {
                         <span className="font-medium">{appointmentCount}</span>
                         {appointmentCount > 0 && (
                           <Badge variant="outline" className="ml-2">
-                            {appointmentCount > 2 ? "High" : "Normal"}
+                            {appointmentCount > 2 ? "مرتفع" : "طبيعي"}
                           </Badge>
                         )}
                       </div>
@@ -306,24 +306,24 @@ export default function ManagerAppointments() {
 
       {/* Teacher Assignment Dialog */}
       <Dialog open={assignDialogOpen} onOpenChange={setAssignDialogOpen}>
-        <DialogContent className="sm:max-w-md" dir="rtl"> {/* Added dir="rtl" here */}
+        <DialogContent className="sm:max-w-md" dir="rtl">
           <DialogHeader>
             <DialogTitle>تعيين معلم</DialogTitle>
           </DialogHeader>
           {selectedAppointment && (
             <div className="py-4">
               <div className="mb-4">
-                <p className="font-medium">Appointment Details</p>
+                <p className="font-medium">تفاصيل الموعد</p>
                 <p className="text-sm text-muted-foreground">
-                  Student: {selectedAppointment.studentName}
+                  الطالب: {selectedAppointment.studentName}
                 </p>
                 <p className="text-sm text-muted-foreground">
-                  Time: {format(new Date(selectedAppointment.startTime), "h:mm a")}
+                  الوقت: {format(new Date(selectedAppointment.startTime), "h:mm a")}
                 </p>
               </div>
 
               <div className="mb-4">
-                <p className="font-medium mb-2">Available Teachers</p>
+                <p className="font-medium mb-2">المعلمون المتاحون</p>
                 <div className="space-y-2">
                   {findAvailableTeachers(selectedAppointment.startTime).map(teacher => (
                       <div 
@@ -332,7 +332,7 @@ export default function ManagerAppointments() {
                         onClick={() => handleAssignTeacher(teacher.id)}
                       >
                         <span>{teacher.username}</span>
-                        <Button size="sm" variant="secondary">Select</Button>
+                        <Button size="sm" variant="secondary">اختيار</Button>
                       </div>
                     ))}
                 </div>
@@ -340,7 +340,7 @@ export default function ManagerAppointments() {
 
               <div className="flex justify-end">
                 <DialogClose asChild>
-                  <Button variant="outline">Cancel</Button>
+                  <Button variant="outline">إلغاء</Button>
                 </DialogClose>
               </div>
             </div>
