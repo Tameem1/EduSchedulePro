@@ -170,6 +170,43 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // New endpoint to get all appointments
+  app.get("/api/appointments", async (req, res) => {
+    if (!req.isAuthenticated() || req.user.role !== "manager") {
+      return res.sendStatus(403);
+    }
+
+    try {
+      const allAppointments = await storage.getAllAppointments();
+      res.json(allAppointments);
+    } catch (error) {
+      console.error("Error fetching appointments:", error);
+      res.status(500).json({ error: "Failed to fetch appointments" });
+    }
+  });
+
+  // New endpoint to assign teacher to appointment
+  app.patch("/api/appointments/:id", async (req, res) => {
+    if (!req.isAuthenticated() || req.user.role !== "manager") {
+      return res.sendStatus(403);
+    }
+
+    try {
+      const appointmentId = parseInt(req.params.id);
+      const { teacherId, status } = req.body;
+
+      const appointment = await storage.updateAppointment(appointmentId, {
+        teacherId,
+        status
+      });
+
+      res.json(appointment);
+    } catch (error) {
+      console.error("Error updating appointment:", error);
+      res.status(500).json({ error: "Failed to update appointment" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }

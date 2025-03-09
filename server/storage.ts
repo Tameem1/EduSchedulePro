@@ -99,6 +99,24 @@ export class DatabaseStorage implements IStorage {
       .where(eq(questionnaireResponses.appointmentId, appointmentId));
     return response;
   }
+
+  async getAllAppointments(): Promise<Appointment[]> {
+    return await db
+      .select()
+      .from(appointments);
+  }
+
+  async updateAppointment(
+    id: number,
+    data: { teacherId: number; status: string }
+  ): Promise<Appointment> {
+    const [updatedAppointment] = await db
+      .update(appointments)
+      .set(data)
+      .where(eq(appointments.id, id))
+      .returning();
+    return updatedAppointment;
+  }
 }
 
 export const storage = new DatabaseStorage();
