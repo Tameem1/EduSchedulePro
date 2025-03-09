@@ -6,8 +6,8 @@ import { Button } from "@/components/ui/button";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { format, parse, isAfter } from "date-fns";
-import { Link } from "wouter";
-import { X, Plus } from "lucide-react";
+import { Link, Redirect } from "wouter";
+import { X, Plus, Loader2 } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -44,10 +44,24 @@ function generateTimeOptions() {
 }
 
 export default function TeacherAvailability() {
-  const { user } = useAuth();
+  const { user, isLoading: isAuthLoading } = useAuth();
   const { toast } = useToast();
   const [timeRanges, setTimeRanges] = React.useState<Array<{id: string, start: string, end: string}>>([]);
   const timeOptions = React.useMemo(() => generateTimeOptions(), []);
+
+  // If still loading auth state, show loading indicator
+  if (isAuthLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin" />
+      </div>
+    );
+  }
+
+  // If not authenticated or not a teacher, redirect to login
+  if (!user || user.role !== 'teacher') {
+    return <Redirect to="/auth" />;
+  }
 
   // Add a new time range
   const addTimeRange = () => {
