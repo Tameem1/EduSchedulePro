@@ -70,17 +70,16 @@ export default function BookAppointment() {
     mutationFn: async () => {
       if (!selectedTime) throw new Error("Please select a time");
 
-      // Explicitly preserve the local time by creating an ISO string with timezone offset
-      // This ensures the server receives the correct local time
-      const localISOTime = new Date(
-        selectedTime.getTime() - selectedTime.getTimezoneOffset() * 60000
-      ).toISOString();
+      // Since everyone is in the same timezone, we can just send the date directly
+      // without any timezone adjustments
+      const dateToSend = new Date(selectedTime);
+      const isoString = dateToSend.toISOString();
 
-      console.log(`Booking appointment at local time: ${selectedTime.toLocaleTimeString()}`);
-      console.log(`Sending to server as: ${localISOTime}`);
+      console.log(`Booking appointment at time: ${selectedTime.toLocaleTimeString()}`);
+      console.log(`Sending to server as: ${isoString}`);
 
       const res = await apiRequest("POST", "/api/appointments", {
-        startTime: localISOTime,
+        startTime: isoString,
       });
 
       if (!res.ok) {
