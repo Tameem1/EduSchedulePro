@@ -1,5 +1,5 @@
-import { Pool, neonConfig } from '@neondatabase/serverless';
-import { drizzle } from 'drizzle-orm/neon-serverless';
+import { Pool, neonConfig } from "@neondatabase/serverless";
+import { drizzle } from "drizzle-orm/neon-serverless";
 import ws from "ws";
 import * as schema from "@shared/schema";
 
@@ -28,24 +28,23 @@ function RegistrationForm() {
 
   return (
     <form onSubmit={handleSubmit}>
-      {/* ... other form fields ... */}
+      {/* ... other form fields ... *}/
       <label htmlFor="telegramId">Telegram ID:</label>
       <input type="text" id="telegramId" value={telegramId} onChange={(e) => setTelegramId(e.target.value)} />
-      {/* ... rest of the form ... */}
+      {/* ... rest of the form ... *}/
       <button type="submit">Register</button>
     </form>
   );
 }
 */
 
-
 //This is a placeholder for the auth page.  A real implementation would require a React or similar framework and routing.
 /*
 function AuthPage() {
   return (
     <div>
-      {/* RegistrationForm would be rendered here */}
-      {/* LoginForm would be rendered here */}
+      {/* RegistrationForm would be rendered here *}/
+      {/* LoginForm would be rendered here *}/
     </div>
   );
 }
@@ -57,13 +56,12 @@ function LoginForm() {
   // ... Login form logic ...
   return (
     <form>
-      {/* ...Login form fields... */}
+      {/* ...Login form fields... *}/
       <button type="submit">Login</button>
     </form>
   );
 }
 */
-
 
 //This is a placeholder for the Telegram notification function.  A real implementation would require a Telegram bot API integration.
 /*
@@ -88,7 +86,6 @@ ALTER TABLE users ADD COLUMN telegram_id VARCHAR(255);
 
 // ... rest of server code ...
 */
-
 
 //This file is already correctly exporting the pool.  No changes are needed.
 
