@@ -3,6 +3,7 @@ import { db } from './db';
 import { eq } from 'drizzle-orm';
 import { users, appointments } from '@shared/schema';
 import { Telegraf } from 'telegraf';
+import { format } from 'date-fns';
 
 // Check if bot token is provided
 const botToken = process.env.TELEGRAM_BOT_TOKEN;
@@ -104,7 +105,7 @@ export const startBot = async () => {
     let launchPromise = bot.launch();
 
     // Set up a timeout to ensure we don't wait forever
-    const timeout = new Promise((_, reject) => 
+    const timeout = new Promise((_, reject) =>
       setTimeout(() => reject(new Error('Bot launch timeout after 10 seconds')), 10000)
     );
 
@@ -169,8 +170,8 @@ export async function sendTelegramNotification(telegramUsername: string, message
     console.log(`Sending notification to teacher with Telegram username: ${displayUsername}`);
 
     // Prepare message text with optional action button
-    const inlineKeyboard = callbackUrl ? 
-      { inline_keyboard: [[{ text: "قبول الموعد", url: callbackUrl }]] } : 
+    const inlineKeyboard = callbackUrl ?
+      { inline_keyboard: [[{ text: "قبول الموعد", url: callbackUrl }]] } :
       undefined;
 
     // Try to get user's ID from username (works if they've already started the bot)
@@ -180,9 +181,9 @@ export async function sendTelegramNotification(telegramUsername: string, message
 
       // If it's a numeric ID, use it directly, otherwise clean the username
       // Important: For usernames (not IDs), we need to REMOVE the @ symbol when using chat_id
-      const chatId = isNumeric 
-        ? telegramUsername.trim() 
-        : (formattedUsername.startsWith('@') 
+      const chatId = isNumeric
+        ? telegramUsername.trim()
+        : (formattedUsername.startsWith('@')
           ? formattedUsername.substring(1)  // Remove the @ for API calls with usernames
           : formattedUsername);
 
@@ -255,18 +256,15 @@ export async function notifyTeacherAboutAppointment(appointmentId: number, teach
       return false;
     }
 
-    // Check for telegramId first (preferred), then fall back to username
-    const hasTelegramId = !!teacher[0].telegramId;
     const hasTelegramUsername = !!teacher[0].telegramUsername;
 
-    if (!hasTelegramId && !hasTelegramUsername) {
-      console.error(`Teacher ${teacherId} has no Telegram ID or username`);
+    if (!hasTelegramUsername) {
+      console.error(`Teacher ${teacherId} has no Telegram username`);
       return false;
     }
 
-    // Prefer using telegramId if available
-    const telegramContact = hasTelegramId ? teacher[0].telegramId : teacher[0].telegramUsername;
-    console.log(`Using teacher's ${hasTelegramId ? 'Telegram ID' : 'username'}: ${telegramContact}`);
+    const telegramContact = teacher[0].telegramUsername;
+    console.log(`Using teacher's username: ${telegramContact}`);
 
     // Get appointment details
     const appointment = await db.select().from(appointments).where(eq(appointments.id, appointmentId)).limit(1);
@@ -285,91 +283,19 @@ export async function notifyTeacherAboutAppointment(appointmentId: number, teach
 
     console.log(`Using callback URL: ${callbackUrl}`);
 
-    // Format the date for display
-    const appointmentDate = new Date(appointment[0].startTime);
-    // Add timezone offset to ensure correct local time display
-    // Convert back to local time by applying timezone offset
-    const localAppointmentDate = new Date(appointmentDate.getTime());
-
-    // Format date in Arabic but using Gregorian calendar
-    const formattedDate = localAppointmentDate.toLocaleDateString('ar', {
-      year: 'numeric',
-      month: 'numeric',
-      day: 'numeric',
-      calendar: 'gregory' // Ensure Gregorian calendar is used
-    });
-
-    // Format time in Arabic
-    const formattedTime = localAppointmentDate.toLocaleTimeString('ar', { 
-      hour: '2-digit', 
-      minute: '2-digit',
-      hour12: true 
-    });
+    // Format time without timezone conversion
+    const appointmentTime = format(new Date(appointment[0].startTime), "HH:mm");
 
     // Log the original date and formatted versions for debugging
     console.log(`Original appointment time from DB: ${appointment[0].startTime}`);
-    console.log(`Local appointment time: ${localAppointmentDate.toString()}`);
-    console.log(`Formatted for notification: ${formattedDate} ${formattedTime}`);
+    console.log(`Formatted for notification: ${appointmentTime}`);
 
     // Prepare message text
-    const message = `تم تعيينك لموعد جديد مع ${studentName} بتاريخ ${formattedDate} الساعة ${formattedTime}. الرجاء قبول الموعد في أقرب وقت.`;
+    const message = `تم تعيينك لموعد جديد مع ${studentName} الساعة ${appointmentTime}. الرجاء قبول الموعد في أقرب وقت.`;
 
-    // Try first using the bot directly if we have it initialized (more reliable)
-    if (bot) {
-      try {
-        // Determine whether to use telegram ID or username
-        // Important: For usernames, we need to REMOVE the @ for Telegraf API
-        const chatId = teacher[0].telegramId || 
-                      (teacher[0].telegramUsername?.startsWith('@') 
-                        ? teacher[0].telegramUsername.substring(1)
-                        : teacher[0].telegramUsername);
-
-        console.log(`Sending notification to teacher ${teacherId} with Telegram ${teacher[0].telegramId ? 'ID' : 'username'}: ${chatId}`);
-
-        // Find the user's chat by ID or username and send message
-        // This works if the user has started a conversation with the bot
-        await bot.telegram.sendMessage(
-          chatId,
-          message,
-          callbackUrl ? { 
-            reply_markup: { 
-              inline_keyboard: [[{ text: "قبول الموعد", url: callbackUrl }]] 
-            } 
-          } : undefined
-        );
-
-        console.log('Successfully sent notification via bot API');
-        return true;
-      } catch (botError) {
-        console.log('Error sending via bot API, falling back to HTTP method:', botError.message);
-        console.log('Full bot API error:', JSON.stringify(botError, null, 2));
-        // Fall back to HTTP method
-      }
-    }
-
-    // Fallback to the HTTP method
-    console.log(`Telegram API fallback: Using ${hasTelegramId ? 'ID' : 'username'} "${telegramContact}" to send message`);
-
-    // Additional debug check: Try to look up username via Telegram API
-    if (!hasTelegramId && telegramContact && botToken) {
-      try {
-        console.log('Attempting to look up user info via getChat API...');
-        // Ensure username has NO @ prefix when passed to getChat API
-        const username = telegramContact.startsWith('@') 
-                        ? telegramContact.substring(1)
-                        : telegramContact;
-        const lookupResponse = await axios.get(
-          `https://api.telegram.org/bot${botToken}/getChat?chat_id=${username}`
-        );
-        console.log('User lookup successful!', JSON.stringify(lookupResponse.data, null, 2));
-      } catch (lookupError) {
-        console.log('User lookup failed:', JSON.stringify(lookupError.response?.data || lookupError.message, null, 2));
-        console.log('This confirms the username is not found or not accessible to the bot');
-      }
-    }
-
+    // Send notification
     return await sendTelegramNotification(
-      telegramContact, // Use the determined telegramId or username
+      telegramContact,
       message,
       callbackUrl
     );
