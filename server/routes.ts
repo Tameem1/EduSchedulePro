@@ -112,7 +112,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Convert startTime to Date if it's a string
       // Ensure we're storing the time as provided by the client
       const appointmentStartTime = new Date(startTime);
-      
+
       console.log(`Appointment requested for time: ${startTime}`);
       console.log(`Parsed as Date object: ${appointmentStartTime.toString()}`);
 
@@ -191,6 +191,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
     try {
       const allAppointments = await storage.getAllAppointments();
+      console.log("Fetched appointments times:", allAppointments.map(a => ({
+        id: a.id,
+        rawStartTime: a.startTime,
+        asDate: new Date(a.startTime).toISOString()
+      }))); // Added logging for all appointments
       res.json(allAppointments);
     } catch (error) {
       console.error("Error fetching appointments:", error);
@@ -260,6 +265,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const teacherId = parseInt(req.params.id);
       const appointments = await storage.getAppointmentsByTeacher(teacherId);
+      console.log("Fetched appointments times for teacher:", appointments.map(a => ({ // Added logging for teacher appointments
+        id: a.id,
+        rawStartTime: a.startTime,
+        asDate: new Date(a.startTime).toISOString()
+      })));
       res.json(appointments);
     } catch (error) {
       console.error("Error fetching teacher appointments:", error);
