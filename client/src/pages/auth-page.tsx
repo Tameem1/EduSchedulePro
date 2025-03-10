@@ -16,7 +16,9 @@ const loginSchema = insertUserSchema.pick({
   password: true 
 });
 
-const registerSchema = insertUserSchema;
+const registerSchema = insertUserSchema.extend({
+  telegramId: z.string().optional()
+});
 
 export default function AuthPage() {
   const { user, loginMutation, registerMutation } = useAuth();
@@ -35,6 +37,7 @@ export default function AuthPage() {
       username: "",
       password: "",
       role: UserRole.STUDENT as UserRoleType,
+      telegramId: "",
     },
   });
 
@@ -82,6 +85,11 @@ export default function AuthPage() {
                 </TabsContent>
 
                 <TabsContent value="register">
+                  <div className="bg-blue-50 p-3 mb-4 rounded-md border border-blue-200">
+                    <p className="text-sm text-blue-800">
+                      يمكنك إضافة معرف تيليجرام الخاص بك لتلقي الإشعارات المتعلقة بالمواعيد والتحديثات عبر تيليجرام
+                    </p>
+                  </div>
                   <form onSubmit={registerForm.handleSubmit((data) => registerMutation.mutate(data))}>
                     <div className="space-y-4">
                       <div>
@@ -107,6 +115,14 @@ export default function AuthPage() {
                             <SelectItem value={UserRole.MANAGER}>مدير</SelectItem>
                           </SelectContent>
                         </Select>
+                      </div>
+                      <div>
+                        <Label htmlFor="telegramId">معرف تيليجرام (اختياري)</Label>
+                        <Input 
+                          dir="ltr" 
+                          placeholder="@username أو chat ID" 
+                          {...registerForm.register("telegramId")}
+                        />
                       </div>
                       <Button 
                         type="submit" 
