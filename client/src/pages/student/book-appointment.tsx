@@ -61,10 +61,15 @@ export default function BookAppointment() {
   const bookAppointmentMutation = useMutation({
     mutationFn: async () => {
       if (!selectedTime) throw new Error("Please select a time");
-
+      
+      console.log("Selected time (local):", selectedTime.toLocaleString());
+      
+      // Use the selected time directly without any adjustments
       const appointment = {
         startTime: getGMT3ISOString(selectedTime),
       };
+      
+      console.log("Sending to server:", appointment.startTime);
 
       const res = await apiRequest("POST", "/api/appointments", appointment);
 
@@ -165,7 +170,7 @@ export default function BookAppointment() {
                     <div className="flex justify-between items-center">
                       <div>
                         <p className="font-medium">
-                          {formatGMT3Time(new Date(appointment.startTime))}
+                          {format(new Date(appointment.startTime), "EEEE, MMMM d, yyyy h:mm a")}
                         </p>
                         <p className="text-sm text-muted-foreground">
                           {format(new Date(appointment.startTime), "EEEE, MMMM d")}
