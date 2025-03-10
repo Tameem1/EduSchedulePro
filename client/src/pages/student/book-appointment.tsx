@@ -36,11 +36,11 @@ export default function BookAppointment() {
     return <Redirect to="/auth" />;
   }
 
-
   // Convert slider value to time and update the selected time
   React.useEffect(() => {
     if (sliderValue[0] !== undefined) {
-      const now = new Date();
+      // Create a new date for today
+      const time = new Date();
       const selectedSlot = sliderValue[0];
 
       // Calculate hours and minutes from the slot
@@ -48,39 +48,26 @@ export default function BookAppointment() {
       const hours = Math.floor(totalHours);
       const minutes = (totalHours - hours) * 60;
 
-      // Create date without timezone conversion
-      const time = new Date();
-      time.setHours(hours, minutes, 0, 0);
+      // Set the time components
+      time.setHours(hours);
+      time.setMinutes(minutes);
+      time.setSeconds(0);
+      time.setMilliseconds(0);
+
       setSelectedTime(time);
     }
   }, [sliderValue]);
-
-  // Format the time display for the slider
-  const formatTimeLabel = (value: number) => {
-    const totalHours = START_HOUR + value / 2;
-    const hours = Math.floor(totalHours);
-    const minutes = (totalHours - hours) * 60;
-
-    const time = new Date();
-    time.setHours(hours, minutes, 0, 0);
-
-    return format(time, "h:mm a");
-  };
 
   const bookAppointmentMutation = useMutation({
     mutationFn: async () => {
       if (!selectedTime) throw new Error("Please select a time");
 
-      // Send the time exactly as it is, without any timezone conversion
-      const dateToSend = selectedTime;
-      const isoString = dateToSend.toISOString();
+      // Format the date as ISO string
+      const appointment = {
+        startTime: selectedTime.toISOString(),
+      };
 
-      console.log(`Booking appointment at time: ${selectedTime.toLocaleTimeString()}`);
-      console.log(`Sending to server as: ${isoString}`);
-
-      const res = await apiRequest("POST", "/api/appointments", {
-        startTime: isoString,
-      });
+      const res = await apiRequest("POST", "/api/appointments", appointment);
 
       if (!res.ok) {
         const error = await res.json();
@@ -148,7 +135,7 @@ export default function BookAppointment() {
 
               <div className="mt-6 text-center bg-muted/50 p-4 rounded-md">
                 <p className="text-xl font-semibold">
-                  {selectedTime ? format(selectedTime, "h:mm a") : "اختر وقتاً"}
+                  {selectedTime ? format(selectedTime, "HH:mm") : "اختر وقتاً"}
                 </p>
                 <p className="text-xs text-muted-foreground mt-1">
                   حرك المؤشر لاختيار الوقت المناسب لك
@@ -179,7 +166,7 @@ export default function BookAppointment() {
                     <div className="flex justify-between items-center">
                       <div>
                         <p className="font-medium">
-                          {format(new Date(appointment.startTime), "h:mm a")}
+                          {format(new Date(appointment.startTime), "HH:mm")}
                         </p>
                         <p className="text-sm text-muted-foreground">
                           {format(new Date(appointment.startTime), "EEEE, MMMM d")}

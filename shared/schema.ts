@@ -90,7 +90,14 @@ export const questionnaireResponsesRelations = relations(questionnaireResponses,
 // Create Zod schemas for validation
 export const insertUserSchema = createInsertSchema(users);
 export const insertAvailabilitySchema = createInsertSchema(availabilities);
-export const insertAppointmentSchema = createInsertSchema(appointments).omit({ teacherId: true });
+export const insertAppointmentSchema = createInsertSchema(appointments).extend({
+  startTime: z.preprocess((arg) => {
+    if (typeof arg === 'string') {
+      return new Date(arg);
+    }
+    return arg;
+  }, z.date()),
+}).omit({ teacherId: true });
 export const insertQuestionnaireSchema = createInsertSchema(questionnaireResponses);
 
 // Export types

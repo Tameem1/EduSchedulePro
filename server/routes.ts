@@ -108,15 +108,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
     try {
       const { startTime } = req.body;
-
-      // Store the time exactly as received from the client
-      const appointmentStartTime = startTime;
-
       console.log(`Appointment requested for time: ${startTime}`);
-      console.log(`Storing as: ${appointmentStartTime}`);
 
       const parsedData = insertAppointmentSchema.parse({
-        startTime: appointmentStartTime,
+        startTime,
         studentId: req.user.id,
         status: "pending"
       });
