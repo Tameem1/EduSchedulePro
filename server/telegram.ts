@@ -93,11 +93,18 @@ export async function sendTelegramNotification(telegramUsername: string, message
 
     // Try to get user's ID from username (works if they've already started the bot)
     try {
+      // Remove @ from username if present (Telegram API prefers usernames without @)
+      const cleanUsername = formattedUsername.startsWith('@') 
+        ? formattedUsername.substring(1) // Remove @ if present
+        : formattedUsername;
+        
+      console.log(`Attempting to send message to Telegram username: ${cleanUsername}`);
+        
       // First attempt: send directly to the username
       const response = await axios.post(
         `https://api.telegram.org/bot${botToken}/sendMessage`,
         {
-          chat_id: formattedUsername, // This must be a Telegram username with @
+          chat_id: cleanUsername, // Send without @ prefix
           text: message,
           parse_mode: 'HTML',
           reply_markup: inlineKeyboard ? JSON.stringify(inlineKeyboard) : undefined
@@ -178,12 +185,12 @@ export async function notifyTeacherAboutAppointment(appointmentId: number, teach
         // Clean the username (remove @ if present)
         const username = teacher[0].telegramUsername.replace('@', '');
         
-        console.log(`Sending notification to teacher ${teacherId} with Telegram username: @${username}`);
+        console.log(`Sending notification to teacher ${teacherId} with Telegram username: ${username} (without @ prefix)`);
         
         // Find the user's chat by username and send message
         // This works if the user has started a conversation with the bot
         await bot.telegram.sendMessage(
-          `@${username}`, 
+          username, // Send without @ prefix
           message,
           callbackUrl ? { 
             reply_markup: { 
