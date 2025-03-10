@@ -1,3 +1,4 @@
+
 import * as React from "react";
 import { useParams, useLocation } from "wouter";
 import { useQuery, useMutation } from "@tanstack/react-query";
@@ -30,7 +31,7 @@ interface AppointmentDetails {
   teacherId: number | null;
 }
 
-export function AssignTeacher() {
+export default function AssignTeacher() {
   const { id } = useParams();
   const [, navigate] = useLocation();
   const { toast } = useToast();
