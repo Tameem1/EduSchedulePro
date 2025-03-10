@@ -249,7 +249,7 @@ export async function sendTelegramNotification(telegramUsername: string, message
 
 export async function notifyTeacherAboutAppointment(appointmentId: number, teacherId: number): Promise<boolean> {
   try {
-    // Get teacher telegram username or ID
+    // Get teacher details
     const teacher = await db.select().from(users).where(eq(users.id, teacherId)).limit(1);
     if (!teacher.length) {
       console.error(`Teacher ${teacherId} not found`);
@@ -257,14 +257,12 @@ export async function notifyTeacherAboutAppointment(appointmentId: number, teach
     }
 
     const hasTelegramUsername = !!teacher[0].telegramUsername;
-
     if (!hasTelegramUsername) {
       console.error(`Teacher ${teacherId} has no Telegram username`);
       return false;
     }
 
     const telegramContact = teacher[0].telegramUsername;
-    console.log(`Using teacher's username: ${telegramContact}`);
 
     // Get appointment details
     const appointment = await db.select().from(appointments).where(eq(appointments.id, appointmentId)).limit(1);
@@ -277,18 +275,12 @@ export async function notifyTeacherAboutAppointment(appointmentId: number, teach
     const student = await db.select().from(users).where(eq(users.id, appointment[0].studentId)).limit(1);
     const studentName = student.length ? student[0].username : `طالب ${appointment[0].studentId}`;
 
-    // Create acceptance URL (must be a public URL, not localhost)
+    // Create acceptance URL
     const replit_domain = process.env.REPL_SLUG ? `https://${process.env.REPL_SLUG}.replit.dev` : null;
     const callbackUrl = `${process.env.FRONTEND_URL || replit_domain || 'https://example.com'}/teacher/accept-appointment/${appointmentId}`;
 
-    console.log(`Using callback URL: ${callbackUrl}`);
-
     // Format time without timezone conversion
     const appointmentTime = format(new Date(appointment[0].startTime), "HH:mm");
-
-    // Log the original date and formatted versions for debugging
-    console.log(`Original appointment time from DB: ${appointment[0].startTime}`);
-    console.log(`Formatted for notification: ${appointmentTime}`);
 
     // Prepare message text
     const message = `تم تعيينك لموعد جديد مع ${studentName} الساعة ${appointmentTime}. الرجاء قبول الموعد في أقرب وقت.`;
@@ -301,7 +293,6 @@ export async function notifyTeacherAboutAppointment(appointmentId: number, teach
     );
   } catch (error) {
     console.error('Failed to notify teacher about appointment:', error);
-    console.error('Error details:', JSON.stringify(error, null, 2));
     return false;
   }
 }

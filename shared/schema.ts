@@ -29,8 +29,8 @@ export const users = pgTable("users", {
 export const availabilities = pgTable("availabilities", {
   id: serial("id").primaryKey(),
   teacherId: integer("teacher_id").references(() => users.id).notNull(),
-  startTime: timestamp("start_time").notNull(),
-  endTime: timestamp("end_time").notNull()
+  startTime: timestamp("start_time", { withTimezone: false }).notNull(),
+  endTime: timestamp("end_time", { withTimezone: false }).notNull()
 });
 
 // Appointments between students and teachers
@@ -38,7 +38,7 @@ export const appointments = pgTable("appointments", {
   id: serial("id").primaryKey(),
   studentId: integer("student_id").references(() => users.id).notNull(),
   teacherId: integer("teacher_id").references(() => users.id), 
-  startTime: timestamp("start_time").notNull(),
+  startTime: timestamp("start_time", { withTimezone: false }).notNull(),
   status: appointmentStatusEnum("status").notNull().default('pending')
 });
 
@@ -91,12 +91,7 @@ export const questionnaireResponsesRelations = relations(questionnaireResponses,
 export const insertUserSchema = createInsertSchema(users);
 export const insertAvailabilitySchema = createInsertSchema(availabilities);
 export const insertAppointmentSchema = createInsertSchema(appointments).extend({
-  startTime: z.preprocess((arg) => {
-    if (typeof arg === 'string') {
-      return new Date(arg);
-    }
-    return arg;
-  }, z.date()),
+  startTime: z.string().transform((str) => new Date(str)),
 }).omit({ teacherId: true });
 export const insertQuestionnaireSchema = createInsertSchema(questionnaireResponses);
 
