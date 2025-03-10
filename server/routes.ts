@@ -110,9 +110,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const { startTime } = req.body;
       console.log(`Appointment requested for time: ${startTime}`);
       console.log(`Time in local timezone: ${new Date(startTime).toLocaleString()}`);
-
-      const parsedData = insertAppointmentSchema.parse({
-        startTime,
+      console.log(`Hours: ${new Date(startTime).getHours()}, Minutes: ${new Date(startTime).getMinutes()}`);
+      
+      // Use the time directly without any schema transformations
+      const parsedData = {
+        startTime: startTime,
+        studentId: req.user.id,
+        status: "pending"
+      };
         studentId: req.user.id,
         status: "pending"
       });

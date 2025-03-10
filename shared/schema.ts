@@ -91,10 +91,7 @@ export const questionnaireResponsesRelations = relations(questionnaireResponses,
 export const insertUserSchema = createInsertSchema(users);
 export const insertAvailabilitySchema = createInsertSchema(availabilities);
 export const insertAppointmentSchema = createInsertSchema(appointments).extend({
-  startTime: z.string().transform((str) => {
-    // Don't modify the time, just ensure it's an ISO string
-    return new Date(str).toISOString();
-  }),
+  startTime: z.string(),
 }).omit({ teacherId: true });
 export const insertQuestionnaireSchema = createInsertSchema(questionnaireResponses);
 
