@@ -302,18 +302,27 @@ export default function ManagerAppointments() {
                       const availStartTime = new Date(avail.startTime);
                       const availEndTime = new Date(avail.endTime);
                       
-                      // Log for debugging
+                      // Normalize dates for comparison by converting to timestamps
+                      const apptTimeStamp = appointmentTime.getTime();
+                      const startTimeStamp = availStartTime.getTime();
+                      const endTimeStamp = availEndTime.getTime();
+                      
+                      // Log for debugging with consistent format
                       console.log(`Checking availability for teacher ${teacher.id}:`, {
+                        teacherId: avail.teacherId,
                         appointmentTime: appointmentTime.toISOString(),
+                        appointmentTimeStamp: apptTimeStamp,
                         availStartTime: availStartTime.toISOString(),
+                        availStartTimeStamp: startTimeStamp,
                         availEndTime: availEndTime.toISOString(),
-                        isInRange: appointmentTime >= availStartTime && appointmentTime <= availEndTime
+                        availEndTimeStamp: endTimeStamp,
+                        isInRange: apptTimeStamp >= startTimeStamp && apptTimeStamp <= endTimeStamp
                       });
                       
                       return (
                         avail.teacherId === teacher.id &&
-                        appointmentTime >= availStartTime &&
-                        appointmentTime <= availEndTime
+                        apptTimeStamp >= startTimeStamp &&
+                        apptTimeStamp <= endTimeStamp
                       );
                     });
 

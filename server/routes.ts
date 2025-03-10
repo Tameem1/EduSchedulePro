@@ -114,11 +114,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       // Ensure the date is properly formatted and parsed
       const appointmentDate = new Date(startTime);
-      console.log("Creating appointment with parsed date:", appointmentDate.toISOString());
+      
+      // Format for logging and debugging
+      console.log("Creating appointment with:", {
+        originalTime: startTime,
+        parsedDate: appointmentDate.toISOString(),
+        timestamp: appointmentDate.getTime()
+      });
       
       // Parse using the schema to ensure correct formatting
+      // Store the date in a format that will be consistent with older records
       const parsedData = insertAppointmentSchema.parse({
-        startTime: appointmentDate.toISOString(),
+        startTime: appointmentDate,
         studentId: req.user.id,
         status: "pending"
       });
