@@ -49,18 +49,34 @@ export const startBot = () => {
     return;
   }
 
-  bot.start((ctx) => ctx.reply('مرحبًا بك في روبوت التعليم المساعد! استخدم /register للتسجيل كمعلم.'));
-
-  bot.command('register', (ctx) => {
-    const telegramPhone = ctx.from.id; // Assuming ID can be used as a placeholder for phone number collection.  Needs refinement for real-world implementation.
-    ctx.reply(`رقم التيليجرام الخاص بك هو: ${telegramPhone}\nيرجى إضافة هذا الرقم في ملفك الشخصي على منصة التعليم.`);
+  bot.start(async (ctx) => {
+    try {
+      console.log('Received /start command from user:', ctx.from);
+      await ctx.reply('مرحبًا بك في روبوت التعليم المساعد! استخدم /register للتسجيل كمعلم.');
+    } catch (error) {
+      console.error('Error in start command handler:', error);
+    }
   });
 
-  // Launch the bot
+  bot.command('register', async (ctx) => {
+    try {
+      const userId = ctx.from.id;
+      const username = ctx.from.username || '';
+      console.log(`User registering with Telegram ID: ${userId}, username: @${username}`);
+      await ctx.reply(`معرف التيليجرام الخاص بك هو: ${userId}\nاسم المستخدم الخاص بك هو: @${username}\nيرجى إضافة هذه المعلومات في ملفك الشخصي على منصة التعليم.`);
+    } catch (error) {
+      console.error('Error in register command handler:', error);
+    }
+  });
+
+  // Launch the bot with more detailed logging
   bot.launch().then(() => {
-    console.log('Telegram bot started');
+    console.log('Telegram bot started successfully');
+    console.log(`Bot username: @${bot.botInfo?.username || 'unknown'}`);
+    console.log('Teachers should start a conversation with the bot by sending /start to @' + (bot.botInfo?.username || 'your_bot_username'));
   }).catch(err => {
     console.error('Failed to start Telegram bot:', err);
+    console.error('Make sure your TELEGRAM_BOT_TOKEN is correct and the bot is properly configured');
   });
 };
 
@@ -93,18 +109,23 @@ export async function sendTelegramNotification(telegramUsername: string, message
 
     // Try to get user's ID from username (works if they've already started the bot)
     try {
-      // Remove @ from username if present (Telegram API prefers usernames without @)
-      const cleanUsername = formattedUsername.startsWith('@') 
-        ? formattedUsername.substring(1) // Remove @ if present
-        : formattedUsername;
+      // Check if the username might actually be a numeric chat ID
+      const isNumeric = /^\d+$/.test(telegramUsername.trim());
+      
+      // If it's a numeric ID, use it directly, otherwise clean the username
+      const chatId = isNumeric 
+        ? telegramUsername.trim() 
+        : (formattedUsername.startsWith('@') 
+          ? formattedUsername.substring(1) 
+          : formattedUsername);
         
-      console.log(`Attempting to send message to Telegram username: ${cleanUsername}`);
+      console.log(`Attempting to send message to Telegram ${isNumeric ? 'chat ID' : 'username'}: ${chatId}`);
         
-      // First attempt: send directly to the username
+      // First attempt: send directly to the chat_id
       const response = await axios.post(
         `https://api.telegram.org/bot${botToken}/sendMessage`,
         {
-          chat_id: cleanUsername, // Send without @ prefix
+          chat_id: chatId,
           text: message,
           parse_mode: 'HTML',
           reply_markup: inlineKeyboard ? JSON.stringify(inlineKeyboard) : undefined
@@ -147,12 +168,25 @@ export async function sendTelegramNotification(telegramUsername: string, message
 
 export async function notifyTeacherAboutAppointment(appointmentId: number, teacherId: number): Promise<boolean> {
   try {
-    // Get teacher telegram username
+    // Get teacher telegram username or ID
     const teacher = await db.select().from(users).where(eq(users.id, teacherId)).limit(1);
-    if (!teacher.length || !teacher[0].telegramUsername) {
-      console.error(`Teacher ${teacherId} not found or has no Telegram username`);
+    if (!teacher.length) {
+      console.error(`Teacher ${teacherId} not found`);
       return false;
     }
+    
+    // Check for telegramId first (preferred), then fall back to username
+    const hasTelegramId = !!teacher[0].telegramId;
+    const hasTelegramUsername = !!teacher[0].telegramUsername;
+    
+    if (!hasTelegramId && !hasTelegramUsername) {
+      console.error(`Teacher ${teacherId} has no Telegram ID or username`);
+      return false;
+    }
+    
+    // Prefer using telegramId if available
+    const telegramContact = hasTelegramId ? teacher[0].telegramId : teacher[0].telegramUsername;
+    console.log(`Using teacher's ${hasTelegramId ? 'Telegram ID' : 'username'}: ${telegramContact}`);
 
     // Get appointment details
     const appointment = await db.select().from(appointments).where(eq(appointments.id, appointmentId)).limit(1);
@@ -182,15 +216,15 @@ export async function notifyTeacherAboutAppointment(appointmentId: number, teach
     // Try first using the bot directly if we have it initialized (more reliable)
     if (bot) {
       try {
-        // Clean the username (remove @ if present)
-        const username = teacher[0].telegramUsername.replace('@', '');
+        // Determine whether to use telegram ID or username
+        const chatId = teacher[0].telegramId || teacher[0].telegramUsername?.replace('@', '');
         
-        console.log(`Sending notification to teacher ${teacherId} with Telegram username: ${username} (without @ prefix)`);
+        console.log(`Sending notification to teacher ${teacherId} with Telegram ${teacher[0].telegramId ? 'ID' : 'username'}: ${chatId}`);
         
-        // Find the user's chat by username and send message
+        // Find the user's chat by ID or username and send message
         // This works if the user has started a conversation with the bot
         await bot.telegram.sendMessage(
-          username, // Send without @ prefix
+          chatId,
           message,
           callbackUrl ? { 
             reply_markup: { 
@@ -210,7 +244,7 @@ export async function notifyTeacherAboutAppointment(appointmentId: number, teach
     
     // Fallback to the HTTP method
     return await sendTelegramNotification(
-      teacher[0].telegramUsername, 
+      telegramContact, // Use the determined telegramId or username
       message,
       callbackUrl
     );
