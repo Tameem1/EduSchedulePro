@@ -64,7 +64,7 @@ export const startBot = () => {
   });
 };
 
-export async function sendTelegramNotification(telegramPhone: string, message: string, callbackUrl?: string): Promise<boolean> {
+export async function sendTelegramNotification(telegramUsername: string, message: string, callbackUrl?: string): Promise<boolean> {
   try {
     // Check if TELEGRAM_BOT_TOKEN is set
     const botToken = process.env.TELEGRAM_BOT_TOKEN;
@@ -73,20 +73,18 @@ export async function sendTelegramNotification(telegramPhone: string, message: s
       return false;
     }
 
-    // Format telephone number (remove any non-digit characters and ensure it starts with +)
-    let formattedPhone = telegramPhone;
-    if (formattedPhone) {
-      // Remove any non-digit characters except +
-      formattedPhone = formattedPhone.replace(/[^\d+]/g, '');
-
-      // Ensure it starts with +
-      if (!formattedPhone.startsWith('+')) {
-        formattedPhone = '+' + formattedPhone;
-      }
-    } else {
-      console.error('No phone number provided for Telegram notification');
+    if (!telegramUsername) {
+      console.error('No Telegram username provided for notification');
       return false;
     }
+
+    // Ensure username starts with @ if provided
+    let formattedUsername = telegramUsername.trim();
+    if (formattedUsername && !formattedUsername.startsWith('@')) {
+      formattedUsername = '@' + formattedUsername;
+    }
+
+    console.log(`Attempting to send Telegram message to: ${formattedUsername}`);
 
     // Prepare message text with optional action button
     const inlineKeyboard = callbackUrl ? 
@@ -94,17 +92,24 @@ export async function sendTelegramNotification(telegramPhone: string, message: s
       undefined;
 
     // Send message via Telegram Bot API
-    const response = await axios.post(
-      `https://api.telegram.org/bot${botToken}/sendMessage`,
-      {
-        chat_id: formattedPhone,
-        text: message,
-        parse_mode: 'HTML',
-        reply_markup: inlineKeyboard ? JSON.stringify(inlineKeyboard) : undefined
-      }
-    );
+    try {
+      const response = await axios.post(
+        `https://api.telegram.org/bot${botToken}/sendMessage`,
+        {
+          chat_id: formattedUsername, // This must be a Telegram username with @
+          text: message,
+          parse_mode: 'HTML',
+          reply_markup: inlineKeyboard ? JSON.stringify(inlineKeyboard) : undefined
+        }
+      );
 
-    return response.data.ok;
+      console.log('Telegram API response:', response.data);
+      return response.data.ok;
+    } catch (apiError: any) {
+      console.error('Telegram API error:', apiError.response?.data || apiError.message);
+      console.log('Important: The user must have started a conversation with your bot before you can send them messages');
+      return false;
+    }
   } catch (error) {
     console.error('Failed to send Telegram notification:', error);
     return false;
@@ -113,10 +118,10 @@ export async function sendTelegramNotification(telegramPhone: string, message: s
 
 export async function notifyTeacherAboutAppointment(appointmentId: number, teacherId: number): Promise<boolean> {
   try {
-    // Get teacher telegram phone number
+    // Get teacher telegram username (stored in telegramPhone field)
     const teacher = await db.select().from(users).where(eq(users.id, teacherId)).limit(1);
-    if (!teacher.length || !teacher[0].telegramPhone) { //Changed to telegramPhone
-      console.error(`Teacher ${teacherId} not found or has no Telegram phone number`);
+    if (!teacher.length || !teacher[0].telegramPhone) {
+      console.error(`Teacher ${teacherId} not found or has no Telegram username`);
       return false;
     }
 
@@ -143,8 +148,9 @@ export async function notifyTeacherAboutAppointment(appointmentId: number, teach
     });
 
     // Send notification with more detailed information
+    console.log(`Sending notification to teacher ${teacherId} with Telegram username: ${teacher[0].telegramPhone}`);
     return await sendTelegramNotification(
-      teacher[0].telegramPhone, //Changed to telegramPhone
+      teacher[0].telegramPhone, 
       `تم تعيينك لموعد جديد مع ${studentName} بتاريخ ${formattedDate} الساعة ${formattedTime}. الرجاء قبول الموعد في أقرب وقت.`,
       callbackUrl
     );

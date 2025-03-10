@@ -26,7 +26,7 @@ const formSchema = z.object({
   username: z.string().min(3, "اسم المستخدم يجب أن يكون 3 أحرف على الأقل"),
   password: z.string().min(6, "كلمة المرور يجب أن تكون 6 أحرف على الأقل"),
   role: z.enum(["student", "teacher", "manager"]),
-  telegramPhone: z.string().optional(),
+  telegramUsername: z.string().optional(),
 });
 
 export function RegisterForm() {
@@ -38,7 +38,7 @@ export function RegisterForm() {
       username: "",
       password: "",
       role: "student",
-      telegramPhone: "",
+      telegramUsername: "",
     },
   });
 
@@ -47,7 +47,7 @@ export function RegisterForm() {
       username: values.username,
       password: values.password,
       role: values.role,
-      telegramPhone: values.telegramPhone || undefined,
+      telegramUsername: values.telegramUsername || undefined,
     });
   }
 
@@ -86,22 +86,22 @@ export function RegisterForm() {
         />
         <FormField
           control={form.control}
-          name="telegramPhone"
+          name="telegramUsername"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>رقم هاتف تيليجرام (اختياري)</FormLabel>
+              <FormLabel>معرف المستخدم في تيليجرام (اختياري)</FormLabel>
               <FormControl>
                 <Input
                   dir="ltr"
-                  type="tel"
-                  placeholder="+966123456789"
+                  type="text"
+                  placeholder="@yourname"
                   {...field}
                 />
               </FormControl>
               <FormMessage />
-            </FormItem>
-          )}
-        />rmMessage />
+              <small className="text-gray-500">
+                لاستلام الإشعارات، يجب عليك أولاً بدء محادثة مع الروبوت ثم إدخال معرف المستخدم الخاص بك مع علامة @ قبل الاسم
+              </small>
             </FormItem>
           )}
         />
