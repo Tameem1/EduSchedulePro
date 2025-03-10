@@ -307,6 +307,20 @@ export default function ManagerAppointments() {
                       const startTimeStamp = availStartTime.getTime();
                       const endTimeStamp = availEndTime.getTime();
                       
+                      console.log(`Dialog - Checking availability for teacher ${teacher.id}:`, {
+                        teacherId: avail.teacherId,
+                        appointmentTime: appointmentTime.toISOString(),
+                        appointmentTimeStamp: apptTimeStamp,
+                        availStartTime: availStartTime.toISOString(),
+                        availStartTimeStamp: startTimeStamp,
+                        availEndTime: availEndTime.toISOString(),
+                        availEndTimeStamp: endTimeStamp,
+                        isInRange: apptTimeStamp >= startTimeStamp && apptTimeStamp <= endTimeStamp
+                      });ng to timestamps
+                      const apptTimeStamp = appointmentTime.getTime();
+                      const startTimeStamp = availStartTime.getTime();
+                      const endTimeStamp = availEndTime.getTime();
+                      
                       // Log for debugging with consistent format
                       console.log(`Checking availability for teacher ${teacher.id}:`, {
                         teacherId: avail.teacherId,
@@ -316,7 +330,7 @@ export default function ManagerAppointments() {
                         availStartTimeStamp: startTimeStamp,
                         availEndTime: availEndTime.toISOString(),
                         availEndTimeStamp: endTimeStamp,
-                        isInRange: apptTimeStamp >= startTimeStamp && apptTimeStamp <= endTimeStamp
+                        isInRange: apptTimeStamp >= startTimeStamp && apptTimeStamp <= endTimeStamp= endTimeStamp
                       });
                       
                       return (

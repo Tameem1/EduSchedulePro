@@ -111,17 +111,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.log(`Appointment requested for time: ${startTime}`);
       console.log(`Time in local timezone: ${new Date(startTime).toLocaleString()}`);
       console.log(`Hours: ${new Date(startTime).getHours()}, Minutes: ${new Date(startTime).getMinutes()}`);
-      
+
       // Ensure the date is properly formatted and parsed
       const appointmentDate = new Date(startTime);
-      
+
       // Format for logging and debugging
       console.log("Creating appointment with:", {
         originalTime: startTime,
         parsedDate: appointmentDate.toISOString(),
         timestamp: appointmentDate.getTime()
       });
-      
+
       // Parse using the schema to ensure correct formatting
       // Store the date in a format that will be consistent with older records
       const parsedData = insertAppointmentSchema.parse({
@@ -198,13 +198,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
 
     try {
-      const allAppointments = await storage.getAllAppointments();
-      console.log("Fetched appointments times:", allAppointments.map(a => ({
+      const appointments = await storage.getAllAppointments();
+      console.log("Fetched appointments times:", appointments.map(a => ({
         id: a.id,
         rawStartTime: a.startTime,
-        asDate: new Date(a.startTime).toISOString()
-      }))); // Added logging for all appointments
-      res.json(allAppointments);
+        asDate: new Date(a.startTime).toISOString(),
+        timestamp: new Date(a.startTime).getTime()
+      }))); // Enhanced logging for all appointments with timestamp
+      res.json(appointments);
     } catch (error) {
       console.error("Error fetching appointments:", error);
       res.status(500).json({ error: "Failed to fetch appointments" });
@@ -276,7 +277,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.log("Fetched appointments times for teacher:", appointments.map(a => ({ // Added logging for teacher appointments
         id: a.id,
         rawStartTime: a.startTime,
-        asDate: new Date(a.startTime).toISOString()
+        asDate: new Date(a.startTime).toISOString(),
+        timestamp: new Date(a.startTime).getTime()
       })));
       res.json(appointments);
     } catch (error) {
