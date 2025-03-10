@@ -51,6 +51,10 @@ export async function notifyTeacherAboutAppointment(appointmentId: number, teach
       return false;
     }
 
+    // Get student details
+    const student = await db.select().from(users).where(eq(users.id, appointment[0].studentId)).limit(1);
+    const studentName = student.length ? student[0].username : `طالب ${appointment[0].studentId}`;
+
     // Create acceptance URL (this would be your frontend URL where teacher can accept)
     const callbackUrl = `${process.env.FRONTEND_URL || 'http://localhost:5173'}/teacher/accept-appointment/${appointmentId}`;
     
@@ -62,10 +66,10 @@ export async function notifyTeacherAboutAppointment(appointmentId: number, teach
       minute: '2-digit'
     });
     
-    // Send notification
+    // Send notification with more detailed information
     return await sendTelegramNotification(
       teacher[0].telegramId,
-      `تم تعيينك لموعد جديد مع طالب (${appointment[0].studentId}) بتاريخ ${formattedDate} الساعة ${formattedTime}. الرجاء قبول الموعد في أقرب وقت.`,
+      `تم تعيينك لموعد جديد مع ${studentName} بتاريخ ${formattedDate} الساعة ${formattedTime}. الرجاء قبول الموعد في أقرب وقت.`,
       callbackUrl
     );
   } catch (error) {

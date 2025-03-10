@@ -76,10 +76,15 @@ export default function ManagerAppointments() {
       }
       return res.json();
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
+      const notificationMessage = data.notificationSent 
+        ? "تم إرسال إشعار للمعلم عبر تيليجرام بنجاح"
+        : "تم تعيين المعلم ولكن لم يتم إرسال إشعار تيليجرام";
+        
       toast({
         title: "تم تعيين المعلم",
-        description: "تم تحديث الموعد بنجاح",
+        description: notificationMessage,
+        variant: data.notificationSent ? "default" : "secondary",
       });
       queryClient.invalidateQueries({ queryKey: ["/api/appointments"] });
       setIsAssignDialogOpen(false);
