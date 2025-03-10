@@ -23,10 +23,12 @@ import {
 } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import type { User, Availability, Appointment } from "@shared/schema";
+import { useAuth } from "../../providers/auth-provider";
 
 export default function ManagerAppointments() {
   const { toast } = useToast();
-  const [selectedAppointment, setSelectedAppointment] = React.useState<Appointment | null>(null);
+  const [selectedAppointment, setSelectedAppointment] =
+    React.useState<Appointment | null>(null);
   const [isAssignDialogOpen, setIsAssignDialogOpen] = React.useState(false);
 
   // Fetch all teachers
@@ -42,7 +44,9 @@ export default function ManagerAppointments() {
   });
 
   // Fetch all appointments
-  const { data: appointments, isLoading: isLoadingAppointments } = useQuery<Appointment[]>({
+  const { data: appointments, isLoading: isLoadingAppointments } = useQuery<
+    Appointment[]
+  >({
     queryKey: ["/api/appointments"],
     queryFn: async () => {
       const res = await apiRequest("GET", "/api/appointments");
@@ -54,7 +58,9 @@ export default function ManagerAppointments() {
   });
 
   // Fetch all availabilities
-  const { data: availabilities, isLoading: isLoadingAvailabilities } = useQuery<Availability[]>({
+  const { data: availabilities, isLoading: isLoadingAvailabilities } = useQuery<
+    Availability[]
+  >({
     queryKey: ["/api/availabilities"],
     queryFn: async () => {
       const res = await apiRequest("GET", "/api/availabilities");
@@ -66,21 +72,31 @@ export default function ManagerAppointments() {
   });
 
   const assignTeacherMutation = useMutation({
-    mutationFn: async ({ appointmentId, teacherId }: { appointmentId: number; teacherId: number }) => {
-      const res = await apiRequest("PATCH", `/api/appointments/${appointmentId}`, {
-        teacherId,
-        status: "matched"
-      });
+    mutationFn: async ({
+      appointmentId,
+      teacherId,
+    }: {
+      appointmentId: number;
+      teacherId: number;
+    }) => {
+      const res = await apiRequest(
+        "PATCH",
+        `/api/appointments/${appointmentId}`,
+        {
+          teacherId,
+          status: "matched",
+        },
+      );
       if (!res.ok) {
         throw new Error("Failed to assign teacher");
       }
       return res.json();
     },
     onSuccess: (data) => {
-      const notificationMessage = data.notificationSent 
+      const notificationMessage = data.notificationSent
         ? "تم إرسال إشعار للمعلم عبر تيليجرام بنجاح"
         : "تم تعيين المعلم ولكن لم يتم إرسال إشعار تيليجرام";
-        
+
       toast({
         title: "تم تعيين المعلم",
         description: notificationMessage,
@@ -138,23 +154,27 @@ export default function ManagerAppointments() {
                   <TableCell>
                     {format(new Date(appointment.startTime), "h:mm a")}
                   </TableCell>
+                  <TableCell>طالب {appointment.studentId}</TableCell>
                   <TableCell>
-                    طالب {appointment.studentId}
+                    {appointment.teacherId
+                      ? `معلم ${appointment.teacherId}`
+                      : "غير معين"}
                   </TableCell>
                   <TableCell>
-                    {appointment.teacherId ? `معلم ${appointment.teacherId}` : "غير معين"}
-                  </TableCell>
-                  <TableCell>
-                    <Badge 
+                    <Badge
                       variant={
-                        appointment.status === "pending" ? "warning" :
-                        appointment.status === "matched" ? "success" :
-                        "default"
+                        appointment.status === "pending"
+                          ? "warning"
+                          : appointment.status === "matched"
+                            ? "success"
+                            : "default"
                       }
                     >
-                      {appointment.status === "pending" ? "قيد الانتظار" :
-                       appointment.status === "matched" ? "تم التطابق" :
-                       "مكتمل"}
+                      {appointment.status === "pending"
+                        ? "قيد الانتظار"
+                        : appointment.status === "matched"
+                          ? "تم التطابق"
+                          : "مكتمل"}
                     </Badge>
                   </TableCell>
                   <TableCell>
@@ -195,10 +215,10 @@ export default function ManagerAppointments() {
             <TableBody>
               {teachers?.map((teacher) => {
                 const teacherAvailabilities = availabilities?.filter(
-                  (a) => a.teacherId === teacher.id
+                  (a) => a.teacherId === teacher.id,
                 );
                 const teacherAppointments = appointments?.filter(
-                  (a) => a.teacherId === teacher.id
+                  (a) => a.teacherId === teacher.id,
                 );
 
                 return (
@@ -228,7 +248,9 @@ export default function ManagerAppointments() {
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center">
-                        <span className="font-medium">{teacherAppointments?.length || 0}</span>
+                        <span className="font-medium">
+                          {teacherAppointments?.length || 0}
+                        </span>
                         {teacherAppointments?.length > 0 && (
                           <Badge variant="outline" className="mr-2">
                             {teacherAppointments.length > 2 ? "مرتفع" : "طبيعي"}
@@ -254,13 +276,18 @@ export default function ManagerAppointments() {
             {selectedAppointment && (
               <div className="space-y-4">
                 <div className="text-sm">
-                  <p>الوقت: {format(new Date(selectedAppointment.startTime), "h:mm a")}</p>
+                  <p>
+                    الوقت:{" "}
+                    {format(new Date(selectedAppointment.startTime), "h:mm a")}
+                  </p>
                   <p>الطالب: طالب {selectedAppointment.studentId}</p>
                 </div>
                 <div className="space-y-2">
                   {teachers?.map((teacher) => {
-                    const isAvailable = availabilities?.some(avail => {
-                      const appointmentTime = new Date(selectedAppointment.startTime);
+                    const isAvailable = availabilities?.some((avail) => {
+                      const appointmentTime = new Date(
+                        selectedAppointment.startTime,
+                      );
                       const availStartTime = new Date(avail.startTime);
                       const availEndTime = new Date(avail.endTime);
                       return (
@@ -274,13 +301,15 @@ export default function ManagerAppointments() {
                       <div
                         key={teacher.id}
                         className={`p-3 border rounded-lg ${
-                          isAvailable ? "hover:bg-muted cursor-pointer" : "opacity-50"
+                          isAvailable
+                            ? "hover:bg-muted cursor-pointer"
+                            : "opacity-50"
                         }`}
                         onClick={() => {
                           if (isAvailable) {
                             assignTeacherMutation.mutate({
                               appointmentId: selectedAppointment.id,
-                              teacherId: teacher.id
+                              teacherId: teacher.id,
                             });
                           }
                         }}
@@ -305,30 +334,21 @@ export default function ManagerAppointments() {
     </div>
   );
 }
-import React from 'react';
-import { useQuery } from '@tanstack/react-query';
-import { apiRequest } from '../../lib/api';
-import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
-import { Button } from '../../components/ui/button';
-import { Loader2 } from 'lucide-react';
-import { format } from 'date-fns';
-import { Link } from 'react-router-dom';
-import { useAuth } from '../../providers/auth-provider';
 
 export default function Appointments() {
   const { user, isLoading: isAuthLoading } = useAuth();
 
   // Fetch all appointments
   const { data: appointments, isLoading: isLoadingAppointments } = useQuery({
-    queryKey: ['/api/appointments'],
+    queryKey: ["/api/appointments"],
     queryFn: async () => {
-      const res = await apiRequest('GET', '/api/appointments');
+      const res = await apiRequest("GET", "/api/appointments");
       if (!res.ok) {
-        throw new Error('Failed to fetch appointments');
+        throw new Error("Failed to fetch appointments");
       }
       return res.json();
     },
-    enabled: user?.role === 'manager',
+    enabled: user?.role === "manager",
   });
 
   if (isAuthLoading || isLoadingAppointments) {
@@ -348,25 +368,45 @@ export default function Appointments() {
         <CardContent>
           <div className="space-y-4">
             {appointments?.length === 0 ? (
-              <p className="text-center text-muted-foreground py-4">لا توجد مواعيد</p>
+              <p className="text-center text-muted-foreground py-4">
+                لا توجد مواعيد
+              </p>
             ) : (
               <div className="grid gap-4">
                 {appointments?.map((appointment) => (
-                  <div key={appointment.id} className="border rounded-md p-4 flex justify-between items-center">
+                  <div
+                    key={appointment.id}
+                    className="border rounded-md p-4 flex justify-between items-center"
+                  >
                     <div>
-                      <p><span className="font-semibold">رقم الموعد:</span> {appointment.id}</p>
-                      <p><span className="font-semibold">الطالب:</span> {appointment.studentId}</p>
+                      <p>
+                        <span className="font-semibold">رقم الموعد:</span>{" "}
+                        {appointment.id}
+                      </p>
+                      <p>
+                        <span className="font-semibold">الطالب:</span>{" "}
+                        {appointment.studentId}
+                      </p>
                       <p>
                         <span className="font-semibold">الوقت:</span>{" "}
-                        {format(new Date(appointment.startTime), "yyyy-MM-dd h:mm a")}
+                        {format(
+                          new Date(appointment.startTime),
+                          "yyyy-MM-dd h:mm a",
+                        )}
                       </p>
-                      <p><span className="font-semibold">الحالة:</span> {appointment.status}</p>
+                      <p>
+                        <span className="font-semibold">الحالة:</span>{" "}
+                        {appointment.status}
+                      </p>
                       {appointment.teacherId && (
-                        <p><span className="font-semibold">المعلم:</span> {appointment.teacherId}</p>
+                        <p>
+                          <span className="font-semibold">المعلم:</span>{" "}
+                          {appointment.teacherId}
+                        </p>
                       )}
                     </div>
                     <div>
-                      {appointment.status === 'pending' && (
+                      {appointment.status === "pending" && (
                         <Link to={`/manager/assign-teacher/${appointment.id}`}>
                           <Button variant="default">تعيين معلم</Button>
                         </Link>
