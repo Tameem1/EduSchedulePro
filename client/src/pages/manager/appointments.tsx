@@ -23,7 +23,7 @@ import {
 } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import type { User, Availability, Appointment } from "@shared/schema";
-import { useAuth } from "../../providers/auth-provider";
+import { useAuth } from "@/hooks/use-auth";
 
 function ManagerAppointments() {
   const { toast } = useToast();
