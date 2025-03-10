@@ -58,8 +58,8 @@ app.use((req, res, next) => {
   });
 
   // Run migration for telegram_phone
-  import addTelegramPhone from './migrations/add_telegram_phone';
   try {
+    const { default: addTelegramPhone } = await import('./migrations/add_telegram_phone');
     await addTelegramPhone();
     console.log('Migration for telegram_phone completed successfully');
   } catch (error) {
