@@ -25,11 +25,12 @@ import { useToast } from "@/hooks/use-toast";
 import type { User, Availability, Appointment } from "@shared/schema";
 import { useAuth } from "@/hooks/use-auth";
 
-function ManagerAppointments() {
+export default function ManagerAppointments() {
   const { toast } = useToast();
   const [selectedAppointment, setSelectedAppointment] =
     React.useState<Appointment | null>(null);
   const [isAssignDialogOpen, setIsAssignDialogOpen] = React.useState(false);
+  const { user, isLoading: isAuthLoading } = useAuth();
 
   // Fetch all teachers
   const { data: teachers, isLoading: isLoadingTeachers } = useQuery<User[]>({
@@ -41,6 +42,7 @@ function ManagerAppointments() {
       }
       return res.json();
     },
+    enabled: !!user,
   });
 
   // Fetch all appointments
@@ -55,6 +57,7 @@ function ManagerAppointments() {
       }
       return res.json();
     },
+    enabled: !!user,
   });
 
   // Fetch all availabilities
@@ -69,6 +72,7 @@ function ManagerAppointments() {
       }
       return res.json();
     },
+    enabled: !!user,
   });
 
   const assignTeacherMutation = useMutation({
@@ -115,10 +119,19 @@ function ManagerAppointments() {
     },
   });
 
-  if (isLoadingTeachers || isLoadingAppointments || isLoadingAvailabilities) {
+  if (isAuthLoading || isLoadingTeachers || isLoadingAppointments || isLoadingAvailabilities) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin" />
+      </div>
+    );
+  }
+
+  // If not authorized or not a manager
+  if (!user || user.role !== "manager") {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p>Not authorized. You must be a manager to view this page.</p>
       </div>
     );
   }
@@ -133,7 +146,7 @@ function ManagerAppointments() {
       </div>
 
       {/* Appointments Table */}
-      <Card>
+      <Card className="mb-6">
         <CardHeader>
           <CardTitle>المواعيد</CardTitle>
         </CardHeader>
@@ -331,94 +344,6 @@ function ManagerAppointments() {
           </div>
         </DialogContent>
       </Dialog>
-    </div>
-  );
-}
-
-export default function Appointments() {
-  const { user, isLoading: isAuthLoading } = useAuth();
-
-  // Fetch all appointments
-  const { data: appointments, isLoading: isLoadingAppointments } = useQuery({
-    queryKey: ["/api/appointments"],
-    queryFn: async () => {
-      const res = await apiRequest("GET", "/api/appointments");
-      if (!res.ok) {
-        throw new Error("Failed to fetch appointments");
-      }
-      return res.json();
-    },
-    enabled: user?.role === "manager",
-  });
-
-  if (isAuthLoading || isLoadingAppointments) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin" />
-      </div>
-    );
-  }
-
-  return (
-    <div className="container mx-auto p-4">
-      <Card>
-        <CardHeader>
-          <CardTitle>جميع المواعيد</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            {appointments?.length === 0 ? (
-              <p className="text-center text-muted-foreground py-4">
-                لا توجد مواعيد
-              </p>
-            ) : (
-              <div className="grid gap-4">
-                {appointments?.map((appointment) => (
-                  <div
-                    key={appointment.id}
-                    className="border rounded-md p-4 flex justify-between items-center"
-                  >
-                    <div>
-                      <p>
-                        <span className="font-semibold">رقم الموعد:</span>{" "}
-                        {appointment.id}
-                      </p>
-                      <p>
-                        <span className="font-semibold">الطالب:</span>{" "}
-                        {appointment.studentId}
-                      </p>
-                      <p>
-                        <span className="font-semibold">الوقت:</span>{" "}
-                        {format(
-                          new Date(appointment.startTime),
-                          "yyyy-MM-dd h:mm a",
-                        )}
-                      </p>
-                      <p>
-                        <span className="font-semibold">الحالة:</span>{" "}
-                        {appointment.status}
-                      </p>
-                      {appointment.teacherId && (
-                        <p>
-                          <span className="font-semibold">المعلم:</span>{" "}
-                          {appointment.teacherId}
-                        </p>
-                      )}
-                    </div>
-                    <div>
-                      {appointment.status === "pending" && (
-                        <Link to={`/manager/assign-teacher/${appointment.id}`}>
-                          <Button variant="default">تعيين معلم</Button>
-                        </Link>
-                      )}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        </CardContent>
-      </Card>
     </div>
   );
 }

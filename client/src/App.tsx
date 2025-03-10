@@ -1,3 +1,4 @@
+
 import { Switch, Route } from "wouter";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
@@ -10,6 +11,7 @@ import TeacherAvailability from "@/pages/teacher/availability";
 import TeacherQuestionnaire from "@/pages/teacher/questionnaire";
 import ManagerAppointments from "@/pages/manager/appointments";
 import ManagerResults from "@/pages/manager/results";
+import AssignTeacher from "@/pages/manager/assign-teacher";
 import { ProtectedRoute } from "./lib/protected-route";
 import { Navbar } from "@/components/Navbar";
 
@@ -43,6 +45,11 @@ function Router() {
           path="/manager/results"
           role="manager"
           component={ManagerResults}
+        />
+        <ProtectedRoute
+          path="/manager/assign-teacher/:appointmentId"
+          role="manager"
+          component={AssignTeacher}
         />
         <Route component={NotFound} />
       </Switch>
