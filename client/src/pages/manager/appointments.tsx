@@ -297,32 +297,15 @@ export default function ManagerAppointments() {
                 <div className="space-y-2">
                   {teachers?.map((teacher) => {
                     const isAvailable = availabilities?.some((avail) => {
-                      // Parse both times to ensure proper comparison
-                      const appointmentTime = new Date(selectedAppointment.startTime);
+                      const appointmentTime = new Date(
+                        selectedAppointment.startTime,
+                      );
                       const availStartTime = new Date(avail.startTime);
                       const availEndTime = new Date(avail.endTime);
-
-                      // Convert appointment time to timestamps
-                      const apptTimeStamp = appointmentTime.getTime();
-                      const startTimeStamp = availStartTime.getTime();
-                      const endTimeStamp = availEndTime.getTime();
-
-                      console.log(`Dialog - Checking availability for teacher ${teacher.id}:`, {
-                        teacherId: avail.teacherId,
-                        appointmentTime: appointmentTime.toISOString(),
-                        appointmentTimeStamp: apptTimeStamp,
-                        availStartTime: availStartTime.toISOString(),
-                        availStartTimeStamp: startTimeStamp,
-                        availEndTime: availEndTime.toISOString(),
-                        availEndTimeStamp: endTimeStamp,
-                        isInRange: apptTimeStamp >= startTimeStamp && apptTimeStamp <= endTimeStamp
-                      });
-
-                      // The timestamps are already calculated above, no need to redeclare them
                       return (
                         avail.teacherId === teacher.id &&
-                        apptTimeStamp >= startTimeStamp &&
-                        apptTimeStamp <= endTimeStamp
+                        appointmentTime >= availStartTime &&
+                        appointmentTime <= availEndTime
                       );
                     });
 
