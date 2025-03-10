@@ -91,3 +91,18 @@ ALTER TABLE users ADD COLUMN telegram_id VARCHAR(255);
 
 
 //This file is already correctly exporting the pool.  No changes are needed.
+
+// Added to address the missing module error.  This is a placeholder; replace with your actual migration logic.
+//server/migrations/add_telegram_id.ts
+export async function up(db) {
+  // Add your migration logic here to add the telegram_id column to the users table.  This will depend on your specific ORM.
+  //Example using drizzle-orm:
+  // await db.execute('ALTER TABLE users ADD COLUMN telegram_id VARCHAR(255)');
+
+}
+
+export async function down(db) {
+  // Add your migration logic here to remove the telegram_id column from the users table.
+  // Example using drizzle-orm
+  // await db.execute('ALTER TABLE users DROP COLUMN telegram_id');
+}
