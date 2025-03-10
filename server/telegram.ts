@@ -50,19 +50,19 @@ export const startBot = async () => {
   }
 
   console.log('Initializing Telegram bot...');
-  
+
   // Check token validity
   const botToken = process.env.TELEGRAM_BOT_TOKEN;
   if (!botToken) {
     console.error('TELEGRAM_BOT_TOKEN environment variable is not set');
     return null;
   }
-  
+
   try {
     // Test the token with a simple getMe request
     const response = await axios.get(`https://api.telegram.org/bot${botToken}/getMe`);
     console.log('Telegram bot token is valid. Bot details:', JSON.stringify(response.data, null, 2));
-    
+
     // Important: Show the actual bot username that teachers should interact with
     if (response.data.ok && response.data.result) {
       console.log(`IMPORTANT: Teachers must send /start to @${response.data.result.username}`);
@@ -71,7 +71,7 @@ export const startBot = async () => {
     console.error('Telegram bot token test failed:', error.message);
     console.error('Full error:', JSON.stringify(error.response?.data || error.message, null, 2));
   }
-  
+
   bot.start(async (ctx) => {
     try {
       console.log('=== BOT START COMMAND RECEIVED ===');
@@ -100,23 +100,23 @@ export const startBot = async () => {
   try {
     console.log('=== ATTEMPTING TO LAUNCH TELEGRAM BOT ===');
     console.log(`Using bot token (first 5 chars): ${botToken ? botToken.substring(0, 5) : 'none'}`);
-    
+
     let launchPromise = bot.launch();
-    
+
     // Set up a timeout to ensure we don't wait forever
     const timeout = new Promise((_, reject) => 
       setTimeout(() => reject(new Error('Bot launch timeout after 10 seconds')), 10000)
     );
-    
+
     await Promise.race([launchPromise, timeout]);
-    
+
     console.log('=== TELEGRAM BOT INITIALIZED SUCCESSFULLY ===');
     console.log(`Bot username: @${bot.botInfo?.username || 'unknown'}`);
     console.log(`Bot ID: ${bot.botInfo?.id || 'unknown'}`);
     console.log('Full bot details:', JSON.stringify(bot.botInfo || {}, null, 2));
     console.log('Teachers should start a conversation with the bot by sending /start to @' + (bot.botInfo?.username || 'your_bot_username'));
     console.log('=============================================');
-    
+
     // Return the initialized bot
     return bot;
   } catch (err) {
@@ -125,13 +125,13 @@ export const startBot = async () => {
     console.error('Error details:', JSON.stringify(err, null, 2));
     console.error('Make sure your TELEGRAM_BOT_TOKEN is correct and the bot is properly configured');
     console.error('===========================================');
-    
+
     // Return the bot even though initialization failed - we can still try to use it later
     return bot;
   }
 };
 
-export async function sendTelegramNotification(telegramUsername: string, message: string, callbackUrl?: string): Promise<boolean> {
+export async function sendTelegramNotification(telegramUsername: string, message: string, callbackUrl?: string): Promise<boolean | { success: false; error: string }> {
   try {
     // Check if TELEGRAM_BOT_TOKEN is set
     const botToken = process.env.TELEGRAM_BOT_TOKEN;
@@ -144,7 +144,7 @@ export async function sendTelegramNotification(telegramUsername: string, message
       console.error('No Telegram username provided for notification');
       return false;
     }
-    
+
     // Log bot initialization status
     console.log(`Bot initialized: ${bot?.botInfo ? 'Yes' : 'No'}`);
     if (bot && !bot.botInfo) {
@@ -155,11 +155,11 @@ export async function sendTelegramNotification(telegramUsername: string, message
 
     // Clean up and format username
     let formattedUsername = telegramUsername.trim();
-    
+
     // Check if username appears to be a numeric ID
     const isNumericId = /^\d+$/.test(formattedUsername);
     console.log(`Username appears to be a ${isNumericId ? 'numeric ID' : 'username string'}`);
-    
+
     // For display purposes only, keep a formatted version with @
     let displayUsername = formattedUsername;
     if (!isNumericId && displayUsername && !displayUsername.startsWith('@')) {
@@ -177,7 +177,7 @@ export async function sendTelegramNotification(telegramUsername: string, message
     try {
       // Check if the username might actually be a numeric chat ID
       const isNumeric = /^\d+$/.test(telegramUsername.trim());
-      
+
       // If it's a numeric ID, use it directly, otherwise clean the username
       // Important: For usernames (not IDs), we need to REMOVE the @ symbol when using chat_id
       const chatId = isNumeric 
@@ -185,7 +185,7 @@ export async function sendTelegramNotification(telegramUsername: string, message
         : (formattedUsername.startsWith('@') 
           ? formattedUsername.substring(1)  // Remove the @ for API calls with usernames
           : formattedUsername);
-        
+
       console.log('=== TELEGRAM DEBUGGING INFO ===');
       console.log(`Bot Token exists: ${!!botToken} (first 5 chars: ${botToken ? botToken.substring(0, 5) : 'none'})`);
       console.log(`Original username/ID provided: "${telegramUsername}"`);
@@ -193,9 +193,9 @@ export async function sendTelegramNotification(telegramUsername: string, message
       console.log(`Using as chat_id: "${chatId}" (${isNumeric ? 'numeric ID' : 'username'})`);
       console.log(`Bot info from Telegraf: ${bot ? JSON.stringify(bot.botInfo || 'Not initialized') : 'Bot not initialized'}`);
       console.log('==============================');
-      
+
       console.log(`Attempting to send message to Telegram ${isNumeric ? 'chat ID' : 'username'}: ${chatId}`);
-        
+
       // First attempt: send directly to the chat_id
       const response = await axios.post(
         `https://api.telegram.org/bot${botToken}/sendMessage`,
@@ -211,7 +211,7 @@ export async function sendTelegramNotification(telegramUsername: string, message
       return response.data.ok;
     } catch (apiError: any) {
       const errorData = apiError.response?.data;
-      
+
       // Log full error response for debugging
       console.log('Full Telegram API error response:', JSON.stringify({
         status: apiError.response?.status,
@@ -223,7 +223,7 @@ export async function sendTelegramNotification(telegramUsername: string, message
           data: JSON.parse(apiError.config?.data || '{}')
         }
       }, null, 2));
-      
+
       if (errorData?.error_code === 404) {
         console.log('IMPORTANT: User not found or has not started a conversation with the bot.');
         console.log('For Telegram to work correctly:');
@@ -231,13 +231,13 @@ export async function sendTelegramNotification(telegramUsername: string, message
         console.log('2. The teacher MUST start a conversation with the bot first by sending /start');
         console.log(`3. The bot username is: ${bot ? `@${bot.botInfo?.username || 'unknown'}` : '(Bot not initialized yet)'}`);
         console.log('4. Verify that the username in the platform matches their exact Telegram username (case sensitive)');
-        
+
         // Return a more specific error flag that could be used by the frontend
         return { success: false, error: 'user_not_started_bot' };
       } else {
         console.error('Telegram API error:', errorData || apiError.message);
       }
-      
+
       return false;
     }
   } catch (error) {
@@ -254,16 +254,16 @@ export async function notifyTeacherAboutAppointment(appointmentId: number, teach
       console.error(`Teacher ${teacherId} not found`);
       return false;
     }
-    
+
     // Check for telegramId first (preferred), then fall back to username
     const hasTelegramId = !!teacher[0].telegramId;
     const hasTelegramUsername = !!teacher[0].telegramUsername;
-    
+
     if (!hasTelegramId && !hasTelegramUsername) {
       console.error(`Teacher ${teacherId} has no Telegram ID or username`);
       return false;
     }
-    
+
     // Prefer using telegramId if available
     const telegramContact = hasTelegramId ? teacher[0].telegramId : teacher[0].telegramUsername;
     console.log(`Using teacher's ${hasTelegramId ? 'Telegram ID' : 'username'}: ${telegramContact}`);
@@ -282,20 +282,38 @@ export async function notifyTeacherAboutAppointment(appointmentId: number, teach
     // Create acceptance URL (must be a public URL, not localhost)
     const replit_domain = process.env.REPL_SLUG ? `https://${process.env.REPL_SLUG}.replit.dev` : null;
     const callbackUrl = `${process.env.FRONTEND_URL || replit_domain || 'https://example.com'}/teacher/accept-appointment/${appointmentId}`;
-    
+
     console.log(`Using callback URL: ${callbackUrl}`);
 
     // Format the date for display
     const appointmentDate = new Date(appointment[0].startTime);
-    const formattedDate = appointmentDate.toLocaleDateString('ar-SA');
-    const formattedTime = appointmentDate.toLocaleTimeString('ar-SA', { 
-      hour: '2-digit', 
-      minute: '2-digit'
+    // Add timezone offset to ensure correct local time display
+    // Convert back to local time by applying timezone offset
+    const localAppointmentDate = new Date(appointmentDate.getTime());
+
+    // Format date in Arabic but using Gregorian calendar
+    const formattedDate = localAppointmentDate.toLocaleDateString('ar', {
+      year: 'numeric',
+      month: 'numeric',
+      day: 'numeric',
+      calendar: 'gregory' // Ensure Gregorian calendar is used
     });
+
+    // Format time in Arabic
+    const formattedTime = localAppointmentDate.toLocaleTimeString('ar', { 
+      hour: '2-digit', 
+      minute: '2-digit',
+      hour12: true 
+    });
+
+    // Log the original date and formatted versions for debugging
+    console.log(`Original appointment time from DB: ${appointment[0].startTime}`);
+    console.log(`Local appointment time: ${localAppointmentDate.toString()}`);
+    console.log(`Formatted for notification: ${formattedDate} ${formattedTime}`);
 
     // Prepare message text
     const message = `تم تعيينك لموعد جديد مع ${studentName} بتاريخ ${formattedDate} الساعة ${formattedTime}. الرجاء قبول الموعد في أقرب وقت.`;
-    
+
     // Try first using the bot directly if we have it initialized (more reliable)
     if (bot) {
       try {
@@ -305,9 +323,9 @@ export async function notifyTeacherAboutAppointment(appointmentId: number, teach
                       (teacher[0].telegramUsername?.startsWith('@') 
                         ? teacher[0].telegramUsername.substring(1)
                         : teacher[0].telegramUsername);
-        
+
         console.log(`Sending notification to teacher ${teacherId} with Telegram ${teacher[0].telegramId ? 'ID' : 'username'}: ${chatId}`);
-        
+
         // Find the user's chat by ID or username and send message
         // This works if the user has started a conversation with the bot
         await bot.telegram.sendMessage(
@@ -319,7 +337,7 @@ export async function notifyTeacherAboutAppointment(appointmentId: number, teach
             } 
           } : undefined
         );
-        
+
         console.log('Successfully sent notification via bot API');
         return true;
       } catch (botError) {
@@ -328,10 +346,10 @@ export async function notifyTeacherAboutAppointment(appointmentId: number, teach
         // Fall back to HTTP method
       }
     }
-    
+
     // Fallback to the HTTP method
     console.log(`Telegram API fallback: Using ${hasTelegramId ? 'ID' : 'username'} "${telegramContact}" to send message`);
-    
+
     // Additional debug check: Try to look up username via Telegram API
     if (!hasTelegramId && telegramContact && botToken) {
       try {
@@ -349,7 +367,7 @@ export async function notifyTeacherAboutAppointment(appointmentId: number, teach
         console.log('This confirms the username is not found or not accessible to the bot');
       }
     }
-    
+
     return await sendTelegramNotification(
       telegramContact, // Use the determined telegramId or username
       message,

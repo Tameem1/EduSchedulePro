@@ -110,7 +110,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const { startTime } = req.body;
 
       // Convert startTime to Date if it's a string
+      // Ensure we're storing the time as provided by the client
       const appointmentStartTime = new Date(startTime);
+      
+      console.log(`Appointment requested for time: ${startTime}`);
+      console.log(`Parsed as Date object: ${appointmentStartTime.toString()}`);
 
       const parsedData = insertAppointmentSchema.parse({
         startTime: appointmentStartTime,
