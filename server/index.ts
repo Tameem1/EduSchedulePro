@@ -38,13 +38,8 @@ app.use((req, res, next) => {
   next();
 });
 
-// Placeholder for startBot function.  Replace with your actual bot initialization.
-const startBot = () => {
-  console.log('Telegram bot initialized.');
-  // Add your Telegram bot initialization logic here.  Example:
-  // const bot = new Telegraf(process.env.TELEGRAM_BOT_TOKEN);
-  // bot.launch();
-};
+// Import the actual startBot function from telegram.ts
+import { startBot } from './telegram';
 
 (async () => {
   // Run database migrations

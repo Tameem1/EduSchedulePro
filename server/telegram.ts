@@ -43,13 +43,34 @@ export const sendTelegramMessage = async (telegramPhone: string, message: string
 };
 
 // Start the bot
-export const startBot = () => {
+export const startBot = async () => {
   if (!bot) {
     console.log('Telegram bot token not provided, skipping bot initialization');
-    return;
+    return null;
   }
 
   console.log('Initializing Telegram bot...');
+  
+  // Check token validity
+  const botToken = process.env.TELEGRAM_BOT_TOKEN;
+  if (!botToken) {
+    console.error('TELEGRAM_BOT_TOKEN environment variable is not set');
+    return null;
+  }
+  
+  try {
+    // Test the token with a simple getMe request
+    const response = await axios.get(`https://api.telegram.org/bot${botToken}/getMe`);
+    console.log('Telegram bot token is valid. Bot details:', JSON.stringify(response.data, null, 2));
+    
+    // Important: Show the actual bot username that teachers should interact with
+    if (response.data.ok && response.data.result) {
+      console.log(`IMPORTANT: Teachers must send /start to @${response.data.result.username}`);
+    }
+  } catch (error) {
+    console.error('Telegram bot token test failed:', error.message);
+    console.error('Full error:', JSON.stringify(error.response?.data || error.message, null, 2));
+  }
   
   bot.start(async (ctx) => {
     try {
@@ -75,21 +96,39 @@ export const startBot = () => {
     }
   });
 
-  // Launch the bot with more detailed logging
-  bot.launch().then(() => {
+  // Launch the bot with more detailed logging and retry mechanism
+  try {
+    console.log('=== ATTEMPTING TO LAUNCH TELEGRAM BOT ===');
+    console.log(`Using bot token (first 5 chars): ${botToken ? botToken.substring(0, 5) : 'none'}`);
+    
+    let launchPromise = bot.launch();
+    
+    // Set up a timeout to ensure we don't wait forever
+    const timeout = new Promise((_, reject) => 
+      setTimeout(() => reject(new Error('Bot launch timeout after 10 seconds')), 10000)
+    );
+    
+    await Promise.race([launchPromise, timeout]);
+    
     console.log('=== TELEGRAM BOT INITIALIZED SUCCESSFULLY ===');
     console.log(`Bot username: @${bot.botInfo?.username || 'unknown'}`);
     console.log(`Bot ID: ${bot.botInfo?.id || 'unknown'}`);
     console.log('Full bot details:', JSON.stringify(bot.botInfo || {}, null, 2));
     console.log('Teachers should start a conversation with the bot by sending /start to @' + (bot.botInfo?.username || 'your_bot_username'));
     console.log('=============================================');
-  }).catch(err => {
+    
+    // Return the initialized bot
+    return bot;
+  } catch (err) {
     console.error('=== TELEGRAM BOT INITIALIZATION FAILED ===');
     console.error('Failed to start Telegram bot:', err);
     console.error('Error details:', JSON.stringify(err, null, 2));
     console.error('Make sure your TELEGRAM_BOT_TOKEN is correct and the bot is properly configured');
     console.error('===========================================');
-  });
+    
+    // Return the bot even though initialization failed - we can still try to use it later
+    return bot;
+  }
 };
 
 export async function sendTelegramNotification(telegramUsername: string, message: string, callbackUrl?: string): Promise<boolean> {
@@ -114,10 +153,17 @@ export async function sendTelegramNotification(telegramUsername: string, message
       await new Promise(resolve => setTimeout(resolve, 1000));
     }
 
-    // Ensure username starts with @ if provided
+    // Clean up and format username
     let formattedUsername = telegramUsername.trim();
-    if (formattedUsername && !formattedUsername.startsWith('@')) {
+    
+    // Check if username appears to be a numeric ID
+    const isNumericId = /^\d+$/.test(formattedUsername);
+    console.log(`Username appears to be a ${isNumericId ? 'numeric ID' : 'username string'}`);
+    
+    // For usernames (not IDs), add @ if missing
+    if (!isNumericId && formattedUsername && !formattedUsername.startsWith('@')) {
       formattedUsername = '@' + formattedUsername;
+      console.log(`Added @ to username: ${formattedUsername}`);
     }
 
     console.log(`Sending notification to teacher with Telegram username: ${formattedUsername}`);
