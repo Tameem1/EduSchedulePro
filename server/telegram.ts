@@ -51,8 +51,12 @@ export const startBot = () => {
 
   bot.start(async (ctx) => {
     try {
-      console.log('Received /start command from user:', ctx.from);
+      console.log('=== BOT START COMMAND RECEIVED ===');
+      console.log('User details:', JSON.stringify(ctx.from, null, 2));
+      console.log('Chat details:', JSON.stringify(ctx.chat, null, 2));
+      console.log('===================================');
       await ctx.reply('مرحبًا بك في روبوت التعليم المساعد! استخدم /register للتسجيل كمعلم.');
+      console.log('Reply sent successfully to user');
     } catch (error) {
       console.error('Error in start command handler:', error);
     }
@@ -71,12 +75,18 @@ export const startBot = () => {
 
   // Launch the bot with more detailed logging
   bot.launch().then(() => {
-    console.log('Telegram bot started successfully');
+    console.log('=== TELEGRAM BOT INITIALIZED SUCCESSFULLY ===');
     console.log(`Bot username: @${bot.botInfo?.username || 'unknown'}`);
+    console.log(`Bot ID: ${bot.botInfo?.id || 'unknown'}`);
+    console.log('Full bot details:', JSON.stringify(bot.botInfo || {}, null, 2));
     console.log('Teachers should start a conversation with the bot by sending /start to @' + (bot.botInfo?.username || 'your_bot_username'));
+    console.log('=============================================');
   }).catch(err => {
+    console.error('=== TELEGRAM BOT INITIALIZATION FAILED ===');
     console.error('Failed to start Telegram bot:', err);
+    console.error('Error details:', JSON.stringify(err, null, 2));
     console.error('Make sure your TELEGRAM_BOT_TOKEN is correct and the bot is properly configured');
+    console.error('===========================================');
   });
 };
 
@@ -119,6 +129,14 @@ export async function sendTelegramNotification(telegramUsername: string, message
           ? formattedUsername.substring(1) 
           : formattedUsername);
         
+      console.log('=== TELEGRAM DEBUGGING INFO ===');
+      console.log(`Bot Token exists: ${!!botToken} (first 5 chars: ${botToken ? botToken.substring(0, 5) : 'none'})`);
+      console.log(`Original username/ID provided: "${telegramUsername}"`);
+      console.log(`Formatted username: "${formattedUsername}"`);
+      console.log(`Using as chat_id: "${chatId}" (${isNumeric ? 'numeric ID' : 'username'})`);
+      console.log(`Bot info from Telegraf: ${bot ? JSON.stringify(bot.botInfo || 'Not initialized') : 'Bot not initialized'}`);
+      console.log('==============================');
+      
       console.log(`Attempting to send message to Telegram ${isNumeric ? 'chat ID' : 'username'}: ${chatId}`);
         
       // First attempt: send directly to the chat_id
@@ -243,6 +261,23 @@ export async function notifyTeacherAboutAppointment(appointmentId: number, teach
     }
     
     // Fallback to the HTTP method
+    console.log(`Telegram API fallback: Using ${hasTelegramId ? 'ID' : 'username'} "${telegramContact}" to send message`);
+    
+    // Additional debug check: Try to look up username via Telegram API
+    if (!hasTelegramId && telegramContact && botToken) {
+      try {
+        console.log('Attempting to look up user info via getUserProfilePhotos API...');
+        const username = telegramContact.replace('@', '');
+        const lookupResponse = await axios.get(
+          `https://api.telegram.org/bot${botToken}/getChat?chat_id=@${username}`
+        );
+        console.log('User lookup successful!', JSON.stringify(lookupResponse.data, null, 2));
+      } catch (lookupError) {
+        console.log('User lookup failed:', JSON.stringify(lookupError.response?.data || lookupError.message, null, 2));
+        console.log('This confirms the username is not found or not accessible to the bot');
+      }
+    }
+    
     return await sendTelegramNotification(
       telegramContact, // Use the determined telegramId or username
       message,
@@ -250,6 +285,7 @@ export async function notifyTeacherAboutAppointment(appointmentId: number, teach
     );
   } catch (error) {
     console.error('Failed to notify teacher about appointment:', error);
+    console.error('Error details:', JSON.stringify(error, null, 2));
     return false;
   }
 }
