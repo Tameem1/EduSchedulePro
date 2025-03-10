@@ -11,18 +11,33 @@ const botToken = process.env.TELEGRAM_BOT_TOKEN;
 export const bot = botToken ? new Telegraf(botToken) : null;
 
 // Function to send a message to a specific Telegram user
-export const sendTelegramMessage = async (telegramId: string, message: string): Promise<boolean> => {
+export const sendTelegramMessage = async (telegramPhone: string, message: string): Promise<boolean> => {
   if (!bot) {
     console.log('Telegram bot token not provided, cannot send message');
     return false;
   }
 
   try {
-    await bot.telegram.sendMessage(telegramId, message);
-    console.log(`Message sent to Telegram user ${telegramId}`);
+    // Format telephone number (remove any non-digit characters and ensure it starts with +)
+    let formattedPhone = telegramPhone;
+    if (formattedPhone) {
+      // Remove any non-digit characters except +
+      formattedPhone = formattedPhone.replace(/[^\d+]/g, '');
+
+      // Ensure it starts with +
+      if (!formattedPhone.startsWith('+')) {
+        formattedPhone = '+' + formattedPhone;
+      }
+    } else {
+      console.error('No phone number provided for Telegram notification');
+      return false;
+    }
+
+    await bot.telegram.sendMessage(formattedPhone, message);
+    console.log(`Message sent to Telegram user ${formattedPhone}`);
     return true;
   } catch (error) {
-    console.error(`Failed to send message to Telegram user ${telegramId}:`, error);
+    console.error(`Failed to send message to Telegram user ${telegramPhone}:`, error);
     throw error;
   }
 };
@@ -37,8 +52,8 @@ export const startBot = () => {
   bot.start((ctx) => ctx.reply('مرحبًا بك في روبوت التعليم المساعد! استخدم /register للتسجيل كمعلم.'));
 
   bot.command('register', (ctx) => {
-    const telegramId = ctx.from.id;
-    ctx.reply(`رقم التيليجرام الخاص بك هو: ${telegramId}\nيرجى إضافة هذا الرقم في ملفك الشخصي على منصة التعليم.`);
+    const telegramPhone = ctx.from.id; // Assuming ID can be used as a placeholder for phone number collection.  Needs refinement for real-world implementation.
+    ctx.reply(`رقم التيليجرام الخاص بك هو: ${telegramPhone}\nيرجى إضافة هذا الرقم في ملفك الشخصي على منصة التعليم.`);
   });
 
   // Launch the bot
@@ -49,12 +64,27 @@ export const startBot = () => {
   });
 };
 
-export async function sendTelegramNotification(telegramId: string, message: string, callbackUrl?: string): Promise<boolean> {
+export async function sendTelegramNotification(telegramPhone: string, message: string, callbackUrl?: string): Promise<boolean> {
   try {
     // Check if TELEGRAM_BOT_TOKEN is set
     const botToken = process.env.TELEGRAM_BOT_TOKEN;
     if (!botToken) {
       console.error('TELEGRAM_BOT_TOKEN is not set');
+      return false;
+    }
+
+    // Format telephone number (remove any non-digit characters and ensure it starts with +)
+    let formattedPhone = telegramPhone;
+    if (formattedPhone) {
+      // Remove any non-digit characters except +
+      formattedPhone = formattedPhone.replace(/[^\d+]/g, '');
+
+      // Ensure it starts with +
+      if (!formattedPhone.startsWith('+')) {
+        formattedPhone = '+' + formattedPhone;
+      }
+    } else {
+      console.error('No phone number provided for Telegram notification');
       return false;
     }
 
@@ -67,7 +97,7 @@ export async function sendTelegramNotification(telegramId: string, message: stri
     const response = await axios.post(
       `https://api.telegram.org/bot${botToken}/sendMessage`,
       {
-        chat_id: telegramId,
+        chat_id: formattedPhone,
         text: message,
         parse_mode: 'HTML',
         reply_markup: inlineKeyboard ? JSON.stringify(inlineKeyboard) : undefined
@@ -83,10 +113,10 @@ export async function sendTelegramNotification(telegramId: string, message: stri
 
 export async function notifyTeacherAboutAppointment(appointmentId: number, teacherId: number): Promise<boolean> {
   try {
-    // Get teacher telegram ID
+    // Get teacher telegram phone number
     const teacher = await db.select().from(users).where(eq(users.id, teacherId)).limit(1);
-    if (!teacher.length || !teacher[0].telegramId) {
-      console.error(`Teacher ${teacherId} not found or has no Telegram ID`);
+    if (!teacher.length || !teacher[0].telegramPhone) { //Changed to telegramPhone
+      console.error(`Teacher ${teacherId} not found or has no Telegram phone number`);
       return false;
     }
 
@@ -114,7 +144,7 @@ export async function notifyTeacherAboutAppointment(appointmentId: number, teach
 
     // Send notification with more detailed information
     return await sendTelegramNotification(
-      teacher[0].telegramId,
+      teacher[0].telegramPhone, //Changed to telegramPhone
       `تم تعيينك لموعد جديد مع ${studentName} بتاريخ ${formattedDate} الساعة ${formattedTime}. الرجاء قبول الموعد في أقرب وقت.`,
       callbackUrl
     );

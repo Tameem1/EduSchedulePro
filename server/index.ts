@@ -57,6 +57,15 @@ app.use((req, res, next) => {
     throw err;
   });
 
+  // Run migration for telegram_phone
+  import addTelegramPhone from './migrations/add_telegram_phone';
+  try {
+    await addTelegramPhone();
+    console.log('Migration for telegram_phone completed successfully');
+  } catch (error) {
+    console.error('Failed to run telegram_phone migration:', error);
+  }
+
   // importantly only setup vite in development and after
   // setting up all the other routes so the catch-all route
   // doesn't interfere with the other routes

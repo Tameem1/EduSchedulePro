@@ -26,7 +26,7 @@ const formSchema = z.object({
   username: z.string().min(3, "اسم المستخدم يجب أن يكون 3 أحرف على الأقل"),
   password: z.string().min(6, "كلمة المرور يجب أن تكون 6 أحرف على الأقل"),
   role: z.enum(["student", "teacher", "manager"]),
-  telegramId: z.string().optional(),
+  telegramPhone: z.string().optional(),
 });
 
 export function RegisterForm() {
@@ -38,7 +38,7 @@ export function RegisterForm() {
       username: "",
       password: "",
       role: "student",
-      telegramId: "",
+      telegramPhone: "",
     },
   });
 
@@ -47,7 +47,7 @@ export function RegisterForm() {
       username: values.username,
       password: values.password,
       role: values.role,
-      telegramId: values.telegramId || undefined,
+      telegramPhone: values.telegramPhone || undefined,
     });
   }
 
@@ -86,18 +86,22 @@ export function RegisterForm() {
         />
         <FormField
           control={form.control}
-          name="telegramId"
+          name="telegramPhone"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>معرف تيليجرام (اختياري)</FormLabel>
+              <FormLabel>رقم هاتف تيليجرام (اختياري)</FormLabel>
               <FormControl>
                 <Input
                   dir="ltr"
-                  placeholder="@username أو chat ID"
+                  type="tel"
+                  placeholder="+966123456789"
                   {...field}
                 />
               </FormControl>
               <FormMessage />
+            </FormItem>
+          )}
+        />rmMessage />
             </FormItem>
           )}
         />
