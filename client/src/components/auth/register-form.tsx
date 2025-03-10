@@ -49,6 +49,7 @@ export function RegisterForm() {
       username: values.username,
       password: values.password,
       role: values.role,
+      telegramId: values.telegramId.role,
       telegramId: values.telegramId || null,
     });
   }
@@ -128,7 +129,7 @@ export function RegisterForm() {
         <Button
           type="submit"
           className="w-full"
-          disabled={registerMutation.isPending}
+          disabled={registerMutation.isPending}d={registerMutation.isPending}
         >
           {registerMutation.isPending ? "جاري التسجيل..." : "تسجيل"}
         </Button>

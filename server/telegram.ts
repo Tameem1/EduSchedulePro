@@ -1,4 +1,3 @@
-
 import axios from 'axios';
 import { db } from './db';
 import { eq } from 'drizzle-orm';
@@ -17,7 +16,7 @@ export async function sendTelegramNotification(telegramId: string, message: stri
     const inlineKeyboard = callbackUrl ? 
       { inline_keyboard: [[{ text: "قبول الموعد", url: callbackUrl }]] } : 
       undefined;
-    
+
     // Send message via Telegram Bot API
     const response = await axios.post(
       `https://api.telegram.org/bot${botToken}/sendMessage`,
