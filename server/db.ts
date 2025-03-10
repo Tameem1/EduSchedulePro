@@ -98,7 +98,6 @@ export async function up(db) {
   // Add your migration logic here to add the telegram_id column to the users table.  This will depend on your specific ORM.
   //Example using drizzle-orm:
   // await db.execute('ALTER TABLE users ADD COLUMN telegram_id VARCHAR(255)');
-
 }
 
 export async function down(db) {
