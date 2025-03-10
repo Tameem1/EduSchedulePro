@@ -1,4 +1,3 @@
-
 import { IStorage } from "./types";
 import {
   User,
@@ -164,6 +163,11 @@ export class DatabaseStorage implements IStorage {
   async getAppointment(id: number): Promise<Appointment | undefined> {
     const results = await db.select().from(appointments).where(eq(appointments.id, id)).limit(1);
     return results[0];
+  }
+
+  async getAppointmentById(id: number) {
+    const result = await db.select().from(appointments).where(eq(appointments.id, id)).limit(1);
+    return result.length > 0 ? result[0] : null;
   }
 }
 

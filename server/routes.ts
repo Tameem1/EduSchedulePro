@@ -6,7 +6,7 @@ import { insertAppointmentSchema, insertAvailabilitySchema, insertQuestionnaireS
 import { db } from "./db";
 import { eq } from 'drizzle-orm';
 import { users, availabilities } from "@shared/schema";
-import { sendTelegramNotification } from "./telegram"; // Import the Telegram notification function
+import { sendTelegramNotification, notifyTeacherAboutAppointment } from "./telegram"; // Import the Telegram notification functions
 
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -191,6 +191,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error fetching appointments:", error);
       res.status(500).json({ error: "Failed to fetch appointments" });
+    }
+  });
+  
+  // Get a single appointment by ID
+  app.get("/api/appointments/:id", async (req, res) => {
+    if (!req.isAuthenticated()) {
+      return res.sendStatus(401);
+    }
+
+    try {
+      const appointmentId = parseInt(req.params.id);
+      const appointment = await storage.getAppointmentById(appointmentId);
+      
+      if (!appointment) {
+        return res.status(404).json({ error: "Appointment not found" });
+      }
+      
+      res.json(appointment);
+    } catch (error) {
+      console.error("Error fetching appointment:", error);
+      res.status(500).json({ error: "Failed to fetch appointment" });
     }
   });
 
