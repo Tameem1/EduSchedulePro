@@ -123,11 +123,12 @@ export async function sendTelegramNotification(telegramUsername: string, message
       const isNumeric = /^\d+$/.test(telegramUsername.trim());
       
       // If it's a numeric ID, use it directly, otherwise clean the username
+      // Important: For usernames (not IDs), we need to keep the @ symbol when using chat_id
       const chatId = isNumeric 
         ? telegramUsername.trim() 
         : (formattedUsername.startsWith('@') 
-          ? formattedUsername.substring(1) 
-          : formattedUsername);
+          ? formattedUsername  // Keep the @ for API calls with usernames
+          : '@' + formattedUsername);
         
       console.log('=== TELEGRAM DEBUGGING INFO ===');
       console.log(`Bot Token exists: ${!!botToken} (first 5 chars: ${botToken ? botToken.substring(0, 5) : 'none'})`);
@@ -168,10 +169,15 @@ export async function sendTelegramNotification(telegramUsername: string, message
       }, null, 2));
       
       if (errorData?.error_code === 404) {
-        console.log('User not found. They might have a different username or need to interact with the bot first.');
-        console.log('You should ask the teacher to ensure their username in the platform matches their Telegram username.');
+        console.log('IMPORTANT: User not found or has not started a conversation with the bot.');
+        console.log('For Telegram to work correctly:');
+        console.log('1. The username must be entered WITHOUT the @ symbol in the user profile');
+        console.log('2. The teacher MUST start a conversation with the bot first by sending /start');
+        console.log(`3. The bot username is: @${bot?.botInfo?.username || 'your_bot_username'}`);
+        console.log('4. Verify that the username in the platform matches their exact Telegram username (case sensitive)');
         
-        // You could implement a fallback notification method here if needed
+        // Return a more specific error flag that could be used by the frontend
+        return { success: false, error: 'user_not_started_bot' };
       } else {
         console.error('Telegram API error:', errorData || apiError.message);
       }
@@ -235,7 +241,11 @@ export async function notifyTeacherAboutAppointment(appointmentId: number, teach
     if (bot) {
       try {
         // Determine whether to use telegram ID or username
-        const chatId = teacher[0].telegramId || teacher[0].telegramUsername?.replace('@', '');
+        // Important: For usernames, we need to KEEP the @ for Telegraf API
+        const chatId = teacher[0].telegramId || 
+                      (teacher[0].telegramUsername?.startsWith('@') 
+                        ? teacher[0].telegramUsername 
+                        : '@' + teacher[0].telegramUsername);
         
         console.log(`Sending notification to teacher ${teacherId} with Telegram ${teacher[0].telegramId ? 'ID' : 'username'}: ${chatId}`);
         
@@ -266,10 +276,13 @@ export async function notifyTeacherAboutAppointment(appointmentId: number, teach
     // Additional debug check: Try to look up username via Telegram API
     if (!hasTelegramId && telegramContact && botToken) {
       try {
-        console.log('Attempting to look up user info via getUserProfilePhotos API...');
-        const username = telegramContact.replace('@', '');
+        console.log('Attempting to look up user info via getChat API...');
+        // Ensure username has @ prefix when passed to getChat API
+        const username = telegramContact.startsWith('@') 
+                        ? telegramContact 
+                        : '@' + telegramContact;
         const lookupResponse = await axios.get(
-          `https://api.telegram.org/bot${botToken}/getChat?chat_id=@${username}`
+          `https://api.telegram.org/bot${botToken}/getChat?chat_id=${username}`
         );
         console.log('User lookup successful!', JSON.stringify(lookupResponse.data, null, 2));
       } catch (lookupError) {
