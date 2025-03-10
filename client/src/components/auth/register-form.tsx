@@ -1,11 +1,9 @@
 
 import * as React from "react";
 import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { useAuth } from "@/hooks/use-auth";
-import { UserRole } from "@shared/schema";
-
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -14,6 +12,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
@@ -21,8 +20,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+import { useAuth } from "@/hooks/use-auth";
+import { UserRole } from "@shared/schema";
 
 const formSchema = z.object({
   username: z.string().min(3, "اسم المستخدم يجب أن يكون 3 أحرف على الأقل"),
@@ -49,8 +48,7 @@ export function RegisterForm() {
       username: values.username,
       password: values.password,
       role: values.role,
-      telegramId: values.telegramId.role,
-      telegramId: values.telegramId || null,
+      telegramId: values.telegramId || undefined,
     });
   }
 
@@ -64,7 +62,7 @@ export function RegisterForm() {
             <FormItem>
               <FormLabel>اسم المستخدم</FormLabel>
               <FormControl>
-                <Input dir="rtl" placeholder="اسم المستخدم" {...field} />
+                <Input placeholder="أدخل اسم المستخدم" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -78,9 +76,8 @@ export function RegisterForm() {
               <FormLabel>كلمة المرور</FormLabel>
               <FormControl>
                 <Input
-                  dir="rtl"
                   type="password"
-                  placeholder="كلمة المرور"
+                  placeholder="أدخل كلمة المرور"
                   {...field}
                 />
               </FormControl>
@@ -129,7 +126,7 @@ export function RegisterForm() {
         <Button
           type="submit"
           className="w-full"
-          disabled={registerMutation.isPending}d={registerMutation.isPending}
+          disabled={registerMutation.isPending}
         >
           {registerMutation.isPending ? "جاري التسجيل..." : "تسجيل"}
         </Button>
