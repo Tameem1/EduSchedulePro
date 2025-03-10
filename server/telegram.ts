@@ -160,13 +160,13 @@ export async function sendTelegramNotification(telegramUsername: string, message
     const isNumericId = /^\d+$/.test(formattedUsername);
     console.log(`Username appears to be a ${isNumericId ? 'numeric ID' : 'username string'}`);
     
-    // For usernames (not IDs), add @ if missing
-    if (!isNumericId && formattedUsername && !formattedUsername.startsWith('@')) {
-      formattedUsername = '@' + formattedUsername;
-      console.log(`Added @ to username: ${formattedUsername}`);
+    // For display purposes only, keep a formatted version with @
+    let displayUsername = formattedUsername;
+    if (!isNumericId && displayUsername && !displayUsername.startsWith('@')) {
+      displayUsername = '@' + displayUsername;
     }
 
-    console.log(`Sending notification to teacher with Telegram username: ${formattedUsername}`);
+    console.log(`Sending notification to teacher with Telegram username: ${displayUsername}`);
 
     // Prepare message text with optional action button
     const inlineKeyboard = callbackUrl ? 
@@ -179,12 +179,12 @@ export async function sendTelegramNotification(telegramUsername: string, message
       const isNumeric = /^\d+$/.test(telegramUsername.trim());
       
       // If it's a numeric ID, use it directly, otherwise clean the username
-      // Important: For usernames (not IDs), we need to keep the @ symbol when using chat_id
+      // Important: For usernames (not IDs), we need to REMOVE the @ symbol when using chat_id
       const chatId = isNumeric 
         ? telegramUsername.trim() 
         : (formattedUsername.startsWith('@') 
-          ? formattedUsername  // Keep the @ for API calls with usernames
-          : '@' + formattedUsername);
+          ? formattedUsername.substring(1)  // Remove the @ for API calls with usernames
+          : formattedUsername);
         
       console.log('=== TELEGRAM DEBUGGING INFO ===');
       console.log(`Bot Token exists: ${!!botToken} (first 5 chars: ${botToken ? botToken.substring(0, 5) : 'none'})`);
@@ -297,11 +297,11 @@ export async function notifyTeacherAboutAppointment(appointmentId: number, teach
     if (bot) {
       try {
         // Determine whether to use telegram ID or username
-        // Important: For usernames, we need to KEEP the @ for Telegraf API
+        // Important: For usernames, we need to REMOVE the @ for Telegraf API
         const chatId = teacher[0].telegramId || 
                       (teacher[0].telegramUsername?.startsWith('@') 
-                        ? teacher[0].telegramUsername 
-                        : '@' + teacher[0].telegramUsername);
+                        ? teacher[0].telegramUsername.substring(1)
+                        : teacher[0].telegramUsername);
         
         console.log(`Sending notification to teacher ${teacherId} with Telegram ${teacher[0].telegramId ? 'ID' : 'username'}: ${chatId}`);
         
@@ -333,10 +333,10 @@ export async function notifyTeacherAboutAppointment(appointmentId: number, teach
     if (!hasTelegramId && telegramContact && botToken) {
       try {
         console.log('Attempting to look up user info via getChat API...');
-        // Ensure username has @ prefix when passed to getChat API
+        // Ensure username has NO @ prefix when passed to getChat API
         const username = telegramContact.startsWith('@') 
-                        ? telegramContact 
-                        : '@' + telegramContact;
+                        ? telegramContact.substring(1)
+                        : telegramContact;
         const lookupResponse = await axios.get(
           `https://api.telegram.org/bot${botToken}/getChat?chat_id=${username}`
         );
