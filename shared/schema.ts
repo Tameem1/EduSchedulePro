@@ -97,5 +97,8 @@ export const insertQuestionnaireSchema = createInsertSchema(questionnaireRespons
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type User = typeof users.$inferSelect;
 export type Availability = typeof availabilities.$inferSelect;
-export type Appointment = typeof appointments.$inferSelect;
+export type Appointment = typeof appointments.$inferSelect & {
+  student?: User;
+  teacher?: User;
+};
 export type QuestionnaireResponse = typeof questionnaireResponses.$inferSelect;

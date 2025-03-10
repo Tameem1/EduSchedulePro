@@ -193,7 +193,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ error: "Failed to fetch appointments" });
     }
   });
-  
+
   // Get a single appointment by ID
   app.get("/api/appointments/:id", async (req, res) => {
     if (!req.isAuthenticated()) {
@@ -203,11 +203,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const appointmentId = parseInt(req.params.id);
       const appointment = await storage.getAppointmentById(appointmentId);
-      
+
       if (!appointment) {
         return res.status(404).json({ error: "Appointment not found" });
       }
-      
+
       res.json(appointment);
     } catch (error) {
       console.error("Error fetching appointment:", error);

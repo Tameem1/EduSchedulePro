@@ -25,7 +25,7 @@ import { useToast } from "@/hooks/use-toast";
 import type { User, Availability, Appointment } from "@shared/schema";
 import { useAuth } from "../../providers/auth-provider";
 
-export default function ManagerAppointments() {
+function ManagerAppointments() {
   const { toast } = useToast();
   const [selectedAppointment, setSelectedAppointment] =
     React.useState<Appointment | null>(null);

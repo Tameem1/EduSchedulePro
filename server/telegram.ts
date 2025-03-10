@@ -2,6 +2,52 @@ import axios from 'axios';
 import { db } from './db';
 import { eq } from 'drizzle-orm';
 import { users, appointments } from '@shared/schema';
+import { Telegraf } from 'telegraf';
+
+// Check if bot token is provided
+const botToken = process.env.TELEGRAM_BOT_TOKEN;
+
+// Initialize bot if token is available
+export const bot = botToken ? new Telegraf(botToken) : null;
+
+// Function to send a message to a specific Telegram user
+export const sendTelegramMessage = async (telegramId: string, message: string): Promise<boolean> => {
+  if (!bot) {
+    console.log('Telegram bot token not provided, cannot send message');
+    return false;
+  }
+
+  try {
+    await bot.telegram.sendMessage(telegramId, message);
+    console.log(`Message sent to Telegram user ${telegramId}`);
+    return true;
+  } catch (error) {
+    console.error(`Failed to send message to Telegram user ${telegramId}:`, error);
+    throw error;
+  }
+};
+
+// Start the bot
+export const startBot = () => {
+  if (!bot) {
+    console.log('Telegram bot token not provided, skipping bot initialization');
+    return;
+  }
+
+  bot.start((ctx) => ctx.reply('مرحبًا بك في روبوت التعليم المساعد! استخدم /register للتسجيل كمعلم.'));
+
+  bot.command('register', (ctx) => {
+    const telegramId = ctx.from.id;
+    ctx.reply(`رقم التيليجرام الخاص بك هو: ${telegramId}\nيرجى إضافة هذا الرقم في ملفك الشخصي على منصة التعليم.`);
+  });
+
+  // Launch the bot
+  bot.launch().then(() => {
+    console.log('Telegram bot started');
+  }).catch(err => {
+    console.error('Failed to start Telegram bot:', err);
+  });
+};
 
 export async function sendTelegramNotification(telegramId: string, message: string, callbackUrl?: string): Promise<boolean> {
   try {
@@ -57,7 +103,7 @@ export async function notifyTeacherAboutAppointment(appointmentId: number, teach
 
     // Create acceptance URL (this would be your frontend URL where teacher can accept)
     const callbackUrl = `${process.env.FRONTEND_URL || 'http://localhost:5173'}/teacher/accept-appointment/${appointmentId}`;
-    
+
     // Format the date for display
     const appointmentDate = new Date(appointment[0].startTime);
     const formattedDate = appointmentDate.toLocaleDateString('ar-SA');
@@ -65,7 +111,7 @@ export async function notifyTeacherAboutAppointment(appointmentId: number, teach
       hour: '2-digit', 
       minute: '2-digit'
     });
-    
+
     // Send notification with more detailed information
     return await sendTelegramNotification(
       teacher[0].telegramId,
