@@ -161,22 +161,24 @@ export class DatabaseStorage implements IStorage {
   }
 }
 
-export const storage = new DatabaseStorage();
+// Add these methods to the DatabaseStorage class implementation 
+// before exporting the storage instance
+async getAppointment(id: number): Promise<Appointment | undefined> {
+  const results = await db.select().from(appointments).where(eq(appointments.id, id)).limit(1);
+  return results[0];
+}
 
-  async getAppointment(id: number): Promise<Appointment | undefined> {
-    const results = await db.select().from(appointments).where(eq(appointments.id, id)).limit(1);
-    return results[0];
-  },
+async updateAppointment(id: number, data: Partial<Appointment>): Promise<Appointment> {
+  await db.update(appointments)
+    .set(data)
+    .where(eq(appointments.id, id));
   
-  async updateAppointment(id: number, data: Partial<Appointment>): Promise<Appointment> {
-    await db.update(appointments)
-      .set(data)
-      .where(eq(appointments.id, id));
-    
-    const updated = await db.select().from(appointments).where(eq(appointments.id, id)).limit(1);
-    if (!updated.length) {
-      throw new Error("Appointment not found after update");
-    }
-    
-    return updated[0];
-  },
+  const updated = await db.select().from(appointments).where(eq(appointments.id, id)).limit(1);
+  if (!updated.length) {
+    throw new Error("Appointment not found after update");
+  }
+  
+  return updated[0];
+}
+
+export const storage = new DatabaseStorage();
