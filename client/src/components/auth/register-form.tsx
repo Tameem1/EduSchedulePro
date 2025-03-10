@@ -1,4 +1,3 @@
-
 import * as React from "react";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
@@ -87,14 +86,28 @@ export function RegisterForm() {
         />
         <FormField
           control={form.control}
+          name="telegramId"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>معرف تيليجرام (اختياري)</FormLabel>
+              <FormControl>
+                <Input
+                  dir="ltr"
+                  placeholder="@username أو chat ID"
+                  {...field}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
           name="role"
           render={({ field }) => (
             <FormItem>
               <FormLabel>نوع الحساب</FormLabel>
-              <Select
-                onValueChange={field.onChange}
-                defaultValue={field.value}
-              >
+              <Select onValueChange={field.onChange} defaultValue={field.value}>
                 <FormControl>
                   <SelectTrigger>
                     <SelectValue placeholder="اختر نوع الحساب" />
@@ -110,19 +123,7 @@ export function RegisterForm() {
             </FormItem>
           )}
         />
-        <FormField
-          control={form.control}
-          name="telegramId"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>معرف تيليجرام (اختياري)</FormLabel>
-              <FormControl>
-                <Input dir="ltr" placeholder="@username أو chat ID" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+
         <Button
           type="submit"
           className="w-full"
