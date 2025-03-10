@@ -279,8 +279,11 @@ export async function notifyTeacherAboutAppointment(appointmentId: number, teach
     const student = await db.select().from(users).where(eq(users.id, appointment[0].studentId)).limit(1);
     const studentName = student.length ? student[0].username : `طالب ${appointment[0].studentId}`;
 
-    // Create acceptance URL (this would be your frontend URL where teacher can accept)
-    const callbackUrl = `${process.env.FRONTEND_URL || 'http://localhost:5173'}/teacher/accept-appointment/${appointmentId}`;
+    // Create acceptance URL (must be a public URL, not localhost)
+    const replit_domain = process.env.REPL_SLUG ? `https://${process.env.REPL_SLUG}.replit.dev` : null;
+    const callbackUrl = `${process.env.FRONTEND_URL || replit_domain || 'https://example.com'}/teacher/accept-appointment/${appointmentId}`;
+    
+    console.log(`Using callback URL: ${callbackUrl}`);
 
     // Format the date for display
     const appointmentDate = new Date(appointment[0].startTime);
