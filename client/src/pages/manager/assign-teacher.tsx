@@ -11,7 +11,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { ArrowLeft } from "lucide-react";
 import axios from "axios";
 
@@ -113,10 +113,12 @@ export function AssignTeacher() {
               <h3 className="text-lg font-semibold">تفاصيل الموعد</h3>
               <div className="grid grid-cols-2 gap-2 mt-2">
                 <div>
-                  <span className="font-medium">العنوان:</span> {appointment.title}
+                  <span className="font-medium">العنوان:</span>{" "}
+                  {appointment.title}
                 </div>
                 <div>
-                  <span className="font-medium">الطالب:</span> {appointment.studentName}
+                  <span className="font-medium">الطالب:</span>{" "}
+                  {appointment.studentName}
                 </div>
                 <div>
                   <span className="font-medium">اليوم:</span> {appointment.day}
@@ -148,7 +150,9 @@ export function AssignTeacher() {
               onClick={handleAssignTeacher}
               disabled={assignTeacherMutation.isPending}
             >
-              {assignTeacherMutation.isPending ? "جاري التعيين..." : "تعيين المعلم"}
+              {assignTeacherMutation.isPending
+                ? "جاري التعيين..."
+                : "تعيين المعلم"}
             </Button>
           </div>
         </CardContent>
