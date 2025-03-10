@@ -118,9 +118,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
         studentId: req.user.id,
         status: "pending"
       };
-        studentId: req.user.id,
-        status: "pending"
-      });
 
       const appointment = await storage.createAppointment(parsedData);
       res.json(appointment);
