@@ -109,6 +109,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const { startTime } = req.body;
       console.log(`Appointment requested for time: ${startTime}`);
+      console.log(`Time in local timezone: ${new Date(startTime).toLocaleString()}`);
 
       const parsedData = insertAppointmentSchema.parse({
         startTime,

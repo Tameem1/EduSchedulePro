@@ -6,7 +6,7 @@ const TIMEZONE = "Asia/Riyadh";
 
 export function formatGMT3Time(isoString: string | Date): string {
   const date = typeof isoString === 'string' ? new Date(isoString) : isoString;
-  return formatTZ(date, "HH:mm", { timeZone: TIMEZONE });
+  return format(date, 'EEEE, MMMM d, yyyy h:mm a');
 }
 
 export function getGMT3ISOString(date: Date): string {

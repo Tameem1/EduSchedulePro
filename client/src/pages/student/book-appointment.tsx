@@ -61,6 +61,13 @@ export default function BookAppointment() {
   const bookAppointmentMutation = useMutation({
     mutationFn: async () => {
       if (!selectedTime) throw new Error("Please select a time");
+      
+      // Create a new date object to avoid modifying the original
+      const bookingTime = new Date(selectedTime);
+      
+      // Adjust the time to account for server-side processing
+      // This will cancel out the GMT+3 adjustment on the server side
+      bookingTime.setHours(bookingTime.getHours() - 3);
 
       const appointment = {
         startTime: getGMT3ISOString(selectedTime),

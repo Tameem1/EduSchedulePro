@@ -92,10 +92,8 @@ export const insertUserSchema = createInsertSchema(users);
 export const insertAvailabilitySchema = createInsertSchema(availabilities);
 export const insertAppointmentSchema = createInsertSchema(appointments).extend({
   startTime: z.string().transform((str) => {
-    const date = new Date(str);
-    // Adjust for GMT+3
-    date.setHours(date.getHours() + 3);
-    return date.toISOString();
+    // Don't modify the time, just ensure it's an ISO string
+    return new Date(str).toISOString();
   }),
 }).omit({ teacherId: true });
 export const insertQuestionnaireSchema = createInsertSchema(questionnaireResponses);
