@@ -1,359 +1,154 @@
-
-import React from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { apiRequest } from '../../lib/api';
-import { useToast } from '../../components/ui/use-toast';
-import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
-import { Button } from '../../components/ui/button';
-import { Loader2 } from 'lucide-react';
-import { format } from 'date-fns';
-import { useParams, useNavigate } from 'react-router-dom';
-
-export default function AssignTeacher() {
-  const { appointmentId } = useParams();
-  const navigate = useNavigate();
-  const { toast } = useToast();
-  const queryClient = useQueryClient();
-
-  // Fetch appointment details
-  const { data: appointment, isLoading: isLoadingAppointment } = useQuery({
-    queryKey: ['/api/appointments', appointmentId],
-    queryFn: async () => {
-      const res = await apiRequest('GET', `/api/appointments/${appointmentId}`);
-      if (!res.ok) {
-        throw new Error('Failed to fetch appointment');
-      }
-      return res.json();
-    },
-  });
-
-  // Fetch available teachers
-  const { data: teachers, isLoading: isLoadingTeachers } = useQuery({
-    queryKey: ['/api/users/teachers'],
-    queryFn: async () => {
-      const res = await apiRequest('GET', '/api/users/teachers');
-      if (!res.ok) {
-        throw new Error('Failed to fetch teachers');
-      }
-      return res.json();
-    },
-  });
-
-  // Assign teacher mutation
-  const assignTeacherMutation = useMutation({
-    mutationFn: async (teacherId: number) => {
-      const res = await apiRequest('PATCH', `/api/appointments/${appointmentId}`, {
-        teacherId,
-        status: 'matched',
-      });
-      
-      if (!res.ok) {
-        throw new Error('Failed to assign teacher');
-      }
-      
-      return res.json();
-    },
-    onSuccess: (data) => {
-      // Show success message with notification status
-      if (data.notificationSent) {
-        toast({
-          title: 'تم تعيين المعلم بنجاح',
-          description: 'تم إرسال إشعار للمعلم عبر تيليجرام',
-          variant: 'default',
-        });
-      } else {
-        toast({
-          title: 'تم تعيين المعلم بنجاح',
-          description: 'لم يتم إرسال إشعار للمعلم (المعلم ليس لديه معرف تيليجرام)',
-          variant: 'default',
-        });
-      }
-      
-      // Invalidate queries
-      queryClient.invalidateQueries({ queryKey: ['/api/appointments'] });
-      
-      // Navigate back to appointments list
-      navigate('/manager/appointments');
-    },
-    onError: () => {
-      toast({
-        title: 'خطأ',
-        description: 'فشل في تعيين المعلم',
-        variant: 'destructive',
-      });
-    },
-  });
-
-  if (isLoadingAppointment || isLoadingTeachers) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin" />
-      </div>
-    );
-  }
-
-  return (
-    <div className="container mx-auto p-4">
-      <Card>
-        <CardHeader>
-          <CardTitle>تعيين معلم للموعد</CardTitle>
-        </CardHeader>
-        <CardContent>
-          {appointment && (
-            <div className="mb-6 p-4 bg-muted/50 rounded-md">
-              <p><span className="font-semibold">رقم الموعد:</span> {appointment.id}</p>
-              <p><span className="font-semibold">الطالب:</span> {appointment.studentId}</p>
-              <p>
-                <span className="font-semibold">الوقت:</span>{" "}
-                {format(new Date(appointment.startTime), "yyyy-MM-dd h:mm a")}
-              </p>
-              <p><span className="font-semibold">الحالة:</span> {appointment.status}</p>
-            </div>
-          )}
-
-          <div className="space-y-2">
-            <h3 className="text-lg font-medium">اختر معلم</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
-              {teachers?.map((teacher) => (
-                <Button
-                  key={teacher.id}
-                  variant="outline"
-                  className="h-auto p-4 flex flex-col items-start"
-                  onClick={() => assignTeacherMutation.mutate(teacher.id)}
-                  disabled={assignTeacherMutation.isPending}
-                >
-                  <div className="font-medium">{teacher.username}</div>
-                  <div className="text-sm text-muted-foreground">
-                    {teacher.telegramId ? 'متصل بتيليجرام ✓' : 'غير متصل بتيليجرام ✗'}
-                  </div>
-                </Button>
-              ))}
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-    </div>
-  );
-}
 import * as React from "react";
 import { useParams, useLocation } from "wouter";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { format } from "date-fns";
-import { apiRequest, queryClient } from "@/lib/queryClient";
-import { Loader2 } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
-import type { User, Availability, Appointment } from "@shared/schema";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { useToast } from "@/components/ui/use-toast";
+import { ArrowLeft } from "lucide-react";
+import axios from "axios";
 
-export default function AssignTeacher() {
-  const { appointmentId } = useParams();
-  const [_, navigate] = useLocation();
+interface Teacher {
+  id: number;
+  name: string;
+}
+
+interface AppointmentDetails {
+  id: number;
+  title: string;
+  studentName: string;
+  status: string;
+  day: string;
+  time: string;
+  teacherId: number | null;
+}
+
+export function AssignTeacher() {
+  const { id } = useParams();
+  const [, navigate] = useLocation();
   const { toast } = useToast();
+  const [selectedTeacher, setSelectedTeacher] = React.useState<string>("");
 
-  // Fetch the appointment
-  const { data: appointment, isLoading: isLoadingAppointment } = useQuery<Appointment>({
-    queryKey: [`/api/appointments/${appointmentId}`],
+  const { data: appointment, isLoading: appointmentLoading } = useQuery({
+    queryKey: ["appointment", id],
     queryFn: async () => {
-      const res = await apiRequest("GET", `/api/appointments/${appointmentId}`);
-      if (!res.ok) {
-        throw new Error("Failed to fetch appointment");
-      }
-      return res.json();
+      const response = await axios.get(`/api/appointments/${id}`);
+      return response.data as AppointmentDetails;
     },
   });
 
-  // Fetch all teachers
-  const { data: teachers, isLoading: isLoadingTeachers } = useQuery<User[]>({
-    queryKey: ["/api/users/teachers"],
+  const { data: teachers, isLoading: teachersLoading } = useQuery({
+    queryKey: ["teachers"],
     queryFn: async () => {
-      const res = await apiRequest("GET", "/api/users/teachers");
-      if (!res.ok) {
-        throw new Error("Failed to fetch teachers");
-      }
-      return res.json();
-    },
-  });
-
-  // Fetch all availabilities
-  const { data: availabilities, isLoading: isLoadingAvailabilities } = useQuery<
-    Availability[]
-  >({
-    queryKey: ["/api/availabilities"],
-    queryFn: async () => {
-      const res = await apiRequest("GET", "/api/availabilities");
-      if (!res.ok) {
-        throw new Error("Failed to fetch availabilities");
-      }
-      return res.json();
+      const response = await axios.get("/api/teachers");
+      return response.data as Teacher[];
     },
   });
 
   const assignTeacherMutation = useMutation({
-    mutationFn: async ({
-      appointmentId,
-      teacherId,
-    }: {
-      appointmentId: number;
-      teacherId: number;
-    }) => {
-      const res = await apiRequest(
-        "PATCH",
-        `/api/appointments/${appointmentId}`,
-        {
-          teacherId,
-          status: "matched",
-        },
-      );
-      if (!res.ok) {
-        throw new Error("Failed to assign teacher");
-      }
-      return res.json();
-    },
-    onSuccess: (data) => {
-      const notificationMessage = data.notificationSent
-        ? "تم إرسال إشعار للمعلم عبر تيليجرام بنجاح"
-        : "تم تعيين المعلم ولكن لم يتم إرسال إشعار تيليجرام";
-
-      toast({
-        title: "تم تعيين المعلم",
-        description: notificationMessage,
-        variant: data.notificationSent ? "default" : "secondary",
+    mutationFn: async (teacherId: string) => {
+      await axios.post(`/api/appointments/${id}/assign-teacher`, {
+        teacherId: parseInt(teacherId),
       });
-      queryClient.invalidateQueries({ queryKey: ["/api/appointments"] });
+    },
+    onSuccess: () => {
+      toast({
+        title: "تم تعيين المعلم بنجاح",
+        description: "تم تعيين المعلم للموعد بنجاح",
+      });
       navigate("/manager/appointments");
     },
-    onError: (error) => {
+    onError: () => {
       toast({
-        title: "خطأ في تعيين المعلم",
-        description: error.message,
+        title: "حدث خطأ",
+        description: "لم يتم تعيين المعلم للموعد",
         variant: "destructive",
       });
     },
   });
 
-  if (isLoadingAppointment || isLoadingTeachers || isLoadingAvailabilities) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin" />
-      </div>
-    );
+  const handleAssignTeacher = () => {
+    if (!selectedTeacher) {
+      toast({
+        title: "خطأ",
+        description: "الرجاء اختيار معلم",
+        variant: "destructive",
+      });
+      return;
+    }
+    assignTeacherMutation.mutate(selectedTeacher);
+  };
+
+  if (appointmentLoading || teachersLoading) {
+    return <div>جاري التحميل...</div>;
   }
 
   if (!appointment) {
-    return (
-      <div className="container mx-auto p-4">
-        <Card>
-          <CardContent className="pt-6">
-            <p className="text-center">الموعد غير موجود</p>
-            <div className="mt-4 flex justify-center">
-              <Button onClick={() => navigate("/manager/appointments")}>
-                العودة إلى المواعيد
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-    );
+    return <div>لم يتم العثور على الموعد</div>;
   }
 
   return (
-    <div dir="rtl" className="container mx-auto p-4">
+    <div className="container p-4">
+      <Button
+        variant="outline"
+        className="mb-4"
+        onClick={() => navigate("/manager/appointments")}
+      >
+        <ArrowLeft className="mr-2 h-4 w-4" /> العودة
+      </Button>
       <Card>
         <CardHeader>
           <CardTitle>تعيين معلم للموعد</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="mb-6">
-            <h3 className="text-lg font-medium mb-2">معلومات الموعد</h3>
-            <div className="space-y-2">
-              <p>
-                <span className="font-medium">رقم الموعد:</span> {appointment.id}
-              </p>
-              <p>
-                <span className="font-medium">الطالب:</span> طالب{" "}
-                {appointment.studentId}
-              </p>
-              <p>
-                <span className="font-medium">الوقت:</span>{" "}
-                {format(new Date(appointment.startTime), "yyyy-MM-dd h:mm a")}
-              </p>
-              <p>
-                <span className="font-medium">الحالة:</span>{" "}
-                <Badge
-                  variant={
-                    appointment.status === "pending"
-                      ? "warning"
-                      : appointment.status === "matched"
-                        ? "success"
-                        : "default"
-                  }
-                >
-                  {appointment.status === "pending"
-                    ? "قيد الانتظار"
-                    : appointment.status === "matched"
-                      ? "تم التطابق"
-                      : "مكتمل"}
-                </Badge>
-              </p>
+          <div className="grid gap-4">
+            <div className="mb-4">
+              <h3 className="text-lg font-semibold">تفاصيل الموعد</h3>
+              <div className="grid grid-cols-2 gap-2 mt-2">
+                <div>
+                  <span className="font-medium">العنوان:</span> {appointment.title}
+                </div>
+                <div>
+                  <span className="font-medium">الطالب:</span> {appointment.studentName}
+                </div>
+                <div>
+                  <span className="font-medium">اليوم:</span> {appointment.day}
+                </div>
+                <div>
+                  <span className="font-medium">الوقت:</span> {appointment.time}
+                </div>
+              </div>
             </div>
-          </div>
-
-          <div className="space-y-4">
-            <h3 className="text-lg font-medium">اختر معلماً</h3>
-            <div className="grid gap-3">
-              {teachers?.map((teacher) => {
-                const isAvailable = availabilities?.some((avail) => {
-                  const appointmentTime = new Date(appointment.startTime);
-                  const availStartTime = new Date(avail.startTime);
-                  const availEndTime = new Date(avail.endTime);
-                  return (
-                    avail.teacherId === teacher.id &&
-                    appointmentTime >= availStartTime &&
-                    appointmentTime <= availEndTime
-                  );
-                });
-
-                return (
-                  <div
-                    key={teacher.id}
-                    className={`p-4 border rounded-lg ${
-                      isAvailable
-                        ? "hover:bg-muted cursor-pointer"
-                        : "opacity-50"
-                    }`}
-                    onClick={() => {
-                      if (isAvailable) {
-                        assignTeacherMutation.mutate({
-                          appointmentId: appointment.id,
-                          teacherId: teacher.id,
-                        });
-                      }
-                    }}
-                  >
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="font-medium">{teacher.username}</p>
-                        <p className="text-sm text-muted-foreground">
-                          معلم رقم {teacher.id}
-                        </p>
-                      </div>
-                      {isAvailable ? (
-                        <Badge variant="success">متوفر</Badge>
-                      ) : (
-                        <Badge variant="secondary">غير متوفر</Badge>
-                      )}
-                    </div>
-                  </div>
-                );
-              })}
+            <div>
+              <Label htmlFor="teacher">اختر المعلم</Label>
+              <Select
+                value={selectedTeacher}
+                onValueChange={setSelectedTeacher}
+              >
+                <SelectTrigger id="teacher">
+                  <SelectValue placeholder="اختر المعلم" />
+                </SelectTrigger>
+                <SelectContent>
+                  {teachers?.map((teacher) => (
+                    <SelectItem key={teacher.id} value={teacher.id.toString()}>
+                      {teacher.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
-          </div>
-
-          <div className="mt-6 flex justify-end">
-            <Button variant="outline" onClick={() => navigate("/manager/appointments")}>
-              العودة
+            <Button
+              onClick={handleAssignTeacher}
+              disabled={assignTeacherMutation.isPending}
+            >
+              {assignTeacherMutation.isPending ? "جاري التعيين..." : "تعيين المعلم"}
             </Button>
           </div>
         </CardContent>
