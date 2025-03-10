@@ -84,15 +84,16 @@ export async function sendTelegramNotification(telegramUsername: string, message
       formattedUsername = '@' + formattedUsername;
     }
 
-    console.log(`Attempting to send Telegram message to: ${formattedUsername}`);
+    console.log(`Sending notification to teacher with Telegram username: ${formattedUsername}`);
 
     // Prepare message text with optional action button
     const inlineKeyboard = callbackUrl ? 
       { inline_keyboard: [[{ text: "قبول الموعد", url: callbackUrl }]] } : 
       undefined;
 
-    // Send message via Telegram Bot API
+    // Try to get user's ID from username (works if they've already started the bot)
     try {
+      // First attempt: send directly to the username
       const response = await axios.post(
         `https://api.telegram.org/bot${botToken}/sendMessage`,
         {
@@ -103,11 +104,20 @@ export async function sendTelegramNotification(telegramUsername: string, message
         }
       );
 
-      console.log('Telegram API response:', response.data);
+      console.log('Telegram message sent successfully!');
       return response.data.ok;
     } catch (apiError: any) {
-      console.error('Telegram API error:', apiError.response?.data || apiError.message);
-      console.log('Important: The user must have started a conversation with your bot before you can send them messages');
+      const errorData = apiError.response?.data;
+      
+      if (errorData?.error_code === 404) {
+        console.log('User not found. They might have a different username or need to interact with the bot first.');
+        console.log('You should ask the teacher to ensure their username in the platform matches their Telegram username.');
+        
+        // You could implement a fallback notification method here if needed
+      } else {
+        console.error('Telegram API error:', errorData || apiError.message);
+      }
+      
       return false;
     }
   } catch (error) {
@@ -147,11 +157,41 @@ export async function notifyTeacherAboutAppointment(appointmentId: number, teach
       minute: '2-digit'
     });
 
-    // Send notification with more detailed information
-    console.log(`Sending notification to teacher ${teacherId} with Telegram username: ${teacher[0].telegramUsername}`);
+    // Prepare message text
+    const message = `تم تعيينك لموعد جديد مع ${studentName} بتاريخ ${formattedDate} الساعة ${formattedTime}. الرجاء قبول الموعد في أقرب وقت.`;
+    
+    // Try first using the bot directly if we have it initialized (more reliable)
+    if (bot) {
+      try {
+        // Clean the username (remove @ if present)
+        const username = teacher[0].telegramUsername.replace('@', '');
+        
+        console.log(`Sending notification to teacher ${teacherId} with Telegram username: @${username}`);
+        
+        // Find the user's chat by username and send message
+        // This works if the user has started a conversation with the bot
+        await bot.telegram.sendMessage(
+          `@${username}`, 
+          message,
+          callbackUrl ? { 
+            reply_markup: { 
+              inline_keyboard: [[{ text: "قبول الموعد", url: callbackUrl }]] 
+            } 
+          } : undefined
+        );
+        
+        console.log('Successfully sent notification via bot API');
+        return true;
+      } catch (botError) {
+        console.log('Error sending via bot API, falling back to HTTP method:', botError.message);
+        // Fall back to HTTP method
+      }
+    }
+    
+    // Fallback to the HTTP method
     return await sendTelegramNotification(
       teacher[0].telegramUsername, 
-      `تم تعيينك لموعد جديد مع ${studentName} بتاريخ ${formattedDate} الساعة ${formattedTime}. الرجاء قبول الموعد في أقرب وقت.`,
+      message,
       callbackUrl
     );
   } catch (error) {
