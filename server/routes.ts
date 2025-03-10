@@ -112,12 +112,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.log(`Time in local timezone: ${new Date(startTime).toLocaleString()}`);
       console.log(`Hours: ${new Date(startTime).getHours()}, Minutes: ${new Date(startTime).getMinutes()}`);
       
-      // Use the time directly without any schema transformations
-      const parsedData = {
-        startTime: startTime,
+      // Parse using the schema to ensure correct formatting
+      const parsedData = insertAppointmentSchema.parse({
+        startTime: new Date(startTime),
         studentId: req.user.id,
         status: "pending"
-      };
+      });
 
       const appointment = await storage.createAppointment(parsedData);
       res.json(appointment);
