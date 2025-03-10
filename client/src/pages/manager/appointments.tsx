@@ -316,7 +316,9 @@ export default function ManagerAppointments() {
                         availEndTime: availEndTime.toISOString(),
                         availEndTimeStamp: endTimeStamp,
                         isInRange: apptTimeStamp >= startTimeStamp && apptTimeStamp <= endTimeStamp
-                      });ng to timestamps
+                      });
+                      
+                      // Convert appointment time to timestamps
                       const apptTimeStamp = appointmentTime.getTime();
                       const startTimeStamp = availStartTime.getTime();
                       const endTimeStamp = availEndTime.getTime();
@@ -330,7 +332,7 @@ export default function ManagerAppointments() {
                         availStartTimeStamp: startTimeStamp,
                         availEndTime: availEndTime.toISOString(),
                         availEndTimeStamp: endTimeStamp,
-                        isInRange: apptTimeStamp >= startTimeStamp && apptTimeStamp <= endTimeStamp= endTimeStamp
+                        isInRange: apptTimeStamp >= startTimeStamp && apptTimeStamp <= endTimeStamp
                       });
                       
                       return (
