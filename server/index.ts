@@ -1,7 +1,8 @@
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
-import migrate from "./migrations/add_telegram_id"; // Added import for migration
+import migrate from "./migrations/add_telegram_id";
+import renameTelegramField from "./migrations/rename_telegram_field"; // Added import for rename migration
 
 const app = express();
 app.use(express.json());
@@ -41,6 +42,7 @@ app.use((req, res, next) => {
   // Run database migrations
   try {
     await migrate();
+    await renameTelegramField(); // Added execution of the rename migration
     console.log('Database migrations completed successfully');
   } catch (error) {
     console.error('Database migrations failed:', error);
@@ -57,14 +59,6 @@ app.use((req, res, next) => {
     throw err;
   });
 
-  // Run migration for telegram_phone
-  try {
-    const { default: addTelegramPhone } = await import('./migrations/add_telegram_phone');
-    await addTelegramPhone();
-    console.log('Migration for telegram_phone completed successfully');
-  } catch (error) {
-    console.error('Failed to run telegram_phone migration:', error);
-  }
 
   // importantly only setup vite in development and after
   // setting up all the other routes so the catch-all route
@@ -88,52 +82,5 @@ app.use((req, res, next) => {
 })();
 
 
-// Placeholder for migrations/add_telegram_id.js (This would be a proper migration file)
-// This is a simplified example and needs to be adapted to your specific database library
-// (e.g., using Sequelize, Prisma, etc.)
-// const { sequelize } = require('./database'); // Import your database connection
-
-// module.exports = async () => {
-//   try {
-//     await sequelize.sync(); //or sequelize.query('ALTER TABLE users ADD COLUMN telegram_id VARCHAR(255);')
-//   } catch (error) {
-//     console.error('Error running migration:', error);
-//     throw error;
-//   }
-// };
-
-
-// Placeholder for a registration form (React example)
-// This is a very basic example and would need error handling and more robust functionality.
-// import React, { useState } from 'react';
-
-// function RegistrationForm() {
-//   const [telegramId, setTelegramId] = useState('');
-
-//   const handleSubmit = async (e) => {
-//     e.preventDefault();
-//     // Send data to backend API endpoint
-//     const response = await fetch('/api/register', {
-//       method: 'POST',
-//       headers: {
-//         'Content-Type': 'application/json',
-//       },
-//       body: JSON.stringify({ telegramId }),
-//     });
-//     //Handle response
-//   };
-
-//   return (
-//     <form onSubmit={handleSubmit}>
-//       <input
-//         type="text"
-//         placeholder="Telegram ID"
-//         value={telegramId}
-//         onChange={(e) => setTelegramId(e.target.value)}
-//       />
-//       <button type="submit">Register</button>
-//     </form>
-//   );
-// }
-
-// export default RegistrationForm;
+// Placeholder for migrations/add_telegram_id.js and migrations/rename_telegram_field.js
+// These would be proper migration files using your database library (e.g., Sequelize, Prisma)

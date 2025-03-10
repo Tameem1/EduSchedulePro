@@ -118,9 +118,9 @@ export async function sendTelegramNotification(telegramUsername: string, message
 
 export async function notifyTeacherAboutAppointment(appointmentId: number, teacherId: number): Promise<boolean> {
   try {
-    // Get teacher telegram username (stored in telegramPhone field)
+    // Get teacher telegram username
     const teacher = await db.select().from(users).where(eq(users.id, teacherId)).limit(1);
-    if (!teacher.length || !teacher[0].telegramPhone) {
+    if (!teacher.length || !teacher[0].telegramUsername) {
       console.error(`Teacher ${teacherId} not found or has no Telegram username`);
       return false;
     }
@@ -148,9 +148,9 @@ export async function notifyTeacherAboutAppointment(appointmentId: number, teach
     });
 
     // Send notification with more detailed information
-    console.log(`Sending notification to teacher ${teacherId} with Telegram username: ${teacher[0].telegramPhone}`);
+    console.log(`Sending notification to teacher ${teacherId} with Telegram username: ${teacher[0].telegramUsername}`);
     return await sendTelegramNotification(
-      teacher[0].telegramPhone, 
+      teacher[0].telegramUsername, 
       `تم تعيينك لموعد جديد مع ${studentName} بتاريخ ${formattedDate} الساعة ${formattedTime}. الرجاء قبول الموعد في أقرب وقت.`,
       callbackUrl
     );

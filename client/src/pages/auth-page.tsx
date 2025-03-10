@@ -17,7 +17,7 @@ const loginSchema = insertUserSchema.pick({
 });
 
 const registerSchema = insertUserSchema.extend({
-  telegramPhone: z.string().optional()
+  telegramUsername: z.string().optional() // Changed to telegramUsername
 });
 
 export default function AuthPage() {
@@ -37,7 +37,7 @@ export default function AuthPage() {
       username: "",
       password: "",
       role: UserRole.STUDENT as UserRoleType,
-      telegramPhone: "",
+      telegramUsername: "", // Changed to telegramUsername
     },
   });
 
@@ -117,12 +117,12 @@ export default function AuthPage() {
                         </Select>
                       </div>
                       <div>
-                        <Label htmlFor="telegramPhone">رقم هاتف تيليجرام (اختياري)</Label>
+                        <Label htmlFor="telegramUsername">معرف تيليجرام (اختياري)</Label>  {/* Changed label */}
                         <Input 
                           dir="ltr"
-                          type="tel"
-                          placeholder="+966123456789" 
-                          {...registerForm.register("telegramPhone")}
+                          type="text" {/* Changed type to text */}
+                          placeholder="@username" {/* Added placeholder */}
+                          {...registerForm.register("telegramUsername")} {/* Changed field name */}
                         />
                       </div>
                       <Button 

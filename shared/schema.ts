@@ -22,7 +22,7 @@ export const users = pgTable("users", {
   username: text("username").notNull().unique(),
   password: text("password").notNull(),
   role: userRoleEnum("role").notNull(),
-  telegramPhone: text("telegram_phone") // Storing Telegram username in this field
+  telegramUsername: text("telegram_username") 
 });
 
 // Teacher availability slots
