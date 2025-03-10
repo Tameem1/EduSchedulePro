@@ -1,6 +1,7 @@
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
+import migrate from "./migrations/add_telegram_id"; // Added import for migration
 
 const app = express();
 app.use(express.json());
@@ -37,6 +38,15 @@ app.use((req, res, next) => {
 });
 
 (async () => {
+  // Run database migrations
+  try {
+    await migrate();
+    console.log('Database migrations completed successfully');
+  } catch (error) {
+    console.error('Database migrations failed:', error);
+    // Continue startup even if migrations fail
+  }
+
   const server = await registerRoutes(app);
 
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
@@ -67,3 +77,54 @@ app.use((req, res, next) => {
     log(`serving on port ${port}`);
   });
 })();
+
+
+// Placeholder for migrations/add_telegram_id.js (This would be a proper migration file)
+// This is a simplified example and needs to be adapted to your specific database library
+// (e.g., using Sequelize, Prisma, etc.)
+// const { sequelize } = require('./database'); // Import your database connection
+
+// module.exports = async () => {
+//   try {
+//     await sequelize.sync(); //or sequelize.query('ALTER TABLE users ADD COLUMN telegram_id VARCHAR(255);')
+//   } catch (error) {
+//     console.error('Error running migration:', error);
+//     throw error;
+//   }
+// };
+
+
+// Placeholder for a registration form (React example)
+// This is a very basic example and would need error handling and more robust functionality.
+// import React, { useState } from 'react';
+
+// function RegistrationForm() {
+//   const [telegramId, setTelegramId] = useState('');
+
+//   const handleSubmit = async (e) => {
+//     e.preventDefault();
+//     // Send data to backend API endpoint
+//     const response = await fetch('/api/register', {
+//       method: 'POST',
+//       headers: {
+//         'Content-Type': 'application/json',
+//       },
+//       body: JSON.stringify({ telegramId }),
+//     });
+//     //Handle response
+//   };
+
+//   return (
+//     <form onSubmit={handleSubmit}>
+//       <input
+//         type="text"
+//         placeholder="Telegram ID"
+//         value={telegramId}
+//         onChange={(e) => setTelegramId(e.target.value)}
+//       />
+//       <button type="submit">Register</button>
+//     </form>
+//   );
+// }
+
+// export default RegistrationForm;
