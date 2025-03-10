@@ -39,8 +39,6 @@ export default function BookAppointment() {
   // Convert slider value to time and update the selected time
   React.useEffect(() => {
     if (sliderValue[0] !== undefined) {
-      // Create a new date for today
-      const time = new Date();
       const selectedSlot = sliderValue[0];
 
       // Calculate hours and minutes from the slot
@@ -48,11 +46,12 @@ export default function BookAppointment() {
       const hours = Math.floor(totalHours);
       const minutes = (totalHours - hours) * 60;
 
-      // Set the time components
-      time.setHours(hours);
-      time.setMinutes(minutes);
-      time.setSeconds(0);
-      time.setMilliseconds(0);
+      // Create a new date and set UTC time
+      const time = new Date();
+      // Reset the date to midnight UTC
+      time.setUTCHours(0, 0, 0, 0);
+      // Set the selected hours and minutes in UTC
+      time.setUTCHours(hours, minutes);
 
       setSelectedTime(time);
     }
@@ -62,7 +61,7 @@ export default function BookAppointment() {
     mutationFn: async () => {
       if (!selectedTime) throw new Error("Please select a time");
 
-      // Format the date as ISO string
+      // The time is already in UTC, so we can send it directly
       const appointment = {
         startTime: selectedTime.toISOString(),
       };
