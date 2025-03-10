@@ -49,6 +49,8 @@ export const startBot = () => {
     return;
   }
 
+  console.log('Initializing Telegram bot...');
+  
   bot.start(async (ctx) => {
     try {
       console.log('=== BOT START COMMAND RECEIVED ===');
@@ -102,6 +104,14 @@ export async function sendTelegramNotification(telegramUsername: string, message
     if (!telegramUsername) {
       console.error('No Telegram username provided for notification');
       return false;
+    }
+    
+    // Log bot initialization status
+    console.log(`Bot initialized: ${bot?.botInfo ? 'Yes' : 'No'}`);
+    if (bot && !bot.botInfo) {
+      console.log('Bot is defined but not fully initialized. Waiting...');
+      // Wait briefly for bot to initialize if needed
+      await new Promise(resolve => setTimeout(resolve, 1000));
     }
 
     // Ensure username starts with @ if provided
@@ -173,7 +183,7 @@ export async function sendTelegramNotification(telegramUsername: string, message
         console.log('For Telegram to work correctly:');
         console.log('1. The username must be entered WITHOUT the @ symbol in the user profile');
         console.log('2. The teacher MUST start a conversation with the bot first by sending /start');
-        console.log(`3. The bot username is: @${bot?.botInfo?.username || 'your_bot_username'}`);
+        console.log(`3. The bot username is: ${bot ? `@${bot.botInfo?.username || 'unknown'}` : '(Bot not initialized yet)'}`);
         console.log('4. Verify that the username in the platform matches their exact Telegram username (case sensitive)');
         
         // Return a more specific error flag that could be used by the frontend

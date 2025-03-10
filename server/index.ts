@@ -38,12 +38,21 @@ app.use((req, res, next) => {
   next();
 });
 
+// Placeholder for startBot function.  Replace with your actual bot initialization.
+const startBot = () => {
+  console.log('Telegram bot initialized.');
+  // Add your Telegram bot initialization logic here.  Example:
+  // const bot = new Telegraf(process.env.TELEGRAM_BOT_TOKEN);
+  // bot.launch();
+};
+
 (async () => {
   // Run database migrations
   try {
     await migrate();
     await renameTelegramField(); // Added execution of the rename migration
     console.log('Database migrations completed successfully');
+    startBot(); // Call startBot after successful migrations
   } catch (error) {
     console.error('Database migrations failed:', error);
     // Continue startup even if migrations fail
@@ -80,7 +89,3 @@ app.use((req, res, next) => {
     log(`serving on port ${port}`);
   });
 })();
-
-
-// Placeholder for migrations/add_telegram_id.js and migrations/rename_telegram_field.js
-// These would be proper migration files using your database library (e.g., Sequelize, Prisma)
