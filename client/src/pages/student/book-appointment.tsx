@@ -10,6 +10,7 @@ import { format } from "date-fns";
 import { Redirect } from "wouter";
 import { Loader2 } from "lucide-react";
 import type { Appointment } from "@shared/schema";
+import { formatGMT3Time, getGMT3ISOString } from "@/lib/date-utils";
 
 // Start and end times for availability
 const START_HOUR = 7; // 7 AM
@@ -39,7 +40,6 @@ export default function BookAppointment() {
   // Convert slider value to time and update the selected time
   React.useEffect(() => {
     if (sliderValue[0] !== undefined) {
-      // Create a new date for today
       const time = new Date();
       const selectedSlot = sliderValue[0];
 
@@ -62,9 +62,8 @@ export default function BookAppointment() {
     mutationFn: async () => {
       if (!selectedTime) throw new Error("Please select a time");
 
-      // Format the date as ISO string
       const appointment = {
-        startTime: selectedTime.toISOString(),
+        startTime: getGMT3ISOString(selectedTime),
       };
 
       const res = await apiRequest("POST", "/api/appointments", appointment);
@@ -135,7 +134,7 @@ export default function BookAppointment() {
 
               <div className="mt-6 text-center bg-muted/50 p-4 rounded-md">
                 <p className="text-xl font-semibold">
-                  {selectedTime ? format(selectedTime, "HH:mm") : "اختر وقتاً"}
+                  {selectedTime ? formatGMT3Time(selectedTime) : "اختر وقتاً"}
                 </p>
                 <p className="text-xs text-muted-foreground mt-1">
                   حرك المؤشر لاختيار الوقت المناسب لك
@@ -166,7 +165,7 @@ export default function BookAppointment() {
                     <div className="flex justify-between items-center">
                       <div>
                         <p className="font-medium">
-                          {format(new Date(appointment.startTime), "HH:mm")}
+                          {formatGMT3Time(new Date(appointment.startTime))}
                         </p>
                         <p className="text-sm text-muted-foreground">
                           {format(new Date(appointment.startTime), "EEEE, MMMM d")}

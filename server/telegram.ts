@@ -4,6 +4,8 @@ import { eq } from 'drizzle-orm';
 import { users, appointments } from '@shared/schema';
 import { Telegraf } from 'telegraf';
 import { format } from 'date-fns';
+import { format as formatGMT3Time } from "date-fns-tz";
+
 
 // Check if bot token is provided
 const botToken = process.env.TELEGRAM_BOT_TOKEN;
@@ -279,8 +281,8 @@ export async function notifyTeacherAboutAppointment(appointmentId: number, teach
     const replit_domain = process.env.REPL_SLUG ? `https://${process.env.REPL_SLUG}.replit.dev` : null;
     const callbackUrl = `${process.env.FRONTEND_URL || replit_domain || 'https://example.com'}/teacher/accept-appointment/${appointmentId}`;
 
-    // Format time without timezone conversion
-    const appointmentTime = format(new Date(appointment[0].startTime), "HH:mm");
+    // Format time in GMT+3
+    const appointmentTime = formatGMT3Time(appointment[0].startTime, {timeZone: 'Africa/Cairo'});
 
     // Prepare message text
     const message = `تم تعيينك لموعد جديد مع ${studentName} الساعة ${appointmentTime}. الرجاء قبول الموعد في أقرب وقت.`;

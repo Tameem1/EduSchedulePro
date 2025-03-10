@@ -12,7 +12,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
-import { format } from "date-fns";
+import { formatGMT3Time } from "@/lib/date-utils"; // Added import
 import { Textarea } from "@/components/ui/textarea";
 import type { Appointment } from "@shared/schema";
 
@@ -122,8 +122,7 @@ export default function TeacherQuestionnaire() {
                 </p>
                 <p>
                   <span className="font-semibold">الوقت:</span>{" "}
-                  {/* Display time without timezone conversion */}
-                  {format(new Date(currentAppointment.startTime), "HH:mm")}
+                  {formatGMT3Time(currentAppointment.startTime)}
                 </p>
               </div>
 
@@ -220,8 +219,7 @@ export default function TeacherQuestionnaire() {
                         <div className="flex justify-between items-center">
                           <div>
                             <p className="font-medium">
-                              {/* Display time without timezone conversion */}
-                              {format(new Date(appointment.startTime), "HH:mm")}
+                              {formatGMT3Time(appointment.startTime)}
                             </p>
                             <p className="text-sm text-muted-foreground">
                               طالب {appointment.studentId}

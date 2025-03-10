@@ -29,8 +29,8 @@ export const users = pgTable("users", {
 export const availabilities = pgTable("availabilities", {
   id: serial("id").primaryKey(),
   teacherId: integer("teacher_id").references(() => users.id).notNull(),
-  startTime: timestamp("start_time", { withTimezone: false }).notNull(),
-  endTime: timestamp("end_time", { withTimezone: false }).notNull()
+  startTime: timestamp("start_time", { mode: 'string' }).notNull(),
+  endTime: timestamp("end_time", { mode: 'string' }).notNull()
 });
 
 // Appointments between students and teachers
@@ -38,7 +38,7 @@ export const appointments = pgTable("appointments", {
   id: serial("id").primaryKey(),
   studentId: integer("student_id").references(() => users.id).notNull(),
   teacherId: integer("teacher_id").references(() => users.id), 
-  startTime: timestamp("start_time", { withTimezone: false }).notNull(),
+  startTime: timestamp("start_time", { mode: 'string' }).notNull(),
   status: appointmentStatusEnum("status").notNull().default('pending')
 });
 
@@ -87,11 +87,16 @@ export const questionnaireResponsesRelations = relations(questionnaireResponses,
   })
 }));
 
-// Create Zod schemas for validation
+// Modified Zod schemas for validation with GMT+3 handling
 export const insertUserSchema = createInsertSchema(users);
 export const insertAvailabilitySchema = createInsertSchema(availabilities);
 export const insertAppointmentSchema = createInsertSchema(appointments).extend({
-  startTime: z.string().transform((str) => new Date(str)),
+  startTime: z.string().transform((str) => {
+    const date = new Date(str);
+    // Adjust for GMT+3
+    date.setHours(date.getHours() + 3);
+    return date.toISOString();
+  }),
 }).omit({ teacherId: true });
 export const insertQuestionnaireSchema = createInsertSchema(questionnaireResponses);
 
