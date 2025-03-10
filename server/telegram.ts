@@ -109,6 +109,18 @@ export async function sendTelegramNotification(telegramUsername: string, message
     } catch (apiError: any) {
       const errorData = apiError.response?.data;
       
+      // Log full error response for debugging
+      console.log('Full Telegram API error response:', JSON.stringify({
+        status: apiError.response?.status,
+        statusText: apiError.response?.statusText,
+        data: errorData,
+        config: {
+          url: apiError.config?.url,
+          method: apiError.config?.method,
+          data: JSON.parse(apiError.config?.data || '{}')
+        }
+      }, null, 2));
+      
       if (errorData?.error_code === 404) {
         console.log('User not found. They might have a different username or need to interact with the bot first.');
         console.log('You should ask the teacher to ensure their username in the platform matches their Telegram username.');
@@ -184,6 +196,7 @@ export async function notifyTeacherAboutAppointment(appointmentId: number, teach
         return true;
       } catch (botError) {
         console.log('Error sending via bot API, falling back to HTTP method:', botError.message);
+        console.log('Full bot API error:', JSON.stringify(botError, null, 2));
         // Fall back to HTTP method
       }
     }
