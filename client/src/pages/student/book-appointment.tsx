@@ -48,7 +48,8 @@ export default function BookAppointment() {
       const hours = Math.floor(totalHours);
       const minutes = (totalHours - hours) * 60;
 
-      const time = new Date(now);
+      // Create date without timezone conversion
+      const time = new Date();
       time.setHours(hours, minutes, 0, 0);
       setSelectedTime(time);
     }
@@ -70,9 +71,8 @@ export default function BookAppointment() {
     mutationFn: async () => {
       if (!selectedTime) throw new Error("Please select a time");
 
-      // Since everyone is in the same timezone, we can just send the date directly
-      // without any timezone adjustments
-      const dateToSend = new Date(selectedTime);
+      // Send the time exactly as it is, without any timezone conversion
+      const dateToSend = selectedTime;
       const isoString = dateToSend.toISOString();
 
       console.log(`Booking appointment at time: ${selectedTime.toLocaleTimeString()}`);

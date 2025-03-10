@@ -122,7 +122,8 @@ export default function TeacherQuestionnaire() {
                 </p>
                 <p>
                   <span className="font-semibold">الوقت:</span>{" "}
-                  {format(new Date(currentAppointment.startTime), "h:mm a")}
+                  {/* Display time without timezone conversion */}
+                  {format(new Date(currentAppointment.startTime), "HH:mm")}
                 </p>
               </div>
 
@@ -219,7 +220,8 @@ export default function TeacherQuestionnaire() {
                         <div className="flex justify-between items-center">
                           <div>
                             <p className="font-medium">
-                              {format(new Date(appointment.startTime), "h:mm a")}
+                              {/* Display time without timezone conversion */}
+                              {format(new Date(appointment.startTime), "HH:mm")}
                             </p>
                             <p className="text-sm text-muted-foreground">
                               طالب {appointment.studentId}

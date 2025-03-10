@@ -165,10 +165,7 @@ export default function ManagerAppointments() {
               {appointments?.map((appointment) => (
                 <TableRow key={appointment.id}>
                   <TableCell>
-                    {format(appointment.startTime, "h:mm a")}
-                    <div className="text-xs text-muted-foreground">
-                      (Raw: {new Date(appointment.startTime).toISOString()})
-                    </div>
+                    {format(new Date(appointment.startTime), "HH:mm")}
                   </TableCell>
                   <TableCell>طالب {appointment.studentId}</TableCell>
                   <TableCell>
@@ -250,8 +247,8 @@ export default function ManagerAppointments() {
                             >
                               <div className="w-2 h-2 bg-green-500 rounded-full ml-2"></div>
                               <span>
-                                {format(avail.startTime, "h:mm a")} -{" "}
-                                {format(avail.endTime, "h:mm a")}
+                                {format(new Date(avail.startTime), "HH:mm")} -{" "}
+                                {format(new Date(avail.endTime), "HH:mm")}
                               </span>
                             </div>
                           ))}
@@ -293,7 +290,7 @@ export default function ManagerAppointments() {
               <div className="space-y-4">
                 <div className="text-sm">
                   <p>
-                    الوقت: {format(selectedAppointment.startTime, "h:mm a")}
+                    الوقت: {format(new Date(selectedAppointment.startTime), "HH:mm")}
                   </p>
                   <p>الطالب: طالب {selectedAppointment.studentId}</p>
                 </div>
