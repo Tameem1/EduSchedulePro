@@ -112,9 +112,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.log(`Time in local timezone: ${new Date(startTime).toLocaleString()}`);
       console.log(`Hours: ${new Date(startTime).getHours()}, Minutes: ${new Date(startTime).getMinutes()}`);
       
+      // Ensure the date is properly formatted and parsed
+      const appointmentDate = new Date(startTime);
+      console.log("Creating appointment with parsed date:", appointmentDate.toISOString());
+      
       // Parse using the schema to ensure correct formatting
       const parsedData = insertAppointmentSchema.parse({
-        startTime: new Date(startTime),
+        startTime: appointmentDate.toISOString(),
         studentId: req.user.id,
         status: "pending"
       });

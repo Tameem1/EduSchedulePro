@@ -297,11 +297,19 @@ export default function ManagerAppointments() {
                 <div className="space-y-2">
                   {teachers?.map((teacher) => {
                     const isAvailable = availabilities?.some((avail) => {
-                      const appointmentTime = new Date(
-                        selectedAppointment.startTime,
-                      );
+                      // Parse both times to ensure proper comparison
+                      const appointmentTime = new Date(selectedAppointment.startTime);
                       const availStartTime = new Date(avail.startTime);
                       const availEndTime = new Date(avail.endTime);
+                      
+                      // Log for debugging
+                      console.log(`Checking availability for teacher ${teacher.id}:`, {
+                        appointmentTime: appointmentTime.toISOString(),
+                        availStartTime: availStartTime.toISOString(),
+                        availEndTime: availEndTime.toISOString(),
+                        isInRange: appointmentTime >= availStartTime && appointmentTime <= availEndTime
+                      });
+                      
                       return (
                         avail.teacherId === teacher.id &&
                         appointmentTime >= availStartTime &&
