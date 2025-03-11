@@ -15,7 +15,7 @@ import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { formatGMT3Time } from "@/lib/date-utils";
 import { Textarea } from "@/components/ui/textarea";
-import type { Appointment } from "@shared/schema";
+import type { Appointment, AppointmentStatusType } from "@shared/schema";
 import { AppointmentStatus, AppointmentStatusArabic } from "@shared/schema";
 
 export default function TeacherQuestionnaire() {
@@ -137,15 +137,14 @@ export default function TeacherQuestionnaire() {
     submitQuestionnaireMutation.mutate(formData);
   };
 
-  const getStatusColor = (status: string) => {
-    const colors = {
+  const getStatusColor = (status: AppointmentStatusType) => {
+    return {
       [AppointmentStatus.PENDING]: "bg-gray-500",
       [AppointmentStatus.REQUESTED]: "bg-blue-500",
       [AppointmentStatus.ASSIGNED]: "bg-yellow-500",
       [AppointmentStatus.RESPONDED]: "bg-green-500",
       [AppointmentStatus.DONE]: "bg-purple-500",
-    };
-    return colors[status] || "bg-gray-500";
+    }[status] || "bg-gray-500";
   };
 
   if (isLoading) {
@@ -179,10 +178,17 @@ export default function TeacherQuestionnaire() {
                 </p>
                 <p>
                   <span className="font-semibold">الوقت:</span>{" "}
-                  {formatGMT3Time(currentAppointment.startTime)}
+                  {new Date(currentAppointment.startTime).toLocaleString('ar-SA', {
+                    timeZone: 'Asia/Riyadh',
+                    year: 'numeric',
+                    month: 'numeric',
+                    day: 'numeric',
+                    hour: 'numeric',
+                    minute: 'numeric',
+                  })}
                 </p>
-                <Badge className={`${getStatusColor(currentAppointment.status)} text-white`}>
-                  {AppointmentStatusArabic[currentAppointment.status]}
+                <Badge className={`${getStatusColor(currentAppointment.status as AppointmentStatusType)} text-white`}>
+                  {AppointmentStatusArabic[currentAppointment.status as AppointmentStatusType]}
                 </Badge>
               </div>
 
@@ -281,16 +287,23 @@ export default function TeacherQuestionnaire() {
                         <div className="flex justify-between items-center">
                           <div>
                             <p className="font-medium">
-                              {formatGMT3Time(appointment.startTime)}
+                              {new Date(appointment.startTime).toLocaleString('ar-SA', {
+                                timeZone: 'Asia/Riyadh',
+                                year: 'numeric',
+                                month: 'numeric',
+                                day: 'numeric',
+                                hour: 'numeric',
+                                minute: 'numeric',
+                              })}
                             </p>
                             <p className="text-sm text-muted-foreground">
                               طالب {appointment.studentId}
                             </p>
                           </div>
                           <Badge
-                            className={`${getStatusColor(appointment.status)} text-white`}
+                            className={`${getStatusColor(appointment.status as AppointmentStatusType)} text-white`}
                           >
-                            {AppointmentStatusArabic[appointment.status]}
+                            {AppointmentStatusArabic[appointment.status as AppointmentStatusType]}
                           </Badge>
                         </div>
                       </CardContent>
