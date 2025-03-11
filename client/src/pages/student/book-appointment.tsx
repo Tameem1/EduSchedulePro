@@ -102,7 +102,9 @@ export default function BookAppointment() {
     onError: (error) => {
       toast({
         title: "خطأ في حجز الموعد",
-        description: error.message,
+        description: error.message === "لديك حجز موجود بالفعل في هذا الوقت" 
+          ? "لديك حجز موجود بالفعل في هذا الوقت" 
+          : error.message,
         variant: "destructive",
       });
     },

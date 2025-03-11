@@ -120,6 +120,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(appointment);
     } catch (error) {
       console.error("Error creating appointment:", error);
+      
+      // Check if it's a duplicate appointment error
+      if (error instanceof Error && error.message === "لديك حجز موجود بالفعل في هذا الوقت") {
+        return res.status(409).json({ error: error.message });
+      }
+      
       res.status(400).json({ error: "Invalid appointment data" });
     }
   });
