@@ -9,6 +9,7 @@ export interface IStorage {
   createUser(user: InsertUser): Promise<User>;
   createAvailability(availability: Omit<Availability, "id">): Promise<Availability>;
   getAvailabilitiesByTeacher(teacherId: number): Promise<Availability[]>;
+  deleteAvailability(id: number): Promise<void>;
   createAppointment(appointment: Omit<Appointment, "id">): Promise<Appointment>;
   getAppointmentsByStudent(studentId: number): Promise<Appointment[]>;
   createQuestionnaireResponse(response: Omit<QuestionnaireResponse, "id">): Promise<QuestionnaireResponse>;

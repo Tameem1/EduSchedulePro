@@ -121,6 +121,36 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ error: "Failed to fetch availabilities" });
     }
   });
+  
+  // Delete availability endpoint
+  app.delete("/api/availabilities/:id", async (req, res) => {
+    if (!req.isAuthenticated()) {
+      return res.sendStatus(401);
+    }
+
+    if (req.user.role !== "teacher") {
+      return res.sendStatus(403);
+    }
+
+    try {
+      const availabilityId = parseInt(req.params.id);
+      
+      // Fetch the availability to check if it belongs to the requesting teacher
+      const teacherAvailabilities = await storage.getAvailabilitiesByTeacher(req.user.id);
+      const availability = teacherAvailabilities.find(a => a.id === availabilityId);
+      
+      if (!availability) {
+        return res.status(404).json({ error: "Availability not found or you don't have permission to delete it" });
+      }
+
+      await storage.deleteAvailability(availabilityId);
+      console.log(`Deleted availability with ID ${availabilityId}`);
+      res.status(200).json({ message: "Availability deleted successfully" });
+    } catch (error) {
+      console.error("Error deleting availability:", error);
+      res.status(500).json({ error: "Failed to delete availability" });
+    }
+  });
 
   // Student routes
   app.post("/api/appointments", async (req, res) => {

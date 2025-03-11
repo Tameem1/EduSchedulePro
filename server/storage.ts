@@ -53,6 +53,10 @@ export const storage = {
       .where(eq(availabilities.teacherId, teacherId));
   },
 
+  async deleteAvailability(id: number): Promise<void> {
+    return this.db.delete(availabilities).where(eq(availabilities.id, id)).then(() => {});
+  },
+
   async createAppointment(data: any) {
     // Check if the student already has an appointment at the same time
     const existingAppointment = await db

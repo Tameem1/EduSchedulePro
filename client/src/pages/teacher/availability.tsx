@@ -102,7 +102,7 @@ export default function TeacherAvailability() {
       const year = today.getFullYear();
       const month = String(today.getMonth() + 1).padStart(2, '0');
       const day = String(today.getDate()).padStart(2, '0');
-      
+
       const startTimeStr = `${year}-${month}-${day}T${String(startHours).padStart(2, '0')}:${String(startMinutes).padStart(2, '0')}:00`;
       const endTimeStr = `${year}-${month}-${day}T${String(endHours).padStart(2, '0')}:${String(endMinutes).padStart(2, '0')}:00`;
 
@@ -133,6 +133,32 @@ export default function TeacherAvailability() {
       });
     },
   });
+
+  const deleteAvailabilityMutation = useMutation({
+    mutationFn: async (availabilityId: string) => {
+      const res = await apiRequest("DELETE", `/api/availabilities/${availabilityId}`);
+      if (!res.ok) {
+        const error = await res.json();
+        throw new Error(error.error || "Failed to delete availability");
+      }
+      return res.json();
+    },
+    onSuccess: () => {
+      toast({
+        title: "تم حذف التوفر",
+        description: "تم حذف فترة توفرك بنجاح.",
+      });
+      queryClient.invalidateQueries({ queryKey: ["/api/teachers", user!.id, "availabilities"] });
+    },
+    onError: (error) => {
+      toast({
+        title: "خطأ في حذف التوفر",
+        description: error.message,
+        variant: "destructive",
+      });
+    }
+  });
+
 
   const { data: availabilities, isLoading: isLoadingAvailabilities } = useQuery<Availability[]>({
     queryKey: ["/api/teachers", user.id, "availabilities"],
@@ -310,9 +336,20 @@ export default function TeacherAvailability() {
                           {format(new Date(availability.startTime), "EEEE, MMMM d, yyyy")}
                         </p>
                       </div>
-                      <div className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded flex items-center">
-                        <span className="w-2 h-2 bg-green-500 rounded-full mr-1"></span>
-                        متوفر
+                      <div className="flex items-center space-x-2">
+                        <div className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded flex items-center ml-2">
+                          <span className="w-2 h-2 bg-green-500 rounded-full ml-1"></span>
+                          متوفر
+                        </div>
+                        <Button 
+                          variant="ghost" 
+                          size="sm" 
+                          className="h-8 text-red-500 hover:text-red-700 hover:bg-red-100"
+                          onClick={() => deleteAvailabilityMutation.mutate(availability.id)}
+                          disabled={deleteAvailabilityMutation.isPending}
+                        >
+                          <X className="h-4 w-4" />
+                        </Button>
                       </div>
                     </div>
                   </div>
