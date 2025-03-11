@@ -48,7 +48,7 @@ export default function BookAppointment() {
       const hours = Math.floor(totalHours);
       const minutes = (totalHours - hours) * 60;
 
-      // Set the time components
+      // Set the time components - creating a direct time without timezone issues
       time.setHours(hours);
       time.setMinutes(minutes);
       time.setSeconds(0);
@@ -62,8 +62,18 @@ export default function BookAppointment() {
     mutationFn: async () => {
       if (!selectedTime) throw new Error("Please select a time");
 
+      // Create an ISO string but preserve the exact hours/minutes selected
+      const year = selectedTime.getFullYear();
+      const month = selectedTime.getMonth();
+      const day = selectedTime.getDate();
+      const hours = selectedTime.getHours();
+      const minutes = selectedTime.getMinutes();
+      
+      // Create a new date in UTC to prevent timezone offset issues
+      const utcTime = new Date(Date.UTC(year, month, day, hours, minutes, 0));
+      
       const appointment = {
-        startTime: selectedTime.toISOString(),
+        startTime: utcTime.toISOString(),
       };
 
       const res = await apiRequest("POST", "/api/appointments", appointment);

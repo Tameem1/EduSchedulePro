@@ -5,6 +5,7 @@ import { format as formatTZ } from "date-fns-tz";
 const TIMEZONE = "Asia/Riyadh";
 
 export function formatGMT3Time(date: Date): string {
+  // Get local time without timezone adjustments
   let hours = date.getHours();
   const minutes = date.getMinutes().toString().padStart(2, '0');
   const ampm = hours >= 12 ? 'PM' : 'AM';
