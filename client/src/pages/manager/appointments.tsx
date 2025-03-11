@@ -34,7 +34,6 @@ export default function ManagerAppointments() {
   const { user, isLoading: isAuthLoading } = useAuth();
   const socketRef = React.useRef<WebSocket | null>(null);
 
-  // WebSocket connection setup remains unchanged
   React.useEffect(() => {
     const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
     const wsUrl = `${protocol}//${window.location.host}/ws`;
@@ -43,7 +42,6 @@ export default function ManagerAppointments() {
     socketRef.current.onmessage = (event) => {
       const data = JSON.parse(event.data);
       if (data.type === 'appointmentUpdate' || data.type === 'availabilityUpdate') {
-        // Invalidate relevant queries to refresh the lists
         queryClient.invalidateQueries({ queryKey: ["/api/appointments"] });
         queryClient.invalidateQueries({ queryKey: ["/api/availabilities"] });
       }
@@ -56,7 +54,6 @@ export default function ManagerAppointments() {
     };
   }, []);
 
-  // Fetch all teachers
   const { data: teachers, isLoading: isLoadingTeachers } = useQuery<User[]>({
     queryKey: ["/api/users/teachers"],
     queryFn: async () => {
@@ -69,7 +66,6 @@ export default function ManagerAppointments() {
     enabled: !!user,
   });
 
-  // Fetch all students
   const { data: students, isLoading: isLoadingStudents } = useQuery<User[]>({
     queryKey: ["/api/users/students"],
     queryFn: async () => {
@@ -82,7 +78,6 @@ export default function ManagerAppointments() {
     enabled: !!user,
   });
 
-  // Fetch all appointments
   const { data: appointments, isLoading: isLoadingAppointments } = useQuery<
     Appointment[]
   >({
@@ -97,7 +92,6 @@ export default function ManagerAppointments() {
     enabled: !!user,
   });
 
-  // Fetch all availabilities
   const { data: availabilities, isLoading: isLoadingAvailabilities } = useQuery<
     Availability[]
   >({
@@ -155,7 +149,6 @@ export default function ManagerAppointments() {
     },
   });
 
-  // Helper function to get user name
   const getUserName = (userId: number, role: 'student' | 'teacher') => {
     const userList = role === 'student' ? students : teachers;
     const user = userList?.find(u => u.id === userId);
@@ -180,7 +173,6 @@ export default function ManagerAppointments() {
     );
   }
 
-  // If not authorized or not a manager
   if (!user || user.role !== "manager") {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -198,7 +190,6 @@ export default function ManagerAppointments() {
         </Link>
       </div>
 
-      {/* Appointments Table */}
       <Card className="mb-6">
         <CardHeader>
           <CardTitle>المواعيد</CardTitle>
@@ -221,15 +212,9 @@ export default function ManagerAppointments() {
                     {format(new Date(appointment.startTime), "h:mm a")}
                   </TableCell>
                   <TableCell>{getUserName(appointment.studentId, 'student')}</TableCell>
+                  <TableCell>{getUserName(appointment.teacherId, 'teacher')}</TableCell>
                   <TableCell>
-                    {appointment.teacherId
-                      ? getUserName(appointment.teacherId, 'teacher')
-                      : "غير معين"}
-                  </TableCell>
-                  <TableCell>
-                    <Badge
-                      className={`${getStatusColor(appointment.status as AppointmentStatusType)} text-white`}
-                    >
+                    <Badge className={`${getStatusColor(appointment.status as AppointmentStatusType)} text-white`}>
                       {AppointmentStatusArabic[appointment.status as AppointmentStatusType]}
                     </Badge>
                   </TableCell>
@@ -254,7 +239,6 @@ export default function ManagerAppointments() {
         </CardContent>
       </Card>
 
-      {/* Teacher Availability Table */}
       <Card className="mb-6">
         <CardHeader>
           <CardTitle>توفر المعلمين</CardTitle>
@@ -322,7 +306,6 @@ export default function ManagerAppointments() {
         </CardContent>
       </Card>
 
-      {/* Teacher Assignment Dialog */}
       <Dialog open={isAssignDialogOpen} onOpenChange={setIsAssignDialogOpen}>
         <DialogContent>
           <DialogHeader>
