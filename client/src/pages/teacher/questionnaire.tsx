@@ -174,7 +174,7 @@ export default function TeacherQuestionnaire() {
               <div className="bg-muted/50 p-4 rounded-md mb-4">
                 <p>
                   <span className="font-semibold">الطالب:</span>{" "}
-                  طالب {currentAppointment.studentId}
+                  {currentAppointment.student?.username || `طالب #${currentAppointment.studentId}`}
                 </p>
                 <p>
                   <span className="font-semibold">الوقت:</span>{" "}
@@ -297,7 +297,7 @@ export default function TeacherQuestionnaire() {
                               })}
                             </p>
                             <p className="text-sm text-muted-foreground">
-                              طالب {appointment.studentId}
+                              {appointment.student?.username || `طالب #${appointment.studentId}`}
                             </p>
                           </div>
                           <Badge
