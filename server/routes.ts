@@ -35,7 +35,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
     try {
       const allAvailabilities = await db.select().from(availabilities);
-      res.json(allAvailabilities);
+
+      // Get today's date at midnight in GMT+3
+      const now = new Date();
+      const todayStart = startOfDay(now);
+      const todayEnd = endOfDay(now);
+
+      // Filter availabilities for today only
+      const todayAvailabilities = allAvailabilities.filter(availability => {
+        const availabilityStartDate = new Date(availability.startTime);
+        const availabilityEndDate = new Date(availability.endTime);
+        return availabilityStartDate >= todayStart && availabilityEndDate <= todayEnd;
+      });
+
+      res.json(todayAvailabilities);
     } catch (error) {
       console.error("Error fetching availabilities:", error);
       res.status(500).json({ error: "Failed to fetch availabilities" });
@@ -87,9 +100,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const teacherId = parseInt(req.params.id);
       console.log("Fetching availabilities for teacher:", teacherId);
-      const availabilities = await storage.getAvailabilitiesByTeacher(teacherId);
-      console.log("Found availabilities:", availabilities);
-      res.json(availabilities);
+      const teacherAvailabilities = await storage.getAvailabilitiesByTeacher(teacherId);
+
+      // Get today's date at midnight in GMT+3
+      const now = new Date();
+      const todayStart = startOfDay(now);
+      const todayEnd = endOfDay(now);
+
+      // Filter availabilities for today only
+      const todayAvailabilities = teacherAvailabilities.filter(availability => {
+        const availabilityStartDate = new Date(availability.startTime);
+        const availabilityEndDate = new Date(availability.endTime);
+        return availabilityStartDate >= todayStart && availabilityEndDate <= todayEnd;
+      });
+
+      console.log("Found availabilities:", todayAvailabilities);
+      res.json(todayAvailabilities);
     } catch (error) {
       console.error("Error fetching availabilities:", error);
       res.status(500).json({ error: "Failed to fetch availabilities" });
@@ -137,16 +163,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
     try {
       const studentId = parseInt(req.params.id);
-      const today = new Date();
       const appointments = await storage.getAppointmentsByStudent(studentId);
 
-      // Filter appointments for today only
+      // Get today's date at midnight in GMT+3.  Note:  This assumes GMT+3 is the correct timezone.  Adjust as needed.
+      const now = new Date();
+      const todayStart = startOfDay(now);
+      const todayEnd = endOfDay(now);
+
+      // Filter appointments for today only, considering GMT+3
       const todayAppointments = appointments.filter(appointment => {
         const appointmentDate = new Date(appointment.startTime);
-        return appointmentDate >= startOfDay(today) && appointmentDate <= endOfDay(today);
+        return appointmentDate >= todayStart && appointmentDate <= todayEnd;
       });
 
       res.json(todayAppointments);
+
     } catch (error) {
       console.error("Error fetching appointments:", error);
       res.status(500).json({ error: "Failed to fetch appointments" });
@@ -198,21 +229,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
 
     try {
-      const today = new Date();
       const allAppointments = await storage.getAllAppointments();
+      const now = new Date();
+      const todayStart = startOfDay(now);
+      const todayEnd = endOfDay(now);
 
       // Filter appointments for today only
       const todayAppointments = allAppointments.filter(appointment => {
         const appointmentDate = new Date(appointment.startTime);
-        return appointmentDate >= startOfDay(today) && appointmentDate <= endOfDay(today);
+        return appointmentDate >= todayStart && appointmentDate <= todayEnd;
       });
 
-      console.log("Fetched appointments times:", todayAppointments.map(a => ({
-        id: a.id,
-        rawStartTime: a.startTime,
-        asDate: new Date(a.startTime).toISOString()
-      }))); // Added logging for all appointments
       res.json(todayAppointments);
+
     } catch (error) {
       console.error("Error fetching appointments:", error);
       res.status(500).json({ error: "Failed to fetch appointments" });
@@ -280,21 +309,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
     try {
       const teacherId = parseInt(req.params.id);
-      const today = new Date();
       const appointments = await storage.getAppointmentsByTeacher(teacherId);
+      const now = new Date();
+      const todayStart = startOfDay(now);
+      const todayEnd = endOfDay(now);
 
       // Filter appointments for today only
       const todayAppointments = appointments.filter(appointment => {
         const appointmentDate = new Date(appointment.startTime);
-        return appointmentDate >= startOfDay(today) && appointmentDate <= endOfDay(today);
+        return appointmentDate >= todayStart && appointmentDate <= todayEnd;
       });
 
-      console.log("Fetched appointments times for teacher:", todayAppointments.map(a => ({ // Added logging for teacher appointments
-        id: a.id,
-        rawStartTime: a.startTime,
-        asDate: new Date(a.startTime).toISOString()
-      })));
       res.json(todayAppointments);
+
     } catch (error) {
       console.error("Error fetching teacher appointments:", error);
       res.status(500).json({ error: "Failed to fetch appointments" });
