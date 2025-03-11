@@ -98,15 +98,17 @@ export default function TeacherAvailability() {
       const [startHours, startMinutes] = range.start.split(':').map(Number);
       const [endHours, endMinutes] = range.end.split(':').map(Number);
 
-      const startTime = new Date(today);
-      startTime.setHours(startHours, startMinutes, 0, 0);
-
-      const endTime = new Date(today);
-      endTime.setHours(endHours, endMinutes, 0, 0);
+      // Format dates in ISO format but preserve the local time
+      const year = today.getFullYear();
+      const month = String(today.getMonth() + 1).padStart(2, '0');
+      const day = String(today.getDate()).padStart(2, '0');
+      
+      const startTimeStr = `${year}-${month}-${day}T${String(startHours).padStart(2, '0')}:${String(startMinutes).padStart(2, '0')}:00`;
+      const endTimeStr = `${year}-${month}-${day}T${String(endHours).padStart(2, '0')}:${String(endMinutes).padStart(2, '0')}:00`;
 
       const res = await apiRequest("POST", "/api/availabilities", {
-        startTime: startTime.toISOString(),
-        endTime: endTime.toISOString(),
+        startTime: startTimeStr,
+        endTime: endTimeStr,
       });
 
       if (!res.ok) {
