@@ -22,7 +22,8 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
-import type { User, Availability, Appointment } from "@shared/schema";
+import type { User, Availability, Appointment, AppointmentStatusType } from "@shared/schema";
+import { AppointmentStatus, AppointmentStatusArabic } from "@shared/schema";
 import { useAuth } from "@/hooks/use-auth";
 
 export default function ManagerAppointments() {
@@ -31,6 +32,28 @@ export default function ManagerAppointments() {
     React.useState<Appointment | null>(null);
   const [isAssignDialogOpen, setIsAssignDialogOpen] = React.useState(false);
   const { user, isLoading: isAuthLoading } = useAuth();
+  const socketRef = React.useRef<WebSocket | null>(null);
+
+  // WebSocket connection setup
+  React.useEffect(() => {
+    const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
+    const wsUrl = `${protocol}//${window.location.host}/ws`;
+    socketRef.current = new WebSocket(wsUrl);
+
+    socketRef.current.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+      if (data.type === 'appointmentUpdate') {
+        // Invalidate appointments query to refresh the list
+        queryClient.invalidateQueries({ queryKey: ["/api/appointments"] });
+      }
+    };
+
+    return () => {
+      if (socketRef.current) {
+        socketRef.current.close();
+      }
+    };
+  }, []);
 
   // Fetch all teachers
   const { data: teachers, isLoading: isLoadingTeachers } = useQuery<User[]>({
@@ -88,8 +111,8 @@ export default function ManagerAppointments() {
         `/api/appointments/${appointmentId}`,
         {
           teacherId,
-          status: "matched",
-        },
+          status: AppointmentStatus.REQUESTED,
+        }
       );
       if (!res.ok) {
         throw new Error("Failed to assign teacher");
@@ -104,7 +127,6 @@ export default function ManagerAppointments() {
       toast({
         title: "تم تعيين المعلم",
         description: notificationMessage,
-        variant: data.notificationSent ? "default" : "secondary",
       });
       queryClient.invalidateQueries({ queryKey: ["/api/appointments"] });
       setIsAssignDialogOpen(false);
@@ -118,6 +140,16 @@ export default function ManagerAppointments() {
       });
     },
   });
+
+  const getStatusColor = (status: AppointmentStatusType) => {
+    return {
+      [AppointmentStatus.PENDING]: "bg-gray-500",
+      [AppointmentStatus.REQUESTED]: "bg-blue-500",
+      [AppointmentStatus.ASSIGNED]: "bg-yellow-500",
+      [AppointmentStatus.RESPONDED]: "bg-green-500",
+      [AppointmentStatus.DONE]: "bg-purple-500",
+    }[status] || "bg-gray-500";
+  };
 
   if (isAuthLoading || isLoadingTeachers || isLoadingAppointments || isLoadingAvailabilities) {
     return (
@@ -175,23 +207,13 @@ export default function ManagerAppointments() {
                   </TableCell>
                   <TableCell>
                     <Badge
-                      variant={
-                        appointment.status === "pending"
-                          ? "warning"
-                          : appointment.status === "matched"
-                            ? "success"
-                            : "default"
-                      }
+                      className={`${getStatusColor(appointment.status as AppointmentStatusType)} text-white`}
                     >
-                      {appointment.status === "pending"
-                        ? "قيد الانتظار"
-                        : appointment.status === "matched"
-                          ? "تم التطابق"
-                          : "مكتمل"}
+                      {AppointmentStatusArabic[appointment.status as AppointmentStatusType]}
                     </Badge>
                   </TableCell>
                   <TableCell>
-                    {appointment.status === "pending" && (
+                    {(appointment.status === AppointmentStatus.PENDING) && (
                       <Button
                         variant="outline"
                         size="sm"
@@ -238,7 +260,7 @@ export default function ManagerAppointments() {
                   <TableRow key={teacher.id}>
                     <TableCell>{teacher.username}</TableCell>
                     <TableCell>
-                      {teacherAvailabilities?.length > 0 ? (
+                      {teacherAvailabilities && teacherAvailabilities.length > 0 ? (
                         <div className="space-y-1">
                           {teacherAvailabilities.map((avail) => (
                             <div
@@ -264,7 +286,7 @@ export default function ManagerAppointments() {
                         <span className="font-medium">
                           {teacherAppointments?.length || 0}
                         </span>
-                        {teacherAppointments?.length > 0 && (
+                        {teacherAppointments && teacherAppointments.length > 0 && (
                           <Badge variant="outline" className="mr-2">
                             {teacherAppointments.length > 2 ? "مرتفع" : "طبيعي"}
                           </Badge>
@@ -329,7 +351,7 @@ export default function ManagerAppointments() {
                         <div className="flex items-center justify-between">
                           <span>{teacher.username}</span>
                           {isAvailable ? (
-                            <Badge variant="success">متوفر</Badge>
+                            <Badge variant="default">متوفر</Badge>
                           ) : (
                             <Badge variant="secondary">غير متوفر</Badge>
                           )}
