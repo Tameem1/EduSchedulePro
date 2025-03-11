@@ -1,4 +1,3 @@
-
 import { Switch, Route } from "wouter";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
@@ -9,6 +8,7 @@ import AuthPage from "@/pages/auth-page";
 import BookAppointment from "@/pages/student/book-appointment";
 import TeacherAvailability from "@/pages/teacher/availability";
 import TeacherQuestionnaire from "@/pages/teacher/questionnaire";
+import AcceptAppointment from "@/pages/teacher/accept-appointment";
 import ManagerAppointments from "@/pages/manager/appointments";
 import ManagerResults from "@/pages/manager/results";
 import AssignTeacher from "@/pages/manager/assign-teacher";
@@ -35,6 +35,11 @@ function Router() {
           path="/teacher/questionnaire"
           role="teacher"
           component={TeacherQuestionnaire}
+        />
+        <ProtectedRoute
+          path="/teacher/accept-appointment/:id"
+          role="teacher"
+          component={AcceptAppointment}
         />
         <ProtectedRoute
           path="/manager/appointments"

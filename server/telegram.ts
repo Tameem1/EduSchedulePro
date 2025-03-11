@@ -277,9 +277,8 @@ export async function notifyTeacherAboutAppointment(appointmentId: number, teach
     const student = await db.select().from(users).where(eq(users.id, appointment[0].studentId)).limit(1);
     const studentName = student.length ? student[0].username : `طالب ${appointment[0].studentId}`;
 
-    // Create acceptance URL
-    const replit_domain = process.env.REPL_SLUG ? `https://${process.env.REPL_SLUG}.replit.dev` : null;
-    const callbackUrl = `${process.env.FRONTEND_URL || replit_domain || 'https://example.com'}/teacher/accept-appointment/${appointmentId}`;
+    // Create acceptance URL - Use the deployed URL
+    const callbackUrl = `https://appointment-manager.replit.app/teacher/accept-appointment/${appointmentId}`;
 
     // Format time in GMT+3
     const appointmentTime = formatGMT3Time(new Date(appointment[0].startTime), "HH:mm", {timeZone: 'Africa/Cairo'});
