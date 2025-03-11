@@ -165,7 +165,7 @@ export default function ManagerAppointments() {
               {appointments?.map((appointment) => (
                 <TableRow key={appointment.id}>
                   <TableCell>
-                    {format(new Date(appointment.startTime), "HH:mm")}
+                    {format(new Date(appointment.startTime), "h:mm a")}
                   </TableCell>
                   <TableCell>طالب {appointment.studentId}</TableCell>
                   <TableCell>

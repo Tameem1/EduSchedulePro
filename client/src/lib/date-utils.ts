@@ -4,9 +4,13 @@ import { format as formatTZ } from "date-fns-tz";
 // Timezone for Riyadh (GMT+3)
 const TIMEZONE = "Asia/Riyadh";
 
-export function formatGMT3Time(isoString: string | Date): string {
-  const date = typeof isoString === 'string' ? new Date(isoString) : isoString;
-  return formatTZ(date, "HH:mm", { timeZone: TIMEZONE });
+export function formatGMT3Time(date: Date): string {
+  let hours = date.getHours();
+  const minutes = date.getMinutes().toString().padStart(2, '0');
+  const ampm = hours >= 12 ? 'PM' : 'AM';
+  hours = hours % 12;
+  hours = hours ? hours : 12; // the hour '0' should be '12'
+  return `${hours}:${minutes} ${ampm}`;
 }
 
 export function getGMT3ISOString(date: Date): string {

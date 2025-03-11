@@ -63,7 +63,7 @@ export default function BookAppointment() {
       if (!selectedTime) throw new Error("Please select a time");
 
       const appointment = {
-        startTime: getGMT3ISOString(selectedTime),
+        startTime: selectedTime.toISOString(),
       };
 
       const res = await apiRequest("POST", "/api/appointments", appointment);
