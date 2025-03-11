@@ -16,7 +16,9 @@ export default function AcceptAppointment() {
   const [, setLocation] = useLocation();
   const { user, isLoading: isAuthLoading } = useAuth();
   const { toast } = useToast();
+  const [isAccepted, setIsAccepted] = React.useState(false);
 
+  // Fetch appointment details
   const { data: appointment, isLoading: isLoadingAppointment } = useQuery<Appointment>({
     queryKey: ["/api/appointments", id],
     queryFn: async () => {
@@ -55,14 +57,15 @@ export default function AcceptAppointment() {
       return res.json();
     },
     onSuccess: () => {
+      setIsAccepted(true);
       toast({
         title: "تم قبول الموعد",
         description: "سيتم إخطار الطالب بقبول الموعد",
       });
       queryClient.invalidateQueries({ queryKey: ["/api/appointments"] });
-      // Redirect to the questionnaire page after 2 seconds
+      // Redirect to the appointments page after 2 seconds
       setTimeout(() => {
-        setLocation("/teacher/questionnaire");
+        setLocation("/teacher/appointments");
       }, 2000);
     },
     onError: (error) => {
@@ -73,6 +76,13 @@ export default function AcceptAppointment() {
       });
     },
   });
+
+  // Auto-accept when teacher is logged in and appointment is found
+  React.useEffect(() => {
+    if (user && appointment && !isAccepted && appointment.status === AppointmentStatus.ASSIGNED) {
+      acceptAppointmentMutation.mutate();
+    }
+  }, [user, appointment, isAccepted]);
 
   if (isAuthLoading || isLoadingAppointment) {
     return (
@@ -85,7 +95,23 @@ export default function AcceptAppointment() {
   if (!user || user.role !== "teacher") {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <p>غير مصرح. يجب أن تكون معلماً للوصول إلى هذه الصفحة.</p>
+        <Card className="w-full max-w-md mx-4">
+          <CardContent className="pt-6">
+            <p>يجب تسجيل الدخول كمعلم للوصول إلى هذه الصفحة.</p>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  if (!appointment) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Card className="w-full max-w-md mx-4">
+          <CardContent className="pt-6">
+            <p>لم يتم العثور على الموعد</p>
+          </CardContent>
+        </Card>
       </div>
     );
   }
@@ -94,17 +120,17 @@ export default function AcceptAppointment() {
     <div className="container mx-auto p-4">
       <Card>
         <CardHeader>
-          <CardTitle>قبول الموعد</CardTitle>
+          <CardTitle>تأكيد قبول الموعد</CardTitle>
         </CardHeader>
         <CardContent>
-          {appointment ? (
-            <div className="space-y-4">
-              <div className="bg-muted/50 p-4 rounded-md">
-                <p className="font-medium">تفاصيل الموعد:</p>
-                <p>الوقت: {format(new Date(appointment.startTime), "HH:mm")}</p>
-                <p>الطالب: {student?.username || `طالب ${appointment.studentId}`}</p>
-                <p>الحالة: {appointment.status}</p>
-              </div>
+          <div className="space-y-4">
+            <div className="bg-muted/50 p-4 rounded-md">
+              <p className="font-medium">تفاصيل الموعد:</p>
+              <p>الوقت: {format(new Date(appointment.startTime), "HH:mm")}</p>
+              <p>الطالب: {student?.username || `طالب ${appointment.studentId}`}</p>
+              <p>الحالة: {isAccepted ? "تم القبول" : "في انتظار القبول"}</p>
+            </div>
+            {!isAccepted && appointment.status === AppointmentStatus.ASSIGNED && (
               <Button
                 className="w-full"
                 onClick={() => acceptAppointmentMutation.mutate()}
@@ -112,10 +138,13 @@ export default function AcceptAppointment() {
               >
                 {acceptAppointmentMutation.isPending ? "جاري قبول الموعد..." : "قبول الموعد"}
               </Button>
-            </div>
-          ) : (
-            <p>لم يتم العثور على الموعد</p>
-          )}
+            )}
+            {isAccepted && (
+              <div className="text-center text-green-600">
+                تم قبول الموعد بنجاح! سيتم تحويلك إلى صفحة المواعيد...
+              </div>
+            )}
+          </div>
         </CardContent>
       </Card>
     </div>
