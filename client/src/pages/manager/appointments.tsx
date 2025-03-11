@@ -149,7 +149,8 @@ export default function ManagerAppointments() {
     },
   });
 
-  const getUserName = (userId: number, role: 'student' | 'teacher') => {
+  const getUserName = (userId: number | null, role: 'student' | 'teacher') => {
+    if (!userId) return "غير معين";
     const userList = role === 'student' ? students : teachers;
     const user = userList?.find(u => u.id === userId);
     return user?.username || `${role} ${userId}`;
@@ -214,7 +215,9 @@ export default function ManagerAppointments() {
                   <TableCell>{getUserName(appointment.studentId, 'student')}</TableCell>
                   <TableCell>{getUserName(appointment.teacherId, 'teacher')}</TableCell>
                   <TableCell>
-                    <Badge className={`${getStatusColor(appointment.status as AppointmentStatusType)} text-white`}>
+                    <Badge
+                      className={`${getStatusColor(appointment.status as AppointmentStatusType)} text-white`}
+                    >
                       {AppointmentStatusArabic[appointment.status as AppointmentStatusType]}
                     </Badge>
                   </TableCell>
