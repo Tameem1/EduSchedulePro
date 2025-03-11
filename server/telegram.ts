@@ -282,7 +282,7 @@ export async function notifyTeacherAboutAppointment(appointmentId: number, teach
     const callbackUrl = `${process.env.FRONTEND_URL || replit_domain || 'https://example.com'}/teacher/accept-appointment/${appointmentId}`;
 
     // Format time in GMT+3
-    const appointmentTime = formatGMT3Time(appointment[0].startTime, {timeZone: 'Africa/Cairo'});
+    const appointmentTime = formatGMT3Time(new Date(appointment[0].startTime), "HH:mm", {timeZone: 'Africa/Cairo'});
 
     // Prepare message text
     const message = `تم تعيينك لموعد جديد مع ${studentName} الساعة ${appointmentTime}. الرجاء قبول الموعد في أقرب وقت.`;
