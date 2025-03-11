@@ -87,7 +87,9 @@ export const storage = {
       .select()
       .from(appointments)
       .where(eq(appointments.studentId, studentId))
-      .orderBy(desc(appointments.startTime));
+      .orderBy(desc(appointments.startTime))
+      .leftJoin(users, (appointments, users) => eq(appointments.studentId, users.id))
+      .leftJoin(users, (appointments, users) => eq(appointments.teacherId, users.id));
   },
 
   async getAppointmentsByTeacher(teacherId: number) {
@@ -95,7 +97,9 @@ export const storage = {
       .select()
       .from(appointments)
       .where(eq(appointments.teacherId, teacherId))
-      .orderBy(desc(appointments.startTime));
+      .orderBy(desc(appointments.startTime))
+      .leftJoin(users, (appointments, users) => eq(appointments.studentId, users.id))
+      .leftJoin(users, (appointments, users) => eq(appointments.teacherId, users.id));
   },
 
   async updateAppointment(appointmentId: number, data: any) {
@@ -112,7 +116,9 @@ export const storage = {
     const result = await db
       .select()
       .from(appointments)
-      .where(eq(appointments.id, appointmentId));
+      .where(eq(appointments.id, appointmentId))
+      .leftJoin(users, (appointments, users) => eq(appointments.studentId, users.id))
+      .leftJoin(users, (appointments, users) => eq(appointments.teacherId, users.id));
 
     return result[0];
   },
@@ -121,7 +127,9 @@ export const storage = {
     return await db
       .select()
       .from(appointments)
-      .orderBy(desc(appointments.startTime));
+      .orderBy(desc(appointments.startTime))
+      .leftJoin(users, (appointments, users) => eq(appointments.studentId, users.id))
+      .leftJoin(users, (appointments, users) => eq(appointments.teacherId, users.id));
   },
 
   async createQuestionnaireResponse(data: any) {

@@ -69,7 +69,7 @@ export default function ManagerAppointments() {
     enabled: !!user,
   });
 
-  // Fetch all appointments
+  // Fetch all appointments (Assuming backend now returns student and teacher objects)
   const { data: appointments, isLoading: isLoadingAppointments } = useQuery<
     Appointment[]
   >({
@@ -200,10 +200,10 @@ export default function ManagerAppointments() {
                   <TableCell>
                     {format(new Date(appointment.startTime), "h:mm a")}
                   </TableCell>
-                  <TableCell>طالب {appointment.studentId}</TableCell>
+                  <TableCell>{appointment.student ? appointment.student.username : `طالب ${appointment.studentId}`}</TableCell>
                   <TableCell>
-                    {appointment.teacherId
-                      ? `معلم ${appointment.teacherId}`
+                    {appointment.teacher
+                      ? appointment.teacher.username
                       : "غير معين"}
                   </TableCell>
                   <TableCell>
@@ -214,7 +214,7 @@ export default function ManagerAppointments() {
                     </Badge>
                   </TableCell>
                   <TableCell>
-                    {(appointment.status === AppointmentStatus.PENDING) && (
+                    {appointment.status === AppointmentStatus.PENDING && (
                       <Button
                         variant="outline"
                         size="sm"
@@ -315,7 +315,7 @@ export default function ManagerAppointments() {
                   <p>
                     الوقت: {format(new Date(selectedAppointment.startTime), "HH:mm")}
                   </p>
-                  <p>الطالب: طالب {selectedAppointment.studentId}</p>
+                  <p>الطالب: {selectedAppointment.student.username}</p> {/* Assuming student object is present */}
                 </div>
                 <div className="space-y-2">
                   {teachers?.map((teacher) => {
