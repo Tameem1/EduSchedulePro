@@ -7,7 +7,7 @@ import { db } from "./db";
 import { eq } from 'drizzle-orm';
 import { users, availabilities } from "@shared/schema";
 import { sendTelegramNotification, notifyTeacherAboutAppointment } from "./telegram"; // Import the Telegram notification functions
-
+import { startOfDay, endOfDay } from "date-fns";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   setupAuth(app);
@@ -120,12 +120,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(appointment);
     } catch (error) {
       console.error("Error creating appointment:", error);
-      
+
       // Check if it's a duplicate appointment error
       if (error instanceof Error && error.message === "لديك حجز موجود بالفعل في هذا الوقت") {
         return res.status(409).json({ error: error.message });
       }
-      
+
       res.status(400).json({ error: "Invalid appointment data" });
     }
   });
@@ -137,8 +137,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
     try {
       const studentId = parseInt(req.params.id);
+      const today = new Date();
       const appointments = await storage.getAppointmentsByStudent(studentId);
-      res.json(appointments);
+
+      // Filter appointments for today only
+      const todayAppointments = appointments.filter(appointment => {
+        const appointmentDate = new Date(appointment.startTime);
+        return appointmentDate >= startOfDay(today) && appointmentDate <= endOfDay(today);
+      });
+
+      res.json(todayAppointments);
     } catch (error) {
       console.error("Error fetching appointments:", error);
       res.status(500).json({ error: "Failed to fetch appointments" });
@@ -190,13 +198,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
 
     try {
+      const today = new Date();
       const allAppointments = await storage.getAllAppointments();
-      console.log("Fetched appointments times:", allAppointments.map(a => ({
+
+      // Filter appointments for today only
+      const todayAppointments = allAppointments.filter(appointment => {
+        const appointmentDate = new Date(appointment.startTime);
+        return appointmentDate >= startOfDay(today) && appointmentDate <= endOfDay(today);
+      });
+
+      console.log("Fetched appointments times:", todayAppointments.map(a => ({
         id: a.id,
         rawStartTime: a.startTime,
         asDate: new Date(a.startTime).toISOString()
       }))); // Added logging for all appointments
-      res.json(allAppointments);
+      res.json(todayAppointments);
     } catch (error) {
       console.error("Error fetching appointments:", error);
       res.status(500).json({ error: "Failed to fetch appointments" });
@@ -264,13 +280,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
     try {
       const teacherId = parseInt(req.params.id);
+      const today = new Date();
       const appointments = await storage.getAppointmentsByTeacher(teacherId);
-      console.log("Fetched appointments times for teacher:", appointments.map(a => ({ // Added logging for teacher appointments
+
+      // Filter appointments for today only
+      const todayAppointments = appointments.filter(appointment => {
+        const appointmentDate = new Date(appointment.startTime);
+        return appointmentDate >= startOfDay(today) && appointmentDate <= endOfDay(today);
+      });
+
+      console.log("Fetched appointments times for teacher:", todayAppointments.map(a => ({ // Added logging for teacher appointments
         id: a.id,
         rawStartTime: a.startTime,
         asDate: new Date(a.startTime).toISOString()
       })));
-      res.json(appointments);
+      res.json(todayAppointments);
     } catch (error) {
       console.error("Error fetching teacher appointments:", error);
       res.status(500).json({ error: "Failed to fetch appointments" });
