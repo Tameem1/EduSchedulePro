@@ -28,12 +28,12 @@ import { useAuth } from "@/hooks/use-auth";
 
 export default function ManagerAppointments() {
   const { toast } = useToast();
-  const [selectedAppointment, setSelectedAppointment] = React.useState<Appointment | null>(null);
+  const [selectedAppointment, setSelectedAppointment] =
+    React.useState<Appointment | null>(null);
   const [isAssignDialogOpen, setIsAssignDialogOpen] = React.useState(false);
   const { user, isLoading: isAuthLoading } = useAuth();
   const socketRef = React.useRef<WebSocket | null>(null);
 
-  // WebSocket connection setup
   React.useEffect(() => {
     const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
     const wsUrl = `${protocol}//${window.location.host}/ws`;
@@ -43,8 +43,7 @@ export default function ManagerAppointments() {
       const data = JSON.parse(event.data);
       if (data.type === 'appointmentUpdate' || data.type === 'availabilityUpdate') {
         queryClient.invalidateQueries({ queryKey: ["/api/appointments"] });
-        queryClient.invalidateQueries({ queryKey: ["/api/users/students"] });
-        queryClient.invalidateQueries({ queryKey: ["/api/users/teachers"] });
+        queryClient.invalidateQueries({ queryKey: ["/api/availabilities"] });
       }
     };
 
@@ -55,20 +54,6 @@ export default function ManagerAppointments() {
     };
   }, []);
 
-  // Fetch all students
-  const { data: students, isLoading: isLoadingStudents } = useQuery<User[]>({
-    queryKey: ["/api/users/students"],
-    queryFn: async () => {
-      const res = await apiRequest("GET", "/api/users/students");
-      if (!res.ok) {
-        throw new Error("Failed to fetch students");
-      }
-      const data = await res.json();
-      return data;
-    },
-  });
-
-  // Fetch all teachers
   const { data: teachers, isLoading: isLoadingTeachers } = useQuery<User[]>({
     queryKey: ["/api/users/teachers"],
     queryFn: async () => {
@@ -78,9 +63,24 @@ export default function ManagerAppointments() {
       }
       return res.json();
     },
+    enabled: !!user,
   });
 
-  const { data: appointments, isLoading: isLoadingAppointments } = useQuery<Appointment[]>({
+  const { data: students, isLoading: isLoadingStudents } = useQuery<User[]>({
+    queryKey: ["/api/users/students"],
+    queryFn: async () => {
+      const res = await apiRequest("GET", "/api/users/students");
+      if (!res.ok) {
+        throw new Error("Failed to fetch students");
+      }
+      return res.json();
+    },
+    enabled: !!user,
+  });
+
+  const { data: appointments, isLoading: isLoadingAppointments } = useQuery<
+    Appointment[]
+  >({
     queryKey: ["/api/appointments"],
     queryFn: async () => {
       const res = await apiRequest("GET", "/api/appointments");
@@ -89,6 +89,21 @@ export default function ManagerAppointments() {
       }
       return res.json();
     },
+    enabled: !!user,
+  });
+
+  const { data: availabilities, isLoading: isLoadingAvailabilities } = useQuery<
+    Availability[]
+  >({
+    queryKey: ["/api/availabilities"],
+    queryFn: async () => {
+      const res = await apiRequest("GET", "/api/availabilities");
+      if (!res.ok) {
+        throw new Error("Failed to fetch availabilities");
+      }
+      return res.json();
+    },
+    enabled: !!user,
   });
 
   const assignTeacherMutation = useMutation({
@@ -134,16 +149,10 @@ export default function ManagerAppointments() {
     },
   });
 
-  const getStudentName = (studentId: number | null) => {
-    if (!studentId) return "غير معروف";
-    const student = students?.find(s => s.id === studentId);
-    return student?.username || "غير معروف";
-  };
-
-  const getTeacherName = (teacherId: number | null) => {
-    if (!teacherId) return "غير معين";
-    const teacher = teachers?.find(t => t.id === teacherId);
-    return teacher?.username || "غير معروف";
+  const getUserName = (userId: number, role: 'student' | 'teacher') => {
+    const userList = role === 'student' ? students : teachers;
+    const user = userList?.find(u => u.id === userId);
+    return user?.username || `${role} ${userId}`;
   };
 
   const getStatusColor = (status: AppointmentStatusType) => {
@@ -181,7 +190,7 @@ export default function ManagerAppointments() {
         </Link>
       </div>
 
-      <Card>
+      <Card className="mb-6">
         <CardHeader>
           <CardTitle>المواعيد</CardTitle>
         </CardHeader>
@@ -202,12 +211,10 @@ export default function ManagerAppointments() {
                   <TableCell>
                     {format(new Date(appointment.startTime), "h:mm a")}
                   </TableCell>
-                  <TableCell>{getStudentName(appointment.studentId)}</TableCell>
-                  <TableCell>{getTeacherName(appointment.teacherId)}</TableCell>
+                  <TableCell>{getUserName(appointment.studentId, 'student')}</TableCell>
+                  <TableCell>{getUserName(appointment.teacherId, 'teacher')}</TableCell>
                   <TableCell>
-                    <Badge
-                      className={`${getStatusColor(appointment.status as AppointmentStatusType)} text-white`}
-                    >
+                    <Badge className={`${getStatusColor(appointment.status as AppointmentStatusType)} text-white`}>
                       {AppointmentStatusArabic[appointment.status as AppointmentStatusType]}
                     </Badge>
                   </TableCell>
@@ -232,6 +239,73 @@ export default function ManagerAppointments() {
         </CardContent>
       </Card>
 
+      <Card className="mb-6">
+        <CardHeader>
+          <CardTitle>توفر المعلمين</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>المعلم</TableHead>
+                <TableHead>الأوقات المتاحة</TableHead>
+                <TableHead>عدد المواعيد</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {teachers?.map((teacher) => {
+                const teacherAvailabilities = availabilities?.filter(
+                  (a) => a.teacherId === teacher.id,
+                );
+                const teacherAppointments = appointments?.filter(
+                  (a) => a.teacherId === teacher.id,
+                );
+
+                return (
+                  <TableRow key={teacher.id}>
+                    <TableCell>{teacher.username}</TableCell>
+                    <TableCell>
+                      {teacherAvailabilities && teacherAvailabilities.length > 0 ? (
+                        <div className="space-y-1">
+                          {teacherAvailabilities.map((avail) => (
+                            <div
+                              key={avail.id}
+                              className="text-sm flex items-center"
+                            >
+                              <div className="w-2 h-2 bg-green-500 rounded-full ml-2"></div>
+                              <span>
+                                {format(new Date(avail.startTime), "HH:mm")} -{" "}
+                                {format(new Date(avail.endTime), "HH:mm")}
+                              </span>
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <span className="text-muted-foreground text-sm">
+                          لا توجد أوقات متاحة
+                        </span>
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center">
+                        <span className="font-medium">
+                          {teacherAppointments?.length || 0}
+                        </span>
+                        {teacherAppointments && teacherAppointments.length > 0 && (
+                          <Badge variant="outline" className="mr-2">
+                            {teacherAppointments.length > 2 ? "مرتفع" : "طبيعي"}
+                          </Badge>
+                        )}
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
+            </TableBody>
+          </Table>
+        </CardContent>
+      </Card>
+
       <Dialog open={isAssignDialogOpen} onOpenChange={setIsAssignDialogOpen}>
         <DialogContent>
           <DialogHeader>
@@ -244,26 +318,51 @@ export default function ManagerAppointments() {
                   <p>
                     الوقت: {format(new Date(selectedAppointment.startTime), "HH:mm")}
                   </p>
-                  <p>الطالب: {getStudentName(selectedAppointment.studentId)}</p>
+                  <p>الطالب: {getUserName(selectedAppointment.studentId, 'student')}</p>
                 </div>
                 <div className="space-y-2">
-                  {teachers?.map((teacher) => (
-                    <div
-                      key={teacher.id}
-                      className="p-3 border rounded-lg hover:bg-muted cursor-pointer"
-                      onClick={() => {
-                        assignTeacherMutation.mutate({
-                          appointmentId: selectedAppointment.id,
-                          teacherId: teacher.id,
-                        });
-                      }}
-                    >
-                      <div className="flex items-center justify-between">
-                        <span>{teacher.username}</span>
-                        <Badge variant="default">متوفر</Badge>
+                  {teachers?.map((teacher) => {
+                    const isAvailable = availabilities?.some((avail) => {
+                      const appointmentTime = new Date(
+                        selectedAppointment.startTime,
+                      );
+                      const availStartTime = new Date(avail.startTime);
+                      const availEndTime = new Date(avail.endTime);
+                      return (
+                        avail.teacherId === teacher.id &&
+                        appointmentTime >= availStartTime &&
+                        appointmentTime <= availEndTime
+                      );
+                    });
+
+                    return (
+                      <div
+                        key={teacher.id}
+                        className={`p-3 border rounded-lg ${
+                          isAvailable
+                            ? "hover:bg-muted cursor-pointer"
+                            : "opacity-50"
+                        }`}
+                        onClick={() => {
+                          if (isAvailable) {
+                            assignTeacherMutation.mutate({
+                              appointmentId: selectedAppointment.id,
+                              teacherId: teacher.id,
+                            });
+                          }
+                        }}
+                      >
+                        <div className="flex items-center justify-between">
+                          <span>{teacher.username}</span>
+                          {isAvailable ? (
+                            <Badge variant="default">متوفر</Badge>
+                          ) : (
+                            <Badge variant="secondary">غير متوفر</Badge>
+                          )}
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
             )}
