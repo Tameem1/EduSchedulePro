@@ -1,4 +1,3 @@
-
 import { drizzle } from 'drizzle-orm/node-postgres';
 import { eq, and, sql, desc, gte } from "drizzle-orm";
 import type { InsertUser, Appointment, QuestionnaireResponse } from "@shared/schema";
@@ -84,89 +83,19 @@ export const storage = {
   },
 
   async getAppointmentsByStudent(studentId: number) {
-    const results = await db
-      .select({
-        id: appointments.id,
-        studentId: appointments.studentId,
-        teacherId: appointments.teacherId,
-        startTime: appointments.startTime,
-        status: appointments.status,
-        studentName: users.username,
-      })
+    return await db
+      .select()
       .from(appointments)
       .where(eq(appointments.studentId, studentId))
-      .orderBy(desc(appointments.startTime))
-      .leftJoin(users, eq(appointments.studentId, users.id));
-
-    // Get teacher names in a second query
-    const appointmentIds = results.map(app => app.id);
-    const teacherInfo = appointmentIds.length ? await db
-      .select({
-        appointmentId: appointments.id,
-        teacherName: users.username,
-      })
-      .from(appointments)
-      .where(eq(appointments.id, sql`ANY(${appointmentIds})`))
-      .leftJoin(users, eq(appointments.teacherId, users.id)) : [];
-
-    // Combine the results
-    return results.map(app => {
-      const teacherData = teacherInfo.find(t => t.appointmentId === app.id);
-      return {
-        ...app,
-        teacher: app.teacherId ? { 
-          id: app.teacherId, 
-          username: teacherData?.teacherName || `معلم #${app.teacherId}` 
-        } : undefined,
-        student: { 
-          id: app.studentId, 
-          username: app.studentName || `طالب #${app.studentId}` 
-        }
-      };
-    });
+      .orderBy(desc(appointments.startTime));
   },
 
   async getAppointmentsByTeacher(teacherId: number) {
-    const results = await db
-      .select({
-        id: appointments.id,
-        studentId: appointments.studentId,
-        teacherId: appointments.teacherId,
-        startTime: appointments.startTime,
-        status: appointments.status,
-        teacherName: users.username,
-      })
+    return await db
+      .select()
       .from(appointments)
       .where(eq(appointments.teacherId, teacherId))
-      .orderBy(desc(appointments.startTime))
-      .leftJoin(users, eq(appointments.teacherId, users.id));
-
-    // Get student names in a second query
-    const appointmentIds = results.map(app => app.id);
-    const studentInfo = appointmentIds.length ? await db
-      .select({
-        appointmentId: appointments.id,
-        studentName: users.username,
-      })
-      .from(appointments)
-      .where(eq(appointments.id, sql`ANY(${appointmentIds})`))
-      .leftJoin(users, eq(appointments.studentId, users.id)) : [];
-
-    // Combine the results
-    return results.map(app => {
-      const studentData = studentInfo.find(s => s.appointmentId === app.id);
-      return {
-        ...app,
-        teacher: { 
-          id: app.teacherId, 
-          username: app.teacherName || `معلم #${app.teacherId}` 
-        },
-        student: app.studentId ? { 
-          id: app.studentId, 
-          username: studentData?.studentName || `طالب #${app.studentId}` 
-        } : undefined
-      };
-    });
+      .orderBy(desc(appointments.startTime));
   },
 
   async updateAppointment(appointmentId: number, data: any) {
@@ -180,76 +109,19 @@ export const storage = {
   },
 
   async getAppointmentById(appointmentId: number) {
-    // First get the appointment
-    const [appointmentResult] = await db
+    const result = await db
       .select()
       .from(appointments)
       .where(eq(appointments.id, appointmentId));
 
-    if (!appointmentResult) {
-      return null;
-    }
-
-    // Get student info
-    const [student] = appointmentResult.studentId ? 
-      await db.select().from(users).where(eq(users.id, appointmentResult.studentId)) : [];
-
-    // Get teacher info
-    const [teacher] = appointmentResult.teacherId ?
-      await db.select().from(users).where(eq(users.id, appointmentResult.teacherId)) : [];
-
-    return {
-      ...appointmentResult,
-      student: student ? { 
-        id: student.id, 
-        username: student.username 
-      } : undefined,
-      teacher: teacher ? { 
-        id: teacher.id, 
-        username: teacher.username 
-      } : undefined
-    };
+    return result[0];
   },
 
   async getAllAppointments() {
-    // First get all appointments
-    const appointmentsResult = await db
+    return await db
       .select()
       .from(appointments)
       .orderBy(desc(appointments.startTime));
-
-    // Get all student IDs and teacher IDs
-    const studentIds = appointmentsResult.map(app => app.studentId).filter(Boolean);
-    const teacherIds = appointmentsResult.map(app => app.teacherId).filter(Boolean);
-    
-    // Get all relevant users in one query
-    const allUserIds = [...new Set([...studentIds, ...teacherIds])];
-    const userInfo = allUserIds.length ? await db
-      .select()
-      .from(users)
-      .where(eq(users.id, sql`ANY(${allUserIds})`)) : [];
-
-    // Create a map for quick lookup
-    const userMap = new Map();
-    userInfo.forEach(user => userMap.set(user.id, user));
-
-    // Combine the results
-    return appointmentsResult.map(app => {
-      const studentUser = app.studentId && userMap.get(app.studentId);
-      const teacherUser = app.teacherId && userMap.get(app.teacherId);
-      
-      return {
-        ...app,
-        student: studentUser ? { 
-          id: studentUser.id, 
-          username: studentUser.username 
-        } : { id: app.studentId, username: `طالب #${app.studentId}` },
-        teacher: teacherUser ? { 
-          id: teacherUser.id, 
-          username: teacherUser.username 
-        } : app.teacherId ? { id: app.teacherId, username: `معلم #${app.teacherId}` } : undefined
-      };
-    });
   },
 
   async createQuestionnaireResponse(data: any) {
@@ -271,8 +143,7 @@ export const storage = {
   },
 
   async getAllQuestionnaireResponses() {
-    // First get all questionnaire responses with appointment IDs
-    const responses = await db
+    return await db
       .select({
         id: questionnaireResponses.id,
         appointmentId: questionnaireResponses.appointmentId,
@@ -280,50 +151,19 @@ export const storage = {
         question2: questionnaireResponses.question2,
         question3: questionnaireResponses.question3,
         question4: questionnaireResponses.question4,
+        teacherId: appointments.teacherId,
+        studentId: appointments.studentId,
+        createdAt: appointments.startTime,
+        studentName: users.username,
       })
-      .from(questionnaireResponses);
-
-    // Get all appointments referenced by the questionnaires
-    const appointmentIds = responses.map(r => r.appointmentId);
-    const appointmentsInfo = appointmentIds.length ? await db
-      .select()
-      .from(appointments)
-      .where(eq(appointments.id, sql`ANY(${appointmentIds})`)) : [];
-
-    // Get all student and teacher IDs
-    const studentIds = appointmentsInfo.map(app => app.studentId).filter(Boolean);
-    const teacherIds = appointmentsInfo.map(app => app.teacherId).filter(Boolean);
-    
-    // Get all users in one query
-    const allUserIds = [...new Set([...studentIds, ...teacherIds])];
-    const usersInfo = allUserIds.length ? await db
-      .select()
-      .from(users)
-      .where(eq(users.id, sql`ANY(${allUserIds})`)) : [];
-
-    // Create maps for quick lookup
-    const appointmentMap = new Map();
-    appointmentsInfo.forEach(app => appointmentMap.set(app.id, app));
-    
-    const userMap = new Map();
-    usersInfo.forEach(user => userMap.set(user.id, user));
-
-    // Combine the results
-    return responses.map(response => {
-      const appointment = appointmentMap.get(response.appointmentId);
-      if (!appointment) return response;
-
-      const student = appointment.studentId && userMap.get(appointment.studentId);
-      const teacher = appointment.teacherId && userMap.get(appointment.teacherId);
-
-      return {
-        ...response,
-        teacherId: appointment.teacherId,
-        studentId: appointment.studentId,
-        createdAt: appointment.startTime,
-        studentName: student ? student.username : `طالب #${appointment.studentId}`,
-        teacherName: teacher ? teacher.username : appointment.teacherId ? `معلم #${appointment.teacherId}` : 'غير معين'
-      };
-    });
+      .from(questionnaireResponses)
+      .innerJoin(
+        appointments,
+        eq(questionnaireResponses.appointmentId, appointments.id)
+      )
+      .innerJoin(
+        users,
+        eq(appointments.studentId, users.id)
+      );
   }
 };

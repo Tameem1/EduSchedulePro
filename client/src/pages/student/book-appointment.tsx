@@ -92,10 +92,10 @@ export default function BookAppointment() {
       const day = selectedTime.getDate();
       const hours = selectedTime.getHours();
       const minutes = selectedTime.getMinutes();
-
+      
       // Create a new date in UTC to prevent timezone offset issues
       const utcTime = new Date(Date.UTC(year, month, day, hours, minutes, 0));
-
+      
       const appointment = {
         startTime: utcTime.toISOString(),
       };
@@ -134,11 +134,11 @@ export default function BookAppointment() {
     },
   });
 
-  // Fetch student's appointments and teacher data
-  const { data: appointments, isLoading: isLoadingAppointments } = useQuery({
-    queryKey: ["/api/students", user?.id, "appointments"],
+  // Fetch student's appointments
+  const { data: appointments, isLoading: isLoadingAppointments } = useQuery<Appointment[]>({
+    queryKey: ["/api/students", user.id, "appointments"],
     queryFn: async () => {
-      const res = await apiRequest("GET", `/api/students/${user?.id}/appointments`);
+      const res = await apiRequest("GET", `/api/students/${user.id}/appointments`);
       if (!res.ok) {
         const error = await res.json();
         throw new Error(error.error || "Failed to fetch appointments");
@@ -146,23 +146,6 @@ export default function BookAppointment() {
       return res.json();
     },
   });
-
-  const { data: teachers, isLoading: isLoadingTeachers } = useQuery({
-    queryKey: ["/api/users/teachers"],
-    queryFn: async () => {
-      const res = await apiRequest("GET", "/api/users/teachers");
-      if (!res.ok) {
-        const error = await res.json();
-        throw new Error(error.error || "Failed to fetch teachers");
-      }
-      return res.json();
-    },
-  });
-
-
-  if (isLoadingAppointments || isLoadingTeachers) {
-    return <div>Loading...</div>;
-  }
 
   return (
     <div className="container mx-auto p-4">
@@ -207,35 +190,38 @@ export default function BookAppointment() {
           {/* Display appointments */}
           <div className="mt-8">
             <h3 className="text-lg font-semibold mb-4">مواعيدك</h3>
-            {appointments && appointments.length > 0 ? (
+            {isLoadingAppointments ? (
+              <div className="flex justify-center">
+                <Loader2 className="h-8 w-8 animate-spin" />
+              </div>
+            ) : appointments && appointments.length > 0 ? (
               <div className="space-y-2">
                 {appointments.map((appointment) => (
-                  <Card className="mb-4" key={appointment.id}>
-                    <CardHeader>
-                      <CardTitle>
-                        {appointment.status === "pending"
+                  <div key={appointment.id} className="p-4 border rounded-md">
+                    <div className="flex justify-between items-center">
+                      <div>
+                        <p className="font-medium">
+                          {formatGMT3Time(new Date(appointment.startTime))}
+                        </p>
+                        <p className="text-sm text-muted-foreground">
+                          {format(new Date(appointment.startTime), "EEEE, MMMM d")}
+                        </p>
+                      </div>
+                      <div className={`px-2 py-1 rounded-full text-sm ${
+                        appointment.status === "pending" 
+                          ? "bg-yellow-100 text-yellow-800" 
+                          : appointment.status === "matched"
+                            ? "bg-green-100 text-green-800"
+                            : "bg-blue-100 text-blue-800"
+                      }`}>
+                        {appointment.status === "pending" 
                           ? "قيد الانتظار"
                           : appointment.status === "matched"
-                          ? "تم التطابق"
-                          : "مكتمل"}
-                      </CardTitle>
-                      <CardDescription>
-                        {formatGMT3Time(new Date(appointment.startTime))}
-                      </CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="grid gap-2">
-                        <div className="grid grid-cols-2 items-center gap-4">
-                          <div className="font-medium">المعلم:</div>
-                          <div>
-                            {appointment.teacher
-                              ? appointment.teacher.username
-                              : "لم يتم التعيين بعد"}
-                          </div>
-                        </div>
+                            ? "تم التطابق"
+                            : "مكتمل"}
                       </div>
-                    </CardContent>
-                  </Card>
+                    </div>
+                  </div>
                 ))}
               </div>
             ) : (
