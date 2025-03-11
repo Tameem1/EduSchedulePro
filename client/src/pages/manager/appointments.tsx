@@ -42,9 +42,10 @@ export default function ManagerAppointments() {
 
     socketRef.current.onmessage = (event) => {
       const data = JSON.parse(event.data);
-      if (data.type === 'appointmentUpdate') {
-        // Invalidate appointments query to refresh the list
+      if (data.type === 'appointmentUpdate' || data.type === 'availabilityUpdate') {
+        // Invalidate relevant queries to refresh the lists
         queryClient.invalidateQueries({ queryKey: ["/api/appointments"] });
+        queryClient.invalidateQueries({ queryKey: ["/api/availabilities"] });
       }
     };
 

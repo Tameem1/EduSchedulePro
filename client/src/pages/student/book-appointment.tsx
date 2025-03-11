@@ -22,6 +22,30 @@ export default function BookAppointment() {
   const { toast } = useToast();
   const [sliderValue, setSliderValue] = React.useState<number[]>([0]);
   const [selectedTime, setSelectedTime] = React.useState<Date | null>(null);
+  const socketRef = React.useRef<WebSocket | null>(null);
+
+  // WebSocket connection setup
+  React.useEffect(() => {
+    const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
+    const wsUrl = `${protocol}//${window.location.host}/ws`;
+    socketRef.current = new WebSocket(wsUrl);
+
+    socketRef.current.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+      if (data.type === 'appointmentUpdate') {
+        // Refresh appointments list when there's an update
+        queryClient.invalidateQueries({ 
+          queryKey: ["/api/students", user?.id, "appointments"] 
+        });
+      }
+    };
+
+    return () => {
+      if (socketRef.current) {
+        socketRef.current.close();
+      }
+    };
+  }, [user?.id]);
 
   // If still loading auth state, show loading indicator
   if (isAuthLoading) {

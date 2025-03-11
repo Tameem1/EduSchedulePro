@@ -29,9 +29,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     });
   });
 
-  // Helper function to broadcast appointment updates
-  const broadcastAppointmentUpdate = (appointmentId: number, status: string) => {
-    const message = JSON.stringify({ type: 'appointmentUpdate', appointmentId, status });
+  // Helper function to broadcast updates
+  const broadcastUpdate = (type: string, data: any) => {
+    const message = JSON.stringify({ type, data });
     clients.forEach(client => {
       if (client.readyState === WebSocket.OPEN) {
         client.send(message);
@@ -82,7 +82,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Teacher routes
+  // Create availability endpoint
   app.post("/api/availabilities", async (req, res) => {
     if (!req.isAuthenticated()) {
       console.log("Unauthorized: User not authenticated");
@@ -102,7 +102,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
         teacherId: req.user.id
       });
 
-      // Pass the ISO strings directly without converting to Date objects
       const parsedData = insertAvailabilitySchema.parse({
         startTime,
         endTime,
@@ -111,6 +110,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       const availability = await storage.createAvailability(parsedData);
       console.log("Created availability:", availability);
+
+      // Broadcast the new availability
+      broadcastUpdate('availabilityUpdate', { action: 'create', availability });
+
       res.json(availability);
     } catch (error) {
       console.error("Error creating availability:", error);
@@ -172,6 +175,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       await storage.deleteAvailability(availabilityId);
       console.log(`Deleted availability with ID ${availabilityId}`);
+
+      // Broadcast the deletion
+      broadcastUpdate('availabilityUpdate', { action: 'delete', availabilityId });
+
       res.status(200).json({ message: "Availability deleted successfully" });
     } catch (error) {
       console.error("Error deleting availability:", error);
@@ -200,6 +207,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
 
       const appointment = await storage.createAppointment(parsedData);
+
+      // Broadcast the new appointment
+      broadcastUpdate('appointmentUpdate', { action: 'create', appointment });
+
       res.json(appointment);
     } catch (error) {
       console.error("Error creating appointment:", error);
@@ -259,7 +270,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const response = await storage.createQuestionnaireResponse(parsedData);
 
       // Broadcast the update
-      broadcastAppointmentUpdate(parsedData.appointmentId, AppointmentStatus.DONE);
+      broadcastUpdate('appointmentUpdate', { action: 'update', appointment });
 
       res.json(response);
     } catch (error) {
@@ -346,7 +357,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
 
       // Broadcast the update
-      broadcastAppointmentUpdate(appointmentId, status);
+      broadcastUpdate('appointmentUpdate', { action: 'update', appointment });
 
       // Send Telegram notification after successful update
       let notificationSent = false;
@@ -422,7 +433,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const appointment = await storage.updateAppointment(appointmentId, { status });
 
       // Broadcast the update
-      broadcastAppointmentUpdate(appointmentId, status);
+      broadcastUpdate('appointmentUpdate', { action: 'update', appointment });
 
       res.json(appointment);
     } catch (error) {
