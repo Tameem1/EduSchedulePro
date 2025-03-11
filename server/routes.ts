@@ -62,10 +62,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
         teacherId: req.user.id
       });
 
-      // Parse the ISO strings into Date objects
+      // Pass the ISO strings directly without converting to Date objects
       const parsedData = insertAvailabilitySchema.parse({
-        startTime: new Date(startTime),
-        endTime: new Date(endTime),
+        startTime,
+        endTime,
         teacherId: req.user.id,
       });
 
