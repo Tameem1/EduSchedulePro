@@ -89,7 +89,11 @@ export const questionnaireResponsesRelations = relations(questionnaireResponses,
 
 // Modified Zod schemas for validation with GMT+3 handling
 export const insertUserSchema = createInsertSchema(users);
-export const insertAvailabilitySchema = createInsertSchema(availabilities);
+export const insertAvailabilitySchema = createInsertSchema(availabilities).extend({
+  // Ensure we use the exact time strings provided without any transformation
+  startTime: z.string().transform(str => str),
+  endTime: z.string().transform(str => str),
+});
 export const insertAppointmentSchema = createInsertSchema(appointments).extend({
   // Ensure we use the exact time string provided without any transformation
   startTime: z.string().transform(str => str),
