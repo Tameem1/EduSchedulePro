@@ -9,20 +9,15 @@ import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
 import { Redirect } from "wouter";
 import { Loader2 } from "lucide-react";
-import type { Appointment, User, AppointmentStatusType, AppointmentStatus } from "@shared/schema";
-import { formatGMT3Time, getGMT3ISOString } from "@/lib/date-utils";
+import type { Appointment, User, AppointmentStatusType } from "@shared/schema";
+import { AppointmentStatus, AppointmentStatusArabic } from "@shared/schema";
+import { formatGMT3Time } from "@/lib/date-utils";
+import { Skeleton } from "@/components/ui/skeleton";
 
 // Start and end times for availability
 const START_HOUR = 7; // 7 AM
 const END_HOUR = 23; // 11 PM
 const TOTAL_SLOTS = (END_HOUR - START_HOUR) * 2; // 2 slots per hour (30 min each)
-
-const AppointmentStatusArabic: { [key in AppointmentStatusType]: string } = {
-  pending: "قيد الانتظار",
-  assigned: "تم التطابق",
-  completed: "مكتمل",
-};
-
 
 export default function BookAppointment() {
   const { user, isLoading: isAuthLoading } = useAuth();
@@ -99,7 +94,7 @@ export default function BookAppointment() {
       const hours = Math.floor(totalHours);
       const minutes = (totalHours - hours) * 60;
 
-      // Set the time components - creating a direct time without timezone issues
+      // Set the time components
       time.setHours(hours);
       time.setMinutes(minutes);
       time.setSeconds(0);
@@ -119,10 +114,10 @@ export default function BookAppointment() {
       const day = selectedTime.getDate();
       const hours = selectedTime.getHours();
       const minutes = selectedTime.getMinutes();
-      
+
       // Create a new date in UTC to prevent timezone offset issues
       const utcTime = new Date(Date.UTC(year, month, day, hours, minutes, 0));
-      
+
       const appointment = {
         startTime: utcTime.toISOString(),
       };
@@ -218,8 +213,19 @@ export default function BookAppointment() {
           <div className="mt-8">
             <h3 className="text-lg font-semibold mb-4">مواعيدك</h3>
             {isLoadingAppointments ? (
-              <div className="flex justify-center">
-                <Loader2 className="h-8 w-8 animate-spin" />
+              <div className="space-y-2">
+                {[1, 2, 3].map((i) => (
+                  <div key={i} className="p-4 border rounded-md">
+                    <div className="flex justify-between items-center">
+                      <div className="space-y-2">
+                        <Skeleton className="h-4 w-24" />
+                        <Skeleton className="h-3 w-32" />
+                        <Skeleton className="h-3 w-40" />
+                      </div>
+                      <Skeleton className="h-6 w-20" />
+                    </div>
+                  </div>
+                ))}
               </div>
             ) : appointments && appointments.length > 0 ? (
               <div className="space-y-2">
