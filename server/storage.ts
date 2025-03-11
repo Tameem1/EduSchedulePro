@@ -4,7 +4,7 @@ import type { InsertUser, Appointment, QuestionnaireResponse } from "@shared/sch
 import { users, appointments, availabilities, questionnaireResponses, UserRole } from "@shared/schema";
 import session from "express-session";
 import createMemoryStore from "memorystore";
-import { pool } from "./db";
+import { pool, db } from "./db";
 
 const MemoryStore = createMemoryStore(session);
 
