@@ -54,7 +54,8 @@ export const storage = {
   },
 
   async deleteAvailability(id: number): Promise<void> {
-    return this.db.delete(availabilities).where(eq(availabilities.id, id)).then(() => {});
+    await db.delete(availabilities).where(eq(availabilities.id, id));
+    return;
   },
 
   async createAppointment(data: any) {
