@@ -34,7 +34,7 @@ export default function ManagerAppointments() {
   const { user, isLoading: isAuthLoading } = useAuth();
   const socketRef = React.useRef<WebSocket | null>(null);
 
-  // WebSocket connection setup
+  // WebSocket connection setup remains unchanged
   React.useEffect(() => {
     const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
     const wsUrl = `${protocol}//${window.location.host}/ws`;
@@ -63,6 +63,19 @@ export default function ManagerAppointments() {
       const res = await apiRequest("GET", "/api/users/teachers");
       if (!res.ok) {
         throw new Error("Failed to fetch teachers");
+      }
+      return res.json();
+    },
+    enabled: !!user,
+  });
+
+  // Fetch all students
+  const { data: students, isLoading: isLoadingStudents } = useQuery<User[]>({
+    queryKey: ["/api/users/students"],
+    queryFn: async () => {
+      const res = await apiRequest("GET", "/api/users/students");
+      if (!res.ok) {
+        throw new Error("Failed to fetch students");
       }
       return res.json();
     },
@@ -142,6 +155,13 @@ export default function ManagerAppointments() {
     },
   });
 
+  // Helper function to get user name
+  const getUserName = (userId: number, role: 'student' | 'teacher') => {
+    const userList = role === 'student' ? students : teachers;
+    const user = userList?.find(u => u.id === userId);
+    return user?.username || `${role} ${userId}`;
+  };
+
   const getStatusColor = (status: AppointmentStatusType) => {
     return {
       [AppointmentStatus.PENDING]: "bg-gray-500",
@@ -152,7 +172,7 @@ export default function ManagerAppointments() {
     }[status] || "bg-gray-500";
   };
 
-  if (isAuthLoading || isLoadingTeachers || isLoadingAppointments || isLoadingAvailabilities) {
+  if (isAuthLoading || isLoadingTeachers || isLoadingAppointments || isLoadingStudents) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin" />
@@ -200,10 +220,10 @@ export default function ManagerAppointments() {
                   <TableCell>
                     {format(new Date(appointment.startTime), "h:mm a")}
                   </TableCell>
-                  <TableCell>طالب {appointment.studentId}</TableCell>
+                  <TableCell>{getUserName(appointment.studentId, 'student')}</TableCell>
                   <TableCell>
                     {appointment.teacherId
-                      ? `معلم ${appointment.teacherId}`
+                      ? getUserName(appointment.teacherId, 'teacher')
                       : "غير معين"}
                   </TableCell>
                   <TableCell>
@@ -214,7 +234,7 @@ export default function ManagerAppointments() {
                     </Badge>
                   </TableCell>
                   <TableCell>
-                    {(appointment.status === AppointmentStatus.PENDING) && (
+                    {appointment.status === AppointmentStatus.PENDING && (
                       <Button
                         variant="outline"
                         size="sm"
@@ -315,7 +335,7 @@ export default function ManagerAppointments() {
                   <p>
                     الوقت: {format(new Date(selectedAppointment.startTime), "HH:mm")}
                   </p>
-                  <p>الطالب: طالب {selectedAppointment.studentId}</p>
+                  <p>الطالب: {getUserName(selectedAppointment.studentId, 'student')}</p>
                 </div>
                 <div className="space-y-2">
                   {teachers?.map((teacher) => {

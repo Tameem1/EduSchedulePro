@@ -9,13 +9,20 @@ import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
 import { Redirect } from "wouter";
 import { Loader2 } from "lucide-react";
-import type { Appointment } from "@shared/schema";
+import type { Appointment, User, AppointmentStatusType, AppointmentStatus } from "@shared/schema";
 import { formatGMT3Time, getGMT3ISOString } from "@/lib/date-utils";
 
 // Start and end times for availability
 const START_HOUR = 7; // 7 AM
 const END_HOUR = 23; // 11 PM
 const TOTAL_SLOTS = (END_HOUR - START_HOUR) * 2; // 2 slots per hour (30 min each)
+
+const AppointmentStatusArabic: { [key in AppointmentStatusType]: string } = {
+  pending: "قيد الانتظار",
+  assigned: "تم التطابق",
+  completed: "مكتمل",
+};
+
 
 export default function BookAppointment() {
   const { user, isLoading: isAuthLoading } = useAuth();
@@ -46,6 +53,26 @@ export default function BookAppointment() {
       }
     };
   }, [user?.id]);
+
+  // Fetch teachers data
+  const { data: teachers } = useQuery<User[]>({
+    queryKey: ["/api/users/teachers"],
+    queryFn: async () => {
+      const res = await apiRequest("GET", "/api/users/teachers");
+      if (!res.ok) {
+        throw new Error("Failed to fetch teachers");
+      }
+      return res.json();
+    },
+    enabled: !!user?.id,
+  });
+
+  // Helper function to get teacher name
+  const getTeacherName = (teacherId: number | null) => {
+    if (!teacherId) return "لم يتم التعيين";
+    const teacher = teachers?.find(t => t.id === teacherId);
+    return teacher?.username || `معلم ${teacherId}`;
+  };
 
   // If still loading auth state, show loading indicator
   if (isAuthLoading) {
@@ -206,19 +233,20 @@ export default function BookAppointment() {
                         <p className="text-sm text-muted-foreground">
                           {format(new Date(appointment.startTime), "EEEE, MMMM d")}
                         </p>
+                        {appointment.teacherId && (
+                          <p className="text-sm text-muted-foreground mt-1">
+                            المعلم: {getTeacherName(appointment.teacherId)}
+                          </p>
+                        )}
                       </div>
                       <div className={`px-2 py-1 rounded-full text-sm ${
-                        appointment.status === "pending" 
+                        appointment.status === AppointmentStatus.PENDING
                           ? "bg-yellow-100 text-yellow-800" 
-                          : appointment.status === "matched"
+                          : appointment.status === AppointmentStatus.ASSIGNED
                             ? "bg-green-100 text-green-800"
                             : "bg-blue-100 text-blue-800"
                       }`}>
-                        {appointment.status === "pending" 
-                          ? "قيد الانتظار"
-                          : appointment.status === "matched"
-                            ? "تم التطابق"
-                            : "مكتمل"}
+                        {AppointmentStatusArabic[appointment.status as AppointmentStatusType]}
                       </div>
                     </div>
                   </div>

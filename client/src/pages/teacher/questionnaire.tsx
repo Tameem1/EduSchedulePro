@@ -17,6 +17,7 @@ import { formatGMT3Time } from "@/lib/date-utils";
 import { Textarea } from "@/components/ui/textarea";
 import type { Appointment, AppointmentStatusType } from "@shared/schema";
 import { AppointmentStatus, AppointmentStatusArabic } from "@shared/schema";
+import type { User } from "@shared/schema"; // Assuming User type is defined
 
 export default function TeacherQuestionnaire() {
   const { user } = useAuth();
@@ -40,8 +41,8 @@ export default function TeacherQuestionnaire() {
       const data = JSON.parse(event.data);
       if (data.type === 'appointmentUpdate') {
         // Invalidate appointments query to refresh the list
-        queryClient.invalidateQueries({ 
-          queryKey: ["/api/teachers", user?.id, "appointments"] 
+        queryClient.invalidateQueries({
+          queryKey: ["/api/teachers", user?.id, "appointments"]
         });
       }
     };
@@ -52,6 +53,19 @@ export default function TeacherQuestionnaire() {
       }
     };
   }, [user?.id]);
+
+  // Fetch students data
+  const { data: students } = useQuery<User[]>({
+    queryKey: ["/api/users/students"],
+    queryFn: async () => {
+      const res = await apiRequest("GET", "/api/users/students");
+      if (!res.ok) {
+        throw new Error("Failed to fetch students");
+      }
+      return res.json();
+    },
+    enabled: !!user?.id,
+  });
 
   // Fetch teacher's appointments
   const { data: appointments, isLoading } = useQuery<Appointment[]>({
@@ -67,6 +81,12 @@ export default function TeacherQuestionnaire() {
     enabled: !!user?.id,
   });
 
+  // Helper function to get student name
+  const getStudentName = (studentId: number) => {
+    const student = students?.find(s => s.id === studentId);
+    return student?.username || `طالب ${studentId}`;
+  };
+
   // Update student response status
   const updateResponseStatusMutation = useMutation({
     mutationFn: async ({ appointmentId, responded }: { appointmentId: number; responded: boolean }) => {
@@ -81,8 +101,8 @@ export default function TeacherQuestionnaire() {
       return res.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ 
-        queryKey: ["/api/teachers", user?.id, "appointments"] 
+      queryClient.invalidateQueries({
+        queryKey: ["/api/teachers", user?.id, "appointments"]
       });
     },
   });
@@ -119,8 +139,8 @@ export default function TeacherQuestionnaire() {
       });
       setCurrentAppointment(null);
 
-      queryClient.invalidateQueries({ 
-        queryKey: ["/api/teachers", user?.id, "appointments"] 
+      queryClient.invalidateQueries({
+        queryKey: ["/api/teachers", user?.id, "appointments"]
       });
     },
     onError: (error) => {
@@ -174,7 +194,7 @@ export default function TeacherQuestionnaire() {
               <div className="bg-muted/50 p-4 rounded-md mb-4">
                 <p>
                   <span className="font-semibold">الطالب:</span>{" "}
-                  طالب {currentAppointment.studentId}
+                  {getStudentName(currentAppointment.studentId)}
                 </p>
                 <p>
                   <span className="font-semibold">الوقت:</span>{" "}
@@ -297,7 +317,7 @@ export default function TeacherQuestionnaire() {
                               })}
                             </p>
                             <p className="text-sm text-muted-foreground">
-                              طالب {appointment.studentId}
+                              {getStudentName(appointment.studentId)}
                             </p>
                           </div>
                           <Badge
