@@ -1,16 +1,43 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
+import { WebSocketServer, WebSocket } from 'ws';
 import { setupAuth } from "./auth";
 import { storage } from "./storage";
-import { insertAppointmentSchema, insertAvailabilitySchema, insertQuestionnaireSchema } from "@shared/schema";
+import { insertAppointmentSchema, insertAvailabilitySchema, insertQuestionnaireSchema, AppointmentStatus } from "@shared/schema";
 import { db } from "./db";
 import { eq } from 'drizzle-orm';
 import { users, availabilities } from "@shared/schema";
 import { sendTelegramNotification, notifyTeacherAboutAppointment } from "./telegram"; // Import the Telegram notification functions
 import { startOfDay, endOfDay } from "date-fns";
 
+// Keep track of all connected clients
+const clients = new Set<WebSocket>();
+
 export async function registerRoutes(app: Express): Promise<Server> {
   setupAuth(app);
+
+  const httpServer = createServer(app);
+
+  // Create WebSocket server
+  const wss = new WebSocketServer({ server: httpServer, path: '/ws' });
+
+  wss.on('connection', (ws) => {
+    clients.add(ws);
+
+    ws.on('close', () => {
+      clients.delete(ws);
+    });
+  });
+
+  // Helper function to broadcast appointment updates
+  const broadcastAppointmentUpdate = (appointmentId: number, status: string) => {
+    const message = JSON.stringify({ type: 'appointmentUpdate', appointmentId, status });
+    clients.forEach(client => {
+      if (client.readyState === WebSocket.OPEN) {
+        client.send(message);
+      }
+    });
+  };
 
   // New endpoint to fetch all teachers
   app.get("/api/users/teachers", async (req, res) => {
@@ -121,7 +148,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ error: "Failed to fetch availabilities" });
     }
   });
-  
+
   // Delete availability endpoint
   app.delete("/api/availabilities/:id", async (req, res) => {
     if (!req.isAuthenticated()) {
@@ -134,11 +161,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
     try {
       const availabilityId = parseInt(req.params.id);
-      
+
       // Fetch the availability to check if it belongs to the requesting teacher
       const teacherAvailabilities = await storage.getAvailabilitiesByTeacher(req.user.id);
       const availability = teacherAvailabilities.find(a => a.id === availabilityId);
-      
+
       if (!availability) {
         return res.status(404).json({ error: "Availability not found or you don't have permission to delete it" });
       }
@@ -223,13 +250,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const parsedData = insertQuestionnaireSchema.parse(req.body);
 
-      // Update appointment status to completed
-      await storage.updateAppointment(parsedData.appointmentId, {
-        status: "completed"
+      // Update appointment status to done
+      const appointment = await storage.updateAppointment(parsedData.appointmentId, {
+        status: AppointmentStatus.DONE
       });
 
       // Create questionnaire response
       const response = await storage.createQuestionnaireResponse(parsedData);
+
+      // Broadcast the update
+      broadcastAppointmentUpdate(parsedData.appointmentId, AppointmentStatus.DONE);
+
       res.json(response);
     } catch (error) {
       console.error("Error creating questionnaire response:", error);
@@ -301,7 +332,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // New endpoint to assign teacher to appointment WITH TELEGRAM NOTIFICATION
   app.patch("/api/appointments/:id", async (req, res) => {
-    if (!req.isAuthenticated() || req.user.role !== "manager") {
+    if (!req.isAuthenticated() || (req.user.role !== "manager" && req.user.role !== "teacher")) {
       return res.sendStatus(403);
     }
 
@@ -314,13 +345,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
         status
       });
 
+      // Broadcast the update
+      broadcastAppointmentUpdate(appointmentId, status);
+
       // Send Telegram notification after successful update
       let notificationSent = false;
-      if (teacherId) {
+      if (teacherId && status === AppointmentStatus.REQUESTED) {
         notificationSent = await notifyTeacherAboutAppointment(appointmentId, teacherId);
       }
 
-      // Return the appointment along with notification status
       res.json({
         ...appointment,
         notificationSent
@@ -373,6 +406,30 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  const httpServer = createServer(app);
+
+  // Add endpoint for updating student response status
+  app.patch("/api/appointments/:id/response", async (req, res) => {
+    if (!req.isAuthenticated() || req.user.role !== "teacher") {
+      return res.sendStatus(403);
+    }
+
+    try {
+      const appointmentId = parseInt(req.params.id);
+      const { responded } = req.body;
+
+      const status = responded ? AppointmentStatus.RESPONDED : AppointmentStatus.ASSIGNED;
+
+      const appointment = await storage.updateAppointment(appointmentId, { status });
+
+      // Broadcast the update
+      broadcastAppointmentUpdate(appointmentId, status);
+
+      res.json(appointment);
+    } catch (error) {
+      console.error("Error updating appointment response status:", error);
+      res.status(500).json({ error: "Failed to update response status" });
+    }
+  });
+
   return httpServer;
 }

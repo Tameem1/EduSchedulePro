@@ -10,22 +10,48 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Switch } from "@/components/ui/switch";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
-import { formatGMT3Time } from "@/lib/date-utils"; // Added import
+import { formatGMT3Time } from "@/lib/date-utils";
 import { Textarea } from "@/components/ui/textarea";
 import type { Appointment } from "@shared/schema";
+import { AppointmentStatus, AppointmentStatusArabic } from "@shared/schema";
 
 export default function TeacherQuestionnaire() {
   const { user } = useAuth();
   const { toast } = useToast();
   const [currentAppointment, setCurrentAppointment] = React.useState<Appointment | null>(null);
   const [formData, setFormData] = React.useState({
-    question1: "",
-    question2: "",
+    question1: false,
+    question2: false,
     question3: "",
     question4: "",
   });
+  const socketRef = React.useRef<WebSocket | null>(null);
+
+  // WebSocket connection setup
+  React.useEffect(() => {
+    const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
+    const wsUrl = `${protocol}//${window.location.host}/ws`;
+    socketRef.current = new WebSocket(wsUrl);
+
+    socketRef.current.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+      if (data.type === 'appointmentUpdate') {
+        // Invalidate appointments query to refresh the list
+        queryClient.invalidateQueries({ 
+          queryKey: ["/api/teachers", user?.id, "appointments"] 
+        });
+      }
+    };
+
+    return () => {
+      if (socketRef.current) {
+        socketRef.current.close();
+      }
+    };
+  }, [user?.id]);
 
   // Fetch teacher's appointments
   const { data: appointments, isLoading } = useQuery<Appointment[]>({
@@ -41,6 +67,26 @@ export default function TeacherQuestionnaire() {
     enabled: !!user?.id,
   });
 
+  // Update student response status
+  const updateResponseStatusMutation = useMutation({
+    mutationFn: async ({ appointmentId, responded }: { appointmentId: number; responded: boolean }) => {
+      const res = await apiRequest(
+        "PATCH",
+        `/api/appointments/${appointmentId}/response`,
+        { responded }
+      );
+      if (!res.ok) {
+        throw new Error("Failed to update response status");
+      }
+      return res.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ 
+        queryKey: ["/api/teachers", user?.id, "appointments"] 
+      });
+    },
+  });
+
   const submitQuestionnaireMutation = useMutation({
     mutationFn: async (data: any) => {
       const res = await apiRequest(
@@ -49,6 +95,8 @@ export default function TeacherQuestionnaire() {
         {
           ...data,
           appointmentId: currentAppointment?.id,
+          question1: data.question1 ? "نعم" : "لا",
+          question2: data.question2 ? "نعم" : "لا",
         }
       );
       if (!res.ok) {
@@ -63,16 +111,14 @@ export default function TeacherQuestionnaire() {
         description: "تم حفظ إجاباتك بنجاح",
       });
 
-      // Reset form and current appointment
       setFormData({
-        question1: "",
-        question2: "",
+        question1: false,
+        question2: false,
         question3: "",
         question4: "",
       });
       setCurrentAppointment(null);
 
-      // Invalidate appointments query to refresh the list
       queryClient.invalidateQueries({ 
         queryKey: ["/api/teachers", user?.id, "appointments"] 
       });
@@ -89,6 +135,17 @@ export default function TeacherQuestionnaire() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     submitQuestionnaireMutation.mutate(formData);
+  };
+
+  const getStatusColor = (status: string) => {
+    const colors = {
+      [AppointmentStatus.PENDING]: "bg-gray-500",
+      [AppointmentStatus.REQUESTED]: "bg-blue-500",
+      [AppointmentStatus.ASSIGNED]: "bg-yellow-500",
+      [AppointmentStatus.RESPONDED]: "bg-green-500",
+      [AppointmentStatus.DONE]: "bg-purple-500",
+    };
+    return colors[status] || "bg-gray-500";
   };
 
   if (isLoading) {
@@ -124,34 +181,39 @@ export default function TeacherQuestionnaire() {
                   <span className="font-semibold">الوقت:</span>{" "}
                   {formatGMT3Time(currentAppointment.startTime)}
                 </p>
+                <Badge className={`${getStatusColor(currentAppointment.status)} text-white`}>
+                  {AppointmentStatusArabic[currentAppointment.status]}
+                </Badge>
               </div>
 
               <div className="space-y-4">
-                <div>
-                  <label className="text-sm font-medium block mb-2">
+                <div className="flex items-center justify-between">
+                  <label className="text-sm font-medium">
                     هل تمت متابعة الطالب؟
                   </label>
-                  <Textarea
-                    value={formData.question1}
-                    onChange={(e) =>
-                      setFormData({ ...formData, question1: e.target.value })
+                  <Switch
+                    checked={formData.question1}
+                    onCheckedChange={(checked) =>
+                      setFormData({ ...formData, question1: checked })
                     }
-                    placeholder="نعم/لا"
-                    required
                   />
                 </div>
 
-                <div>
-                  <label className="text-sm font-medium block mb-2">
+                <div className="flex items-center justify-between">
+                  <label className="text-sm font-medium">
                     هل استجاب الطالب للمتابعة؟
                   </label>
-                  <Textarea
-                    value={formData.question2}
-                    onChange={(e) =>
-                      setFormData({ ...formData, question2: e.target.value })
-                    }
-                    placeholder="نعم/لا"
-                    required
+                  <Switch
+                    checked={formData.question2}
+                    onCheckedChange={(checked) => {
+                      setFormData({ ...formData, question2: checked });
+                      if (currentAppointment?.id) {
+                        updateResponseStatusMutation.mutate({
+                          appointmentId: currentAppointment.id,
+                          responded: checked
+                        });
+                      }
+                    }}
                   />
                 </div>
 
@@ -207,10 +269,10 @@ export default function TeacherQuestionnaire() {
                     <Card
                       key={appointment.id}
                       className={`cursor-pointer hover:border-primary ${
-                        appointment.status === "completed" ? "opacity-50" : ""
+                        appointment.status === AppointmentStatus.DONE ? "opacity-50" : ""
                       }`}
                       onClick={() => {
-                        if (appointment.status !== "completed") {
+                        if (appointment.status !== AppointmentStatus.DONE) {
                           setCurrentAppointment(appointment);
                         }
                       }}
@@ -226,15 +288,9 @@ export default function TeacherQuestionnaire() {
                             </p>
                           </div>
                           <Badge
-                            variant={
-                              appointment.status === "completed"
-                                ? "secondary"
-                                : "outline"
-                            }
+                            className={`${getStatusColor(appointment.status)} text-white`}
                           >
-                            {appointment.status === "completed"
-                              ? "مكتمل"
-                              : "بانتظار التقييم"}
+                            {AppointmentStatusArabic[appointment.status]}
                           </Badge>
                         </div>
                       </CardContent>
