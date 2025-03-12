@@ -207,19 +207,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
       return res.sendStatus(401);
     }
 
-    // Allow both students and teachers to create appointments
-    if (req.user.role !== "student" && req.user.role !== "teacher") {
+    if (req.user.role !== "student") {
       return res.sendStatus(403);
     }
 
     try {
-      const { startTime, studentId } = req.body;
+      const { startTime } = req.body;
       console.log(`Appointment requested for time: ${startTime}`);
 
       const parsedData = insertAppointmentSchema.parse({
         startTime,
-        studentId: req.user.role === "student" ? req.user.id : studentId,
-        status: req.user.role === "teacher" ? "assigned" : "pending"
+        studentId: req.user.id,
+        status: "pending"
       });
 
       const appointment = await storage.createAppointment(parsedData);
