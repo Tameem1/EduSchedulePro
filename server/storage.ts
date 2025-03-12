@@ -99,6 +99,13 @@ export const storage = {
   },
 
   async updateAppointment(appointmentId: number, data: any) {
+    // Check if we're updating response status
+    if ('responded' in data) {
+      // If responded is false, we're accepting the appointment, so set status to ASSIGNED
+      const status = data.responded ? 'responded' : 'assigned';
+      data = { ...data, status };
+    }
+
     const updatedAppointment = await db
       .update(appointments)
       .set(data)
