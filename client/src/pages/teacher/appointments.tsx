@@ -174,20 +174,6 @@ export default function TeacherAppointments() {
                         : "قبول الموعد"}
                     </Button>
                   )}
-                  {appointment.status === AppointmentStatus.ASSIGNED && (
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() =>
-                        acceptAppointmentMutation.mutate(appointment.id)
-                      }
-                      disabled={acceptAppointmentMutation.isPending}
-                    >
-                      {acceptAppointmentMutation.isPending
-                        ? "جاري القبول..."
-                        : "قبول الموعد"}
-                    </Button>
-                  )}
                   {appointment.status === AppointmentStatus.RESPONDED && (
                     <Button
                       variant="outline"
