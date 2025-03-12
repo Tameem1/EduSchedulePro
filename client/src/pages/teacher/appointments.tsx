@@ -8,7 +8,6 @@ import { Loader2, PlusCircle } from "lucide-react";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { format, parseISO } from "date-fns";
-import { formatLocalTime } from "@/lib/date-utils";
 import { AppointmentStatus, AppointmentStatusArabic } from "@shared/schema";
 import type { Appointment, User } from "@shared/schema";
 import {
@@ -220,7 +219,7 @@ export default function TeacherAppointments() {
                 >
                   <div>
                     <p className="font-medium">
-                      {formatLocalTime(appointment.startTime, "h:mm a")}
+                      {format(parseISO(appointment.startTime), "h:mm a")}
                     </p>
                     <p className="text-sm text-muted-foreground">
                       {getStudentName(appointment.studentId)}
