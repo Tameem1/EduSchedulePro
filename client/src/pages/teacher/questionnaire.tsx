@@ -36,6 +36,7 @@ import {
 import { Label } from "@/components/ui/label";
 
 const AVAILABLE_TIMES = [
+  "07:00",
   "08:00",
   "09:00",
   "10:00",
@@ -45,6 +46,14 @@ const AVAILABLE_TIMES = [
   "14:00",
   "15:00",
   "16:00",
+  "17:00",
+  "18:00",
+  "19:00",
+  "20:00",
+  "21:00",
+  "22:00",
+  "23:00",
+  "00:00",
 ];
 
 export default function TeacherQuestionnaire() {
@@ -255,12 +264,12 @@ export default function TeacherQuestionnaire() {
                 إضافة موعد لطالب
               </Button>
             </DialogTrigger>
-            <DialogContent>
+            <DialogContent className="sm:max-w-[425px]">
               <DialogHeader>
                 <DialogTitle>إضافة موعد جديد</DialogTitle>
               </DialogHeader>
-              <div className="space-y-4 mt-4">
-                <div>
+              <div className="space-y-6">
+                <div className="space-y-2">
                   <Label htmlFor="student">اختر الطالب</Label>
                   <Select
                     value={selectedStudent}
@@ -281,27 +290,23 @@ export default function TeacherQuestionnaire() {
                     </SelectContent>
                   </Select>
                 </div>
-                <div>
-                  <Label htmlFor="time">اختر الوقت</Label>
-                  <Select
-                    value={selectedTime}
-                    onValueChange={setSelectedTime}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="اختر الوقت" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {AVAILABLE_TIMES.map((time) => (
-                        <SelectItem
-                          key={time}
-                          value={time}
-                        >
-                          {time}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+
+                <div className="space-y-4">
+                  <Label>اختر الوقت</Label>
+                  <div className="grid grid-cols-3 gap-2">
+                    {AVAILABLE_TIMES.map((time) => (
+                      <Button
+                        key={time}
+                        variant={selectedTime === time ? "default" : "outline"}
+                        className="w-full"
+                        onClick={() => setSelectedTime(time)}
+                      >
+                        {time}
+                      </Button>
+                    ))}
+                  </div>
                 </div>
+
                 <Button
                   className="w-full"
                   onClick={handleCreateAppointment}
