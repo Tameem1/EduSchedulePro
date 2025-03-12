@@ -81,7 +81,8 @@ export default function TeacherAppointments() {
         { responded: true },
       );
       if (!res.ok) {
-        throw new Error("Failed to accept appointment");
+        const errorData = await res.json();
+        throw new Error(errorData.error || "Failed to accept appointment");
       }
       return res.json();
     },
@@ -95,6 +96,7 @@ export default function TeacherAppointments() {
       });
     },
     onError: (error) => {
+      console.error("Error accepting appointment:", error);
       toast({
         title: "خطأ في قبول الموعد",
         description: error.message,
@@ -178,9 +180,9 @@ export default function TeacherAppointments() {
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() =>
-                        (window.location.href = `/teacher/questionnaire/${appointment.id}`)
-                      }
+                      onClick={() => {
+                        window.location.href = `/teacher/questionnaire/${appointment.id}`;
+                      }}
                     >
                       إكمال الاستبيان
                     </Button>
