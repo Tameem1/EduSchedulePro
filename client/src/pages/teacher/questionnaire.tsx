@@ -228,7 +228,7 @@ export default function TeacherQuestionnaire() {
                       checked={formData.question2}
                       onCheckedChange={async (checked) => {
                         setFormData({ ...formData, question2: checked });
-                        
+
                         // Update appointment status when toggle is checked
                         if (checked && currentAppointment?.id) {
                           try {
@@ -237,18 +237,18 @@ export default function TeacherQuestionnaire() {
                               `/api/appointments/${currentAppointment.id}/response`,
                               { responded: true }
                             );
-                            
+
                             // Update the appointment status in UI
                             setCurrentAppointment({
                               ...currentAppointment,
                               status: AppointmentStatus.RESPONDED
                             });
-                            
+
                             toast({
                               title: "تم تحديث الحالة",
                               description: "تم تحديث حالة الموعد إلى تمت الاستجابة"
                             });
-                            
+
                             // Refresh appointments data
                             queryClient.invalidateQueries({
                               queryKey: ["/api/teachers", user?.id, "appointments"]
@@ -262,21 +262,6 @@ export default function TeacherQuestionnaire() {
                             });
                           }
                         }
-                      }}
-                      onCheckedChange={(checked) =>
-                        setFormData({ ...formData, question1: checked })
-                      }
-                    />
-                  </div>
-
-                  <div className="flex items-center justify-between">
-                    <label className="text-sm font-medium">
-                      هل استجاب الطالب للمتابعة؟
-                    </label>
-                    <Switch
-                      checked={formData.question2}
-                      onCheckedChange={(checked) => {
-                        setFormData({ ...formData, question2: checked });
                       }}
                     />
                   </div>
