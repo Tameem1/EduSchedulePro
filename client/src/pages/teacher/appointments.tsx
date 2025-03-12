@@ -85,7 +85,7 @@ export default function TeacherAppointments() {
       }
       return res.json();
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
       toast({
         title: "تم قبول الموعد",
         description: "سيتم إخطار الطالب بقبول الموعد",
@@ -160,6 +160,20 @@ export default function TeacherAppointments() {
                   </Badge>
                 </div>
                 <div className="flex gap-2">
+                  {appointment.status === AppointmentStatus.ASSIGNED && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() =>
+                        acceptAppointmentMutation.mutate(appointment.id)
+                      }
+                      disabled={acceptAppointmentMutation.isPending}
+                    >
+                      {acceptAppointmentMutation.isPending
+                        ? "جاري القبول..."
+                        : "قبول الموعد"}
+                    </Button>
+                  )}
                   {appointment.status === AppointmentStatus.ASSIGNED && (
                     <Button
                       variant="outline"
