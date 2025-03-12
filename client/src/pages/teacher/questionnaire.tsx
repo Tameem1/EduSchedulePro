@@ -34,6 +34,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
+import { formatGMT3Time } from "@/lib/date-utils"; // <-- Import the GMT+3 helper
 
 const AVAILABLE_TIMES = [
   "07:00",
@@ -60,7 +61,8 @@ export default function TeacherQuestionnaire() {
   const { user } = useAuth();
   const { toast } = useToast();
   const [, setLocation] = useLocation();
-  const [currentAppointment, setCurrentAppointment] = React.useState<Appointment | null>(null);
+  const [currentAppointment, setCurrentAppointment] =
+    React.useState<Appointment | null>(null);
   const [formData, setFormData] = React.useState({
     question1: false,
     question2: false,
@@ -68,11 +70,11 @@ export default function TeacherQuestionnaire() {
     question4: "",
   });
   const [selectedStudent, setSelectedStudent] = React.useState<string>("");
-  const [selectedTime, setSelectedTime] = React.useState<string>("");
-  const [isDialogOpen, setIsDialogOpen] = React.useState(false);
   const [timeSliderValue, setTimeSliderValue] = React.useState<number>(0);
+  const [isDialogOpen, setIsDialogOpen] = React.useState(false);
   const socketRef = React.useRef<WebSocket | null>(null);
 
+  // WebSocket for real-time updates
   React.useEffect(() => {
     const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
     const wsUrl = `${protocol}//${window.location.host}/ws`;
@@ -80,9 +82,10 @@ export default function TeacherQuestionnaire() {
 
     socketRef.current.onmessage = (event) => {
       const data = JSON.parse(event.data);
-      if (data.type === 'appointmentUpdate') {
+      if (data.type === "appointmentUpdate") {
+        // Re-fetch appointments
         queryClient.invalidateQueries({
-          queryKey: ["/api/teachers", user?.id, "appointments"]
+          queryKey: ["/api/teachers", user?.id, "appointments"],
         });
       }
     };
@@ -94,6 +97,7 @@ export default function TeacherQuestionnaire() {
     };
   }, [user?.id]);
 
+  // Fetch all students
   const { data: students } = useQuery<User[]>({
     queryKey: ["/api/users/students"],
     queryFn: async () => {
@@ -106,11 +110,15 @@ export default function TeacherQuestionnaire() {
     enabled: !!user?.id,
   });
 
+  // Fetch teacher's appointments
   const { data: appointments, isLoading } = useQuery<Appointment[]>({
     queryKey: ["/api/teachers", user?.id, "appointments"],
     queryFn: async () => {
       if (!user?.id) return [];
-      const res = await apiRequest("GET", `/api/teachers/${user.id}/appointments`);
+      const res = await apiRequest(
+        "GET",
+        `/api/teachers/${user.id}/appointments`,
+      );
       if (!res.ok) {
         throw new Error("Failed to fetch appointments");
       }
@@ -120,10 +128,11 @@ export default function TeacherQuestionnaire() {
   });
 
   const getStudentName = (studentId: number) => {
-    const student = students?.find(s => s.id === studentId);
+    const student = students?.find((s) => s.id === studentId);
     return student?.username || `طالب ${studentId}`;
   };
 
+  // Mutation to create an appointment
   const createAppointmentMutation = useMutation({
     mutationFn: async (data: { studentId: number; startTime: string }) => {
       const res = await apiRequest("POST", "/api/appointments", data);
@@ -142,7 +151,7 @@ export default function TeacherQuestionnaire() {
       setSelectedStudent("");
       setTimeSliderValue(0);
       queryClient.invalidateQueries({
-        queryKey: ["/api/teachers", user?.id, "appointments"]
+        queryKey: ["/api/teachers", user?.id, "appointments"],
       });
     },
     onError: (error) => {
@@ -154,7 +163,8 @@ export default function TeacherQuestionnaire() {
     },
   });
 
-  const handleCreateAppointment = async () => {
+  // Handle creation of an appointment from the dialog
+  const handleCreateAppointment = () => {
     if (!selectedStudent) {
       toast({
         title: "خطأ",
@@ -163,25 +173,27 @@ export default function TeacherQuestionnaire() {
       });
       return;
     }
-
     createAppointmentMutation.mutate({
       studentId: parseInt(selectedStudent),
-      startTime: new Date().toLocaleDateString('en-US') + ' ' + AVAILABLE_TIMES[timeSliderValue],
+      // For demonstration: "today's date plus chosen time"
+      // In a real app, you'd pick an actual date or finalize logic
+      startTime:
+        new Date().toLocaleDateString("en-US") +
+        " " +
+        AVAILABLE_TIMES[timeSliderValue],
     });
   };
 
+  // Mutation to submit the teacher's questionnaire
   const submitQuestionnaireMutation = useMutation({
     mutationFn: async (data: any) => {
-      const res = await apiRequest(
-        "POST",
-        "/api/questionnaire-responses",
-        {
-          ...data,
-          appointmentId: currentAppointment?.id,
-          question1: data.question1 ? "نعم" : "لا",
-          question2: data.question2 ? "نعم" : "لا",
-        }
-      );
+      const res = await apiRequest("POST", "/api/questionnaire-responses", {
+        ...data,
+        appointmentId: currentAppointment?.id,
+        // Convert booleans into strings
+        question1: data.question1 ? "نعم" : "لا",
+        question2: data.question2 ? "نعم" : "لا",
+      });
       if (!res.ok) {
         const error = await res.json();
         throw new Error(error.error || "Failed to submit questionnaire");
@@ -193,7 +205,6 @@ export default function TeacherQuestionnaire() {
         title: "تم إرسال التقييم",
         description: "تم حفظ إجاباتك بنجاح",
       });
-
       setFormData({
         question1: false,
         question2: false,
@@ -201,9 +212,8 @@ export default function TeacherQuestionnaire() {
         question4: "",
       });
       setCurrentAppointment(null);
-
       queryClient.invalidateQueries({
-        queryKey: ["/api/teachers", user?.id, "appointments"]
+        queryKey: ["/api/teachers", user?.id, "appointments"],
       });
     },
     onError: (error) => {
@@ -215,35 +225,28 @@ export default function TeacherQuestionnaire() {
     },
   });
 
+  // Submit handler for the questionnaire form
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     submitQuestionnaireMutation.mutate(formData);
   };
 
+  // Helper to pick a status color
   const getStatusColor = (status: AppointmentStatusType) => {
-    return {
-      [AppointmentStatus.PENDING]: "bg-gray-500",
-      [AppointmentStatus.REQUESTED]: "bg-blue-500",
-      [AppointmentStatus.ASSIGNED]: "bg-yellow-500",
-      [AppointmentStatus.RESPONDED]: "bg-green-500",
-      [AppointmentStatus.DONE]: "bg-purple-500",
-    }[status] || "bg-gray-500";
-  };
-
-  if (isLoading) {
     return (
-      <div className="container mx-auto p-4">
-        <Card>
-          <CardContent className="p-6">
-            <div className="text-center">جاري التحميل...</div>
-          </CardContent>
-        </Card>
-      </div>
+      {
+        [AppointmentStatus.PENDING]: "bg-gray-500",
+        [AppointmentStatus.REQUESTED]: "bg-blue-500",
+        [AppointmentStatus.ASSIGNED]: "bg-yellow-500",
+        [AppointmentStatus.RESPONDED]: "bg-green-500",
+        [AppointmentStatus.DONE]: "bg-purple-500",
+      }[status] || "bg-gray-500"
     );
-  }
+  };
 
   return (
     <div className="container mx-auto p-4">
+      {/* Header Actions */}
       <div className="flex justify-between items-center mb-4">
         <h1 className="text-2xl font-bold">لوحة المعلم</h1>
         <div className="flex gap-2">
@@ -294,7 +297,9 @@ export default function TeacherQuestionnaire() {
                     min="0"
                     max={AVAILABLE_TIMES.length - 1}
                     value={timeSliderValue}
-                    onChange={(e) => setTimeSliderValue(parseInt(e.target.value))}
+                    onChange={(e) =>
+                      setTimeSliderValue(parseInt(e.target.value))
+                    }
                     className="w-full"
                   />
                 </div>
@@ -314,6 +319,7 @@ export default function TeacherQuestionnaire() {
         </div>
       </div>
 
+      {/* Main Card */}
       <Card>
         <CardHeader>
           <CardTitle>استبيان الموعد</CardTitle>
@@ -322,6 +328,7 @@ export default function TeacherQuestionnaire() {
           </CardDescription>
         </CardHeader>
         <CardContent>
+          {/* If an appointment is currently selected, show the questionnaire */}
           {currentAppointment ? (
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="bg-muted/50 p-4 rounded-md mb-4">
@@ -331,20 +338,23 @@ export default function TeacherQuestionnaire() {
                 </p>
                 <p>
                   <span className="font-semibold">الوقت:</span>{" "}
-                  {new Date(currentAppointment.startTime).toLocaleString('ar-SA', {
-                    timeZone: 'Asia/Riyadh',
-                    year: 'numeric',
-                    month: 'numeric',
-                    day: 'numeric',
-                    hour: 'numeric',
-                    minute: 'numeric',
-                  })}
+                  {/* Use GMT+3 helper to fix hour discrepancy */}
+                  {formatGMT3Time(new Date(currentAppointment.startTime))}
                 </p>
-                <Badge className={`${getStatusColor(currentAppointment.status as AppointmentStatusType)} text-white`}>
-                  {AppointmentStatusArabic[currentAppointment.status as AppointmentStatusType]}
+                <Badge
+                  className={`${getStatusColor(
+                    currentAppointment.status as AppointmentStatusType,
+                  )} text-white`}
+                >
+                  {
+                    AppointmentStatusArabic[
+                      currentAppointment.status as AppointmentStatusType
+                    ]
+                  }
                 </Badge>
               </div>
 
+              {/* If the appointment is REQUESTED, direct the teacher to accept it first */}
               {currentAppointment.status === AppointmentStatus.REQUESTED && (
                 <div className="space-y-4">
                   <p className="text-sm text-muted-foreground">
@@ -353,14 +363,20 @@ export default function TeacherQuestionnaire() {
                   <Button
                     type="button"
                     className="w-full"
-                    onClick={() => setLocation(`/teacher/accept-appointment/${currentAppointment.id}`)}
+                    onClick={() =>
+                      setLocation(
+                        `/teacher/accept-appointment/${currentAppointment.id}`,
+                      )
+                    }
                   >
                     قبول الموعد
                   </Button>
                 </div>
               )}
 
-              {(currentAppointment.status === AppointmentStatus.ASSIGNED || currentAppointment._keepVisible) && (
+              {/* If the appointment is ASSIGNED (or forcibly displayed), show the questionnaire fields */}
+              {(currentAppointment.status === AppointmentStatus.ASSIGNED ||
+                (currentAppointment as any)._keepVisible) && (
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
                     <label className="text-sm font-medium">
@@ -368,9 +384,9 @@ export default function TeacherQuestionnaire() {
                     </label>
                     <Switch
                       checked={formData.question1}
-                      onCheckedChange={(checked) => {
-                        setFormData({ ...formData, question1: checked });
-                      }}
+                      onCheckedChange={(checked) =>
+                        setFormData({ ...formData, question1: checked })
+                      }
                     />
                   </div>
                   <div className="flex items-center justify-between">
@@ -387,29 +403,38 @@ export default function TeacherQuestionnaire() {
                             await apiRequest(
                               "PATCH",
                               `/api/appointments/${currentAppointment.id}/response`,
-                              { responded: true }
+                              { responded: true },
                             );
 
+                            // Update status in local state
                             setCurrentAppointment({
                               ...currentAppointment,
                               status: AppointmentStatus.RESPONDED,
-                              _keepVisible: true
+                              _keepVisible: true,
                             });
 
                             toast({
                               title: "تم تحديث الحالة",
-                              description: "تم تحديث حالة الموعد إلى تمت الاستجابة"
+                              description:
+                                "تم تحديث حالة الموعد إلى تمت الاستجابة",
                             });
 
                             queryClient.invalidateQueries({
-                              queryKey: ["/api/teachers", user?.id, "appointments"]
+                              queryKey: [
+                                "/api/teachers",
+                                user?.id,
+                                "appointments",
+                              ],
                             });
                           } catch (error) {
-                            console.error("Failed to update appointment status:", error);
+                            console.error(
+                              "Failed to update appointment status:",
+                              error,
+                            );
                             toast({
                               title: "خطأ في تحديث الحالة",
                               description: "فشل تحديث حالة الموعد",
-                              variant: "destructive"
+                              variant: "destructive",
                             });
                           }
                         }
@@ -424,7 +449,10 @@ export default function TeacherQuestionnaire() {
                     <Textarea
                       value={formData.question3}
                       onChange={(e) =>
-                        setFormData({ ...formData, question3: e.target.value })
+                        setFormData({
+                          ...formData,
+                          question3: e.target.value,
+                        })
                       }
                       placeholder="سورة الاسراء"
                       required
@@ -438,7 +466,10 @@ export default function TeacherQuestionnaire() {
                     <Textarea
                       value={formData.question4}
                       onChange={(e) =>
-                        setFormData({ ...formData, question4: e.target.value })
+                        setFormData({
+                          ...formData,
+                          question4: e.target.value,
+                        })
                       }
                       placeholder="أي ملاحظات إضافية عن الجلسة"
                       required
@@ -458,6 +489,7 @@ export default function TeacherQuestionnaire() {
               )}
             </form>
           ) : (
+            // If no appointment is selected, show a list to pick from
             <div className="py-8">
               <div className="text-center space-y-4">
                 <h3 className="text-lg font-medium">اختر موعداً</h3>
@@ -470,7 +502,9 @@ export default function TeacherQuestionnaire() {
                     <Card
                       key={appointment.id}
                       className={`cursor-pointer hover:border-primary ${
-                        appointment.status === AppointmentStatus.DONE ? "opacity-50" : ""
+                        appointment.status === AppointmentStatus.DONE
+                          ? "opacity-50"
+                          : ""
                       }`}
                       onClick={() => {
                         if (appointment.status !== AppointmentStatus.DONE) {
@@ -481,24 +515,24 @@ export default function TeacherQuestionnaire() {
                       <CardContent className="p-4">
                         <div className="flex justify-between items-center">
                           <div>
+                            {/* Show time in GMT+3 */}
                             <p className="font-medium">
-                              {new Date(appointment.startTime).toLocaleString('ar-SA', {
-                                timeZone: 'Asia/Riyadh',
-                                year: 'numeric',
-                                month: 'numeric',
-                                day: 'numeric',
-                                hour: 'numeric',
-                                minute: 'numeric',
-                              })}
+                              {formatGMT3Time(new Date(appointment.startTime))}
                             </p>
                             <p className="text-sm text-muted-foreground">
                               {getStudentName(appointment.studentId)}
                             </p>
                           </div>
                           <Badge
-                            className={`${getStatusColor(appointment.status as AppointmentStatusType)} text-white`}
+                            className={`${getStatusColor(
+                              appointment.status as AppointmentStatusType,
+                            )} text-white`}
                           >
-                            {AppointmentStatusArabic[appointment.status as AppointmentStatusType]}
+                            {
+                              AppointmentStatusArabic[
+                                appointment.status as AppointmentStatusType
+                              ]
+                            }
                           </Badge>
                         </div>
                       </CardContent>
