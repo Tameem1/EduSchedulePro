@@ -7,6 +7,7 @@ import {
 import { insertUserSchema, User as SelectUser, InsertUser } from "@shared/schema";
 import { getQueryFn, apiRequest, queryClient } from "../lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
+import { useLocation } from "wouter";
 
 type AuthContextType = {
   user: SelectUser | null;
@@ -22,6 +23,8 @@ type LoginData = Pick<InsertUser, "username" | "password">;
 export const AuthContext = createContext<AuthContextType | null>(null);
 export function AuthProvider({ children }: { children: ReactNode }) {
   const { toast } = useToast();
+  const [, setLocation] = useLocation();
+
   const {
     data: user,
     error,
@@ -38,6 +41,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     },
     onSuccess: (user: SelectUser) => {
       queryClient.setQueryData(["/api/user"], user);
+      // Redirect based on user role
+      switch (user.role) {
+        case 'teacher':
+          setLocation('/teacher/questionnaire');
+          break;
+        case 'student':
+          setLocation('/student/appointments');
+          break;
+        case 'manager':
+          setLocation('/manager/appointments');
+          break;
+        default:
+          setLocation('/');
+      }
     },
     onError: (error: Error) => {
       toast({
@@ -55,6 +72,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     },
     onSuccess: (user: SelectUser) => {
       queryClient.setQueryData(["/api/user"], user);
+      // Redirect based on user role after registration
+      switch (user.role) {
+        case 'teacher':
+          setLocation('/teacher/questionnaire');
+          break;
+        case 'student':
+          setLocation('/student/appointments');
+          break;
+        case 'manager':
+          setLocation('/manager/appointments');
+          break;
+        default:
+          setLocation('/');
+      }
     },
     onError: (error: Error) => {
       toast({
@@ -71,6 +102,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     },
     onSuccess: () => {
       queryClient.setQueryData(["/api/user"], null);
+      setLocation('/auth');
     },
     onError: (error: Error) => {
       toast({

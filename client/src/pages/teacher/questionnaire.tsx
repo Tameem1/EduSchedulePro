@@ -18,7 +18,8 @@ import { Textarea } from "@/components/ui/textarea";
 import type { Appointment, AppointmentStatusType } from "@shared/schema";
 import { AppointmentStatus, AppointmentStatusArabic } from "@shared/schema";
 import type { User } from "@shared/schema";
-import { useLocation } from "wouter";
+import { Link, useLocation } from "wouter";
+import { Calendar } from "lucide-react";
 
 export default function TeacherQuestionnaire() {
   const { user } = useAuth();
@@ -54,7 +55,6 @@ export default function TeacherQuestionnaire() {
     };
   }, [user?.id]);
 
-  // Fetch students data
   const { data: students } = useQuery<User[]>({
     queryKey: ["/api/users/students"],
     queryFn: async () => {
@@ -67,7 +67,6 @@ export default function TeacherQuestionnaire() {
     enabled: !!user?.id,
   });
 
-  // Fetch teacher's appointments
   const { data: appointments, isLoading } = useQuery<Appointment[]>({
     queryKey: ["/api/teachers", user?.id, "appointments"],
     queryFn: async () => {
@@ -81,7 +80,6 @@ export default function TeacherQuestionnaire() {
     enabled: !!user?.id,
   });
 
-  // Helper function to get student name
   const getStudentName = (studentId: number) => {
     const student = students?.find(s => s.id === studentId);
     return student?.username || `طالب ${studentId}`;
@@ -161,6 +159,21 @@ export default function TeacherQuestionnaire() {
 
   return (
     <div className="container mx-auto p-4">
+      <div className="flex justify-between items-center mb-4">
+        <h1 className="text-2xl font-bold">لوحة المعلم</h1>
+        <div className="flex gap-2">
+          <Link href="/teacher/appointments">
+            <Button variant="outline">المواعيد</Button>
+          </Link>
+          <Link href="/teacher/availability">
+            <Button>
+              <Calendar className="mr-2 h-4 w-4" />
+              إدارة التوفر
+            </Button>
+          </Link>
+        </div>
+      </div>
+
       <Card>
         <CardHeader>
           <CardTitle>استبيان الموعد</CardTitle>
@@ -229,7 +242,6 @@ export default function TeacherQuestionnaire() {
                       onCheckedChange={async (checked) => {
                         setFormData({ ...formData, question2: checked });
 
-                        // Update appointment status when toggle is checked
                         if (checked && currentAppointment?.id) {
                           try {
                             await apiRequest(
@@ -238,11 +250,9 @@ export default function TeacherQuestionnaire() {
                               { responded: true }
                             );
 
-                            // Update the appointment status in UI but maintain the current appointment view
                             setCurrentAppointment({
                               ...currentAppointment,
                               status: AppointmentStatus.RESPONDED,
-                              // Keep appointment visible in the questionnaire
                               _keepVisible: true
                             });
 
@@ -251,7 +261,6 @@ export default function TeacherQuestionnaire() {
                               description: "تم تحديث حالة الموعد إلى تمت الاستجابة"
                             });
 
-                            // Refresh appointments data
                             queryClient.invalidateQueries({
                               queryKey: ["/api/teachers", user?.id, "appointments"]
                             });
