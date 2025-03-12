@@ -17,11 +17,13 @@ import { formatGMT3Time } from "@/lib/date-utils";
 import { Textarea } from "@/components/ui/textarea";
 import type { Appointment, AppointmentStatusType } from "@shared/schema";
 import { AppointmentStatus, AppointmentStatusArabic } from "@shared/schema";
-import type { User } from "@shared/schema"; // Assuming User type is defined
+import type { User } from "@shared/schema";
+import { useLocation } from "wouter";
 
 export default function TeacherQuestionnaire() {
   const { user } = useAuth();
   const { toast } = useToast();
+  const [, setLocation] = useLocation();
   const [currentAppointment, setCurrentAppointment] = React.useState<Appointment | null>(null);
   const [formData, setFormData] = React.useState({
     question1: false,
@@ -31,7 +33,6 @@ export default function TeacherQuestionnaire() {
   });
   const socketRef = React.useRef<WebSocket | null>(null);
 
-  // WebSocket connection setup
   React.useEffect(() => {
     const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
     const wsUrl = `${protocol}//${window.location.host}/ws`;
@@ -40,7 +41,6 @@ export default function TeacherQuestionnaire() {
     socketRef.current.onmessage = (event) => {
       const data = JSON.parse(event.data);
       if (data.type === 'appointmentUpdate') {
-        // Invalidate appointments query to refresh the list
         queryClient.invalidateQueries({
           queryKey: ["/api/teachers", user?.id, "appointments"]
         });
@@ -86,26 +86,6 @@ export default function TeacherQuestionnaire() {
     const student = students?.find(s => s.id === studentId);
     return student?.username || `طالب ${studentId}`;
   };
-
-  // Update student response status
-  const updateResponseStatusMutation = useMutation({
-    mutationFn: async ({ appointmentId, responded }: { appointmentId: number; responded: boolean }) => {
-      const res = await apiRequest(
-        "PATCH",
-        `/api/appointments/${appointmentId}/response`,
-        { responded }
-      );
-      if (!res.ok) {
-        throw new Error("Failed to update response status");
-      }
-      return res.json();
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ["/api/teachers", user?.id, "appointments"]
-      });
-    },
-  });
 
   const submitQuestionnaireMutation = useMutation({
     mutationFn: async (data: any) => {
@@ -212,75 +192,86 @@ export default function TeacherQuestionnaire() {
                 </Badge>
               </div>
 
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <label className="text-sm font-medium">
-                    هل تمت متابعة الطالب؟
-                  </label>
-                  <Switch
-                    checked={formData.question1}
-                    onCheckedChange={(checked) =>
-                      setFormData({ ...formData, question1: checked })
-                    }
-                  />
+              {currentAppointment.status === AppointmentStatus.REQUESTED && (
+                <div className="space-y-4">
+                  <p className="text-sm text-muted-foreground">
+                    يجب قبول الموعد أولاً قبل إكمال الاستبيان
+                  </p>
+                  <Button
+                    type="button"
+                    className="w-full"
+                    onClick={() => setLocation(`/teacher/accept-appointment/${currentAppointment.id}`)}
+                  >
+                    قبول الموعد
+                  </Button>
                 </div>
+              )}
 
-                <div className="flex items-center justify-between">
-                  <label className="text-sm font-medium">
-                    هل استجاب الطالب للمتابعة؟
-                  </label>
-                  <Switch
-                    checked={formData.question2}
-                    onCheckedChange={(checked) => {
-                      setFormData({ ...formData, question2: checked });
-                      if (currentAppointment?.id) {
-                        updateResponseStatusMutation.mutate({
-                          appointmentId: currentAppointment.id,
-                          responded: checked
-                        });
+              {currentAppointment.status === AppointmentStatus.ASSIGNED && (
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <label className="text-sm font-medium">
+                      هل تمت متابعة الطالب؟
+                    </label>
+                    <Switch
+                      checked={formData.question1}
+                      onCheckedChange={(checked) =>
+                        setFormData({ ...formData, question1: checked })
                       }
-                    }}
-                  />
-                </div>
+                    />
+                  </div>
 
-                <div>
-                  <label className="text-sm font-medium block mb-2">
-                    ماذا سمع؟
-                  </label>
-                  <Textarea
-                    value={formData.question3}
-                    onChange={(e) =>
-                      setFormData({ ...formData, question3: e.target.value })
-                    }
-                    placeholder="سورة الاسراء"
-                    required
-                  />
-                </div>
+                  <div className="flex items-center justify-between">
+                    <label className="text-sm font-medium">
+                      هل استجاب الطالب للمتابعة؟
+                    </label>
+                    <Switch
+                      checked={formData.question2}
+                      onCheckedChange={(checked) => {
+                        setFormData({ ...formData, question2: checked });
+                      }}
+                    />
+                  </div>
 
-                <div>
-                  <label className="text-sm font-medium block mb-2">
-                    ملاحظات الجلسة
-                  </label>
-                  <Textarea
-                    value={formData.question4}
-                    onChange={(e) =>
-                      setFormData({ ...formData, question4: e.target.value })
-                    }
-                    placeholder="أي ملاحظات إضافية عن الجلسة"
-                    required
-                  />
-                </div>
-              </div>
+                  <div>
+                    <label className="text-sm font-medium block mb-2">
+                      ماذا سمع؟
+                    </label>
+                    <Textarea
+                      value={formData.question3}
+                      onChange={(e) =>
+                        setFormData({ ...formData, question3: e.target.value })
+                      }
+                      placeholder="سورة الاسراء"
+                      required
+                    />
+                  </div>
 
-              <Button
-                type="submit"
-                className="w-full"
-                disabled={submitQuestionnaireMutation.isPending}
-              >
-                {submitQuestionnaireMutation.isPending
-                  ? "جاري الإرسال..."
-                  : "إرسال التقييم"}
-              </Button>
+                  <div>
+                    <label className="text-sm font-medium block mb-2">
+                      ملاحظات الجلسة
+                    </label>
+                    <Textarea
+                      value={formData.question4}
+                      onChange={(e) =>
+                        setFormData({ ...formData, question4: e.target.value })
+                      }
+                      placeholder="أي ملاحظات إضافية عن الجلسة"
+                      required
+                    />
+                  </div>
+
+                  <Button
+                    type="submit"
+                    className="w-full"
+                    disabled={submitQuestionnaireMutation.isPending}
+                  >
+                    {submitQuestionnaireMutation.isPending
+                      ? "جاري الإرسال..."
+                      : "إرسال التقييم"}
+                  </Button>
+                </div>
+              )}
             </form>
           ) : (
             <div className="py-8">

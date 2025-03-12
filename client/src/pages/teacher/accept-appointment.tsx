@@ -49,7 +49,7 @@ export default function AcceptAppointment() {
       const res = await apiRequest(
         "PATCH",
         `/api/appointments/${id}/response`,
-        { responded: true }
+        { responded: false } // Set to false to keep status as ASSIGNED
       );
       if (!res.ok) {
         throw new Error("Failed to accept appointment");
@@ -79,7 +79,7 @@ export default function AcceptAppointment() {
 
   // Auto-accept when teacher is logged in and appointment is found
   React.useEffect(() => {
-    if (user && appointment && !isAccepted && appointment.status === AppointmentStatus.ASSIGNED) {
+    if (user && appointment && !isAccepted && appointment.status === AppointmentStatus.REQUESTED) {
       acceptAppointmentMutation.mutate();
     }
   }, [user, appointment, isAccepted]);
@@ -128,9 +128,9 @@ export default function AcceptAppointment() {
               <p className="font-medium">تفاصيل الموعد:</p>
               <p>الوقت: {format(new Date(appointment.startTime), "HH:mm")}</p>
               <p>الطالب: {student?.username || `طالب ${appointment.studentId}`}</p>
-              <p>الحالة: {isAccepted ? "تم القبول" : "في انتظار القبول"}</p>
+              <p>الحالة: {isAccepted ? "تم التعيين" : "في انتظار القبول"}</p>
             </div>
-            {!isAccepted && appointment.status === AppointmentStatus.ASSIGNED && (
+            {!isAccepted && appointment.status === AppointmentStatus.REQUESTED && (
               <Button
                 className="w-full"
                 onClick={() => acceptAppointmentMutation.mutate()}
