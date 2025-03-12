@@ -207,17 +207,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
       return res.sendStatus(401);
     }
 
-    if (req.user.role !== "student") {
+    if (req.user.role !== "student" && req.user.role !== "teacher") {
       return res.sendStatus(403);
     }
 
     try {
-      const { startTime } = req.body;
+      const { startTime, studentId } = req.body;
       console.log(`Appointment requested for time: ${startTime}`);
 
       const parsedData = insertAppointmentSchema.parse({
         startTime,
-        studentId: req.user.id,
+        studentId: studentId || req.user.id, // Use provided studentId or user's id if not provided
         status: "pending"
       });
 

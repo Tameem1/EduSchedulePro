@@ -35,6 +35,18 @@ import {
 } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 
+const AVAILABLE_TIMES = [
+  "08:00",
+  "09:00",
+  "10:00",
+  "11:00",
+  "12:00",
+  "13:00",
+  "14:00",
+  "15:00",
+  "16:00",
+];
+
 export default function TeacherQuestionnaire() {
   const { user } = useAuth();
   const { toast } = useToast();
@@ -142,9 +154,14 @@ export default function TeacherQuestionnaire() {
       return;
     }
 
+    // Create a date object for today with the selected time
+    const [hours, minutes] = selectedTime.split(":");
+    const appointmentDate = new Date();
+    appointmentDate.setHours(parseInt(hours, 10), parseInt(minutes, 10), 0, 0);
+
     createAppointmentMutation.mutate({
       studentId: parseInt(selectedStudent),
-      startTime: selectedTime,
+      startTime: appointmentDate.toISOString(),
     });
   };
 
@@ -266,12 +283,24 @@ export default function TeacherQuestionnaire() {
                 </div>
                 <div>
                   <Label htmlFor="time">اختر الوقت</Label>
-                  <input
-                    type="datetime-local"
-                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                  <Select
                     value={selectedTime}
-                    onChange={(e) => setSelectedTime(e.target.value)}
-                  />
+                    onValueChange={setSelectedTime}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="اختر الوقت" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {AVAILABLE_TIMES.map((time) => (
+                        <SelectItem
+                          key={time}
+                          value={time}
+                        >
+                          {time}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
                 <Button
                   className="w-full"
