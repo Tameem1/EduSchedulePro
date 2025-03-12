@@ -39,6 +39,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
     });
   };
 
+  // Add new endpoint to get all students
+  app.get("/api/users/students", async (req, res) => {
+    if (!req.isAuthenticated()) {
+      return res.sendStatus(401);
+    }
+
+    try {
+      const students = await db.select().from(users).where(eq(users.role, "student"));
+      res.json(students);
+    } catch (error) {
+      console.error("Error fetching students:", error);
+      res.status(500).json({ error: "Failed to fetch students" });
+    }
+  });
+
   // New endpoint to fetch all teachers
   app.get("/api/users/teachers", async (req, res) => {
     if (!req.isAuthenticated()) {

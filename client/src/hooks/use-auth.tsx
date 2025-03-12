@@ -4,7 +4,11 @@ import {
   useMutation,
   UseMutationResult,
 } from "@tanstack/react-query";
-import { insertUserSchema, User as SelectUser, InsertUser } from "@shared/schema";
+import {
+  insertUserSchema,
+  User as SelectUser,
+  InsertUser,
+} from "@shared/schema";
 import { getQueryFn, apiRequest, queryClient } from "../lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { useLocation } from "wouter";
@@ -43,17 +47,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       queryClient.setQueryData(["/api/user"], user);
       // Redirect based on user role
       switch (user.role) {
-        case 'teacher':
-          setLocation('/teacher/questionnaire');
+        case "teacher":
+          setLocation("/teacher/questionnaire");
           break;
-        case 'student':
-          setLocation('/student/appointments');
+        case "student":
+          setLocation("/student/book-appointment");
           break;
-        case 'manager':
-          setLocation('/manager/appointments');
+        case "manager":
+          setLocation("/manager/appointments");
           break;
         default:
-          setLocation('/');
+          setLocation("/");
       }
     },
     onError: (error: Error) => {
@@ -74,17 +78,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       queryClient.setQueryData(["/api/user"], user);
       // Redirect based on user role after registration
       switch (user.role) {
-        case 'teacher':
-          setLocation('/teacher/questionnaire');
+        case "teacher":
+          setLocation("/teacher/questionnaire");
           break;
-        case 'student':
-          setLocation('/student/appointments');
+        case "student":
+          setLocation("/student/book-appointment");
           break;
-        case 'manager':
-          setLocation('/manager/appointments');
+        case "manager":
+          setLocation("/manager/appointments");
           break;
         default:
-          setLocation('/');
+          setLocation("/");
       }
     },
     onError: (error: Error) => {
@@ -102,7 +106,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     },
     onSuccess: () => {
       queryClient.setQueryData(["/api/user"], null);
-      setLocation('/auth');
+      setLocation("/auth");
     },
     onError: (error: Error) => {
       toast({
