@@ -1,4 +1,3 @@
-
 import * as React from "react";
 import { useState } from "react";
 import { useAuth } from "@/hooks/use-auth";
@@ -26,7 +25,7 @@ export default function AuthPage() {
     if (user.role === "manager") {
       return <Redirect to="/manager/appointments" />;
     } else if (user.role === "teacher") {
-      return <Redirect to="/teacher/dashboard" />;
+      return <Redirect to="/teacher/availability" />;
     } else {
       return <Redirect to="/student/dashboard" />;
     }

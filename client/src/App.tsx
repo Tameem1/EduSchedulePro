@@ -4,8 +4,9 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { AuthProvider } from "@/hooks/use-auth";
 import NotFound from "@/pages/not-found";
-import AuthPage from "@/pages/auth-page";
+import AuthPage from "@/pages/auth";
 import BookAppointment from "@/pages/student/book-appointment";
+import StudentAppointments from "@/pages/student/appointments";
 import TeacherAvailability from "@/pages/teacher/availability";
 import TeacherQuestionnaire from "@/pages/teacher/questionnaire";
 import AcceptAppointment from "@/pages/teacher/accept-appointment";
@@ -21,17 +22,24 @@ function Router() {
       <Navbar />
       <Switch>
         <Route path="/auth" component={AuthPage} />
+
         {/* Student routes */}
         <ProtectedRoute 
-          path="/" 
+          path="/student/dashboard"
           role="student" 
           component={BookAppointment} 
+        />
+        <ProtectedRoute
+          path="/student/appointments"
+          role="student"
+          component={StudentAppointments}
         />
         <ProtectedRoute
           path="/student/book-appointment"
           role="student"
           component={BookAppointment}
         />
+
         {/* Teacher routes */}
         <ProtectedRoute
           path="/teacher/availability"
@@ -48,6 +56,7 @@ function Router() {
           role="teacher"
           component={AcceptAppointment}
         />
+
         {/* Manager routes */}
         <ProtectedRoute
           path="/manager/appointments"
@@ -64,6 +73,17 @@ function Router() {
           role="manager"
           component={AssignTeacher}
         />
+
+        {/* Redirect root to appropriate dashboard */}
+        <ProtectedRoute
+          path="/"
+          role="student"
+          component={() => {
+            window.location.href = "/student/dashboard";
+            return null;
+          }}
+        />
+
         <Route component={NotFound} />
       </Switch>
     </>
