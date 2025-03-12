@@ -1,20 +1,30 @@
-import { format } from "date-fns";
-import { format as formatTZ } from "date-fns-tz";
+
+import { format, parseISO } from "date-fns";
+import { ar } from "date-fns/locale";
 
 // Timezone for Riyadh (GMT+3)
 const TIMEZONE = "Asia/Riyadh";
 
-export function formatGMT3Time(date: Date): string {
-  // Get local time without timezone adjustments
-  let hours = date.getHours();
-  const minutes = date.getMinutes().toString().padStart(2, '0');
-  const ampm = hours >= 12 ? 'PM' : 'AM';
-  hours = hours % 12;
-  hours = hours ? hours : 12; // the hour '0' should be '12'
-  return `${hours}:${minutes} ${ampm}`;
+/**
+ * Format a date string in the Riyadh timezone (GMT+3)
+ * @param dateString ISO date string from the server
+ * @param formatStr Format string for date-fns
+ * @returns Formatted date string
+ */
+export function formatLocalTime(dateString: string, formatStr: string = "h:mm a"): string {
+  return format(parseISO(dateString), formatStr, { 
+    timeZone: TIMEZONE,
+    locale: undefined // Explicitly use Gregorian calendar
+  });
 }
 
-export function getGMT3ISOString(date: Date): string {
-  // Format with the GMT+3 timezone offset
-  return formatTZ(date, "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", { timeZone: TIMEZONE });
+/**
+ * Get a date object adjusted for Riyadh timezone
+ * @param dateString ISO date string from the server
+ * @returns Date object adjusted for Riyadh timezone
+ */
+export function getLocalDate(dateString: string): Date {
+  const date = parseISO(dateString);
+  // Return date with no timezone adjustments as we'll handle this with format options
+  return date;
 }
