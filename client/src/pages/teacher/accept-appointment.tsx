@@ -19,23 +19,27 @@ export default function AcceptAppointment() {
   const [isAccepted, setIsAccepted] = React.useState(false);
 
   // Fetch appointment details
-  const { data: appointment, isLoading: isLoadingAppointment } = useQuery<Appointment>({
-    queryKey: ["/api/appointments", id],
-    queryFn: async () => {
-      const res = await apiRequest("GET", `/api/appointments/${id}`);
-      if (!res.ok) {
-        throw new Error("Failed to fetch appointment");
-      }
-      return res.json();
-    },
-    enabled: !!id && !!user,
-  });
+  const { data: appointment, isLoading: isLoadingAppointment } =
+    useQuery<Appointment>({
+      queryKey: ["/api/appointments", id],
+      queryFn: async () => {
+        const res = await apiRequest("GET", `/api/appointments/${id}`);
+        if (!res.ok) {
+          throw new Error("Failed to fetch appointment");
+        }
+        return res.json();
+      },
+      enabled: !!id && !!user,
+    });
 
   // Fetch student data
   const { data: student } = useQuery<User>({
     queryKey: ["/api/users", appointment?.studentId],
     queryFn: async () => {
-      const res = await apiRequest("GET", `/api/users/${appointment?.studentId}`);
+      const res = await apiRequest(
+        "GET",
+        `/api/users/${appointment?.studentId}`,
+      );
       if (!res.ok) {
         throw new Error("Failed to fetch student details");
       }
@@ -49,7 +53,7 @@ export default function AcceptAppointment() {
       const res = await apiRequest(
         "PATCH",
         `/api/appointments/${id}`,
-        { status: AppointmentStatus.ASSIGNED }  // Directly set status to ASSIGNED
+        { status: AppointmentStatus.ASSIGNED }, // Directly set status to ASSIGNED
       );
       if (!res.ok) {
         throw new Error("Failed to accept appointment");
@@ -65,7 +69,7 @@ export default function AcceptAppointment() {
       queryClient.invalidateQueries({ queryKey: ["/api/appointments"] });
       // Redirect to the appointments page after 2 seconds
       setTimeout(() => {
-        setLocation("/teacher/appointments");
+        setLocation("/teacher/questionnaire");
       }, 2000);
     },
     onError: (error) => {
@@ -79,7 +83,12 @@ export default function AcceptAppointment() {
 
   // Auto-accept when teacher is logged in and appointment is found
   React.useEffect(() => {
-    if (user && appointment && !isAccepted && appointment.status === AppointmentStatus.REQUESTED) {
+    if (
+      user &&
+      appointment &&
+      !isAccepted &&
+      appointment.status === AppointmentStatus.REQUESTED
+    ) {
       acceptAppointmentMutation.mutate();
     }
   }, [user, appointment, isAccepted]);
@@ -127,18 +136,23 @@ export default function AcceptAppointment() {
             <div className="bg-muted/50 p-4 rounded-md">
               <p className="font-medium">تفاصيل الموعد:</p>
               <p>الوقت: {format(new Date(appointment.startTime), "HH:mm")}</p>
-              <p>الطالب: {student?.username || `طالب ${appointment.studentId}`}</p>
+              <p>
+                الطالب: {student?.username || `طالب ${appointment.studentId}`}
+              </p>
               <p>الحالة: {isAccepted ? "تم التعيين" : "في انتظار القبول"}</p>
             </div>
-            {!isAccepted && appointment.status === AppointmentStatus.REQUESTED && (
-              <Button
-                className="w-full"
-                onClick={() => acceptAppointmentMutation.mutate()}
-                disabled={acceptAppointmentMutation.isPending}
-              >
-                {acceptAppointmentMutation.isPending ? "جاري قبول الموعد..." : "قبول الموعد"}
-              </Button>
-            )}
+            {!isAccepted &&
+              appointment.status === AppointmentStatus.REQUESTED && (
+                <Button
+                  className="w-full"
+                  onClick={() => acceptAppointmentMutation.mutate()}
+                  disabled={acceptAppointmentMutation.isPending}
+                >
+                  {acceptAppointmentMutation.isPending
+                    ? "جاري قبول الموعد..."
+                    : "قبول الموعد"}
+                </Button>
+              )}
             {isAccepted && (
               <div className="text-center text-green-600">
                 تم قبول الموعد بنجاح! سيتم تحويلك إلى صفحة المواعيد...
