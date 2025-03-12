@@ -25,21 +25,14 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
-import { Slider } from "@/components/ui/slider";
 
 export default function TeacherAppointments() {
   const { user } = useAuth();
   const { toast } = useToast();
   const socketRef = React.useRef<WebSocket | null>(null);
   const [selectedStudent, setSelectedStudent] = React.useState<string>("");
-  const [selectedTime, setSelectedTime] = React.useState<Date | null>(null);
-  const [sliderValue, setSliderValue] = React.useState<number[]>([0]);
+  const [selectedTime, setSelectedTime] = React.useState<string>("");
   const [isDialogOpen, setIsDialogOpen] = React.useState(false);
-  
-  // Time slot configuration
-  const START_HOUR = 7; // 7 AM
-  const END_HOUR = 24; // 12 AM (Midnight)
-  const TOTAL_SLOTS = (END_HOUR - START_HOUR) * 2; // 2 slots per hour (30 min each)
 
   React.useEffect(() => {
     const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
@@ -61,37 +54,6 @@ export default function TeacherAppointments() {
       }
     };
   }, [user?.id]);
-  
-  // Convert slider value to time and update the selected time
-  React.useEffect(() => {
-    if (sliderValue[0] !== undefined) {
-      const time = new Date();
-      const selectedSlot = sliderValue[0];
-
-      // Calculate hours and minutes from the slot
-      const totalHours = START_HOUR + selectedSlot / 2;
-      const hours = Math.floor(totalHours);
-      const minutes = (totalHours - hours) * 60;
-
-      // Set the time components
-      time.setHours(hours);
-      time.setMinutes(minutes);
-      time.setSeconds(0);
-      time.setMilliseconds(0);
-
-      setSelectedTime(time);
-    }
-  }, [sliderValue]);
-  
-  // Format time in GMT+3 timezone
-  const formatGMT3Time = (date: Date) => {
-    const hours = date.getHours();
-    const minutes = date.getMinutes();
-    const ampm = hours >= 12 ? 'مساءً' : 'صباحًا';
-    const displayHours = hours % 12 || 12;
-    const displayMinutes = minutes === 0 ? '00' : minutes;
-    return `${displayHours}:${displayMinutes} ${ampm}`;
-  };
 
   // Fetch teacher's appointments
   const { data: appointments, isLoading } = useQuery<Appointment[]>({
@@ -145,8 +107,7 @@ export default function TeacherAppointments() {
       });
       setIsDialogOpen(false);
       setSelectedStudent("");
-      setSelectedTime(null);
-      setSliderValue([0]);
+      setSelectedTime("");
       queryClient.invalidateQueries({
         queryKey: ["/api/teachers", user?.id, "appointments"],
       });
@@ -172,7 +133,7 @@ export default function TeacherAppointments() {
 
     createAppointmentMutation.mutate({
       studentId: parseInt(selectedStudent),
-      startTime: selectedTime.toISOString(),
+      startTime: selectedTime,
     });
   };
 
@@ -223,24 +184,12 @@ export default function TeacherAppointments() {
               </div>
               <div>
                 <Label htmlFor="time">اختر الوقت</Label>
-                <div className="py-6">
-                  <Slider
-                    min={0}
-                    max={TOTAL_SLOTS - 1}
-                    step={1}
-                    value={sliderValue}
-                    onValueChange={setSliderValue}
-                  />
-
-                  <div className="mt-6 text-center bg-muted/50 p-4 rounded-md">
-                    <p className="text-xl font-semibold">
-                      {selectedTime ? formatGMT3Time(selectedTime) : "اختر وقتاً"}
-                    </p>
-                    <p className="text-muted-foreground mt-1">
-                      حرك المؤشر لاختيار الوقت المناسب
-                    </p>
-                  </div>
-                </div>
+                <input
+                  type="datetime-local"
+                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                  value={selectedTime}
+                  onChange={(e) => setSelectedTime(e.target.value)}
+                />
               </div>
               <Button
                 className="w-full"
