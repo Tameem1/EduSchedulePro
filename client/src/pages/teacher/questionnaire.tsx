@@ -70,6 +70,7 @@ export default function TeacherQuestionnaire() {
   const [selectedStudent, setSelectedStudent] = React.useState<string>("");
   const [selectedTime, setSelectedTime] = React.useState<string>("");
   const [isDialogOpen, setIsDialogOpen] = React.useState(false);
+  const [timeSliderValue, setTimeSliderValue] = React.useState<number>(0);
   const socketRef = React.useRef<WebSocket | null>(null);
 
   React.useEffect(() => {
@@ -154,23 +155,20 @@ export default function TeacherQuestionnaire() {
   });
 
   const handleCreateAppointment = async () => {
-    if (!selectedStudent || !selectedTime) {
+    if (!selectedStudent) {
       toast({
         title: "خطأ",
-        description: "الرجاء اختيار الطالب والوقت",
+        description: "الرجاء اختيار الطالب",
         variant: "destructive",
       });
       return;
     }
 
-    // Create a date object for today with the selected time
-    const [hours, minutes] = selectedTime.split(":");
-    const appointmentDate = new Date();
-    appointmentDate.setHours(parseInt(hours, 10), parseInt(minutes, 10), 0, 0);
-
+    // Use the time directly from AVAILABLE_TIMES
+    const time = AVAILABLE_TIMES[timeSliderValue];
     createAppointmentMutation.mutate({
       studentId: parseInt(selectedStudent),
-      startTime: appointmentDate.toISOString(),
+      startTime: time,
     });
   };
 
@@ -292,19 +290,15 @@ export default function TeacherQuestionnaire() {
                 </div>
 
                 <div className="space-y-4">
-                  <Label>اختر الوقت</Label>
-                  <div className="grid grid-cols-3 gap-2">
-                    {AVAILABLE_TIMES.map((time) => (
-                      <Button
-                        key={time}
-                        variant={selectedTime === time ? "default" : "outline"}
-                        className="w-full"
-                        onClick={() => setSelectedTime(time)}
-                      >
-                        {time}
-                      </Button>
-                    ))}
-                  </div>
+                  <Label>اختر الوقت: {AVAILABLE_TIMES[timeSliderValue]}</Label>
+                  <input
+                    type="range"
+                    min="0"
+                    max={AVAILABLE_TIMES.length - 1}
+                    value={timeSliderValue}
+                    onChange={(e) => setTimeSliderValue(parseInt(e.target.value))}
+                    className="w-full"
+                  />
                 </div>
 
                 <Button
