@@ -59,6 +59,16 @@ export const storage = {
   },
 
   async createAppointment(data: any) {
+    // Check if the appointment is being created by a teacher for a student
+    if (data.status === "assigned") {
+      const newAppointment = await db
+        .insert(appointments)
+        .values(data)
+        .returning();
+
+      return newAppointment[0];
+    }
+
     // Check if the student already has an appointment at the same time
     const existingAppointment = await db
       .select()

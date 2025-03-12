@@ -20,6 +20,31 @@ import { AppointmentStatus, AppointmentStatusArabic } from "@shared/schema";
 import type { User } from "@shared/schema";
 import { Link, useLocation } from "wouter";
 import { Calendar } from "lucide-react";
+import { useForm } from "react-hook-form";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { PlusCircle } from "lucide-react";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+} from "@/components/ui/form";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {Slider} from "@/components/ui/slider"
+
 
 export default function TeacherQuestionnaire() {
   const { user } = useAuth();
@@ -33,6 +58,8 @@ export default function TeacherQuestionnaire() {
     question4: "",
   });
   const socketRef = React.useRef<WebSocket | null>(null);
+  const [sliderValue, setSliderValue] = React.useState<number[]>([0]);
+  const [selectedTime, setSelectedTime] = React.useState<Date | null>(null);
 
   React.useEffect(() => {
     const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
@@ -145,6 +172,91 @@ export default function TeacherQuestionnaire() {
     }[status] || "bg-gray-500";
   };
 
+  type CreateAppointmentForm = {
+    studentId: string;
+    slotTime: string;
+  };
+
+  const form = useForm<CreateAppointmentForm>({
+    defaultValues: {
+      studentId: "",
+      slotTime: "",
+    },
+  });
+
+  React.useEffect(() => {
+    if (sliderValue[0] !== undefined) {
+      const time = new Date();
+      const selectedSlot = sliderValue[0];
+      const START_HOUR = 7; // 7 AM
+
+      // Calculate hours and minutes from the slot
+      const totalHours = START_HOUR + selectedSlot / 2;
+      const hours = Math.floor(totalHours);
+      const minutes = (totalHours - hours) * 60;
+
+      // Set the time components
+      time.setHours(hours);
+      time.setMinutes(minutes);
+      time.setSeconds(0);
+      time.setMilliseconds(0);
+
+      setSelectedTime(time);
+    }
+  }, [sliderValue]);
+
+  const createAppointmentMutation = useMutation({
+    mutationFn: async (values: CreateAppointmentForm) => {
+      if (!selectedTime) throw new Error("Please select a time");
+
+      // Create an ISO string but preserve the exact hours/minutes selected
+      const year = selectedTime.getFullYear();
+      const month = selectedTime.getMonth();
+      const day = selectedTime.getDate();
+      const hours = selectedTime.getHours();
+      const minutes = selectedTime.getMinutes();
+
+      // Create a new date in UTC to prevent timezone offset issues
+      const utcTime = new Date(Date.UTC(year, month, day, hours, minutes, 0));
+
+      const res = await apiRequest("POST", "/api/appointments", {
+        startTime: utcTime.toISOString(),
+        studentId: parseInt(values.studentId),
+        status: AppointmentStatus.ASSIGNED,
+      });
+
+      if (!res.ok) {
+        const error = await res.json();
+        throw new Error(error.error || "Failed to create appointment");
+      }
+
+      return res.json();
+    },
+    onSuccess: () => {
+      toast({
+        title: "تم إنشاء الموعد",
+        description: "تم إنشاء الموعد بنجاح",
+      });
+
+      queryClient.invalidateQueries({
+        queryKey: ["/api/teachers", user?.id, "appointments"],
+      });
+
+      // Reset form
+      form.reset();
+      setSliderValue([0]);
+      setSelectedTime(null);
+    },
+    onError: (error) => {
+      toast({
+        title: "خطأ في إنشاء الموعد",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
+
+
   if (isLoading) {
     return (
       <div className="container mx-auto p-4">
@@ -162,6 +274,89 @@ export default function TeacherQuestionnaire() {
       <div className="flex justify-between items-center mb-4">
         <h1 className="text-2xl font-bold">لوحة المعلم</h1>
         <div className="flex gap-2">
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button>
+                <PlusCircle className="mr-2 h-4 w-4" />
+                إضافة موعد لطالب
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>إضافة موعد جديد لطالب</DialogTitle>
+              </DialogHeader>
+              <Form {...form}>
+                <form
+                  onSubmit={form.handleSubmit((data) =>
+                    createAppointmentMutation.mutate(data)
+                  )}
+                  className="space-y-4"
+                >
+                  <FormField
+                    control={form.control}
+                    name="studentId"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>اختر الطالب</FormLabel>
+                        <Select
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                        >
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="اختر الطالب" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            {students?.map((student) => (
+                              <SelectItem
+                                key={student.id}
+                                value={student.id.toString()}
+                              >
+                                {student.username}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </FormItem>
+                    )}
+                  />
+
+                  <div className="space-y-2">
+                    <FormLabel>اختر الوقت</FormLabel>
+                    <Slider
+                      min={0}
+                      max={32}
+                      step={1}
+                      value={sliderValue}
+                      onValueChange={setSliderValue}
+                    />
+                    <div className="mt-2 text-center bg-muted/50 p-2 rounded-md">
+                      <p className="text-sm">
+                        {selectedTime
+                          ? new Date(selectedTime).toLocaleString("ar-SA", {
+                              timeZone: "Asia/Riyadh",
+                              hour: "numeric",
+                              minute: "numeric",
+                            })
+                          : "اختر وقتاً"}
+                      </p>
+                    </div>
+                  </div>
+
+                  <Button
+                    type="submit"
+                    className="w-full"
+                    disabled={createAppointmentMutation.isPending}
+                  >
+                    {createAppointmentMutation.isPending
+                      ? "جاري إنشاء الموعد..."
+                      : "إنشاء الموعد"}
+                  </Button>
+                </form>
+              </Form>
+            </DialogContent>
+          </Dialog>
           <Link href="/teacher/availability">
             <Button>
               <Calendar className="mr-2 h-4 w-4" />
