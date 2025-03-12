@@ -27,7 +27,7 @@ export default function AuthPage() {
     } else if (user.role === "teacher") {
       return <Redirect to="/teacher/availability" />;
     } else {
-      return <Redirect to="/student/dashboard" />;
+      return <Redirect to="/student/book-appointment" />;
     }
   }
 

@@ -6,7 +6,6 @@ import { AuthProvider } from "@/hooks/use-auth";
 import NotFound from "@/pages/not-found";
 import AuthPage from "@/pages/auth";
 import BookAppointment from "@/pages/student/book-appointment";
-import StudentAppointments from "@/pages/student/appointments";
 import TeacherAvailability from "@/pages/teacher/availability";
 import TeacherQuestionnaire from "@/pages/teacher/questionnaire";
 import AcceptAppointment from "@/pages/teacher/accept-appointment";
@@ -24,16 +23,6 @@ function Router() {
         <Route path="/auth" component={AuthPage} />
 
         {/* Student routes */}
-        <ProtectedRoute 
-          path="/student/dashboard"
-          role="student" 
-          component={BookAppointment} 
-        />
-        <ProtectedRoute
-          path="/student/appointments"
-          role="student"
-          component={StudentAppointments}
-        />
         <ProtectedRoute
           path="/student/book-appointment"
           role="student"
@@ -79,7 +68,7 @@ function Router() {
           path="/"
           role="student"
           component={() => {
-            window.location.href = "/student/dashboard";
+            window.location.href = "/student/book-appointment";
             return null;
           }}
         />
