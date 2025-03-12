@@ -428,7 +428,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const appointmentId = parseInt(req.params.id);
       const { responded } = req.body;
 
-      const status = responded ? AppointmentStatus.RESPONDED : AppointmentStatus.ASSIGNED;
+      // When accepting an appointment, keep it as ASSIGNED status
+      const status = AppointmentStatus.ASSIGNED;
 
       const appointment = await storage.updateAppointment(appointmentId, { status });
 

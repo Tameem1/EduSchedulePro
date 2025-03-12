@@ -23,9 +23,9 @@ export default function TeacherAppointments() {
 
     socketRef.current.onmessage = (event) => {
       const data = JSON.parse(event.data);
-      if (data.type === 'appointmentUpdate') {
-        queryClient.invalidateQueries({ 
-          queryKey: ["/api/teachers", user?.id, "appointments"] 
+      if (data.type === "appointmentUpdate") {
+        queryClient.invalidateQueries({
+          queryKey: ["/api/teachers", user?.id, "appointments"],
         });
       }
     };
@@ -43,7 +43,7 @@ export default function TeacherAppointments() {
     queryFn: async () => {
       const res = await apiRequest(
         "GET",
-        `/api/teachers/${user?.id}/appointments`
+        `/api/teachers/${user?.id}/appointments`,
       );
       if (!res.ok) {
         throw new Error("Failed to fetch appointments");
@@ -68,7 +68,7 @@ export default function TeacherAppointments() {
 
   // Helper function to get student name
   const getStudentName = (studentId: number) => {
-    const student = students?.find(s => s.id === studentId);
+    const student = students?.find((s) => s.id === studentId);
     return student?.username || `طالب ${studentId}`;
   };
 
@@ -78,7 +78,7 @@ export default function TeacherAppointments() {
       const res = await apiRequest(
         "PATCH",
         `/api/appointments/${appointmentId}/response`,
-        { responded: true }
+        { responded: true },
       );
       if (!res.ok) {
         throw new Error("Failed to accept appointment");
@@ -90,8 +90,8 @@ export default function TeacherAppointments() {
         title: "تم قبول الموعد",
         description: "سيتم إخطار الطالب بقبول الموعد",
       });
-      queryClient.invalidateQueries({ 
-        queryKey: ["/api/teachers", user?.id, "appointments"] 
+      queryClient.invalidateQueries({
+        queryKey: ["/api/teachers", user?.id, "appointments"],
       });
     },
     onError: (error) => {
@@ -119,7 +119,9 @@ export default function TeacherAppointments() {
             <CardTitle>المواعيد</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-center text-muted-foreground">لا توجد مواعيد لهذا اليوم</p>
+            <p className="text-center text-muted-foreground">
+              لا توجد مواعيد لهذا اليوم
+            </p>
           </CardContent>
         </Card>
       </div>
@@ -148,7 +150,11 @@ export default function TeacherAppointments() {
                   </p>
                   <Badge
                     className="mt-2"
-                    variant={appointment.status === AppointmentStatus.ASSIGNED ? "outline" : "default"}
+                    variant={
+                      appointment.status === AppointmentStatus.ASSIGNED
+                        ? "outline"
+                        : "default"
+                    }
                   >
                     {AppointmentStatusArabic[appointment.status]}
                   </Badge>
@@ -158,17 +164,23 @@ export default function TeacherAppointments() {
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() => acceptAppointmentMutation.mutate(appointment.id)}
+                      onClick={() =>
+                        acceptAppointmentMutation.mutate(appointment.id)
+                      }
                       disabled={acceptAppointmentMutation.isPending}
                     >
-                      {acceptAppointmentMutation.isPending ? "جاري القبول..." : "قبول الموعد"}
+                      {acceptAppointmentMutation.isPending
+                        ? "جاري القبول..."
+                        : "قبول الموعد"}
                     </Button>
                   )}
                   {appointment.status === AppointmentStatus.RESPONDED && (
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() => window.location.href = `/teacher/questionnaire/${appointment.id}`}
+                      onClick={() =>
+                        (window.location.href = `/teacher/questionnaire/${appointment.id}`)
+                      }
                     >
                       إكمال الاستبيان
                     </Button>
