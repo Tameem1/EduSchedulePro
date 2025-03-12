@@ -21,11 +21,18 @@ function Router() {
       <Navbar />
       <Switch>
         <Route path="/auth" component={AuthPage} />
+        {/* Student routes */}
         <ProtectedRoute 
           path="/" 
           role="student" 
           component={BookAppointment} 
         />
+        <ProtectedRoute
+          path="/student/book-appointment"
+          role="student"
+          component={BookAppointment}
+        />
+        {/* Teacher routes */}
         <ProtectedRoute
           path="/teacher/availability"
           role="teacher"
@@ -41,6 +48,7 @@ function Router() {
           role="teacher"
           component={AcceptAppointment}
         />
+        {/* Manager routes */}
         <ProtectedRoute
           path="/manager/appointments"
           role="manager"

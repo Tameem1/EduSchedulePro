@@ -49,7 +49,7 @@ export default function AuthPage() {
 
   if (user) {
     const roleRedirects: Record<UserRoleType, string> = {
-      [UserRole.STUDENT]: "/",
+      [UserRole.STUDENT]: "/student/book-appointment",
       [UserRole.TEACHER]: "/teacher/availability",
       [UserRole.MANAGER]: "/manager/appointments",
     };
