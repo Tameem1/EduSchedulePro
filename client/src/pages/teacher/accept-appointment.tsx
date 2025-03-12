@@ -48,8 +48,8 @@ export default function AcceptAppointment() {
     mutationFn: async () => {
       const res = await apiRequest(
         "PATCH",
-        `/api/appointments/${id}/response`,
-        { responded: false } // Set to false to keep status as ASSIGNED
+        `/api/appointments/${id}`,
+        { status: AppointmentStatus.ASSIGNED }  // Directly set status to ASSIGNED
       );
       if (!res.ok) {
         throw new Error("Failed to accept appointment");
