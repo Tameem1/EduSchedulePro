@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Loader2, PlusCircle } from "lucide-react";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
-import { format } from "date-fns";
+import { format, parseISO } from "date-fns";
 import { AppointmentStatus, AppointmentStatusArabic } from "@shared/schema";
 import type { Appointment, User } from "@shared/schema";
 import {
@@ -219,7 +219,7 @@ export default function TeacherAppointments() {
                 >
                   <div>
                     <p className="font-medium">
-                      {format(new Date(new Date(appointment.startTime).getTime() - 60 * 60 * 1000), "h:mm a")}
+                      {format(parseISO(appointment.startTime), "h:mm a")}
                     </p>
                     <p className="text-sm text-muted-foreground">
                       {getStudentName(appointment.studentId)}

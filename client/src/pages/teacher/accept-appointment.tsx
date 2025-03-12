@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
-import { format } from "date-fns";
+import { format, parseISO } from "date-fns";
 import { AppointmentStatus } from "@shared/schema";
 import type { Appointment, User } from "@shared/schema";
 
@@ -135,7 +135,7 @@ export default function AcceptAppointment() {
           <div className="space-y-4">
             <div className="bg-muted/50 p-4 rounded-md">
               <p className="font-medium">تفاصيل الموعد:</p>
-              <p>الوقت: {format(new Date(new Date(appointment.startTime).getTime() - 60 * 60 * 1000), "HH:mm")}</p>
+              <p>الوقت: {format(parseISO(appointment.startTime), "HH:mm")}</p>
               <p>
                 الطالب: {student?.username || `طالب ${appointment.studentId}`}
               </p>
