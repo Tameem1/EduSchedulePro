@@ -207,7 +207,7 @@ export default function TeacherQuestionnaire() {
                 </div>
               )}
 
-              {currentAppointment.status === AppointmentStatus.ASSIGNED && (
+              {(currentAppointment.status === AppointmentStatus.ASSIGNED || currentAppointment._keepVisible) && (
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
                     <label className="text-sm font-medium">
@@ -238,10 +238,12 @@ export default function TeacherQuestionnaire() {
                               { responded: true }
                             );
 
-                            // Update the appointment status in UI
+                            // Update the appointment status in UI but maintain the current appointment view
                             setCurrentAppointment({
                               ...currentAppointment,
-                              status: AppointmentStatus.RESPONDED
+                              status: AppointmentStatus.RESPONDED,
+                              // Keep appointment visible in the questionnaire
+                              _keepVisible: true
                             });
 
                             toast({
