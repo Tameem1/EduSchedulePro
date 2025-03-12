@@ -135,7 +135,7 @@ export default function AcceptAppointment() {
           <div className="space-y-4">
             <div className="bg-muted/50 p-4 rounded-md">
               <p className="font-medium">تفاصيل الموعد:</p>
-              <p>الوقت: {format(new Date(appointment.startTime), "HH:mm", { timeZone: 'UTC' })}</p>
+              <p>الوقت: {format(new Date(new Date(appointment.startTime).getTime() - 60 * 60 * 1000), "HH:mm")}</p>
               <p>
                 الطالب: {student?.username || `طالب ${appointment.studentId}`}
               </p>

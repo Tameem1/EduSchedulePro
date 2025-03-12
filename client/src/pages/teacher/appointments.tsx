@@ -219,9 +219,7 @@ export default function TeacherAppointments() {
                 >
                   <div>
                     <p className="font-medium">
-                      {format(new Date(appointment.startTime), "h:mm a", {
-                        timeZone: "UTC",
-                      })}
+                      {format(new Date(new Date(appointment.startTime).getTime() - 60 * 60 * 1000), "h:mm a")}
                     </p>
                     <p className="text-sm text-muted-foreground">
                       {getStudentName(appointment.studentId)}
