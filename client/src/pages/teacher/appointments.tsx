@@ -90,39 +90,6 @@ export default function TeacherAppointments() {
     return student?.username || `طالب ${studentId}`;
   };
 
-  // Accept appointment mutation
-  const acceptAppointmentMutation = useMutation({
-    mutationFn: async (appointmentId: number) => {
-      const res = await apiRequest(
-        "PATCH",
-        `/api/appointments/${appointmentId}/response`,
-        { responded: true },
-      );
-      if (!res.ok) {
-        const errorData = await res.json();
-        throw new Error(errorData.error || "Failed to accept appointment");
-      }
-      return res.json();
-    },
-    onSuccess: (data) => {
-      toast({
-        title: "تم قبول الموعد",
-        description: "سيتم إخطار الطالب بقبول الموعد",
-      });
-      queryClient.invalidateQueries({
-        queryKey: ["/api/teachers", user?.id, "appointments"],
-      });
-    },
-    onError: (error) => {
-      console.error("Error accepting appointment:", error);
-      toast({
-        title: "خطأ في قبول الموعد",
-        description: error.message,
-        variant: "destructive",
-      });
-    },
-  });
-
   // Create appointment mutation
   const createAppointmentMutation = useMutation({
     mutationFn: async (data: { studentId: number; startTime: string }) => {
@@ -139,6 +106,8 @@ export default function TeacherAppointments() {
         description: "تم إنشاء الموعد بنجاح وإرساله للمدير للموافقة",
       });
       setIsDialogOpen(false);
+      setSelectedStudent("");
+      setSelectedTime("");
       queryClient.invalidateQueries({
         queryKey: ["/api/teachers", user?.id, "appointments"],
       });
@@ -172,23 +141,6 @@ export default function TeacherAppointments() {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin" />
-      </div>
-    );
-  }
-
-  if (!appointments?.length) {
-    return (
-      <div className="container mx-auto p-4">
-        <Card>
-          <CardHeader>
-            <CardTitle>المواعيد</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-center text-muted-foreground">
-              لا توجد مواعيد لهذا اليوم
-            </p>
-          </CardContent>
-        </Card>
       </div>
     );
   }
@@ -252,67 +204,56 @@ export default function TeacherAppointments() {
           </DialogContent>
         </Dialog>
       </div>
-      <Card>
-        <CardHeader>
-          <CardTitle>المواعيد</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            {appointments.map((appointment) => (
-              <div
-                key={appointment.id}
-                className="flex items-center justify-between p-4 border rounded-lg"
-              >
-                <div>
-                  <p className="font-medium">
-                    {format(new Date(appointment.startTime), "h:mm a")}
-                  </p>
-                  <p className="text-sm text-muted-foreground">
-                    {getStudentName(appointment.studentId)}
-                  </p>
-                  <Badge
-                    className="mt-2"
-                    variant={
-                      appointment.status === AppointmentStatus.ASSIGNED
-                        ? "outline"
-                        : "default"
-                    }
-                  >
-                    {AppointmentStatusArabic[appointment.status]}
-                  </Badge>
-                </div>
-                <div className="flex gap-2">
-                  {appointment.status === AppointmentStatus.ASSIGNED && (
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() =>
-                        acceptAppointmentMutation.mutate(appointment.id)
+
+      {appointments?.length ? (
+        <Card>
+          <CardHeader>
+            <CardTitle>المواعيد</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              {appointments.map((appointment) => (
+                <div
+                  key={appointment.id}
+                  className="flex items-center justify-between p-4 border rounded-lg"
+                >
+                  <div>
+                    <p className="font-medium">
+                      {format(new Date(appointment.startTime), "h:mm a")}
+                    </p>
+                    <p className="text-sm text-muted-foreground">
+                      {getStudentName(appointment.studentId)}
+                    </p>
+                    <Badge
+                      className="mt-2"
+                      variant={
+                        appointment.status === AppointmentStatus.PENDING
+                          ? "outline"
+                          : "default"
                       }
-                      disabled={acceptAppointmentMutation.isPending}
                     >
-                      {acceptAppointmentMutation.isPending
-                        ? "جاري القبول..."
-                        : "قبول الموعد"}
-                    </Button>
-                  )}
-                  {appointment.status === AppointmentStatus.RESPONDED && (
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => {
-                        window.location.href = `/teacher/questionnaire/${appointment.id}`;
-                      }}
-                    >
-                      إكمال الاستبيان
-                    </Button>
-                  )}
+                      {AppointmentStatusArabic[appointment.status]}
+                    </Badge>
+                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      ) : (
+        <div className="container mx-auto p-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>المواعيد</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-center text-muted-foreground">
+                لا توجد مواعيد لهذا اليوم
+              </p>
+            </CardContent>
+          </Card>
+        </div>
+      )}
     </div>
   );
 }
