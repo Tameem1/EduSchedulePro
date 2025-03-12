@@ -428,8 +428,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const appointmentId = parseInt(req.params.id);
       const { responded } = req.body;
 
-      // When accepting an appointment, keep it as ASSIGNED status
-      const status = AppointmentStatus.ASSIGNED;
+      // Update the status to RESPONDED when the toggle is checked
+      const status = responded ? AppointmentStatus.RESPONDED : AppointmentStatus.ASSIGNED;
 
       const appointment = await storage.updateAppointment(appointmentId, { status });
 
