@@ -140,7 +140,7 @@ export default function TeacherQuestionnaire() {
       });
       setIsDialogOpen(false);
       setSelectedStudent("");
-      setSelectedTime("");
+      setTimeSliderValue(0);
       queryClient.invalidateQueries({
         queryKey: ["/api/teachers", user?.id, "appointments"]
       });
@@ -164,11 +164,9 @@ export default function TeacherQuestionnaire() {
       return;
     }
 
-    // Use the time directly from AVAILABLE_TIMES
-    const time = AVAILABLE_TIMES[timeSliderValue];
     createAppointmentMutation.mutate({
       studentId: parseInt(selectedStudent),
-      startTime: time,
+      startTime: new Date().toLocaleDateString('en-US') + ' ' + AVAILABLE_TIMES[timeSliderValue],
     });
   };
 
