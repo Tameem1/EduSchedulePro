@@ -416,7 +416,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Create update object with only defined values
       const updateData: any = {};
-      if (status) updateData.status = status;
+      
+      // Validate status if provided
+      if (status) {
+        if (Object.values(AppointmentStatus).includes(status)) {
+          updateData.status = status;
+        } else {
+          return res.status(400).json({ 
+            error: "Invalid appointment status", 
+            details: `Status '${status}' is not valid. Valid statuses are: ${Object.values(AppointmentStatus).join(', ')}` 
+          });
+        }
+      }
+      
       if (teacherId !== undefined && teacherId !== null) {
         updateData.teacherId = teacherId;
       }

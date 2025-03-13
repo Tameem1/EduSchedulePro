@@ -100,6 +100,14 @@ export const storage = {
 
   async updateAppointment(appointmentId: number, data: any) {
     try {
+      // Ensure status is defined if present in data
+      if (data.status) {
+        // Validate that status is a valid AppointmentStatus value
+        if (!Object.values(AppointmentStatus).includes(data.status)) {
+          throw new Error(`appointment status '${data.status}' is not defined`);
+        }
+      }
+      
       // Explicit handling for rejection
       if (data.status === AppointmentStatus.REJECTED) {
         const updatedAppointment = await db
