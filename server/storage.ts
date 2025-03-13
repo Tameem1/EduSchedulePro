@@ -1,7 +1,7 @@
 import { drizzle } from 'drizzle-orm/node-postgres';
 import { eq, and, sql, desc, gte } from "drizzle-orm";
-import type { InsertUser, Appointment, QuestionnaireResponse, AppointmentStatus } from "@shared/schema";
-import { users, appointments, availabilities, questionnaireResponses, UserRole } from "@shared/schema";
+import type { InsertUser, Appointment, QuestionnaireResponse } from "@shared/schema";
+import { users, appointments, availabilities, questionnaireResponses, UserRole, AppointmentStatus } from "@shared/schema";
 import session from "express-session";
 import createMemoryStore from "memorystore";
 import { pool, db } from "./db";
@@ -100,33 +100,55 @@ export const storage = {
 
   async updateAppointment(appointmentId: number, data: any) {
     try {
+      console.log("Updating appointment", appointmentId, "with data:", data);
+      
       // Ensure status is defined if present in data
       if (data.status) {
+        console.log("Status in update data:", data.status);
+        console.log("Valid statuses:", Object.values(AppointmentStatus));
+        
         // Validate that status is a valid AppointmentStatus value
         if (!Object.values(AppointmentStatus).includes(data.status)) {
           throw new Error(`appointment status '${data.status}' is not defined`);
         }
       }
       
-      // Explicit handling for rejection
+      // Handle rejection
       if (data.status === AppointmentStatus.REJECTED) {
+        console.log("Explicitly handling REJECTED status");
         const updatedAppointment = await db
           .update(appointments)
           .set({ status: AppointmentStatus.REJECTED })
           .where(eq(appointments.id, appointmentId))
           .returning();
         
+        console.log("Appointment rejected:", updatedAppointment[0]);
+        return updatedAppointment[0];
+      }
+      
+      // Handle accepting an appointment (ASSIGNED status)
+      if (data.status === AppointmentStatus.ASSIGNED) {
+        console.log("Explicitly handling ASSIGNED status");
+        const updatedAppointment = await db
+          .update(appointments)
+          .set({ status: AppointmentStatus.ASSIGNED })
+          .where(eq(appointments.id, appointmentId))
+          .returning();
+        
+        console.log("Appointment assigned:", updatedAppointment[0]);
         return updatedAppointment[0];
       }
       
       // If updating status only, handle it directly
       if (data.status && !data.teacherId && !data.responded) {
+        console.log("Handling general status update to:", data.status);
         const updatedAppointment = await db
           .update(appointments)
           .set({ status: data.status })
           .where(eq(appointments.id, appointmentId))
           .returning();
 
+        console.log("Updated appointment:", updatedAppointment[0]);
         return updatedAppointment[0];
       }
 

@@ -419,9 +419,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       // Validate status if provided
       if (status) {
+        console.log("Requested status update:", status);
+        console.log("Valid statuses:", Object.values(AppointmentStatus));
+        
         if (Object.values(AppointmentStatus).includes(status)) {
           updateData.status = status;
+          console.log("Status validated and set to:", status);
         } else {
+          console.error("Invalid appointment status:", status);
           return res.status(400).json({ 
             error: "Invalid appointment status", 
             details: `Status '${status}' is not valid. Valid statuses are: ${Object.values(AppointmentStatus).join(', ')}` 
