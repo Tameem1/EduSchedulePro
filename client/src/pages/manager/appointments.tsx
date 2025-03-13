@@ -245,11 +245,16 @@ export default function ManagerAppointments() {
                   <TableCell>
                     {(appointment.status === AppointmentStatus.PENDING ||
                       appointment.status === AppointmentStatus.REJECTED) && (
-                      <Link href={`/manager/assign-teacher/${appointment.id}`}>
-                        <Button variant="outline" size="sm">
-                          تعيين معلم
-                        </Button>
-                      </Link>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => {
+                          setSelectedAppointment(appointment);
+                          setIsAssignDialogOpen(true);
+                        }}
+                      >
+                        تعيين معلم
+                      </Button>
                     )}
                   </TableCell>
                 </TableRow>
@@ -326,6 +331,70 @@ export default function ManagerAppointments() {
           </Table>
         </CardContent>
       </Card>
+
+      <Dialog open={isAssignDialogOpen} onOpenChange={setIsAssignDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>تعيين معلم للموعد</DialogTitle>
+          </DialogHeader>
+          <div className="py-4">
+            {selectedAppointment && (
+              <div className="space-y-4">
+                <div className="text-sm">
+                  <p>
+                    الوقت: {format(new Date(selectedAppointment.startTime), "HH:mm")}
+                  </p>
+                  <p>الطالب: {getUserName(selectedAppointment.studentId, 'student')}</p>
+                </div>
+                <div className="space-y-2">
+                  {teachers?.map((teacher) => {
+                    const isAvailable = availabilities?.some((avail) => {
+                      const appointmentTime = new Date(
+                        selectedAppointment.startTime,
+                      );
+                      const availStartTime = new Date(avail.startTime);
+                      const availEndTime = new Date(avail.endTime);
+                      return (
+                        avail.teacherId === teacher.id &&
+                        appointmentTime >= availStartTime &&
+                        appointmentTime <= availEndTime
+                      );
+                    });
+
+                    return (
+                      <div
+                        key={teacher.id}
+                        className={`p-3 border rounded-lg ${
+                          isAvailable
+                            ? "hover:bg-muted cursor-pointer"
+                            : "opacity-50"
+                        }`}
+                        onClick={() => {
+                          if (isAvailable) {
+                            assignTeacherMutation.mutate({
+                              appointmentId: selectedAppointment.id,
+                              teacherId: teacher.id,
+                            });
+                          }
+                        }}
+                      >
+                        <div className="flex items-center justify-between">
+                          <span>{teacher.username}</span>
+                          {isAvailable ? (
+                            <Badge variant="default">متوفر</Badge>
+                          ) : (
+                            <Badge variant="secondary">غير متوفر</Badge>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
