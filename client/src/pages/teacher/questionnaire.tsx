@@ -75,6 +75,7 @@ export default function TeacherQuestionnaire() {
   const socketRef = React.useRef<WebSocket | null>(null);
   const [wsConnected, setWsConnected] = React.useState(false);
   const reconnectTimeoutRef = React.useRef<NodeJS.Timeout>();
+  const reconnectAttempts = React.useRef(0);
 
   const connectWebSocket = React.useCallback(() => {
     if (socketRef.current?.readyState === WebSocket.OPEN) return;
@@ -88,13 +89,24 @@ export default function TeacherQuestionnaire() {
     ws.onopen = () => {
       console.log("WebSocket connected");
       setWsConnected(true);
+
+      // Reset reconnection attempts on successful connection
+      if (reconnectTimeoutRef.current) {
+        clearTimeout(reconnectTimeoutRef.current);
+        reconnectTimeoutRef.current = undefined;
+      }
     };
 
-    ws.onclose = () => {
-      console.log("WebSocket disconnected");
+    ws.onclose = (event) => {
+      console.log("WebSocket disconnected", event.code, event.reason);
       setWsConnected(false);
-      // Attempt to reconnect after 3 seconds
-      reconnectTimeoutRef.current = setTimeout(connectWebSocket, 3000);
+
+      // Attempt to reconnect after 3 seconds, with exponential backoff
+      const timeout = Math.min(1000 * Math.pow(2, reconnectAttempts.current), 30000);
+      reconnectTimeoutRef.current = setTimeout(() => {
+        reconnectAttempts.current++;
+        connectWebSocket();
+      }, timeout);
     };
 
     ws.onerror = (error) => {
@@ -104,14 +116,40 @@ export default function TeacherQuestionnaire() {
     ws.onmessage = (event) => {
       try {
         const data = JSON.parse(event.data);
+
+        // Handle connection confirmation
+        if (data.type === 'connection' && data.status === 'connected') {
+          console.log("WebSocket connection confirmed");
+          return;
+        }
+
         if (data.type === 'appointmentUpdate') {
+          // Always refresh the appointments list
           queryClient.invalidateQueries({
             queryKey: ["/api/teachers", user?.id, "appointments"],
           });
 
-          // Update current appointment if it's the one that changed
+          // If we have a current appointment and it was updated, update its state
           if (currentAppointment && data.data.appointment.id === currentAppointment.id) {
-            setCurrentAppointment(data.data.appointment);
+            const updatedAppointment = data.data.appointment;
+            setCurrentAppointment(updatedAppointment);
+
+            // If the appointment was just accepted, update form data accordingly
+            if (updatedAppointment.status === AppointmentStatus.ASSIGNED && 
+                currentAppointment.status === AppointmentStatus.REQUESTED) {
+              setFormData({
+                question1: false,
+                question2: false,
+                question3: "",
+                question4: "",
+              });
+
+              // Show a toast notification for the status change
+              toast({
+                title: "تم تحديث حالة الموعد",
+                description: "تم قبول الموعد بنجاح",
+              });
+            }
           }
         }
       } catch (error) {
@@ -120,7 +158,7 @@ export default function TeacherQuestionnaire() {
     };
 
     socketRef.current = ws;
-  }, [user?.id, currentAppointment]);
+  }, [user?.id, currentAppointment, toast]);
 
   React.useEffect(() => {
     connectWebSocket();

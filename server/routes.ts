@@ -22,30 +22,55 @@ export async function registerRoutes(app: Express): Promise<Server> {
     server: httpServer, 
     path: '/ws',
     verifyClient: (info, cb) => {
-      // Allow all WebSocket connections
-      console.log("New WebSocket connection attempt");
+      // Allow all WebSocket connections without authentication
+      console.log("New WebSocket connection attempt from:", info.req.headers.origin);
       cb(true);
     }
   });
 
   // Set up WebSocket connection handling
   wss.on('connection', (ws) => {
-    console.log("WebSocket client connected");
+    console.log("WebSocket client connected successfully");
     clients.add(ws);
+
+    // Send initial connection confirmation
+    ws.send(JSON.stringify({ type: 'connection', status: 'connected' }));
 
     ws.on('error', (error) => {
       console.error("WebSocket error:", error);
     });
 
-    ws.on('close', () => {
-      console.log("WebSocket client disconnected");
+    ws.on('close', (code, reason) => {
+      console.log("WebSocket client disconnected", { code, reason: reason.toString() });
       clients.delete(ws);
+    });
+
+    // Heartbeat to keep connection alive
+    const interval = setInterval(() => {
+      if (ws.readyState === WebSocket.OPEN) {
+        ws.ping();
+      }
+    }, 30000);
+
+    ws.on('pong', () => {
+      // Client responded to ping, connection is alive
+    });
+
+    ws.on('close', () => {
+      clearInterval(interval);
     });
   });
 
   // Helper function to broadcast updates with error handling
   const broadcastUpdate = (type: string, data: any) => {
-    const message = JSON.stringify({ type, data });
+    const message = JSON.stringify({ 
+      type, 
+      data,
+      timestamp: new Date().toISOString()
+    });
+
+    console.log(`Broadcasting ${type} update to ${clients.size} clients`);
+
     clients.forEach(client => {
       try {
         if (client.readyState === WebSocket.OPEN) {
@@ -53,6 +78,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
       } catch (error) {
         console.error("Error broadcasting message:", error);
+        // Remove dead connections
+        clients.delete(client);
       }
     });
   };
@@ -392,8 +419,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
         status
       });
 
-      // Broadcast the update
-      broadcastUpdate('appointmentUpdate', { action: 'update', appointment });
+      // Immediately broadcast the update to all connected clients
+      broadcastUpdate('appointmentUpdate', { 
+        action: 'update', 
+        appointment,
+        timestamp: new Date().toISOString() 
+      });
 
       // Send Telegram notification after successful update
       let notificationSent = false;
