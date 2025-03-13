@@ -44,6 +44,7 @@ function getStatusColor(status: AppointmentStatusType) {
       [AppointmentStatus.ASSIGNED]: "bg-yellow-500",
       [AppointmentStatus.RESPONDED]: "bg-green-500",
       [AppointmentStatus.DONE]: "bg-purple-500",
+      [AppointmentStatus.REJECTED]: "bg-red-500",
     }[status] || "bg-gray-500"
   );
 }
@@ -123,6 +124,38 @@ export default function TeacherAppointments() {
     onError: (error: any) => {
       toast({
         title: "خطأ في إنشاء الموعد",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
+
+  // Add mutation for accepting/rejecting appointments
+  const updateAppointmentStatusMutation = useMutation({
+    mutationFn: async ({ appointmentId, status }: { appointmentId: number; status: AppointmentStatusType }) => {
+      const res = await apiRequest(
+        "PATCH",
+        `/api/appointments/${appointmentId}`,
+        { status }
+      );
+      if (!res.ok) {
+        const errJson = await res.json();
+        throw new Error(errJson.error || "Failed to update appointment status");
+      }
+      return res.json();
+    },
+    onSuccess: () => {
+      toast({
+        title: "تم تحديث حالة الموعد",
+        description: "تم تحديث حالة الموعد بنجاح",
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["/api/teachers", user?.id, "appointments"],
+      });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "خطأ في تحديث حالة الموعد",
         description: error.message,
         variant: "destructive",
       });
@@ -232,10 +265,7 @@ export default function TeacherAppointments() {
                   {/* Just a date/time input for demonstration */}
                   <input
                     type="datetime-local"
-                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm 
-                               ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none
-                               focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 
-                               disabled:cursor-not-allowed disabled:opacity-50"
+                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                     value={startTime}
                     onChange={(e) => setStartTime(e.target.value)}
                   />
@@ -290,14 +320,49 @@ export default function TeacherAppointments() {
                     </Badge>
                   </div>
 
-                  {/* Link to fill out the questionnaire for that appointment */}
-                  <Link
-                    href={`/teacher/questionnaire-submission/${appointment.id}`}
-                  >
-                    <Button variant="outline" size="sm">
-                      املأ الاستبيان
-                    </Button>
-                  </Link>
+                  {/* Action buttons */}
+                  <div className="flex items-center gap-2">
+                    {appointment.status === AppointmentStatus.REQUESTED && (
+                      <>
+                        <Button
+                          variant="default"
+                          size="sm"
+                          onClick={() =>
+                            updateAppointmentStatusMutation.mutate({
+                              appointmentId: appointment.id,
+                              status: AppointmentStatus.ASSIGNED,
+                            })
+                          }
+                          disabled={updateAppointmentStatusMutation.isPending}
+                        >
+                          قبول
+                        </Button>
+                        <Button
+                          variant="destructive"
+                          size="sm"
+                          onClick={() =>
+                            updateAppointmentStatusMutation.mutate({
+                              appointmentId: appointment.id,
+                              status: AppointmentStatus.REJECTED,
+                            })
+                          }
+                          disabled={updateAppointmentStatusMutation.isPending}
+                        >
+                          رفض
+                        </Button>
+                      </>
+                    )}
+
+                    {appointment.status !== AppointmentStatus.REJECTED && (
+                      <Link
+                        href={`/teacher/questionnaire-submission/${appointment.id}`}
+                      >
+                        <Button variant="outline" size="sm">
+                          املأ الاستبيان
+                        </Button>
+                      </Link>
+                    )}
+                  </div>
                 </div>
               ))}
             </div>

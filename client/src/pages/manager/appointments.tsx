@@ -10,28 +10,22 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { format } from "date-fns";
-import { Link } from "wouter";
 import { Badge } from "@/components/ui/badge";
+import { useToast } from "@/hooks/use-toast";
 import { Loader2 } from "lucide-react";
 import { apiRequest, queryClient } from "@/lib/queryClient";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { useToast } from "@/hooks/use-toast";
 import type { User, Availability, Appointment, AppointmentStatusType } from "@shared/schema";
 import { AppointmentStatus, AppointmentStatusArabic } from "@shared/schema";
 import { useAuth } from "@/hooks/use-auth";
+import { format } from "date-fns";
+import { Link } from "wouter";
 
 export default function ManagerAppointments() {
   const { toast } = useToast();
   const [selectedAppointment, setSelectedAppointment] =
     React.useState<Appointment | null>(null);
   const [isAssignDialogOpen, setIsAssignDialogOpen] = React.useState(false);
-  const { user, isLoading: isAuthLoading } = useAuth();
+  const { user } = useAuth();
   const socketRef = React.useRef<WebSocket | null>(null);
   const [wsConnected, setWsConnected] = React.useState(false);
   const reconnectTimeoutRef = React.useRef<NodeJS.Timeout>();
@@ -184,7 +178,7 @@ export default function ManagerAppointments() {
     },
   });
 
-  const getUserName = (userId: number, role: 'student' | 'teacher') => {
+  const getUserName = (userId: number | undefined, role: 'student' | 'teacher') => {
     const userList = role === 'student' ? students : teachers;
     const user = userList?.find(u => u.id === userId);
     return user?.username || `${role} ${userId}`;
@@ -197,21 +191,20 @@ export default function ManagerAppointments() {
       [AppointmentStatus.ASSIGNED]: "bg-yellow-500",
       [AppointmentStatus.RESPONDED]: "bg-green-500",
       [AppointmentStatus.DONE]: "bg-purple-500",
+      [AppointmentStatus.REJECTED]: "bg-red-500",
     }[status] || "bg-gray-500";
   };
 
-  if (isAuthLoading || isLoadingTeachers || isLoadingAppointments || isLoadingStudents) {
+  if (
+    !user ||
+    user.role !== "manager" ||
+    isLoadingTeachers ||
+    isLoadingAppointments ||
+    isLoadingStudents
+  ) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin" />
-      </div>
-    );
-  }
-
-  if (!user || user.role !== "manager") {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <p>Not authorized. You must be a manager to view this page.</p>
       </div>
     );
   }
@@ -249,12 +242,13 @@ export default function ManagerAppointments() {
                   <TableCell>{getUserName(appointment.studentId, 'student')}</TableCell>
                   <TableCell>{getUserName(appointment.teacherId, 'teacher')}</TableCell>
                   <TableCell>
-                    <Badge className={`${getStatusColor(appointment.status as AppointmentStatusType)} text-white`}>
-                      {AppointmentStatusArabic[appointment.status as AppointmentStatusType]}
+                    <Badge className={`${getStatusColor(appointment.status)} text-white`}>
+                      {AppointmentStatusArabic[appointment.status]}
                     </Badge>
                   </TableCell>
                   <TableCell>
-                    {appointment.status === AppointmentStatus.PENDING && (
+                    {(appointment.status === AppointmentStatus.PENDING ||
+                      appointment.status === AppointmentStatus.REJECTED) && (
                       <Button
                         variant="outline"
                         size="sm"
