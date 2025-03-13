@@ -48,93 +48,53 @@ export default function TeacherQuestionnaireSubmission() {
 
   // Local form data
   const [formData, setFormData] = React.useState({
-    question1: false, // "هل تمت متابعة الطالب؟"
-    question2: false, // "هل استجاب الطالب للمتابعة؟"
-    question3: "", // "ماذا سمع؟"
-    question4: "", // "ملاحظات الجلسة"
+    question1: false,
+    question2: false,
+    question3: "",
+    question4: "",
   });
 
-  // We'll store the *single appointment* found by filtering the teacher’s appointments
-  const [currentAppointment, setCurrentAppointment] =
-    React.useState<Appointment | null>(null);
-
-  // We'll also store a mapping of studentId → studentName from /api/users/students
-  const [studentsMap, setStudentsMap] = React.useState<Record<number, string>>(
-    {},
-  );
-
-  // =========== Must be a Teacher ===========
-  if (!user) {
-    return <Redirect to="/auth" />;
-  }
-  if (user.role !== "teacher") {
-    return (
-      <div className="p-4">
-        <p>ليس لديك الصلاحية لدخول هذه الصفحة (تحتاج حساب معلم)</p>
-      </div>
-    );
-  }
-
-  // =========== 1) Fetch the teacher's appointments, as in the old code ===========
+  // Fetch single appointment directly
   const {
-    data: teacherAppointments,
-    isLoading: loadingAppointments,
-    isError: errorAppointments,
-    error: appointmentsError,
-  } = useQuery<Appointment[]>({
-    queryKey: ["/api/teachers", user?.id, "appointments"],
+    data: appointment,
+    isLoading: loadingAppointment,
+    isError: appointmentError,
+  } = useQuery<Appointment>({
+    queryKey: ["/api/appointments", appointmentId],
     queryFn: async () => {
-      // mimic old code: get all teacher appointments
-      const res = await apiRequest(
-        "GET",
-        `/api/teachers/${user.id}/appointments`,
-      );
+      const res = await apiRequest("GET", `/api/appointments/${appointmentId}`);
       if (!res.ok) {
-        throw new Error("Failed to fetch teacher appointments");
+        throw new Error("Failed to fetch appointment");
       }
       return res.json();
     },
-    enabled: !!user?.id,
-    onSuccess: (appts) => {
-      // Once we have all appointments, find the one matching param
-      const apt = appts.find((a) => a.id === parseInt(appointmentId ?? ""));
-      setCurrentAppointment(apt || null);
-    },
+    enabled: !!appointmentId && !!user?.id,
   });
 
-  // =========== 2) Fetch all students, to get their real names just like old code ===========
+  // Fetch student details if we have an appointment
   const {
-    data: allStudents,
-    isLoading: loadingStudents,
-    isError: errorStudents,
-  } = useQuery<User[]>({
-    queryKey: ["/api/users/students"],
+    data: student,
+    isLoading: loadingStudent,
+    isError: studentError,
+  } = useQuery<User>({
+    queryKey: ["/api/users", appointment?.studentId],
     queryFn: async () => {
-      const res = await apiRequest("GET", "/api/users/students");
+      const res = await apiRequest("GET", `/api/users/${appointment?.studentId}`);
       if (!res.ok) {
-        throw new Error("Failed to fetch students");
+        throw new Error("Failed to fetch student details");
       }
       return res.json();
     },
-    enabled: !!user,
-    onSuccess: (list) => {
-      const map: Record<number, string> = {};
-      list.forEach((s) => {
-        map[s.id] = s.username;
-      });
-      setStudentsMap(map);
-    },
+    enabled: !!appointment?.studentId,
   });
 
-  // =========== 3) WebSocket logic for real-time updates, as in old code ===========
+  // WebSocket setup
   const socketRef = React.useRef<WebSocket | null>(null);
   const reconnectTimeoutRef = React.useRef<NodeJS.Timeout>();
-  const reconnectAttempts = React.useRef(0);
   const [wsConnected, setWsConnected] = React.useState(false);
 
   const connectWebSocket = React.useCallback(() => {
-    if (socketRef.current && socketRef.current.readyState === WebSocket.OPEN)
-      return;
+    if (socketRef.current?.readyState === WebSocket.OPEN) return;
 
     const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
     const wsUrl = `${protocol}//${window.location.host}/ws`;
@@ -145,56 +105,29 @@ export default function TeacherQuestionnaireSubmission() {
     ws.onopen = () => {
       console.log("WebSocket connected");
       setWsConnected(true);
-      reconnectAttempts.current = 0;
-      if (reconnectTimeoutRef.current) {
-        clearTimeout(reconnectTimeoutRef.current);
-        reconnectTimeoutRef.current = undefined;
-      }
     };
 
     ws.onmessage = (event) => {
       try {
         const data = JSON.parse(event.data);
         if (data.type === "appointmentUpdate") {
-          // Invalidate the teacher’s appointments to keep everything in sync
-          queryClient.invalidateQueries([
-            "/api/teachers",
-            user?.id,
-            "appointments",
-          ]);
-
-          // If we have a current apt, see if it's the one updated
-          if (currentAppointment && data.data?.appointment) {
-            const updated = data.data.appointment;
-            if (updated.id === currentAppointment.id) {
-              setCurrentAppointment((prev) =>
-                prev ? { ...prev, ...updated } : prev,
-              );
-              // Possibly show a toast if it changed from REQUESTED => ASSIGNED, etc.
-            }
-          }
+          // Invalidate the appointment query to refresh data
+          queryClient.invalidateQueries({ queryKey: ["/api/appointments", appointmentId] });
         }
       } catch (err) {
         console.error("Error handling WS message:", err);
       }
     };
 
-    ws.onclose = (event) => {
-      console.log("WebSocket disconnected", event.code, event.reason);
+    ws.onclose = () => {
+      console.log("WebSocket disconnected");
       setWsConnected(false);
-      reconnectAttempts.current++;
-      const delay = Math.min(1000 * 2 ** reconnectAttempts.current, 30000);
-      reconnectTimeoutRef.current = setTimeout(() => {
-        connectWebSocket();
-      }, delay);
-    };
-
-    ws.onerror = (err) => {
-      console.error("WebSocket error:", err);
+      // Attempt to reconnect after 3 seconds
+      reconnectTimeoutRef.current = setTimeout(connectWebSocket, 3000);
     };
 
     socketRef.current = ws;
-  }, [currentAppointment, user?.id]);
+  }, [appointmentId]);
 
   React.useEffect(() => {
     connectWebSocket();
@@ -208,35 +141,26 @@ export default function TeacherQuestionnaireSubmission() {
     };
   }, [connectWebSocket]);
 
-  // =========== 4) Toggling question #2 => "responded" patch logic from old code ===========
+  // Handle student response toggle
   async function handleQuestion2Toggle(checked: boolean) {
     setFormData((prev) => ({ ...prev, question2: checked }));
 
-    if (checked && currentAppointment?.id) {
+    if (checked && appointmentId) {
       try {
         const res = await apiRequest(
           "PATCH",
-          `/api/appointments/${currentAppointment.id}/response`,
-          { responded: true },
+          `/api/appointments/${appointmentId}/response`,
+          { responded: true }
         );
         if (!res.ok) {
           const errData = await res.json();
-          throw new Error(errData.error || "Failed to mark responded");
+          throw new Error(errData.error || "Failed to mark as responded");
         }
-        // Mark local apt as responded
-        setCurrentAppointment((prev) => {
-          if (!prev) return null;
-          return { ...prev, status: AppointmentStatus.RESPONDED };
-        });
         toast({
           title: "تم تحديث الحالة",
           description: "تم تحديث حالة الموعد إلى استجاب الطالب",
         });
-        queryClient.invalidateQueries([
-          "/api/teachers",
-          user?.id,
-          "appointments",
-        ]);
+        queryClient.invalidateQueries({ queryKey: ["/api/appointments", appointmentId] });
       } catch (err: any) {
         toast({
           title: "خطأ",
@@ -247,30 +171,25 @@ export default function TeacherQuestionnaireSubmission() {
     }
   }
 
-  // =========== 5) Submit questionnaire => "questionnaire-responses" post logic ===========
+  // Submit questionnaire
   const submitQuestionnaireMutation = useMutation({
     mutationFn: async (data: {
       question1: boolean;
       question2: boolean;
       question3: string;
       question4: string;
-      appointmentId: number;
+      appointmentId: string;
     }) => {
-      const body = {
-        appointmentId: data.appointmentId,
+      const res = await apiRequest("POST", "/api/questionnaire-responses", {
+        appointmentId: parseInt(data.appointmentId),
         question1: data.question1 ? "نعم" : "لا",
         question2: data.question2 ? "نعم" : "لا",
         question3: data.question3,
         question4: data.question4,
-      };
-      const res = await apiRequest(
-        "POST",
-        "/api/questionnaire-responses",
-        body,
-      );
+      });
       if (!res.ok) {
-        const errJs = await res.json();
-        throw new Error(errJs.error || "Failed to submit questionnaire");
+        const errData = await res.json();
+        throw new Error(errData.error || "Failed to submit questionnaire");
       }
       return res.json();
     },
@@ -279,24 +198,8 @@ export default function TeacherQuestionnaireSubmission() {
         title: "تم إرسال التقييم",
         description: "تم حفظ إجاباتك بنجاح",
       });
-      // Mark apt as DONE if you want
-      setCurrentAppointment((prev) => {
-        if (!prev) return null;
-        return { ...prev, status: AppointmentStatus.DONE };
-      });
-      // Clear form
-      setFormData({
-        question1: false,
-        question2: false,
-        question3: "",
-        question4: "",
-      });
-      // Invalidate teacher appointments
-      queryClient.invalidateQueries([
-        "/api/teachers",
-        user?.id,
-        "appointments",
-      ]);
+      queryClient.invalidateQueries({ queryKey: ["/api/appointments", appointmentId] });
+      setLocation("/teacher/appointments");
     },
     onError: (err: any) => {
       toast({
@@ -309,52 +212,58 @@ export default function TeacherQuestionnaireSubmission() {
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!currentAppointment) {
+    if (!appointmentId) {
       toast({ title: "لا يوجد موعد", variant: "destructive" });
       return;
     }
     submitQuestionnaireMutation.mutate({
-      question1: formData.question1,
-      question2: formData.question2,
-      question3: formData.question3,
-      question4: formData.question4,
-      appointmentId: currentAppointment.id,
+      ...formData,
+      appointmentId,
     });
   }
 
-  // =========== 6) RENDER ===============
-  if (loadingAppointments || loadingStudents) {
+  // Loading states
+  if (!user) {
+    return <Redirect to="/auth" />;
+  }
+
+  if (user.role !== "teacher") {
+    return (
+      <div className="p-4">
+        <p>ليس لديك الصلاحية لدخول هذه الصفحة (تحتاج حساب معلم)</p>
+      </div>
+    );
+  }
+
+  if (loadingAppointment || loadingStudent) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin" />
       </div>
     );
   }
-  if (errorAppointments) {
-    return (
-      <div className="p-4">
-        <p>فشل جلب مواعيد المعلم: {(appointmentsError as Error)?.message}</p>
-      </div>
-    );
-  }
-  // We have teacherAppointments, but let's see if the chosen one is found
-  if (!currentAppointment) {
+
+  if (appointmentError || !appointment) {
     return (
       <div className="container mx-auto p-4">
         <Card>
-          <CardContent>
+          <CardContent className="pt-6">
             <p className="text-center text-muted-foreground">
               لا يوجد موعد بهذه الهوية أو لم يتم جلبه بعد...
             </p>
+            <div className="mt-4 text-center">
+              <Button variant="outline" onClick={() => setLocation("/teacher/appointments")}>
+                العودة إلى المواعيد
+              </Button>
+            </div>
           </CardContent>
         </Card>
       </div>
     );
   }
 
-  const studentName =
-    studentsMap[currentAppointment.studentId] ||
-    `طالب #${currentAppointment.studentId}`;
+  // Get student name from fetched student data
+  const studentName = student?.username || `طالب #${appointment.studentId}`;
 
   return (
     <div className="container mx-auto p-4">
@@ -369,22 +278,21 @@ export default function TeacherQuestionnaireSubmission() {
           <div className="bg-muted/50 p-4 rounded-md mb-6">
             <p>
               <span className="font-semibold">الوقت: </span>
-              {formatGMT3Time(new Date(currentAppointment.startTime))}{" "}
+              {formatGMT3Time(new Date(appointment.startTime))}{" "}
               &nbsp;—&nbsp;
-              {format(new Date(currentAppointment.startTime), "MMM d, yyyy")}
+              {format(new Date(appointment.startTime), "MMM d, yyyy")}
             </p>
             <p>
               <span className="font-semibold">الطالب: </span>
               {studentName}
             </p>
             <Badge
-              className={`mt-2 text-white ${getStatusColor(currentAppointment.status)}`}
+              className={`mt-2 text-white ${getStatusColor(appointment.status)}`}
             >
-              {AppointmentStatusArabic[currentAppointment.status]}
+              {AppointmentStatusArabic[appointment.status]}
             </Badge>
           </div>
 
-          {/* "Back" button */}
           <div className="text-right mb-4">
             <Button
               variant="outline"
@@ -394,12 +302,7 @@ export default function TeacherQuestionnaireSubmission() {
             </Button>
           </div>
 
-          {/* The old logic says if appointment is only PENDING or REQUESTED, etc. you might show warnings,
-              but we'll let them fill anyway.  
-          */}
-
           <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Q1 */}
             <div className="flex items-center justify-between">
               <label className="text-sm font-medium">
                 هل تمت متابعة الطالب؟
@@ -412,7 +315,6 @@ export default function TeacherQuestionnaireSubmission() {
               />
             </div>
 
-            {/* Q2 => triggers patch if toggled on */}
             <div className="flex items-center justify-between">
               <label className="text-sm font-medium">
                 هل استجاب الطالب للمتابعة؟
@@ -423,7 +325,6 @@ export default function TeacherQuestionnaireSubmission() {
               />
             </div>
 
-            {/* Q3 */}
             <div>
               <label className="text-sm font-medium block mb-2">
                 ماذا سمع؟
@@ -441,7 +342,6 @@ export default function TeacherQuestionnaireSubmission() {
               />
             </div>
 
-            {/* Q4 */}
             <div>
               <label className="text-sm font-medium block mb-2">
                 ملاحظات الجلسة
@@ -459,7 +359,6 @@ export default function TeacherQuestionnaireSubmission() {
               />
             </div>
 
-            {/* Submit */}
             <Button
               type="submit"
               className="w-full"

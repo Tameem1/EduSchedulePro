@@ -85,9 +85,8 @@ export const router = createBrowserRouter([
           />
         ),
       },
-      // The new route for the questionnaire submission:
       {
-        path: "teacher/questionnaire-submission/:appointmentId",
+        path: "teacher/questionnaire-submission/:appointmentId?",
         element: (
           <ProtectedRoute
             element={<TeacherQuestionnaireSubmission />}

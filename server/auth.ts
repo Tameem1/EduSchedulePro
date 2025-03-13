@@ -30,15 +30,17 @@ async function comparePasswords(supplied: string, stored: string) {
 
 export function setupAuth(app: Express) {
   const sessionSettings: session.SessionOptions = {
-    secret: process.env.SESSION_SECRET!,
+    secret: process.env.SESSION_SECRET || 'dev-secret-key',  // Added fallback
     resave: false,
     saveUninitialized: false,
     store: storage.sessionStore,
     cookie: {
-      secure: process.env.NODE_ENV === "production",
+      secure: false, // Set to false to work in development
       maxAge: 24 * 60 * 60 * 1000, // 24 hours
       httpOnly: true,
-    }
+      sameSite: 'lax', // Added for better security
+    },
+    name: 'session_id', // Added custom name
   };
 
   app.set("trust proxy", 1);
@@ -51,7 +53,7 @@ export function setupAuth(app: Express) {
       try {
         const user = await storage.getUserByUsername(username);
         if (!user || !(await comparePasswords(password, user.password))) {
-          return done(null, false);
+          return done(null, false, { message: 'Invalid username or password' });
         }
         return done(null, user);
       } catch (error) {
@@ -71,35 +73,62 @@ export function setupAuth(app: Express) {
     }
   });
 
-  app.post("/api/register", async (req, res, next) => {
-    const existingUser = await storage.getUserByUsername(req.body.username);
-    if (existingUser) {
-      return res.status(400).send("Username already exists");
-    }
-
-    const user = await storage.createUser({
-      ...req.body,
-      password: await hashPassword(req.body.password),
-    });
-
-    req.login(user, (err) => {
-      if (err) return next(err);
-      res.status(201).json(user);
-    });
+  // Add debugging middleware
+  app.use((req, res, next) => {
+    console.log(`[Auth Debug] ${req.method} ${req.path} - isAuthenticated: ${req.isAuthenticated()}`);
+    console.log(`[Auth Debug] Session ID: ${req.sessionID}`);
+    next();
   });
 
-  app.post("/api/login", passport.authenticate("local"), (req, res) => {
-    res.status(200).json(req.user);
+  app.post("/api/register", async (req, res, next) => {
+    try {
+      const existingUser = await storage.getUserByUsername(req.body.username);
+      if (existingUser) {
+        return res.status(400).json({ error: "Username already exists" });
+      }
+
+      const user = await storage.createUser({
+        ...req.body,
+        password: await hashPassword(req.body.password),
+      });
+
+      req.login(user, (err) => {
+        if (err) return next(err);
+        res.status(201).json(user);
+      });
+    } catch (error) {
+      next(error);
+    }
+  });
+
+  app.post("/api/login", (req, res, next) => {
+    passport.authenticate("local", (err, user, info) => {
+      if (err) return next(err);
+      if (!user) {
+        return res.status(401).json({ error: info?.message || "Authentication failed" });
+      }
+      req.login(user, (loginErr) => {
+        if (loginErr) return next(loginErr);
+        res.status(200).json(user);
+      });
+    })(req, res, next);
   });
 
   app.post("/api/logout", (req, res, next) => {
+    const sessionId = req.sessionID;
+    console.log(`[Auth Debug] Logout request - Session ID: ${sessionId}`);
     req.logout((err) => {
       if (err) return next(err);
-      res.sendStatus(200);
+      req.session.destroy((err) => {
+        if (err) return next(err);
+        res.clearCookie('session_id');
+        res.sendStatus(200);
+      });
     });
   });
 
   app.get("/api/user", (req, res) => {
+    console.log(`[Auth Debug] User request - isAuthenticated: ${req.isAuthenticated()}`);
     if (!req.isAuthenticated()) return res.sendStatus(401);
     res.json(req.user);
   });
