@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useParams, useLocation, Redirect } from "wouter";
+import { useParams, useLocation } from "wouter";
 import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
 import { useMutation, useQuery } from "@tanstack/react-query";
@@ -36,6 +36,7 @@ function getStatusColor(status: AppointmentStatusType) {
       [AppointmentStatus.ASSIGNED]: "bg-yellow-500",
       [AppointmentStatus.RESPONDED]: "bg-green-500",
       [AppointmentStatus.DONE]: "bg-purple-500",
+      [AppointmentStatus.REJECTED]: "bg-red-500",
     }[status] || "bg-gray-500"
   );
 }
@@ -43,7 +44,7 @@ function getStatusColor(status: AppointmentStatusType) {
 export default function TeacherQuestionnaireSubmission() {
   const { user } = useAuth();
   const { toast } = useToast();
-  const { appointmentId } = useParams<{ appointmentId: string }>();
+  const { appointmentId } = useParams<{ appointmentId?: string }>();
   const [, setLocation] = useLocation();
 
   // Local form data
@@ -54,32 +55,38 @@ export default function TeacherQuestionnaireSubmission() {
     question4: "",
   });
 
-  // Fetch single appointment directly
+  // Fetch appointment details
   const {
     data: appointment,
     isLoading: loadingAppointment,
     isError: appointmentError,
+    error: appointmentErrorDetails
   } = useQuery<Appointment>({
     queryKey: ["/api/appointments", appointmentId],
     queryFn: async () => {
+      if (!appointmentId) throw new Error("No appointment ID provided");
+
       const res = await apiRequest("GET", `/api/appointments/${appointmentId}`);
       if (!res.ok) {
-        throw new Error("Failed to fetch appointment");
+        const error = await res.json();
+        throw new Error(error.error || "Failed to fetch appointment");
       }
       return res.json();
     },
     enabled: !!appointmentId && !!user?.id,
+    retry: 1,
   });
 
-  // Fetch student details if we have an appointment
+  // Fetch student details
   const {
     data: student,
     isLoading: loadingStudent,
-    isError: studentError,
   } = useQuery<User>({
     queryKey: ["/api/users", appointment?.studentId],
     queryFn: async () => {
-      const res = await apiRequest("GET", `/api/users/${appointment?.studentId}`);
+      if (!appointment?.studentId) throw new Error("No student ID available");
+
+      const res = await apiRequest("GET", `/api/users/${appointment.studentId}`);
       if (!res.ok) {
         throw new Error("Failed to fetch student details");
       }
@@ -88,90 +95,7 @@ export default function TeacherQuestionnaireSubmission() {
     enabled: !!appointment?.studentId,
   });
 
-  // WebSocket setup
-  const socketRef = React.useRef<WebSocket | null>(null);
-  const reconnectTimeoutRef = React.useRef<NodeJS.Timeout>();
-  const [wsConnected, setWsConnected] = React.useState(false);
-
-  const connectWebSocket = React.useCallback(() => {
-    if (socketRef.current?.readyState === WebSocket.OPEN) return;
-
-    const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
-    const wsUrl = `${protocol}//${window.location.host}/ws`;
-
-    console.log("Connecting to WebSocket:", wsUrl);
-    const ws = new WebSocket(wsUrl);
-
-    ws.onopen = () => {
-      console.log("WebSocket connected");
-      setWsConnected(true);
-    };
-
-    ws.onmessage = (event) => {
-      try {
-        const data = JSON.parse(event.data);
-        if (data.type === "appointmentUpdate") {
-          // Invalidate the appointment query to refresh data
-          queryClient.invalidateQueries({ queryKey: ["/api/appointments", appointmentId] });
-        }
-      } catch (err) {
-        console.error("Error handling WS message:", err);
-      }
-    };
-
-    ws.onclose = () => {
-      console.log("WebSocket disconnected");
-      setWsConnected(false);
-      // Attempt to reconnect after 3 seconds
-      reconnectTimeoutRef.current = setTimeout(connectWebSocket, 3000);
-    };
-
-    socketRef.current = ws;
-  }, [appointmentId]);
-
-  React.useEffect(() => {
-    connectWebSocket();
-    return () => {
-      if (reconnectTimeoutRef.current) {
-        clearTimeout(reconnectTimeoutRef.current);
-      }
-      if (socketRef.current) {
-        socketRef.current.close();
-      }
-    };
-  }, [connectWebSocket]);
-
-  // Handle student response toggle
-  async function handleQuestion2Toggle(checked: boolean) {
-    setFormData((prev) => ({ ...prev, question2: checked }));
-
-    if (checked && appointmentId) {
-      try {
-        const res = await apiRequest(
-          "PATCH",
-          `/api/appointments/${appointmentId}/response`,
-          { responded: true }
-        );
-        if (!res.ok) {
-          const errData = await res.json();
-          throw new Error(errData.error || "Failed to mark as responded");
-        }
-        toast({
-          title: "تم تحديث الحالة",
-          description: "تم تحديث حالة الموعد إلى استجاب الطالب",
-        });
-        queryClient.invalidateQueries({ queryKey: ["/api/appointments", appointmentId] });
-      } catch (err: any) {
-        toast({
-          title: "خطأ",
-          description: err.message,
-          variant: "destructive",
-        });
-      }
-    }
-  }
-
-  // Submit questionnaire
+  // Handle form submission
   const submitQuestionnaireMutation = useMutation({
     mutationFn: async (data: {
       question1: boolean;
@@ -210,6 +134,36 @@ export default function TeacherQuestionnaireSubmission() {
     },
   });
 
+  // Handle question2 toggle (student response)
+  async function handleQuestion2Toggle(checked: boolean) {
+    setFormData((prev) => ({ ...prev, question2: checked }));
+
+    if (checked && appointmentId) {
+      try {
+        const res = await apiRequest(
+          "PATCH",
+          `/api/appointments/${appointmentId}/response`,
+          { responded: true }
+        );
+        if (!res.ok) {
+          const errData = await res.json();
+          throw new Error(errData.error || "Failed to mark as responded");
+        }
+        toast({
+          title: "تم تحديث الحالة",
+          description: "تم تحديث حالة الموعد إلى استجاب الطالب",
+        });
+        queryClient.invalidateQueries({ queryKey: ["/api/appointments", appointmentId] });
+      } catch (err: any) {
+        toast({
+          title: "خطأ",
+          description: err.message,
+          variant: "destructive",
+        });
+      }
+    }
+  }
+
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!appointmentId) {
@@ -222,7 +176,7 @@ export default function TeacherQuestionnaireSubmission() {
     });
   }
 
-  // Loading states
+  // Loading states and authorization checks
   if (!user) {
     return <Redirect to="/auth" />;
   }
@@ -231,6 +185,25 @@ export default function TeacherQuestionnaireSubmission() {
     return (
       <div className="p-4">
         <p>ليس لديك الصلاحية لدخول هذه الصفحة (تحتاج حساب معلم)</p>
+      </div>
+    );
+  }
+
+  if (!appointmentId) {
+    return (
+      <div className="container mx-auto p-4">
+        <Card>
+          <CardContent className="pt-6">
+            <p className="text-center text-muted-foreground">
+              لم يتم تحديد موعد للتقييم
+            </p>
+            <div className="mt-4 text-center">
+              <Button variant="outline" onClick={() => setLocation("/teacher/appointments")}>
+                العودة إلى المواعيد
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
       </div>
     );
   }
@@ -249,7 +222,7 @@ export default function TeacherQuestionnaireSubmission() {
         <Card>
           <CardContent className="pt-6">
             <p className="text-center text-muted-foreground">
-              لا يوجد موعد بهذه الهوية أو لم يتم جلبه بعد...
+              {appointmentErrorDetails?.message || "لا يوجد موعد بهذه الهوية أو لم يتم جلبه بعد..."}
             </p>
             <div className="mt-4 text-center">
               <Button variant="outline" onClick={() => setLocation("/teacher/appointments")}>
