@@ -118,9 +118,10 @@ export const storage = {
       if (data.status === AppointmentStatus.REJECTED) {
         console.log("Explicitly handling REJECTED status:", AppointmentStatus.REJECTED);
         try {
+          // Use the EXACT string value from the database enum definition
           const updatedAppointment = await db
             .update(appointments)
-            .set({ status: AppointmentStatus.REJECTED })
+            .set({ status: 'rejected' }) // Use literal string exactly as in database enum
             .where(eq(appointments.id, appointmentId))
             .returning();
           

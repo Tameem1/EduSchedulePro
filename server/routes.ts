@@ -423,16 +423,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
         console.log("Valid statuses:", Object.values(AppointmentStatus));
         console.log("Status type:", typeof status);
         
-        // Make sure we're using the exact string value from the enum
-        const matchedStatus = Object.entries(AppointmentStatus).find(
-          ([key, value]) => value === status || key === status.toUpperCase()
-        );
-        
-        if (matchedStatus) {
-          // Use the exact value from the enum
-          updateData.status = matchedStatus[1];
-          console.log("Status validated and set to:", updateData.status);
+        // Special case for rejection to ensure we use the exact database enum value
+        if (status === AppointmentStatus.REJECTED || status === 'rejected') {
+          // Use literal string exactly as in database enum
+          updateData.status = 'rejected';
+          console.log("Rejection status detected, using direct enum value:", updateData.status);
         } else {
+          // For other statuses, find the matching enum value
+          const matchedStatus = Object.entries(AppointmentStatus).find(
+            ([key, value]) => value === status || key === status.toUpperCase()
+          );
+          
+          if (matchedStatus) {
+            // Use the exact value from the enum
+            updateData.status = matchedStatus[1];
+            console.log("Status validated and set to:", updateData.status);
+          } else {
           console.error("Invalid appointment status:", status);
           return res.status(400).json({ 
             error: "Invalid appointment status", 
