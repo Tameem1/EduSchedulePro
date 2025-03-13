@@ -52,7 +52,8 @@ export const appointments = pgTable("appointments", {
   studentId: integer("student_id").references(() => users.id).notNull(),
   teacherId: integer("teacher_id").references(() => users.id), 
   startTime: timestamp("start_time", { mode: 'string' }).notNull(),
-  status: appointmentStatusEnum("status").notNull().default('pending')
+  status: appointmentStatusEnum("status").notNull().default('pending'),
+  assignment: text("assignment") // New field for teacher's assignment
 });
 
 // Questionnaire responses for appointments
@@ -110,6 +111,7 @@ export const insertAvailabilitySchema = createInsertSchema(availabilities).exten
 export const insertAppointmentSchema = createInsertSchema(appointments).extend({
   // Ensure we use the exact time string provided without any transformation
   startTime: z.string().transform(str => str),
+  assignment: z.string().optional(), // Make assignment optional in the schema
 }).omit({ teacherId: true });
 export const insertQuestionnaireSchema = createInsertSchema(questionnaireResponses);
 
