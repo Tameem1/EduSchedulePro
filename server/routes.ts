@@ -439,11 +439,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
             updateData.status = matchedStatus[1];
             console.log("Status validated and set to:", updateData.status);
           } else {
-          console.error("Invalid appointment status:", status);
-          return res.status(400).json({ 
-            error: "Invalid appointment status", 
-            details: `Status '${status}' is not valid. Valid statuses are: ${Object.values(AppointmentStatus).join(', ')}` 
-          });
+            console.error("Invalid appointment status:", status);
+            return res.status(400).json({ 
+              error: "Invalid appointment status", 
+              details: `Status '${status}' is not valid. Valid statuses are: ${Object.values(AppointmentStatus).join(', ')}` 
+            });
+          }
         }
       }
       
