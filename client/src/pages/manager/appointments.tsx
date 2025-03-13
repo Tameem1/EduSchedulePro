@@ -19,6 +19,12 @@ import { AppointmentStatus, AppointmentStatusArabic } from "@shared/schema";
 import { useAuth } from "@/hooks/use-auth";
 import { format } from "date-fns";
 import { Link } from "wouter";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 export default function ManagerAppointments() {
   const { toast } = useToast();
@@ -30,6 +36,7 @@ export default function ManagerAppointments() {
   const [wsConnected, setWsConnected] = React.useState(false);
   const reconnectTimeoutRef = React.useRef<NodeJS.Timeout>();
 
+  // WebSocket connection setup
   const connectWebSocket = React.useCallback(() => {
     if (socketRef.current?.readyState === WebSocket.OPEN) return;
 
@@ -44,17 +51,6 @@ export default function ManagerAppointments() {
       setWsConnected(true);
     };
 
-    ws.onclose = () => {
-      console.log("WebSocket disconnected");
-      setWsConnected(false);
-      // Attempt to reconnect after 3 seconds
-      reconnectTimeoutRef.current = setTimeout(connectWebSocket, 3000);
-    };
-
-    ws.onerror = (error) => {
-      console.error("WebSocket error:", error);
-    };
-
     ws.onmessage = (event) => {
       try {
         const data = JSON.parse(event.data);
@@ -65,6 +61,13 @@ export default function ManagerAppointments() {
       } catch (error) {
         console.error("Error handling WebSocket message:", error);
       }
+    };
+
+    ws.onclose = () => {
+      console.log("WebSocket disconnected");
+      setWsConnected(false);
+      // Attempt to reconnect after 3 seconds
+      reconnectTimeoutRef.current = setTimeout(connectWebSocket, 3000);
     };
 
     socketRef.current = ws;
@@ -83,6 +86,7 @@ export default function ManagerAppointments() {
     };
   }, [connectWebSocket]);
 
+  // Data fetching
   const { data: teachers, isLoading: isLoadingTeachers } = useQuery<User[]>({
     queryKey: ["/api/users/teachers"],
     queryFn: async () => {
@@ -107,9 +111,7 @@ export default function ManagerAppointments() {
     enabled: !!user,
   });
 
-  const { data: appointments, isLoading: isLoadingAppointments } = useQuery<
-    Appointment[]
-  >({
+  const { data: appointments, isLoading: isLoadingAppointments } = useQuery<Appointment[]>({
     queryKey: ["/api/appointments"],
     queryFn: async () => {
       const res = await apiRequest("GET", "/api/appointments");
@@ -121,9 +123,7 @@ export default function ManagerAppointments() {
     enabled: !!user,
   });
 
-  const { data: availabilities, isLoading: isLoadingAvailabilities } = useQuery<
-    Availability[]
-  >({
+  const { data: availabilities, isLoading: isLoadingAvailabilities } = useQuery<Availability[]>({
     queryKey: ["/api/availabilities"],
     queryFn: async () => {
       const res = await apiRequest("GET", "/api/availabilities");
@@ -178,7 +178,8 @@ export default function ManagerAppointments() {
     },
   });
 
-  const getUserName = (userId: number | undefined, role: 'student' | 'teacher') => {
+  const getUserName = (userId: number | null | undefined, role: 'student' | 'teacher') => {
+    if (!userId) return role === 'teacher' ? "لم يتم التعيين" : "غير معروف";
     const userList = role === 'student' ? students : teachers;
     const user = userList?.find(u => u.id === userId);
     return user?.username || `${role} ${userId}`;
@@ -195,13 +196,8 @@ export default function ManagerAppointments() {
     }[status] || "bg-gray-500";
   };
 
-  if (
-    !user ||
-    user.role !== "manager" ||
-    isLoadingTeachers ||
-    isLoadingAppointments ||
-    isLoadingStudents
-  ) {
+  // Show loading state while checking authentication and loading initial data
+  if (!user || user.role !== "manager" || isLoadingTeachers || isLoadingAppointments || isLoadingStudents) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin" />
@@ -249,16 +245,11 @@ export default function ManagerAppointments() {
                   <TableCell>
                     {(appointment.status === AppointmentStatus.PENDING ||
                       appointment.status === AppointmentStatus.REJECTED) && (
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => {
-                          setSelectedAppointment(appointment);
-                          setIsAssignDialogOpen(true);
-                        }}
-                      >
-                        تعيين معلم
-                      </Button>
+                      <Link href={`/manager/assign-teacher/${appointment.id}`}>
+                        <Button variant="outline" size="sm">
+                          تعيين معلم
+                        </Button>
+                      </Link>
                     )}
                   </TableCell>
                 </TableRow>
@@ -268,6 +259,7 @@ export default function ManagerAppointments() {
         </CardContent>
       </Card>
 
+      {/* Teachers Availability Section */}
       <Card className="mb-6">
         <CardHeader>
           <CardTitle>توفر المعلمين</CardTitle>
@@ -334,70 +326,6 @@ export default function ManagerAppointments() {
           </Table>
         </CardContent>
       </Card>
-
-      <Dialog open={isAssignDialogOpen} onOpenChange={setIsAssignDialogOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>تعيين معلم للموعد</DialogTitle>
-          </DialogHeader>
-          <div className="py-4">
-            {selectedAppointment && (
-              <div className="space-y-4">
-                <div className="text-sm">
-                  <p>
-                    الوقت: {format(new Date(selectedAppointment.startTime), "HH:mm")}
-                  </p>
-                  <p>الطالب: {getUserName(selectedAppointment.studentId, 'student')}</p>
-                </div>
-                <div className="space-y-2">
-                  {teachers?.map((teacher) => {
-                    const isAvailable = availabilities?.some((avail) => {
-                      const appointmentTime = new Date(
-                        selectedAppointment.startTime,
-                      );
-                      const availStartTime = new Date(avail.startTime);
-                      const availEndTime = new Date(avail.endTime);
-                      return (
-                        avail.teacherId === teacher.id &&
-                        appointmentTime >= availStartTime &&
-                        appointmentTime <= availEndTime
-                      );
-                    });
-
-                    return (
-                      <div
-                        key={teacher.id}
-                        className={`p-3 border rounded-lg ${
-                          isAvailable
-                            ? "hover:bg-muted cursor-pointer"
-                            : "opacity-50"
-                        }`}
-                        onClick={() => {
-                          if (isAvailable) {
-                            assignTeacherMutation.mutate({
-                              appointmentId: selectedAppointment.id,
-                              teacherId: teacher.id,
-                            });
-                          }
-                        }}
-                      >
-                        <div className="flex items-center justify-between">
-                          <span>{teacher.username}</span>
-                          {isAvailable ? (
-                            <Badge variant="default">متوفر</Badge>
-                          ) : (
-                            <Badge variant="secondary">غير متوفر</Badge>
-                          )}
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
-          </div>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 }
