@@ -447,7 +447,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
     } catch (error) {
       console.error("Error updating appointment:", error);
-      res.status(500).json({ error: "Failed to update appointment" });
+      const errorMessage = error instanceof Error ? error.message : "Unknown error";
+      console.error("Error details:", errorMessage);
+      res.status(500).json({ 
+        error: "Failed to update appointment", 
+        details: errorMessage 
+      });
     }
   });
 

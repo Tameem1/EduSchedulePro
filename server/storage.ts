@@ -99,51 +99,67 @@ export const storage = {
   },
 
   async updateAppointment(appointmentId: number, data: any) {
-    // If updating status only, handle it directly
-    if (data.status && !data.teacherId && !data.responded) {
+    try {
+      // Explicit handling for rejection
+      if (data.status === AppointmentStatus.REJECTED) {
+        const updatedAppointment = await db
+          .update(appointments)
+          .set({ status: AppointmentStatus.REJECTED })
+          .where(eq(appointments.id, appointmentId))
+          .returning();
+        
+        return updatedAppointment[0];
+      }
+      
+      // If updating status only, handle it directly
+      if (data.status && !data.teacherId && !data.responded) {
+        const updatedAppointment = await db
+          .update(appointments)
+          .set({ status: data.status })
+          .where(eq(appointments.id, appointmentId))
+          .returning();
+
+        return updatedAppointment[0];
+      }
+
+      // Handle teacher assignment
+      if (data.teacherId) {
+        const updatedAppointment = await db
+          .update(appointments)
+          .set({
+            teacherId: data.teacherId,
+            status: data.status || AppointmentStatus.REQUESTED
+          })
+          .where(eq(appointments.id, appointmentId))
+          .returning();
+
+        return updatedAppointment[0];
+      }
+
+      // Handle response status
+      if ('responded' in data) {
+        const status = data.responded ? AppointmentStatus.RESPONDED : AppointmentStatus.ASSIGNED;
+        const updatedAppointment = await db
+          .update(appointments)
+          .set({ status })
+          .where(eq(appointments.id, appointmentId))
+          .returning();
+
+        return updatedAppointment[0];
+      }
+
+      // Default update for any other changes
       const updatedAppointment = await db
         .update(appointments)
-        .set({ status: data.status })
+        .set(data)
         .where(eq(appointments.id, appointmentId))
         .returning();
 
       return updatedAppointment[0];
+    } catch (error) {
+      console.error("Error in updateAppointment:", error);
+      throw error; // Re-throw to allow proper error handling upstream
     }
-
-    // Handle teacher assignment
-    if (data.teacherId) {
-      const updatedAppointment = await db
-        .update(appointments)
-        .set({
-          teacherId: data.teacherId,
-          status: data.status || AppointmentStatus.REQUESTED
-        })
-        .where(eq(appointments.id, appointmentId))
-        .returning();
-
-      return updatedAppointment[0];
-    }
-
-    // Handle response status
-    if ('responded' in data) {
-      const status = data.responded ? AppointmentStatus.RESPONDED : AppointmentStatus.ASSIGNED;
-      const updatedAppointment = await db
-        .update(appointments)
-        .set({ status })
-        .where(eq(appointments.id, appointmentId))
-        .returning();
-
-      return updatedAppointment[0];
-    }
-
-    // Default update for any other changes
-    const updatedAppointment = await db
-      .update(appointments)
-      .set(data)
-      .where(eq(appointments.id, appointmentId))
-      .returning();
-
-    return updatedAppointment[0];
   },
 
   async getAppointmentById(appointmentId: number) {
