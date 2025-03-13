@@ -106,6 +106,7 @@ export const storage = {
       if (data.status) {
         console.log("Status in update data:", data.status);
         console.log("Valid statuses:", Object.values(AppointmentStatus));
+        console.log("Type of status:", typeof data.status);
         
         // Validate that status is a valid AppointmentStatus value
         if (!Object.values(AppointmentStatus).includes(data.status)) {
@@ -115,15 +116,20 @@ export const storage = {
       
       // Handle rejection
       if (data.status === AppointmentStatus.REJECTED) {
-        console.log("Explicitly handling REJECTED status");
-        const updatedAppointment = await db
-          .update(appointments)
-          .set({ status: AppointmentStatus.REJECTED })
-          .where(eq(appointments.id, appointmentId))
-          .returning();
-        
-        console.log("Appointment rejected:", updatedAppointment[0]);
-        return updatedAppointment[0];
+        console.log("Explicitly handling REJECTED status:", AppointmentStatus.REJECTED);
+        try {
+          const updatedAppointment = await db
+            .update(appointments)
+            .set({ status: AppointmentStatus.REJECTED })
+            .where(eq(appointments.id, appointmentId))
+            .returning();
+          
+          console.log("Appointment rejected:", updatedAppointment[0]);
+          return updatedAppointment[0];
+        } catch (error) {
+          console.error("Database error during rejection:", error);
+          throw error;
+        }
       }
       
       // Handle accepting an appointment (ASSIGNED status)

@@ -421,10 +421,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (status) {
         console.log("Requested status update:", status);
         console.log("Valid statuses:", Object.values(AppointmentStatus));
+        console.log("Status type:", typeof status);
         
-        if (Object.values(AppointmentStatus).includes(status)) {
-          updateData.status = status;
-          console.log("Status validated and set to:", status);
+        // Make sure we're using the exact string value from the enum
+        const matchedStatus = Object.entries(AppointmentStatus).find(
+          ([key, value]) => value === status || key === status.toUpperCase()
+        );
+        
+        if (matchedStatus) {
+          // Use the exact value from the enum
+          updateData.status = matchedStatus[1];
+          console.log("Status validated and set to:", updateData.status);
         } else {
           console.error("Invalid appointment status:", status);
           return res.status(400).json({ 

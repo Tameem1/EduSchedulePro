@@ -7,13 +7,7 @@ import { relations } from "drizzle-orm";
 export const userRoleEnum = pgEnum('user_role', ['student', 'teacher', 'manager']);
 export const appointmentStatusEnum = pgEnum('appointment_status', ['pending', 'requested', 'assigned', 'responded', 'done', 'rejected']);
 
-// Export const values for use in the application
-export const UserRole = {
-  STUDENT: 'student',
-  TEACHER: 'teacher',
-  MANAGER: 'manager'
-} as const;
-
+// Export const values for use in the application - make sure these match exactly with the enum values
 export const AppointmentStatus = {
   PENDING: 'pending',
   REQUESTED: 'requested',
@@ -128,3 +122,9 @@ export type Appointment = typeof appointments.$inferSelect & {
   teacher?: User;
 };
 export type QuestionnaireResponse = typeof questionnaireResponses.$inferSelect;
+
+export const UserRole = {
+  STUDENT: 'student',
+  TEACHER: 'teacher',
+  MANAGER: 'manager'
+} as const;
