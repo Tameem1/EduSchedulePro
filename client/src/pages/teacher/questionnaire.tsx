@@ -338,7 +338,6 @@ export default function TeacherQuestionnaire() {
                 </p>
                 <p>
                   <span className="font-semibold">الوقت:</span>{" "}
-                  {/* Use GMT+3 helper to fix hour discrepancy */}
                   {formatGMT3Time(new Date(currentAppointment.startTime))}
                 </p>
                 <Badge
@@ -374,119 +373,116 @@ export default function TeacherQuestionnaire() {
                 </div>
               )}
 
-              {/* If the appointment is ASSIGNED (or forcibly displayed), show the questionnaire fields */}
-              {(currentAppointment.status === AppointmentStatus.ASSIGNED ||
-                (currentAppointment as any)._keepVisible) && (
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <label className="text-sm font-medium">
-                      هل تمت متابعة الطالب؟
-                    </label>
-                    <Switch
-                      checked={formData.question1}
-                      onCheckedChange={(checked) =>
-                        setFormData({ ...formData, question1: checked })
-                      }
-                    />
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <label className="text-sm font-medium">
-                      هل استجاب الطالب للمتابعة؟
-                    </label>
-                    <Switch
-                      checked={formData.question2}
-                      onCheckedChange={async (checked) => {
-                        setFormData({ ...formData, question2: checked });
-
-                        if (checked && currentAppointment?.id) {
-                          try {
-                            await apiRequest(
-                              "PATCH",
-                              `/api/appointments/${currentAppointment.id}/response`,
-                              { responded: true },
-                            );
-
-                            // Update status in local state
-                            setCurrentAppointment({
-                              ...currentAppointment,
-                              status: AppointmentStatus.RESPONDED,
-                              _keepVisible: true,
-                            });
-
-                            toast({
-                              title: "تم تحديث الحالة",
-                              description:
-                                "تم تحديث حالة الموعد إلى تمت الاستجابة",
-                            });
-
-                            queryClient.invalidateQueries({
-                              queryKey: [
-                                "/api/teachers",
-                                user?.id,
-                                "appointments",
-                              ],
-                            });
-                          } catch (error) {
-                            console.error(
-                              "Failed to update appointment status:",
-                              error,
-                            );
-                            toast({
-                              title: "خطأ في تحديث الحالة",
-                              description: "فشل تحديث حالة الموعد",
-                              variant: "destructive",
-                            });
-                          }
-                        }
-                      }}
-                    />
-                  </div>
-
-                  <div>
-                    <label className="text-sm font-medium block mb-2">
-                      ماذا سمع؟
-                    </label>
-                    <Textarea
-                      value={formData.question3}
-                      onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          question3: e.target.value,
-                        })
-                      }
-                      placeholder="سورة الاسراء"
-                      required
-                    />
-                  </div>
-
-                  <div>
-                    <label className="text-sm font-medium block mb-2">
-                      ملاحظات الجلسة
-                    </label>
-                    <Textarea
-                      value={formData.question4}
-                      onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          question4: e.target.value,
-                        })
-                      }
-                      placeholder="أي ملاحظات إضافية عن الجلسة"
-                      required
-                    />
-                  </div>
-
-                  <Button
-                    type="submit"
-                    className="w-full"
-                    disabled={submitQuestionnaireMutation.isPending}
-                  >
-                    {submitQuestionnaireMutation.isPending
-                      ? "جاري الإرسال..."
-                      : "إرسال التقييم"}
-                  </Button>
+              {/* Always show the questionnaire fields once there's a currentAppointment */}
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <label className="text-sm font-medium">
+                    هل تمت متابعة الطالب؟
+                  </label>
+                  <Switch
+                    checked={formData.question1}
+                    onCheckedChange={(checked) =>
+                      setFormData({ ...formData, question1: checked })
+                    }
+                  />
                 </div>
-              )}
+
+                <div className="flex items-center justify-between">
+                  <label className="text-sm font-medium">
+                    هل استجاب الطالب للمتابعة؟
+                  </label>
+                  <Switch
+                    checked={formData.question2}
+                    onCheckedChange={async (checked) => {
+                      setFormData({ ...formData, question2: checked });
+
+                      if (checked && currentAppointment?.id) {
+                        try {
+                          await apiRequest(
+                            "PATCH",
+                            `/api/appointments/${currentAppointment.id}/response`,
+                            { responded: true },
+                          );
+
+                          // Update status in local state
+                          setCurrentAppointment({
+                            ...currentAppointment,
+                            status: AppointmentStatus.RESPONDED,
+                          });
+
+                          toast({
+                            title: "تم تحديث الحالة",
+                            description:
+                              "تم تحديث حالة الموعد إلى تمت الاستجابة",
+                          });
+
+                          queryClient.invalidateQueries({
+                            queryKey: [
+                              "/api/teachers",
+                              user?.id,
+                              "appointments",
+                            ],
+                          });
+                        } catch (error) {
+                          console.error(
+                            "Failed to update appointment status:",
+                            error,
+                          );
+                          toast({
+                            title: "خطأ في تحديث الحالة",
+                            description: "فشل تحديث حالة الموعد",
+                            variant: "destructive",
+                          });
+                        }
+                      }
+                    }}
+                  />
+                </div>
+
+                <div>
+                  <label className="text-sm font-medium block mb-2">
+                    ماذا سمع؟
+                  </label>
+                  <Textarea
+                    value={formData.question3}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        question3: e.target.value,
+                      })
+                    }
+                    placeholder="سورة الاسراء"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className="text-sm font-medium block mb-2">
+                    ملاحظات الجلسة
+                  </label>
+                  <Textarea
+                    value={formData.question4}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        question4: e.target.value,
+                      })
+                    }
+                    placeholder="أي ملاحظات إضافية عن الجلسة"
+                    required
+                  />
+                </div>
+
+                <Button
+                  type="submit"
+                  className="w-full"
+                  disabled={submitQuestionnaireMutation.isPending}
+                >
+                  {submitQuestionnaireMutation.isPending
+                    ? "جاري الإرسال..."
+                    : "إرسال التقييم"}
+                </Button>
+              </div>
             </form>
           ) : (
             // If no appointment is selected, show a list to pick from
