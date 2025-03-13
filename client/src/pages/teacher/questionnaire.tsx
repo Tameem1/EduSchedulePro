@@ -326,6 +326,11 @@ export default function TeacherQuestionnaire() {
       <div className="flex justify-between items-center mb-4">
         <h1 className="text-2xl font-bold">لوحة المعلم</h1>
         <div className="flex gap-2">
+          <Link href="/teacher/appointments">
+            <Button variant="outline">
+              العودة إلى قائمة المواعيد
+            </Button>
+          </Link>
           <Link href="/teacher/availability">
             <Button>
               <Calendar className="mr-2 h-4 w-4" />
