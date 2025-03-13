@@ -69,7 +69,7 @@ export default function AcceptAppointment() {
       queryClient.invalidateQueries({ queryKey: ["/api/appointments"] });
       // Redirect to the appointments page after 2 seconds
       setTimeout(() => {
-        setLocation("/teacher/questionnaire");
+        setLocation("/teacher/questionnaire-submission");
       }, 2000);
     },
     onError: (error) => {

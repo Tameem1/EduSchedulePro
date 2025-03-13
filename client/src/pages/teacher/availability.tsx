@@ -1,4 +1,4 @@
-import * as React from 'react';
+import * as React from "react";
 import { useAuth } from "@/hooks/use-auth";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -35,7 +35,7 @@ function generateTimeOptions() {
       time.setHours(hour, minute, 0, 0);
       options.push({
         value: format(time, "HH:mm"),
-        label: format(time, "h:mm a")
+        label: format(time, "h:mm a"),
       });
     }
   }
@@ -46,7 +46,9 @@ function generateTimeOptions() {
 export default function TeacherAvailability() {
   const { user, isLoading: isAuthLoading } = useAuth();
   const { toast } = useToast();
-  const [timeRanges, setTimeRanges] = React.useState<Array<{id: string, start: string, end: string}>>([]);
+  const [timeRanges, setTimeRanges] = React.useState<
+    Array<{ id: string; start: string; end: string }>
+  >([]);
   const timeOptions = React.useMemo(() => generateTimeOptions(), []);
 
   // If still loading auth state, show loading indicator
@@ -59,7 +61,7 @@ export default function TeacherAvailability() {
   }
 
   // If not authenticated or not a teacher, redirect to login
-  if (!user || user.role !== 'teacher') {
+  if (!user || user.role !== "teacher") {
     return <Redirect to="/auth" />;
   }
 
@@ -71,14 +73,20 @@ export default function TeacherAvailability() {
 
   // Remove a time range
   const removeTimeRange = (id: string) => {
-    setTimeRanges(timeRanges.filter(range => range.id !== id));
+    setTimeRanges(timeRanges.filter((range) => range.id !== id));
   };
 
   // Update a time range
-  const updateTimeRange = (id: string, field: 'start' | 'end', value: string) => {
-    setTimeRanges(timeRanges.map(range =>
-      range.id === id ? { ...range, [field]: value } : range
-    ));
+  const updateTimeRange = (
+    id: string,
+    field: "start" | "end",
+    value: string,
+  ) => {
+    setTimeRanges(
+      timeRanges.map((range) =>
+        range.id === id ? { ...range, [field]: value } : range,
+      ),
+    );
   };
 
   // Check if a time range is valid
@@ -93,18 +101,18 @@ export default function TeacherAvailability() {
   };
 
   const addAvailabilityMutation = useMutation({
-    mutationFn: async (range: {start: string, end: string}) => {
+    mutationFn: async (range: { start: string; end: string }) => {
       const today = new Date();
-      const [startHours, startMinutes] = range.start.split(':').map(Number);
-      const [endHours, endMinutes] = range.end.split(':').map(Number);
+      const [startHours, startMinutes] = range.start.split(":").map(Number);
+      const [endHours, endMinutes] = range.end.split(":").map(Number);
 
       // Format dates in ISO format but preserve the local time
       const year = today.getFullYear();
-      const month = String(today.getMonth() + 1).padStart(2, '0');
-      const day = String(today.getDate()).padStart(2, '0');
+      const month = String(today.getMonth() + 1).padStart(2, "0");
+      const day = String(today.getDate()).padStart(2, "0");
 
-      const startTimeStr = `${year}-${month}-${day}T${String(startHours).padStart(2, '0')}:${String(startMinutes).padStart(2, '0')}:00`;
-      const endTimeStr = `${year}-${month}-${day}T${String(endHours).padStart(2, '0')}:${String(endMinutes).padStart(2, '0')}:00`;
+      const startTimeStr = `${year}-${month}-${day}T${String(startHours).padStart(2, "0")}:${String(startMinutes).padStart(2, "0")}:00`;
+      const endTimeStr = `${year}-${month}-${day}T${String(endHours).padStart(2, "0")}:${String(endMinutes).padStart(2, "0")}:00`;
 
       const res = await apiRequest("POST", "/api/availabilities", {
         startTime: startTimeStr,
@@ -123,7 +131,9 @@ export default function TeacherAvailability() {
         title: "تم إضافة التوفر",
         description: "تم تحديث توفرك.",
       });
-      queryClient.invalidateQueries({ queryKey: ["/api/teachers", user!.id, "availabilities"] });
+      queryClient.invalidateQueries({
+        queryKey: ["/api/teachers", user!.id, "availabilities"],
+      });
     },
     onError: (error) => {
       toast({
@@ -136,7 +146,10 @@ export default function TeacherAvailability() {
 
   const deleteAvailabilityMutation = useMutation({
     mutationFn: async (availabilityId: string) => {
-      const res = await apiRequest("DELETE", `/api/availabilities/${availabilityId}`);
+      const res = await apiRequest(
+        "DELETE",
+        `/api/availabilities/${availabilityId}`,
+      );
       if (!res.ok) {
         const error = await res.json();
         throw new Error(error.error || "Failed to delete availability");
@@ -148,7 +161,9 @@ export default function TeacherAvailability() {
         title: "تم حذف التوفر",
         description: "تم حذف فترة توفرك بنجاح.",
       });
-      queryClient.invalidateQueries({ queryKey: ["/api/teachers", user!.id, "availabilities"] });
+      queryClient.invalidateQueries({
+        queryKey: ["/api/teachers", user!.id, "availabilities"],
+      });
     },
     onError: (error) => {
       toast({
@@ -156,14 +171,18 @@ export default function TeacherAvailability() {
         description: error.message,
         variant: "destructive",
       });
-    }
+    },
   });
 
-
-  const { data: availabilities, isLoading: isLoadingAvailabilities } = useQuery<Availability[]>({
+  const { data: availabilities, isLoading: isLoadingAvailabilities } = useQuery<
+    Availability[]
+  >({
     queryKey: ["/api/teachers", user.id, "availabilities"],
     queryFn: async () => {
-      const res = await apiRequest("GET", `/api/teachers/${user.id}/availabilities`);
+      const res = await apiRequest(
+        "GET",
+        `/api/teachers/${user.id}/availabilities`,
+      );
       if (!res.ok) {
         const error = await res.json();
         throw new Error(error.error || "Failed to fetch availabilities");
@@ -175,7 +194,9 @@ export default function TeacherAvailability() {
 
   // Submit all valid time ranges
   const submitAvailabilities = async () => {
-    const validRanges = timeRanges.filter(range => isValidTimeRange(range.start, range.end));
+    const validRanges = timeRanges.filter((range) =>
+      isValidTimeRange(range.start, range.end),
+    );
 
     if (validRanges.length === 0) {
       toast({
@@ -199,7 +220,7 @@ export default function TeacherAvailability() {
     <div className="container mx-auto p-8">
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-2xl font-bold">إدارة توفر اليوم</h1>
-        <Link href="/teacher/questionnaire">
+        <Link href="/teacher/appointments">
           <Button>الذهاب إلى الاستبيان</Button>
         </Link>
       </div>
@@ -211,7 +232,8 @@ export default function TeacherAvailability() {
         <CardContent className="space-y-6">
           <div className="space-y-4">
             <p className="text-sm text-muted-foreground">
-              أضف فتراتك الزمنية المتاحة لهذا اليوم. يمكنك إضافة العديد من الفترات الزمنية.
+              أضف فتراتك الزمنية المتاحة لهذا اليوم. يمكنك إضافة العديد من
+              الفترات الزمنية.
             </p>
 
             {timeRanges.length === 0 && (
@@ -225,7 +247,10 @@ export default function TeacherAvailability() {
             )}
 
             {timeRanges.map((range) => (
-              <div key={range.id} className="flex items-center space-x-2 p-4 border rounded-md bg-muted/30">
+              <div
+                key={range.id}
+                className="flex items-center space-x-2 p-4 border rounded-md bg-muted/30"
+              >
                 <div className="grid grid-cols-2 gap-4 flex-1">
                   <div>
                     <label className="text-xs text-muted-foreground mb-1 block">
@@ -233,7 +258,9 @@ export default function TeacherAvailability() {
                     </label>
                     <Select
                       value={range.start}
-                      onValueChange={(value) => updateTimeRange(range.id, 'start', value)}
+                      onValueChange={(value) =>
+                        updateTimeRange(range.id, "start", value)
+                      }
                     >
                       <SelectTrigger>
                         <SelectValue placeholder="حدد وقت البدء" />
@@ -253,17 +280,21 @@ export default function TeacherAvailability() {
                     </label>
                     <Select
                       value={range.end}
-                      onValueChange={(value) => updateTimeRange(range.id, 'end', value)}
+                      onValueChange={(value) =>
+                        updateTimeRange(range.id, "end", value)
+                      }
                     >
                       <SelectTrigger>
                         <SelectValue placeholder="حدد وقت الانتهاء" />
                       </SelectTrigger>
                       <SelectContent>
                         {timeOptions.map((option) => {
-                          const isDisabled = range.start ? !isAfter(
-                            parse(option.value, "HH:mm", new Date()),
-                            parse(range.start, "HH:mm", new Date())
-                          ) : false;
+                          const isDisabled = range.start
+                            ? !isAfter(
+                                parse(option.value, "HH:mm", new Date()),
+                                parse(range.start, "HH:mm", new Date()),
+                              )
+                            : false;
                           return (
                             <SelectItem
                               key={option.value}
@@ -307,7 +338,9 @@ export default function TeacherAvailability() {
             className="w-full"
             disabled={
               timeRanges.length === 0 ||
-              !timeRanges.some(range => isValidTimeRange(range.start, range.end)) ||
+              !timeRanges.some((range) =>
+                isValidTimeRange(range.start, range.end),
+              ) ||
               addAvailabilityMutation.isPending
             }
             onClick={submitAvailabilities}
@@ -323,17 +356,26 @@ export default function TeacherAvailability() {
             </div>
           ) : availabilities && availabilities.length > 0 ? (
             <div className="mt-8">
-              <h3 className="text-lg font-semibold mb-4">فتراتك المتاحة اليوم</h3>
+              <h3 className="text-lg font-semibold mb-4">
+                فتراتك المتاحة اليوم
+              </h3>
               <div className="space-y-2">
                 {availabilities.map((availability) => (
-                  <div key={availability.id} className="p-4 border rounded-md hover:bg-gray-50 transition-colors">
+                  <div
+                    key={availability.id}
+                    className="p-4 border rounded-md hover:bg-gray-50 transition-colors"
+                  >
                     <div className="flex justify-between items-center">
                       <div>
                         <p className="font-medium">
-                          {format(new Date(availability.startTime), "h:mm a")} - {format(new Date(availability.endTime), "h:mm a")}
+                          {format(new Date(availability.startTime), "h:mm a")} -{" "}
+                          {format(new Date(availability.endTime), "h:mm a")}
                         </p>
                         <p className="text-xs text-muted-foreground">
-                          {format(new Date(availability.startTime), "EEEE, MMMM d, yyyy")}
+                          {format(
+                            new Date(availability.startTime),
+                            "EEEE, MMMM d, yyyy",
+                          )}
                         </p>
                       </div>
                       <div className="flex items-center space-x-2">
@@ -341,11 +383,13 @@ export default function TeacherAvailability() {
                           <span className="w-2 h-2 bg-green-500 rounded-full ml-1"></span>
                           متوفر
                         </div>
-                        <Button 
-                          variant="ghost" 
-                          size="sm" 
+                        <Button
+                          variant="ghost"
+                          size="sm"
                           className="h-8 text-red-500 hover:text-red-700 hover:bg-red-100"
-                          onClick={() => deleteAvailabilityMutation.mutate(availability.id)}
+                          onClick={() =>
+                            deleteAvailabilityMutation.mutate(availability.id)
+                          }
                           disabled={deleteAvailabilityMutation.isPending}
                         >
                           <X className="h-4 w-4" />

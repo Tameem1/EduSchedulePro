@@ -7,11 +7,13 @@ import NotFound from "@/pages/not-found";
 import AuthPage from "@/pages/auth";
 import BookAppointment from "@/pages/student/book-appointment";
 import TeacherAvailability from "@/pages/teacher/availability";
-import TeacherQuestionnaire from "@/pages/teacher/questionnaire";
+import TeacherQuestionnaireSubmission from "@/pages/teacher/questionnaire-submission"; // <-- new import
 import AcceptAppointment from "@/pages/teacher/accept-appointment";
+import TeacherAppointments from "@/pages/teacher/appointments"; // <-- listing page
 import ManagerAppointments from "@/pages/manager/appointments";
 import ManagerResults from "@/pages/manager/results";
 import AssignTeacher from "@/pages/manager/assign-teacher";
+import StudentAppointments from "@/pages/student/appointments";
 import { ProtectedRoute } from "./lib/protected-route";
 import { Navbar } from "@/components/Navbar";
 
@@ -28,6 +30,11 @@ function Router() {
           role="student"
           component={BookAppointment}
         />
+        <ProtectedRoute
+          path="/student/appointments"
+          role="student"
+          component={StudentAppointments}
+        />
 
         {/* Teacher routes */}
         <ProtectedRoute
@@ -36,9 +43,14 @@ function Router() {
           component={TeacherAvailability}
         />
         <ProtectedRoute
-          path="/teacher/questionnaire"
+          path="/teacher/appointments"
           role="teacher"
-          component={TeacherQuestionnaire}
+          component={TeacherAppointments}
+        />
+        <ProtectedRoute
+          path="/teacher/questionnaire-submission/:appointmentId"
+          role="teacher"
+          component={TeacherQuestionnaireSubmission}
         />
         <ProtectedRoute
           path="/teacher/accept-appointment/:id"

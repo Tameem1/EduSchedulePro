@@ -48,7 +48,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       // Redirect based on user role
       switch (user.role) {
         case "teacher":
-          setLocation("/teacher/questionnaire");
+          setLocation("/teacher/appointments");
           break;
         case "student":
           setLocation("/student/book-appointment");
@@ -79,7 +79,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       // Redirect based on user role after registration
       switch (user.role) {
         case "teacher":
-          setLocation("/teacher/questionnaire");
+          setLocation("/teacher/appointments");
           break;
         case "student":
           setLocation("/student/book-appointment");

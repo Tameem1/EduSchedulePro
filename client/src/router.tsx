@@ -5,7 +5,7 @@ import BookAppointment from "./pages/student/book-appointment";
 import StudentAppointments from "./pages/student/appointments";
 import TeacherAvailability from "./pages/teacher/availability";
 import TeacherAppointments from "./pages/teacher/appointments";
-import Questionnaire from "./pages/teacher/questionnaire";
+import TeacherQuestionnaireSubmission from "./pages/teacher/questionnaire-submission";
 import ManagerAppointments from "./pages/manager/appointments";
 import AssignTeacher from "./pages/manager/assign-teacher";
 import Dashboard from "./pages/dashboard";
@@ -85,11 +85,12 @@ export const router = createBrowserRouter([
           />
         ),
       },
+      // The new route for the questionnaire submission:
       {
-        path: "teacher/questionnaire/:appointmentId",
+        path: "teacher/questionnaire-submission/:appointmentId",
         element: (
           <ProtectedRoute
-            element={<Questionnaire />}
+            element={<TeacherQuestionnaireSubmission />}
             allowedRoles={[UserRole.TEACHER]}
           />
         ),
