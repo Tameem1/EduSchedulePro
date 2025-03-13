@@ -109,7 +109,7 @@ export default function TeacherAppointments() {
   }, [connectWebSocket]);
 
   // Data fetching
-  const { data: students } = useQuery<User[]>({
+  const { data: students, isLoading: loadingStudents } = useQuery<User[]>({
     queryKey: ["/api/users/students"],
     queryFn: async () => {
       const res = await apiRequest("GET", "/api/users/students");
@@ -121,7 +121,7 @@ export default function TeacherAppointments() {
     enabled: !!user,
   });
 
-  const { data: appointments, isLoading: isLoadingAppointments } = useQuery<Appointment[]>({
+  const { data: appointments, isLoading: loadingAppointments, error: appointmentsError } = useQuery<Appointment[]>({
     queryKey: ["/api/teachers", user?.id, "appointments"],
     queryFn: async () => {
       if (!user?.id) return [];
@@ -135,6 +135,37 @@ export default function TeacherAppointments() {
       return res.json();
     },
     enabled: !!user?.id,
+  });
+
+  // Create new appointment mutation
+  const createAppointmentMutation = useMutation({
+    mutationFn: async (data: { studentId: number; startTime: string }) => {
+      const res = await apiRequest("POST", "/api/appointments", data);
+      if (!res.ok) {
+        const errJson = await res.json();
+        throw new Error(errJson.error || "Failed to create appointment");
+      }
+      return res.json();
+    },
+    onSuccess: () => {
+      toast({
+        title: "تم إنشاء الموعد",
+        description: "تم إنشاء الموعد بنجاح وإرساله للمدير للموافقة",
+      });
+      setIsDialogOpen(false);
+      setSelectedStudent("");
+      setStartTime("");
+      queryClient.invalidateQueries({
+        queryKey: ["/api/teachers", user?.id, "appointments"],
+      });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "خطأ في إنشاء الموعد",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
   });
 
   // Add mutation for accepting/rejecting appointments
@@ -201,10 +232,24 @@ export default function TeacherAppointments() {
     );
   }
 
-  if (isLoadingAppointments) {
+  if (loadingAppointments || loadingStudents) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <Loader2 className="h-8 w-8 animate-spin" />
+      </div>
+    );
+  }
+
+  if (appointmentsError) {
+    return (
+      <div className="container mx-auto p-4">
+        <Card>
+          <CardContent>
+            <p className="text-center text-muted-foreground">
+              {appointmentsError instanceof Error ? appointmentsError.message : "حدث خطأ في تحميل المواعيد"}
+            </p>
+          </CardContent>
+        </Card>
       </div>
     );
   }
