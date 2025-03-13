@@ -33,26 +33,61 @@ export default function ManagerAppointments() {
   const [isAssignDialogOpen, setIsAssignDialogOpen] = React.useState(false);
   const { user, isLoading: isAuthLoading } = useAuth();
   const socketRef = React.useRef<WebSocket | null>(null);
+  const [wsConnected, setWsConnected] = React.useState(false);
+  const reconnectTimeoutRef = React.useRef<NodeJS.Timeout>();
 
-  React.useEffect(() => {
+  const connectWebSocket = React.useCallback(() => {
+    if (socketRef.current?.readyState === WebSocket.OPEN) return;
+
     const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
     const wsUrl = `${protocol}//${window.location.host}/ws`;
-    socketRef.current = new WebSocket(wsUrl);
 
-    socketRef.current.onmessage = (event) => {
-      const data = JSON.parse(event.data);
-      if (data.type === 'appointmentUpdate' || data.type === 'availabilityUpdate') {
-        queryClient.invalidateQueries({ queryKey: ["/api/appointments"] });
-        queryClient.invalidateQueries({ queryKey: ["/api/availabilities"] });
+    console.log("Connecting to WebSocket:", wsUrl);
+    const ws = new WebSocket(wsUrl);
+
+    ws.onopen = () => {
+      console.log("WebSocket connected");
+      setWsConnected(true);
+    };
+
+    ws.onclose = () => {
+      console.log("WebSocket disconnected");
+      setWsConnected(false);
+      // Attempt to reconnect after 3 seconds
+      reconnectTimeoutRef.current = setTimeout(connectWebSocket, 3000);
+    };
+
+    ws.onerror = (error) => {
+      console.error("WebSocket error:", error);
+    };
+
+    ws.onmessage = (event) => {
+      try {
+        const data = JSON.parse(event.data);
+        if (data.type === 'appointmentUpdate' || data.type === 'availabilityUpdate') {
+          queryClient.invalidateQueries({ queryKey: ["/api/appointments"] });
+          queryClient.invalidateQueries({ queryKey: ["/api/availabilities"] });
+        }
+      } catch (error) {
+        console.error("Error handling WebSocket message:", error);
       }
     };
 
+    socketRef.current = ws;
+  }, []);
+
+  React.useEffect(() => {
+    connectWebSocket();
+
     return () => {
+      if (reconnectTimeoutRef.current) {
+        clearTimeout(reconnectTimeoutRef.current);
+      }
       if (socketRef.current) {
         socketRef.current.close();
       }
     };
-  }, []);
+  }, [connectWebSocket]);
 
   const { data: teachers, isLoading: isLoadingTeachers } = useQuery<User[]>({
     queryKey: ["/api/users/teachers"],

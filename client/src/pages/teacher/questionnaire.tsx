@@ -73,29 +73,67 @@ export default function TeacherQuestionnaire() {
   const [timeSliderValue, setTimeSliderValue] = React.useState<number>(0);
   const [isDialogOpen, setIsDialogOpen] = React.useState(false);
   const socketRef = React.useRef<WebSocket | null>(null);
+  const [wsConnected, setWsConnected] = React.useState(false);
+  const reconnectTimeoutRef = React.useRef<NodeJS.Timeout>();
 
-  // WebSocket for real-time updates
-  React.useEffect(() => {
+  const connectWebSocket = React.useCallback(() => {
+    if (socketRef.current?.readyState === WebSocket.OPEN) return;
+
     const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
     const wsUrl = `${protocol}//${window.location.host}/ws`;
-    socketRef.current = new WebSocket(wsUrl);
 
-    socketRef.current.onmessage = (event) => {
-      const data = JSON.parse(event.data);
-      if (data.type === "appointmentUpdate") {
-        // Re-fetch appointments
-        queryClient.invalidateQueries({
-          queryKey: ["/api/teachers", user?.id, "appointments"],
-        });
+    console.log("Connecting to WebSocket:", wsUrl);
+    const ws = new WebSocket(wsUrl);
+
+    ws.onopen = () => {
+      console.log("WebSocket connected");
+      setWsConnected(true);
+    };
+
+    ws.onclose = () => {
+      console.log("WebSocket disconnected");
+      setWsConnected(false);
+      // Attempt to reconnect after 3 seconds
+      reconnectTimeoutRef.current = setTimeout(connectWebSocket, 3000);
+    };
+
+    ws.onerror = (error) => {
+      console.error("WebSocket error:", error);
+    };
+
+    ws.onmessage = (event) => {
+      try {
+        const data = JSON.parse(event.data);
+        if (data.type === 'appointmentUpdate') {
+          queryClient.invalidateQueries({
+            queryKey: ["/api/teachers", user?.id, "appointments"],
+          });
+
+          // Update current appointment if it's the one that changed
+          if (currentAppointment && data.data.appointment.id === currentAppointment.id) {
+            setCurrentAppointment(data.data.appointment);
+          }
+        }
+      } catch (error) {
+        console.error("Error handling WebSocket message:", error);
       }
     };
 
+    socketRef.current = ws;
+  }, [user?.id, currentAppointment]);
+
+  React.useEffect(() => {
+    connectWebSocket();
+
     return () => {
+      if (reconnectTimeoutRef.current) {
+        clearTimeout(reconnectTimeoutRef.current);
+      }
       if (socketRef.current) {
         socketRef.current.close();
       }
     };
-  }, [user?.id]);
+  }, [connectWebSocket]);
 
   // Fetch all students
   const { data: students } = useQuery<User[]>({

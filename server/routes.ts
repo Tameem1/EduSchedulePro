@@ -7,37 +7,58 @@ import { insertAppointmentSchema, insertAvailabilitySchema, insertQuestionnaireS
 import { db } from "./db";
 import { eq } from 'drizzle-orm';
 import { users, availabilities } from "@shared/schema";
-import { sendTelegramNotification, notifyTeacherAboutAppointment } from "./telegram"; // Import the Telegram notification functions
+import { sendTelegramNotification, notifyTeacherAboutAppointment } from "./telegram";
 import { startOfDay, endOfDay } from "date-fns";
+import { addHours } from "date-fns";
 
 // Keep track of all connected clients
 const clients = new Set<WebSocket>();
 
 export async function registerRoutes(app: Express): Promise<Server> {
-  setupAuth(app);
-
   const httpServer = createServer(app);
 
-  // Create WebSocket server
-  const wss = new WebSocketServer({ server: httpServer, path: '/ws' });
+  // Create WebSocket server before setting up auth
+  const wss = new WebSocketServer({ 
+    server: httpServer, 
+    path: '/ws',
+    verifyClient: (info, cb) => {
+      // Allow all WebSocket connections
+      console.log("New WebSocket connection attempt");
+      cb(true);
+    }
+  });
 
+  // Set up WebSocket connection handling
   wss.on('connection', (ws) => {
+    console.log("WebSocket client connected");
     clients.add(ws);
 
+    ws.on('error', (error) => {
+      console.error("WebSocket error:", error);
+    });
+
     ws.on('close', () => {
+      console.log("WebSocket client disconnected");
       clients.delete(ws);
     });
   });
 
-  // Helper function to broadcast updates
+  // Helper function to broadcast updates with error handling
   const broadcastUpdate = (type: string, data: any) => {
     const message = JSON.stringify({ type, data });
     clients.forEach(client => {
-      if (client.readyState === WebSocket.OPEN) {
-        client.send(message);
+      try {
+        if (client.readyState === WebSocket.OPEN) {
+          client.send(message);
+        }
+      } catch (error) {
+        console.error("Error broadcasting message:", error);
       }
     });
   };
+
+  // Setup auth after WebSocket server
+  setupAuth(app);
 
   // Add new endpoint to get all students
   app.get("/api/users/students", async (req, res) => {
