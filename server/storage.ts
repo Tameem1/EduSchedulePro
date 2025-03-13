@@ -1,6 +1,6 @@
 import { drizzle } from 'drizzle-orm/node-postgres';
 import { eq, and, sql, desc, gte } from "drizzle-orm";
-import type { InsertUser, Appointment, QuestionnaireResponse } from "@shared/schema";
+import type { InsertUser, Appointment, QuestionnaireResponse, AppointmentStatus } from "@shared/schema";
 import { users, appointments, availabilities, questionnaireResponses, UserRole } from "@shared/schema";
 import session from "express-session";
 import createMemoryStore from "memorystore";
@@ -99,13 +99,44 @@ export const storage = {
   },
 
   async updateAppointment(appointmentId: number, data: any) {
-    // Check if we're updating response status
-    if ('responded' in data) {
-      // If responded is false, we're accepting the appointment, so set status to ASSIGNED
-      const status = data.responded ? 'responded' : 'assigned';
-      data = { ...data, status };
+    // If updating status only, handle it directly
+    if (data.status && !data.teacherId && !data.responded) {
+      const updatedAppointment = await db
+        .update(appointments)
+        .set({ status: data.status })
+        .where(eq(appointments.id, appointmentId))
+        .returning();
+
+      return updatedAppointment[0];
     }
 
+    // Handle teacher assignment
+    if (data.teacherId) {
+      const updatedAppointment = await db
+        .update(appointments)
+        .set({
+          teacherId: data.teacherId,
+          status: data.status || AppointmentStatus.REQUESTED
+        })
+        .where(eq(appointments.id, appointmentId))
+        .returning();
+
+      return updatedAppointment[0];
+    }
+
+    // Handle response status
+    if ('responded' in data) {
+      const status = data.responded ? AppointmentStatus.RESPONDED : AppointmentStatus.ASSIGNED;
+      const updatedAppointment = await db
+        .update(appointments)
+        .set({ status })
+        .where(eq(appointments.id, appointmentId))
+        .returning();
+
+      return updatedAppointment[0];
+    }
+
+    // Default update for any other changes
     const updatedAppointment = await db
       .update(appointments)
       .set(data)

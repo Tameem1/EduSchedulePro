@@ -404,7 +404,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // New endpoint to assign teacher to appointment WITH TELEGRAM NOTIFICATION
+  // Update appointment endpoint
   app.patch("/api/appointments/:id", async (req, res) => {
     if (!req.isAuthenticated() || (req.user.role !== "manager" && req.user.role !== "teacher")) {
       return res.sendStatus(403);
@@ -414,10 +414,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const appointmentId = parseInt(req.params.id);
       const { teacherId, status } = req.body;
 
-      const appointment = await storage.updateAppointment(appointmentId, {
-        teacherId,
-        status
-      });
+      // Create update object with only defined values
+      const updateData: any = {};
+      if (status) updateData.status = status;
+      if (teacherId !== undefined && teacherId !== null) {
+        updateData.teacherId = teacherId;
+      }
+
+      const appointment = await storage.updateAppointment(appointmentId, updateData);
 
       // Immediately broadcast the update to all connected clients
       broadcastUpdate('appointmentUpdate', { 
@@ -429,7 +433,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Send Telegram notification after successful update
       let notificationSent = false;
       if (teacherId && status === AppointmentStatus.REQUESTED) {
-        notificationSent = await notifyTeacherAboutAppointment(appointmentId, teacherId);
+        try {
+          notificationSent = await notifyTeacherAboutAppointment(appointmentId, teacherId);
+        } catch (error) {
+          console.error("Failed to send Telegram notification:", error);
+          // Don't fail the request if notification fails
+        }
       }
 
       res.json({
