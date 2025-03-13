@@ -101,19 +101,19 @@ export const storage = {
   async updateAppointment(appointmentId: number, data: any) {
     try {
       console.log("Updating appointment", appointmentId, "with data:", data);
-      
+
       // Ensure status is defined if present in data
       if (data.status) {
         console.log("Status in update data:", data.status);
         console.log("Valid statuses:", Object.values(AppointmentStatus));
         console.log("Type of status:", typeof data.status);
-        
+
         // Validate that status is a valid AppointmentStatus value
         if (!Object.values(AppointmentStatus).includes(data.status)) {
           throw new Error(`appointment status '${data.status}' is not defined`);
         }
       }
-      
+
       // Handle rejection
       if (data.status === AppointmentStatus.REJECTED) {
         console.log("Explicitly handling REJECTED status:", AppointmentStatus.REJECTED);
@@ -124,7 +124,7 @@ export const storage = {
             .set({ status: 'rejected' }) // Use literal string exactly as in database enum
             .where(eq(appointments.id, appointmentId))
             .returning();
-          
+
           console.log("Appointment rejected:", updatedAppointment[0]);
           return updatedAppointment[0];
         } catch (error) {
@@ -132,20 +132,23 @@ export const storage = {
           throw error;
         }
       }
-      
+
       // Handle accepting an appointment (ASSIGNED status)
       if (data.status === AppointmentStatus.ASSIGNED) {
         console.log("Explicitly handling ASSIGNED status");
         const updatedAppointment = await db
           .update(appointments)
-          .set({ status: AppointmentStatus.ASSIGNED })
+          .set({ 
+            status: AppointmentStatus.ASSIGNED,
+            assignment: data.assignment // Add assignment when teacher accepts
+          })
           .where(eq(appointments.id, appointmentId))
           .returning();
-        
+
         console.log("Appointment assigned:", updatedAppointment[0]);
         return updatedAppointment[0];
       }
-      
+
       // If updating status only, handle it directly
       if (data.status && !data.teacherId && !data.responded) {
         console.log("Handling general status update to:", data.status);
@@ -165,7 +168,8 @@ export const storage = {
           .update(appointments)
           .set({
             teacherId: data.teacherId,
-            status: data.status || AppointmentStatus.REQUESTED
+            status: data.status || AppointmentStatus.REQUESTED,
+            assignment: data.assignment // Include assignment when assigning teacher
           })
           .where(eq(appointments.id, appointmentId))
           .returning();
@@ -178,7 +182,10 @@ export const storage = {
         const status = data.responded ? AppointmentStatus.RESPONDED : AppointmentStatus.ASSIGNED;
         const updatedAppointment = await db
           .update(appointments)
-          .set({ status })
+          .set({ 
+            status,
+            assignment: data.assignment // Allow updating assignment when responding
+          })
           .where(eq(appointments.id, appointmentId))
           .returning();
 
