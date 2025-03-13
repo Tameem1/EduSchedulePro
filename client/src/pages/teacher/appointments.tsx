@@ -5,7 +5,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2, PlusCircle } from "lucide-react";
+import { Loader2, Check, X } from "lucide-react";
 import { Link } from "wouter";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { format, parseISO } from "date-fns";
@@ -52,15 +52,64 @@ function getStatusColor(status: AppointmentStatusType) {
 export default function TeacherAppointments() {
   const { user } = useAuth();
   const { toast } = useToast();
+  const [selectedStudent, setSelectedStudent] = React.useState("");
+  const [startTime, setStartTime] = React.useState("");
+  const [isDialogOpen, setIsDialogOpen] = React.useState(false);
+  const socketRef = React.useRef<WebSocket | null>(null);
+  const [wsConnected, setWsConnected] = React.useState(false);
+  const reconnectTimeoutRef = React.useRef<NodeJS.Timeout>();
 
-  // We fetch all students to:
-  //   1) Display their real name for each appointment
-  //   2) Let teacher pick which student to create an appointment for
-  const {
-    data: students,
-    isLoading: loadingStudents,
-    isError: isErrorStudents,
-  } = useQuery<User[]>({
+  // WebSocket connection setup
+  const connectWebSocket = React.useCallback(() => {
+    if (socketRef.current?.readyState === WebSocket.OPEN) return;
+
+    const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
+    const wsUrl = `${protocol}//${window.location.host}/ws`;
+
+    console.log("Connecting to WebSocket:", wsUrl);
+    const ws = new WebSocket(wsUrl);
+
+    ws.onopen = () => {
+      console.log("WebSocket connected");
+      setWsConnected(true);
+    };
+
+    ws.onmessage = (event) => {
+      try {
+        const data = JSON.parse(event.data);
+        if (data.type === 'appointmentUpdate') {
+          queryClient.invalidateQueries({ 
+            queryKey: ["/api/teachers", user?.id, "appointments"] 
+          });
+        }
+      } catch (error) {
+        console.error("Error handling WebSocket message:", error);
+      }
+    };
+
+    ws.onclose = () => {
+      console.log("WebSocket disconnected");
+      setWsConnected(false);
+      reconnectTimeoutRef.current = setTimeout(connectWebSocket, 3000);
+    };
+
+    socketRef.current = ws;
+  }, [user?.id]);
+
+  React.useEffect(() => {
+    connectWebSocket();
+    return () => {
+      if (reconnectTimeoutRef.current) {
+        clearTimeout(reconnectTimeoutRef.current);
+      }
+      if (socketRef.current) {
+        socketRef.current.close();
+      }
+    };
+  }, [connectWebSocket]);
+
+  // Data fetching
+  const { data: students } = useQuery<User[]>({
     queryKey: ["/api/users/students"],
     queryFn: async () => {
       const res = await apiRequest("GET", "/api/users/students");
@@ -72,13 +121,7 @@ export default function TeacherAppointments() {
     enabled: !!user,
   });
 
-  // Query for the teacher’s existing appointments
-  const {
-    data: appointments,
-    isLoading: loadingAppointments,
-    isError: isErrorAppointments,
-    error: appointmentsError,
-  } = useQuery<Appointment[]>({
+  const { data: appointments, isLoading: isLoadingAppointments } = useQuery<Appointment[]>({
     queryKey: ["/api/teachers", user?.id, "appointments"],
     queryFn: async () => {
       if (!user?.id) return [];
@@ -92,42 +135,6 @@ export default function TeacherAppointments() {
       return res.json();
     },
     enabled: !!user?.id,
-  });
-
-  // Create appointment to a certain student. We'll store local form:
-  const [isDialogOpen, setIsDialogOpen] = React.useState(false);
-  const [selectedStudent, setSelectedStudent] = React.useState("");
-  const [startTime, setStartTime] = React.useState("");
-
-  // Mutation that POSTs to /api/appointments with { studentId, startTime }
-  const createAppointmentMutation = useMutation({
-    mutationFn: async (data: { studentId: number; startTime: string }) => {
-      const res = await apiRequest("POST", "/api/appointments", data);
-      if (!res.ok) {
-        const errJson = await res.json();
-        throw new Error(errJson.error || "Failed to create appointment");
-      }
-      return res.json();
-    },
-    onSuccess: () => {
-      toast({
-        title: "تم إنشاء الموعد",
-        description: "تم إنشاء الموعد بنجاح وإرساله للمدير للموافقة",
-      });
-      setIsDialogOpen(false);
-      setSelectedStudent("");
-      setStartTime("");
-      queryClient.invalidateQueries({
-        queryKey: ["/api/teachers", user?.id, "appointments"],
-      });
-    },
-    onError: (error: any) => {
-      toast({
-        title: "خطأ في إنشاء الموعد",
-        description: error.message,
-        variant: "destructive",
-      });
-    },
   });
 
   // Add mutation for accepting/rejecting appointments
@@ -144,10 +151,11 @@ export default function TeacherAppointments() {
       }
       return res.json();
     },
-    onSuccess: () => {
+    onSuccess: (_, variables) => {
+      const action = variables.status === AppointmentStatus.ASSIGNED ? "قبول" : "رفض";
       toast({
-        title: "تم تحديث حالة الموعد",
-        description: "تم تحديث حالة الموعد بنجاح",
+        title: `تم ${action} الموعد`,
+        description: `تم ${action} الموعد بنجاح`,
       });
       queryClient.invalidateQueries({
         queryKey: ["/api/teachers", user?.id, "appointments"],
@@ -177,7 +185,7 @@ export default function TeacherAppointments() {
     });
   }
 
-  // Helper to get student's real name for an ID
+  // Helper to get student name
   function getStudentName(id: number) {
     if (!students) return `طالب #${id}`;
     const stu = students.find((s) => s.id === id);
@@ -193,26 +201,10 @@ export default function TeacherAppointments() {
     );
   }
 
-  if (loadingStudents || loadingAppointments) {
+  if (isLoadingAppointments) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <Loader2 className="h-8 w-8 animate-spin" />
-      </div>
-    );
-  }
-
-  if (isErrorStudents) {
-    return (
-      <div className="p-4">
-        <p>فشل جلب قائمة الطلاب.</p>
-      </div>
-    );
-  }
-
-  if (isErrorAppointments) {
-    return (
-      <div className="p-4">
-        <p>حدث خطأ: {(appointmentsError as Error)?.message}</p>
       </div>
     );
   }
@@ -230,10 +222,7 @@ export default function TeacherAppointments() {
           {/* Button+Dialog to add new appointment */}
           <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
             <DialogTrigger asChild>
-              <Button>
-                <PlusCircle className="mr-2 h-4 w-4" />
-                إضافة موعد لطالب
-              </Button>
+              <Button>إضافة موعد لطالب</Button>
             </DialogTrigger>
 
             <DialogContent>
@@ -262,7 +251,6 @@ export default function TeacherAppointments() {
 
                 <div>
                   <Label>وقت الموعد</Label>
-                  {/* Just a date/time input for demonstration */}
                   <input
                     type="datetime-local"
                     className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
@@ -301,7 +289,6 @@ export default function TeacherAppointments() {
                 >
                   {/* Appointment info */}
                   <div>
-                    {/* Show local time with our GMT+3 helper */}
                     <p className="font-medium">
                       {formatGMT3Time(new Date(appointment.startTime))}
                       {"  "}
@@ -325,7 +312,7 @@ export default function TeacherAppointments() {
                     {appointment.status === AppointmentStatus.REQUESTED && (
                       <>
                         <Button
-                          variant="default"
+                          variant="outline"
                           size="sm"
                           onClick={() =>
                             updateAppointmentStatusMutation.mutate({
@@ -334,11 +321,13 @@ export default function TeacherAppointments() {
                             })
                           }
                           disabled={updateAppointmentStatusMutation.isPending}
+                          className="bg-green-50 hover:bg-green-100 text-green-700 border-green-200"
                         >
+                          <Check className="w-4 h-4 mr-1" />
                           قبول
                         </Button>
                         <Button
-                          variant="destructive"
+                          variant="outline"
                           size="sm"
                           onClick={() =>
                             updateAppointmentStatusMutation.mutate({
@@ -347,7 +336,9 @@ export default function TeacherAppointments() {
                             })
                           }
                           disabled={updateAppointmentStatusMutation.isPending}
+                          className="bg-red-50 hover:bg-red-100 text-red-700 border-red-200"
                         >
+                          <X className="w-4 h-4 mr-1" />
                           رفض
                         </Button>
                       </>
