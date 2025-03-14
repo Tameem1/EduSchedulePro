@@ -259,6 +259,12 @@ export default function TeacherQuestionnaireSubmission() {
               <span className="font-semibold">الطالب: </span>
               {studentName}
             </p>
+            {appointment.teacherAssignment && (
+              <p className="mt-2">
+                <span className="font-semibold">المهمة المطلوبة: </span>
+                {appointment.teacherAssignment}
+              </p>
+            )}
             <Badge
               className={`mt-2 text-white ${getStatusColor(appointment.status)}`}
             >
