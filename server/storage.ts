@@ -122,7 +122,7 @@ export const storage = {
             .update(appointments)
             .set({ 
               status: 'rejected',
-              teacherAssignment: data.teacherAssignment 
+              teacherAssignment: data.teacherAssignment || null
             })
             .where(eq(appointments.id, appointmentId))
             .returning();
@@ -142,7 +142,7 @@ export const storage = {
           .update(appointments)
           .set({ 
             status: AppointmentStatus.ASSIGNED,
-            teacherAssignment: data.teacherAssignment 
+            teacherAssignment: data.teacherAssignment || null
           })
           .where(eq(appointments.id, appointmentId))
           .returning();
@@ -158,7 +158,7 @@ export const storage = {
           .update(appointments)
           .set({ 
             status: data.status,
-            teacherAssignment: data.teacherAssignment 
+            teacherAssignment: data.teacherAssignment || null
           })
           .where(eq(appointments.id, appointmentId))
           .returning();
@@ -174,7 +174,7 @@ export const storage = {
           .set({
             teacherId: data.teacherId,
             status: data.status || AppointmentStatus.REQUESTED,
-            teacherAssignment: data.teacherAssignment
+            teacherAssignment: data.teacherAssignment || null
           })
           .where(eq(appointments.id, appointmentId))
           .returning();
@@ -189,7 +189,7 @@ export const storage = {
           .update(appointments)
           .set({ 
             status,
-            teacherAssignment: data.teacherAssignment 
+            teacherAssignment: data.teacherAssignment || null
           })
           .where(eq(appointments.id, appointmentId))
           .returning();
@@ -202,7 +202,7 @@ export const storage = {
         .update(appointments)
         .set({
           ...data,
-          teacherAssignment: data.teacherAssignment
+          teacherAssignment: data.teacherAssignment || null
         })
         .where(eq(appointments.id, appointmentId))
         .returning();

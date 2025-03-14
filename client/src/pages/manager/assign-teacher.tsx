@@ -1,4 +1,3 @@
-
 import * as React from "react";
 import { useParams, useLocation } from "wouter";
 import { useQuery, useMutation } from "@tanstack/react-query";
@@ -12,6 +11,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Input } from "@/components/ui/input"; // Added import statement
 import { useToast } from "@/hooks/use-toast";
 import { ArrowLeft } from "lucide-react";
 import axios from "axios";
@@ -29,6 +29,7 @@ interface AppointmentDetails {
   day: string;
   time: string;
   teacherId: number | null;
+  teacherAssignment?: string;
 }
 
 export default function AssignTeacher() {
@@ -36,6 +37,7 @@ export default function AssignTeacher() {
   const [, navigate] = useLocation();
   const { toast } = useToast();
   const [selectedTeacher, setSelectedTeacher] = React.useState<string>("");
+  const [assignment, setAssignment] = React.useState<string>("");
 
   const { data: appointment, isLoading: appointmentLoading } = useQuery({
     queryKey: ["appointment", id],
@@ -57,6 +59,7 @@ export default function AssignTeacher() {
     mutationFn: async (teacherId: string) => {
       await axios.post(`/api/appointments/${id}/assign-teacher`, {
         teacherId: parseInt(teacherId),
+        teacherAssignment: assignment,
       });
     },
     onSuccess: () => {
@@ -74,6 +77,12 @@ export default function AssignTeacher() {
       });
     },
   });
+
+  React.useEffect(() => {
+    if (appointment?.teacherAssignment) {
+      setAssignment(appointment.teacherAssignment);
+    }
+  }, [appointment]);
 
   const handleAssignTeacher = () => {
     if (!selectedTeacher) {
@@ -146,6 +155,15 @@ export default function AssignTeacher() {
                   ))}
                 </SelectContent>
               </Select>
+            </div>
+            <div>
+              <Label htmlFor="assignment">المهمة المطلوبة</Label>
+              <Input
+                id="assignment"
+                value={assignment}
+                onChange={(e) => setAssignment(e.target.value)}
+                placeholder="أدخل المهمة المطلوبة من المعلم"
+              />
             </div>
             <Button
               onClick={handleAssignTeacher}

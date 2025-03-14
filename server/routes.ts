@@ -364,10 +364,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
 
     try {
+      console.log('Fetching all appointments');
       const allAppointments = await storage.getAllAppointments();
+
+      if (!allAppointments) {
+        console.log('No appointments found');
+        return res.json([]);
+      }
+
       const now = new Date();
       const todayStart = startOfDay(now);
       const todayEnd = endOfDay(now);
+
+      console.log('Filtering appointments for today between:', {
+        todayStart: todayStart.toISOString(),
+        todayEnd: todayEnd.toISOString()
+      });
 
       // Filter appointments for today only
       const todayAppointments = allAppointments.filter(appointment => {
@@ -375,11 +387,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return appointmentDate >= todayStart && appointmentDate <= todayEnd;
       });
 
+      console.log(`Found ${todayAppointments.length} appointments for today`);
       res.json(todayAppointments);
 
     } catch (error) {
       console.error("Error fetching appointments:", error);
-      res.status(500).json({ error: "Failed to fetch appointments" });
+      const errorMessage = error instanceof Error ? error.message : "Unknown error";
+      res.status(500).json({ 
+        error: "Failed to fetch appointments",
+        details: errorMessage
+      });
     }
   });
 
