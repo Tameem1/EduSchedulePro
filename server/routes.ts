@@ -258,15 +258,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
     if (req.user.role !== "student" && req.user.role !== "teacher") {
       return res.sendStatus(403);
     }
-    
+
     try {
-      const { startTime, studentId } = req.body;
-      console.log(`Appointment requested for time: ${startTime}`);
+      const { startTime, studentId, teacherAssignment } = req.body;
+      console.log(`Appointment requested with data:`, {
+        startTime,
+        studentId,
+        teacherAssignment
+      });
 
       const parsedData = insertAppointmentSchema.parse({
         startTime,
         studentId: studentId || req.user.id, // Use provided studentId or user's id if not provided
-        status: "pending"
+        status: "pending",
+        teacherAssignment // Include teacherAssignment in parsed data
       });
 
       const appointment = await storage.createAppointment(parsedData);

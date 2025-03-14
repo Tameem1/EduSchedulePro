@@ -111,6 +111,7 @@ export const insertAvailabilitySchema = createInsertSchema(availabilities).exten
 export const insertAppointmentSchema = createInsertSchema(appointments).extend({
   // Ensure we use the exact time string provided without any transformation
   startTime: z.string().transform(str => str),
+  teacherAssignment: z.string().optional(),
 }).omit({ teacherId: true });
 export const insertQuestionnaireSchema = createInsertSchema(questionnaireResponses);
 

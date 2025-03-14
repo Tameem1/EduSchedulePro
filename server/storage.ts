@@ -74,11 +74,17 @@ export const storage = {
       throw new Error("لديك حجز موجود بالفعل في هذا الوقت");
     }
 
+    console.log("Creating appointment with data:", data);
+
     const newAppointment = await db
       .insert(appointments)
-      .values(data)
+      .values({
+        ...data,
+        teacherAssignment: data.teacherAssignment || null
+      })
       .returning();
 
+    console.log("Created appointment:", newAppointment[0]);
     return newAppointment[0];
   },
 
