@@ -14,7 +14,12 @@ import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2 } from "lucide-react";
 import { apiRequest, queryClient } from "@/lib/queryClient";
-import type { User, Availability, Appointment, AppointmentStatusType } from "@shared/schema";
+import type {
+  User,
+  Availability,
+  Appointment,
+  AppointmentStatusType,
+} from "@shared/schema";
 import { AppointmentStatus, AppointmentStatusArabic } from "@shared/schema";
 import { useAuth } from "@/hooks/use-auth";
 import { format } from "date-fns";
@@ -56,7 +61,10 @@ export default function ManagerAppointments() {
     ws.onmessage = (event) => {
       try {
         const data = JSON.parse(event.data);
-        if (data.type === 'appointmentUpdate' || data.type === 'availabilityUpdate') {
+        if (
+          data.type === "appointmentUpdate" ||
+          data.type === "availabilityUpdate"
+        ) {
           queryClient.invalidateQueries({ queryKey: ["/api/appointments"] });
           queryClient.invalidateQueries({ queryKey: ["/api/availabilities"] });
         }
@@ -113,7 +121,9 @@ export default function ManagerAppointments() {
     enabled: !!user,
   });
 
-  const { data: appointments, isLoading: isLoadingAppointments } = useQuery<Appointment[]>({
+  const { data: appointments, isLoading: isLoadingAppointments } = useQuery<
+    Appointment[]
+  >({
     queryKey: ["/api/appointments"],
     queryFn: async () => {
       const res = await apiRequest("GET", "/api/appointments");
@@ -125,7 +135,9 @@ export default function ManagerAppointments() {
     enabled: !!user,
   });
 
-  const { data: availabilities, isLoading: isLoadingAvailabilities } = useQuery<Availability[]>({
+  const { data: availabilities, isLoading: isLoadingAvailabilities } = useQuery<
+    Availability[]
+  >({
     queryKey: ["/api/availabilities"],
     queryFn: async () => {
       const res = await apiRequest("GET", "/api/availabilities");
@@ -154,7 +166,7 @@ export default function ManagerAppointments() {
           teacherId,
           status: AppointmentStatus.REQUESTED,
           teacherAssignment,
-        }
+        },
       );
       if (!res.ok) {
         throw new Error("Failed to assign teacher");
@@ -183,26 +195,37 @@ export default function ManagerAppointments() {
     },
   });
 
-  const getUserName = (userId: number | null | undefined, role: 'student' | 'teacher') => {
-    if (!userId) return role === 'teacher' ? "لم يتم التعيين" : "غير معروف";
-    const userList = role === 'student' ? students : teachers;
-    const user = userList?.find(u => u.id === userId);
+  const getUserName = (
+    userId: number | null | undefined,
+    role: "student" | "teacher",
+  ) => {
+    if (!userId) return role === "teacher" ? "لم يتم التعيين" : "غير معروف";
+    const userList = role === "student" ? students : teachers;
+    const user = userList?.find((u) => u.id === userId);
     return user?.username || `${role} ${userId}`;
   };
 
   const getStatusColor = (status: AppointmentStatusType) => {
-    return {
-      [AppointmentStatus.PENDING]: "bg-gray-500",
-      [AppointmentStatus.REQUESTED]: "bg-blue-500",
-      [AppointmentStatus.ASSIGNED]: "bg-yellow-500",
-      [AppointmentStatus.RESPONDED]: "bg-green-500",
-      [AppointmentStatus.DONE]: "bg-purple-500",
-      [AppointmentStatus.REJECTED]: "bg-red-500",
-    }[status] || "bg-gray-500";
+    return (
+      {
+        [AppointmentStatus.PENDING]: "bg-gray-500",
+        [AppointmentStatus.REQUESTED]: "bg-blue-500",
+        [AppointmentStatus.ASSIGNED]: "bg-yellow-500",
+        [AppointmentStatus.RESPONDED]: "bg-green-500",
+        [AppointmentStatus.DONE]: "bg-purple-500",
+        [AppointmentStatus.REJECTED]: "bg-red-500",
+      }[status] || "bg-gray-500"
+    );
   };
 
   // Show loading state while checking authentication and loading initial data
-  if (!user || user.role !== "manager" || isLoadingTeachers || isLoadingAppointments || isLoadingStudents) {
+  if (
+    !user ||
+    user.role !== "manager" ||
+    isLoadingTeachers ||
+    isLoadingAppointments ||
+    isLoadingStudents
+  ) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin" />
@@ -240,10 +263,16 @@ export default function ManagerAppointments() {
                   <TableCell>
                     {format(new Date(appointment.startTime), "h:mm a")}
                   </TableCell>
-                  <TableCell>{getUserName(appointment.studentId, 'student')}</TableCell>
-                  <TableCell>{getUserName(appointment.teacherId, 'teacher')}</TableCell>
                   <TableCell>
-                    <Badge className={`${getStatusColor(appointment.status)} text-white`}>
+                    {getUserName(appointment.studentId, "student")}
+                  </TableCell>
+                  <TableCell>
+                    {getUserName(appointment.teacherId, "teacher")}
+                  </TableCell>
+                  <TableCell>
+                    <Badge
+                      className={`${getStatusColor(appointment.status)} text-white`}
+                    >
                       {AppointmentStatusArabic[appointment.status]}
                     </Badge>
                   </TableCell>
@@ -296,7 +325,8 @@ export default function ManagerAppointments() {
                   <TableRow key={teacher.id}>
                     <TableCell>{teacher.username}</TableCell>
                     <TableCell>
-                      {teacherAvailabilities && teacherAvailabilities.length > 0 ? (
+                      {teacherAvailabilities &&
+                      teacherAvailabilities.length > 0 ? (
                         <div className="space-y-1">
                           {teacherAvailabilities.map((avail) => (
                             <div
@@ -322,11 +352,14 @@ export default function ManagerAppointments() {
                         <span className="font-medium">
                           {teacherAppointments?.length || 0}
                         </span>
-                        {teacherAppointments && teacherAppointments.length > 0 && (
-                          <Badge variant="outline" className="mr-2">
-                            {teacherAppointments.length > 2 ? "مرتفع" : "طبيعي"}
-                          </Badge>
-                        )}
+                        {teacherAppointments &&
+                          teacherAppointments.length > 0 && (
+                            <Badge variant="outline" className="mr-2">
+                              {teacherAppointments.length > 2
+                                ? "مرتفع"
+                                : "طبيعي"}
+                            </Badge>
+                          )}
                       </div>
                     </TableCell>
                   </TableRow>
@@ -347,9 +380,13 @@ export default function ManagerAppointments() {
               <div className="space-y-4">
                 <div className="text-sm">
                   <p>
-                    الوقت: {format(new Date(selectedAppointment.startTime), "HH:mm")}
+                    الوقت:{" "}
+                    {format(new Date(selectedAppointment.startTime), "HH:mm")}
                   </p>
-                  <p>الطالب: {getUserName(selectedAppointment.studentId, 'student')}</p>
+                  <p>
+                    الطالب:{" "}
+                    {getUserName(selectedAppointment.studentId, "student")}
+                  </p>
                 </div>
                 <div className="space-y-2">
                   {teachers?.map((teacher) => {
@@ -369,20 +406,17 @@ export default function ManagerAppointments() {
                     return (
                       <div
                         key={teacher.id}
-                        className={`p-3 border rounded-lg ${
-                          isAvailable
-                            ? "hover:bg-muted cursor-pointer"
-                            : "opacity-50"
+                        className={`p-3 border rounded-lg cursor-pointer hover:bg-muted ${
+                          isAvailable ? "border-green-500" : "border-gray-300"
                         }`}
-                        onClick={() => {
-                          if (isAvailable) {
-                            assignTeacherMutation.mutate({
-                              appointmentId: selectedAppointment.id,
-                              teacherId: teacher.id,
-                              teacherAssignment: selectedAppointment.teacherAssignment || "" // Handle undefined
-                            });
-                          }
-                        }}
+                        onClick={() =>
+                          assignTeacherMutation.mutate({
+                            appointmentId: selectedAppointment.id,
+                            teacherId: teacher.id,
+                            teacherAssignment:
+                              selectedAppointment.teacherAssignment || "",
+                          })
+                        }
                       >
                         <div className="flex items-center justify-between">
                           <span>{teacher.username}</span>
@@ -400,7 +434,7 @@ export default function ManagerAppointments() {
                   <Label htmlFor="assignment">المهمة المطلوبة</Label>
                   <Input
                     id="assignment"
-                    value={selectedAppointment.teacherAssignment || ''}
+                    value={selectedAppointment.teacherAssignment || ""}
                     onChange={(e) => {
                       setSelectedAppointment({
                         ...selectedAppointment,

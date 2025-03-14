@@ -1,7 +1,18 @@
-import { drizzle } from 'drizzle-orm/node-postgres';
+import { drizzle } from "drizzle-orm/node-postgres";
 import { eq, and, sql, desc, gte } from "drizzle-orm";
-import type { InsertUser, Appointment, QuestionnaireResponse } from "@shared/schema";
-import { users, appointments, availabilities, questionnaireResponses, UserRole, AppointmentStatus } from "@shared/schema";
+import type {
+  InsertUser,
+  Appointment,
+  QuestionnaireResponse,
+} from "@shared/schema";
+import {
+  users,
+  appointments,
+  availabilities,
+  questionnaireResponses,
+  UserRole,
+  AppointmentStatus,
+} from "@shared/schema";
 import session from "express-session";
 import createMemoryStore from "memorystore";
 import { pool, db } from "./db";
@@ -19,15 +30,15 @@ export const storage = {
   },
 
   async getUserByUsername(username: string) {
-    const [user] = await db.select().from(users).where(eq(users.username, username));
+    const [user] = await db
+      .select()
+      .from(users)
+      .where(eq(users.username, username));
     return user;
   },
 
   async createUser(user: InsertUser) {
-    const newUser = await db
-      .insert(users)
-      .values(user)
-      .returning();
+    const newUser = await db.insert(users).values(user).returning();
 
     return newUser[0];
   },
@@ -66,8 +77,8 @@ export const storage = {
       .where(
         and(
           eq(appointments.studentId, data.studentId),
-          eq(appointments.startTime, data.startTime)
-        )
+          eq(appointments.startTime, data.startTime),
+        ),
       );
 
     if (existingAppointment.length > 0) {
@@ -80,7 +91,6 @@ export const storage = {
       .insert(appointments)
       .values({
         ...data,
-        teacherAssignment: data.teacherAssignment || null
       })
       .returning();
 
@@ -104,7 +114,7 @@ export const storage = {
         teacherId: appointments.teacherId,
         startTime: appointments.startTime,
         status: appointments.status,
-        teacherAssignment: appointments.teacherAssignment
+        teacherAssignment: appointments.teacherAssignment,
       })
       .from(appointments)
       .where(eq(appointments.teacherId, teacherId))
@@ -129,13 +139,15 @@ export const storage = {
 
       // Handle rejection
       if (data.status === AppointmentStatus.REJECTED) {
-        console.log("Explicitly handling REJECTED status:", AppointmentStatus.REJECTED);
+        console.log(
+          "Explicitly handling REJECTED status:",
+          AppointmentStatus.REJECTED,
+        );
         try {
           const updatedAppointment = await db
             .update(appointments)
-            .set({ 
-              status: 'rejected',
-              teacherAssignment: data.teacherAssignment || null
+            .set({
+              status: "rejected",
             })
             .where(eq(appointments.id, appointmentId))
             .returning();
@@ -153,9 +165,8 @@ export const storage = {
         console.log("Explicitly handling ASSIGNED status");
         const updatedAppointment = await db
           .update(appointments)
-          .set({ 
+          .set({
             status: AppointmentStatus.ASSIGNED,
-            teacherAssignment: data.teacherAssignment || null
           })
           .where(eq(appointments.id, appointmentId))
           .returning();
@@ -169,9 +180,8 @@ export const storage = {
         console.log("Handling general status update to:", data.status);
         const updatedAppointment = await db
           .update(appointments)
-          .set({ 
+          .set({
             status: data.status,
-            teacherAssignment: data.teacherAssignment || null
           })
           .where(eq(appointments.id, appointmentId))
           .returning();
@@ -187,7 +197,6 @@ export const storage = {
           .set({
             teacherId: data.teacherId,
             status: data.status || AppointmentStatus.REQUESTED,
-            teacherAssignment: data.teacherAssignment || null
           })
           .where(eq(appointments.id, appointmentId))
           .returning();
@@ -196,13 +205,14 @@ export const storage = {
       }
 
       // Handle response status
-      if ('responded' in data) {
-        const status = data.responded ? AppointmentStatus.RESPONDED : AppointmentStatus.ASSIGNED;
+      if ("responded" in data) {
+        const status = data.responded
+          ? AppointmentStatus.RESPONDED
+          : AppointmentStatus.ASSIGNED;
         const updatedAppointment = await db
           .update(appointments)
-          .set({ 
+          .set({
             status,
-            teacherAssignment: data.teacherAssignment || null
           })
           .where(eq(appointments.id, appointmentId))
           .returning();
@@ -215,7 +225,6 @@ export const storage = {
         .update(appointments)
         .set({
           ...data,
-          teacherAssignment: data.teacherAssignment || null
         })
         .where(eq(appointments.id, appointmentId))
         .returning();
@@ -237,15 +246,15 @@ export const storage = {
           teacherId: appointments.teacherId,
           startTime: appointments.startTime,
           status: appointments.status,
-          teacherAssignment: appointments.teacherAssignment
+          teacherAssignment: appointments.teacherAssignment,
         })
         .from(appointments)
         .where(eq(appointments.id, appointmentId));
 
-      console.log('Retrieved appointment:', result[0]);
+      console.log("Retrieved appointment:", result[0]);
       return result[0];
     } catch (error) {
-      console.error('Error fetching appointment:', error);
+      console.error("Error fetching appointment:", error);
       throw error;
     }
   },
@@ -292,11 +301,8 @@ export const storage = {
       .from(questionnaireResponses)
       .innerJoin(
         appointments,
-        eq(questionnaireResponses.appointmentId, appointments.id)
+        eq(questionnaireResponses.appointmentId, appointments.id),
       )
-      .innerJoin(
-        users,
-        eq(appointments.studentId, users.id)
-      );
-  }
+      .innerJoin(users, eq(appointments.studentId, users.id));
+  },
 };

@@ -60,7 +60,7 @@ const TeacherQuestionnaireSubmission = () => {
     data: appointment,
     isLoading: loadingAppointment,
     isError: appointmentError,
-    error: appointmentErrorDetails
+    error: appointmentErrorDetails,
   } = useQuery<Appointment>({
     queryKey: ["/api/appointments", appointmentId],
     queryFn: async () => {
@@ -78,15 +78,15 @@ const TeacherQuestionnaireSubmission = () => {
   });
 
   // Fetch student details
-  const {
-    data: student,
-    isLoading: loadingStudent,
-  } = useQuery<User>({
+  const { data: student, isLoading: loadingStudent } = useQuery<User>({
     queryKey: ["/api/users", appointment?.studentId],
     queryFn: async () => {
       if (!appointment?.studentId) throw new Error("No student ID available");
 
-      const res = await apiRequest("GET", `/api/users/${appointment.studentId}`);
+      const res = await apiRequest(
+        "GET",
+        `/api/users/${appointment.studentId}`,
+      );
       if (!res.ok) {
         throw new Error("Failed to fetch student details");
       }
@@ -98,7 +98,7 @@ const TeacherQuestionnaireSubmission = () => {
   // Add debug logging for appointment data
   React.useEffect(() => {
     if (appointment) {
-      console.log('Appointment data in questionnaire:', appointment);
+      console.log("Appointment data in questionnaire:", appointment);
     }
   }, [appointment]);
 
@@ -129,7 +129,9 @@ const TeacherQuestionnaireSubmission = () => {
         title: "تم إرسال التقييم",
         description: "تم حفظ إجاباتك بنجاح",
       });
-      queryClient.invalidateQueries({ queryKey: ["/api/appointments", appointmentId] });
+      queryClient.invalidateQueries({
+        queryKey: ["/api/appointments", appointmentId],
+      });
       setLocation("/teacher/appointments");
     },
     onError: (err: any) => {
@@ -150,7 +152,7 @@ const TeacherQuestionnaireSubmission = () => {
         const res = await apiRequest(
           "PATCH",
           `/api/appointments/${appointmentId}/response`,
-          { responded: true }
+          { responded: true },
         );
         if (!res.ok) {
           const errData = await res.json();
@@ -160,7 +162,9 @@ const TeacherQuestionnaireSubmission = () => {
           title: "تم تحديث الحالة",
           description: "تم تحديث حالة الموعد إلى استجاب الطالب",
         });
-        queryClient.invalidateQueries({ queryKey: ["/api/appointments", appointmentId] });
+        queryClient.invalidateQueries({
+          queryKey: ["/api/appointments", appointmentId],
+        });
       } catch (err: any) {
         toast({
           title: "خطأ",
@@ -205,7 +209,10 @@ const TeacherQuestionnaireSubmission = () => {
               لم يتم تحديد موعد للتقييم
             </p>
             <div className="mt-4 text-center">
-              <Button variant="outline" onClick={() => setLocation("/teacher/appointments")}>
+              <Button
+                variant="outline"
+                onClick={() => setLocation("/teacher/appointments")}
+              >
                 العودة إلى المواعيد
               </Button>
             </div>
@@ -229,10 +236,14 @@ const TeacherQuestionnaireSubmission = () => {
         <Card>
           <CardContent className="pt-6">
             <p className="text-center text-muted-foreground">
-              {appointmentErrorDetails?.message || "لا يوجد موعد بهذه الهوية أو لم يتم جلبه بعد..."}
+              {appointmentErrorDetails?.message ||
+                "لا يوجد موعد بهذه الهوية أو لم يتم جلبه بعد..."}
             </p>
             <div className="mt-4 text-center">
-              <Button variant="outline" onClick={() => setLocation("/teacher/appointments")}>
+              <Button
+                variant="outline"
+                onClick={() => setLocation("/teacher/appointments")}
+              >
                 العودة إلى المواعيد
               </Button>
             </div>
@@ -247,6 +258,13 @@ const TeacherQuestionnaireSubmission = () => {
 
   return (
     <div className="container mx-auto p-4">
+      <Button
+        variant="outline"
+        className="flex items-center gap-2"
+        onClick={() => setLocation("/teacher/appointments")}
+      >
+        ← العودة إلى المواعيد
+      </Button>
       <Card>
         <CardHeader>
           <CardTitle>استبيان الموعد</CardTitle>
@@ -258,20 +276,20 @@ const TeacherQuestionnaireSubmission = () => {
           <div className="bg-muted/50 p-4 rounded-md mb-6">
             <p>
               <span className="font-semibold">الوقت: </span>
-              {formatGMT3Time(new Date(appointment.startTime))}{" "}
-              &nbsp;—&nbsp;
+              {formatGMT3Time(new Date(appointment.startTime))} &nbsp;—&nbsp;
               {format(new Date(appointment.startTime), "MMM d, yyyy")}
             </p>
             <p>
               <span className="font-semibold">الطالب: </span>
               {studentName}
             </p>
-            {appointment.teacherAssignment && (
-              <div className="mt-4 p-3 bg-primary/10 rounded-lg border border-primary/20">
-                <h3 className="font-semibold mb-2">المهمة المطلوبة:</h3>
-                <p className="text-muted-foreground">{appointment.teacherAssignment}</p>
-              </div>
-            )}
+
+            <div className="mt-4 p-3 bg-primary/10 rounded-lg border border-primary/20">
+              <h3 className="font-semibold mb-2">المهمة المطلوبة:</h3>
+              <p className="text-muted-foreground">
+                {appointment.teacherAssignment}
+              </p>
+            </div>
             <Badge
               className={`mt-4 text-white ${getStatusColor(appointment.status)}`}
             >
