@@ -143,6 +143,7 @@ export default function TeacherAppointments() {
   // Create new appointment mutation
   const createAppointmentMutation = useMutation({
     mutationFn: async (data: { studentId: number; startTime: string; teacherAssignment: string }) => {
+      console.log("Creating appointment with data:", data); // Add debug log
       const res = await apiRequest("POST", "/api/appointments", data);
       if (!res.ok) {
         const errJson = await res.json();
@@ -214,6 +215,7 @@ export default function TeacherAppointments() {
       });
       return;
     }
+    console.log("Submitting appointment with assignment:", teacherAssignment); // Add debug log
     createAppointmentMutation.mutate({
       studentId: parseInt(selectedStudent),
       startTime,

@@ -546,7 +546,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Get all questionnaire responses
   app.get("/api/questionnaire-responses", async (req, res) => {
     if (!req.isAuthenticated() || req.user.role !== "manager") {
-      return res.sendStatus(403);
+      return res.sendStatus(450);
     }
 
     try {
