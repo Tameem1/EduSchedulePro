@@ -408,12 +408,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
     try {
       const appointmentId = parseInt(req.params.id);
+      console.log("Fetching appointment details for ID:", appointmentId);
+
       const appointment = await storage.getAppointmentById(appointmentId);
 
       if (!appointment) {
+        console.log("No appointment found for ID:", appointmentId);
         return res.status(404).json({ error: "Appointment not found" });
       }
 
+      console.log("Retrieved appointment:", appointment);
       res.json(appointment);
     } catch (error) {
       console.error("Error fetching appointment:", error);
