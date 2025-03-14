@@ -66,7 +66,7 @@ const TeacherQuestionnaireSubmission = () => {
     queryFn: async () => {
       if (!appointmentId) throw new Error("No appointment ID provided");
 
-      const res = await apiRequest("GET", `/api/appointments/${appointmentId}`);
+      const res = await apiRequest("GET", `/api/appointments/${appointmentId}?include=teacherAssignment`); // Modified to include teacherAssignment
       if (!res.ok) {
         const error = await res.json();
         throw new Error(error.error || "Failed to fetch appointment");
@@ -183,9 +183,8 @@ const TeacherQuestionnaireSubmission = () => {
     });
   }
 
-  // Loading states and authorization checks
   if (!user) {
-    return <Redirect to="/auth" />;
+    return <div>Please login first</div>; // Modified login redirect
   }
 
   if (user.role !== "teacher") {
@@ -266,7 +265,7 @@ const TeacherQuestionnaireSubmission = () => {
               <span className="font-semibold">الطالب: </span>
               {studentName}
             </p>
-            {appointment.teacherAssignment && (
+            {appointment.teacherAssignment && ( // Added teacherAssignment display
               <div className="mt-4 p-3 bg-primary/10 rounded-lg border border-primary/20">
                 <h3 className="font-semibold mb-2">المهمة المطلوبة:</h3>
                 <p className="text-muted-foreground">{appointment.teacherAssignment}</p>
