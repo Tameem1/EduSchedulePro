@@ -52,7 +52,8 @@ export const appointments = pgTable("appointments", {
   studentId: integer("student_id").references(() => users.id).notNull(),
   teacherId: integer("teacher_id").references(() => users.id), 
   startTime: timestamp("start_time", { mode: 'string' }).notNull(),
-  status: appointmentStatusEnum("status").notNull().default('pending')
+  status: appointmentStatusEnum("status").notNull().default('pending'),
+  teacherAssignment: text("teacherAssignment")
 });
 
 // Questionnaire responses for appointments

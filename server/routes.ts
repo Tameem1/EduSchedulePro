@@ -258,7 +258,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     if (req.user.role !== "student" && req.user.role !== "teacher") {
       return res.sendStatus(403);
     }
-
+    
     try {
       const { startTime, studentId } = req.body;
       console.log(`Appointment requested for time: ${startTime}`);
