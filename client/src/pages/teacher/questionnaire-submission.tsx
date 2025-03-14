@@ -41,7 +41,7 @@ function getStatusColor(status: AppointmentStatusType) {
   );
 }
 
-export default function TeacherQuestionnaireSubmission() {
+const TeacherQuestionnaireSubmission = () => {
   const { user } = useAuth();
   const { toast } = useToast();
   const { appointmentId } = useParams<{ appointmentId?: string }>();
@@ -98,7 +98,7 @@ export default function TeacherQuestionnaireSubmission() {
   // Add debug logging for appointment data
   React.useEffect(() => {
     if (appointment) {
-      console.log('Loaded appointment data:', appointment);
+      console.log('Appointment data in questionnaire:', appointment);
     }
   }, [appointment]);
 
@@ -350,4 +350,6 @@ export default function TeacherQuestionnaireSubmission() {
       </Card>
     </div>
   );
-}
+};
+
+export default TeacherQuestionnaireSubmission;

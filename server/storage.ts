@@ -222,19 +222,26 @@ export const storage = {
   },
 
   async getAppointmentById(appointmentId: number) {
-    const result = await db
-      .select({
-        id: appointments.id,
-        studentId: appointments.studentId,
-        teacherId: appointments.teacherId,
-        startTime: appointments.startTime,
-        status: appointments.status,
-        teacherAssignment: appointments.teacherAssignment
-      })
-      .from(appointments)
-      .where(eq(appointments.id, appointmentId));
+    try {
+      console.log(`Fetching appointment with ID: ${appointmentId}`);
+      const result = await db
+        .select({
+          id: appointments.id,
+          studentId: appointments.studentId,
+          teacherId: appointments.teacherId,
+          startTime: appointments.startTime,
+          status: appointments.status,
+          teacherAssignment: appointments.teacherAssignment
+        })
+        .from(appointments)
+        .where(eq(appointments.id, appointmentId));
 
-    return result[0];
+      console.log('Retrieved appointment:', result[0]);
+      return result[0];
+    } catch (error) {
+      console.error('Error fetching appointment:', error);
+      throw error;
+    }
   },
 
   async getAllAppointments() {
