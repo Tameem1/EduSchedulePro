@@ -35,6 +35,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+
 
 function getStatusColor(status: AppointmentStatusType) {
   return (
@@ -54,6 +56,7 @@ export default function TeacherAppointments() {
   const { toast } = useToast();
   const [selectedStudent, setSelectedStudent] = React.useState("");
   const [startTime, setStartTime] = React.useState("");
+  const [teacherAssignment, setTeacherAssignment] = React.useState(""); 
   const [isDialogOpen, setIsDialogOpen] = React.useState(false);
   const socketRef = React.useRef<WebSocket | null>(null);
   const [wsConnected, setWsConnected] = React.useState(false);
@@ -139,7 +142,7 @@ export default function TeacherAppointments() {
 
   // Create new appointment mutation
   const createAppointmentMutation = useMutation({
-    mutationFn: async (data: { studentId: number; startTime: string }) => {
+    mutationFn: async (data: { studentId: number; startTime: string; teacherAssignment: string }) => {
       const res = await apiRequest("POST", "/api/appointments", data);
       if (!res.ok) {
         const errJson = await res.json();
@@ -155,6 +158,7 @@ export default function TeacherAppointments() {
       setIsDialogOpen(false);
       setSelectedStudent("");
       setStartTime("");
+      setTeacherAssignment(""); 
       queryClient.invalidateQueries({
         queryKey: ["/api/teachers", user?.id, "appointments"],
       });
@@ -213,6 +217,7 @@ export default function TeacherAppointments() {
     createAppointmentMutation.mutate({
       studentId: parseInt(selectedStudent),
       startTime,
+      teacherAssignment,
     });
   }
 
@@ -301,6 +306,16 @@ export default function TeacherAppointments() {
                     className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                     value={startTime}
                     onChange={(e) => setStartTime(e.target.value)}
+                  />
+                </div>
+
+                {/* Add new input field for teacherAssignment */}
+                <div>
+                  <Label>المهمة المطلوبة</Label>
+                  <Input
+                    value={teacherAssignment}
+                    onChange={(e) => setTeacherAssignment(e.target.value)}
+                    placeholder="أدخل المهمة المطلوبة من الطالب"
                   />
                 </div>
 
