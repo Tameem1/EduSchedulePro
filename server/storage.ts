@@ -92,7 +92,14 @@ export const storage = {
 
   async getAppointmentsByTeacher(teacherId: number) {
     return await db
-      .select()
+      .select({
+        id: appointments.id,
+        studentId: appointments.studentId,
+        teacherId: appointments.teacherId,
+        startTime: appointments.startTime,
+        status: appointments.status,
+        teacherAssignment: appointments.teacherAssignment
+      })
       .from(appointments)
       .where(eq(appointments.teacherId, teacherId))
       .orderBy(desc(appointments.startTime));
@@ -216,7 +223,14 @@ export const storage = {
 
   async getAppointmentById(appointmentId: number) {
     const result = await db
-      .select()
+      .select({
+        id: appointments.id,
+        studentId: appointments.studentId,
+        teacherId: appointments.teacherId,
+        startTime: appointments.startTime,
+        status: appointments.status,
+        teacherAssignment: appointments.teacherAssignment
+      })
       .from(appointments)
       .where(eq(appointments.id, appointmentId));
 

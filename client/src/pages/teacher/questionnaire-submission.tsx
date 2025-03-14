@@ -95,6 +95,13 @@ export default function TeacherQuestionnaireSubmission() {
     enabled: !!appointment?.studentId,
   });
 
+  // Add debug logging for appointment data
+  React.useEffect(() => {
+    if (appointment) {
+      console.log('Loaded appointment data:', appointment);
+    }
+  }, [appointment]);
+
   // Handle form submission
   const submitQuestionnaireMutation = useMutation({
     mutationFn: async (data: {
@@ -260,25 +267,16 @@ export default function TeacherQuestionnaireSubmission() {
               {studentName}
             </p>
             {appointment.teacherAssignment && (
-              <p className="mt-2">
-                <span className="font-semibold">المهمة المطلوبة: </span>
-                {appointment.teacherAssignment}
-              </p>
+              <div className="mt-4 p-3 bg-primary/10 rounded-lg border border-primary/20">
+                <h3 className="font-semibold mb-2">المهمة المطلوبة:</h3>
+                <p className="text-muted-foreground">{appointment.teacherAssignment}</p>
+              </div>
             )}
             <Badge
-              className={`mt-2 text-white ${getStatusColor(appointment.status)}`}
+              className={`mt-4 text-white ${getStatusColor(appointment.status)}`}
             >
               {AppointmentStatusArabic[appointment.status]}
             </Badge>
-          </div>
-
-          <div className="text-right mb-4">
-            <Button
-              variant="outline"
-              onClick={() => setLocation("/teacher/appointments")}
-            >
-              العودة إلى المواعيد
-            </Button>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
