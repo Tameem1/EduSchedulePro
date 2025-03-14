@@ -101,30 +101,32 @@ export const storage = {
   async updateAppointment(appointmentId: number, data: any) {
     try {
       console.log("Updating appointment", appointmentId, "with data:", data);
-      
+
       // Ensure status is defined if present in data
       if (data.status) {
         console.log("Status in update data:", data.status);
         console.log("Valid statuses:", Object.values(AppointmentStatus));
         console.log("Type of status:", typeof data.status);
-        
+
         // Validate that status is a valid AppointmentStatus value
         if (!Object.values(AppointmentStatus).includes(data.status)) {
           throw new Error(`appointment status '${data.status}' is not defined`);
         }
       }
-      
+
       // Handle rejection
       if (data.status === AppointmentStatus.REJECTED) {
         console.log("Explicitly handling REJECTED status:", AppointmentStatus.REJECTED);
         try {
-          // Use the EXACT string value from the database enum definition
           const updatedAppointment = await db
             .update(appointments)
-            .set({ status: 'rejected' }) // Use literal string exactly as in database enum
+            .set({ 
+              status: 'rejected',
+              teacherAssignment: data.teacherAssignment 
+            })
             .where(eq(appointments.id, appointmentId))
             .returning();
-          
+
           console.log("Appointment rejected:", updatedAppointment[0]);
           return updatedAppointment[0];
         } catch (error) {
@@ -132,26 +134,32 @@ export const storage = {
           throw error;
         }
       }
-      
+
       // Handle accepting an appointment (ASSIGNED status)
       if (data.status === AppointmentStatus.ASSIGNED) {
         console.log("Explicitly handling ASSIGNED status");
         const updatedAppointment = await db
           .update(appointments)
-          .set({ status: AppointmentStatus.ASSIGNED })
+          .set({ 
+            status: AppointmentStatus.ASSIGNED,
+            teacherAssignment: data.teacherAssignment 
+          })
           .where(eq(appointments.id, appointmentId))
           .returning();
-        
+
         console.log("Appointment assigned:", updatedAppointment[0]);
         return updatedAppointment[0];
       }
-      
+
       // If updating status only, handle it directly
       if (data.status && !data.teacherId && !data.responded) {
         console.log("Handling general status update to:", data.status);
         const updatedAppointment = await db
           .update(appointments)
-          .set({ status: data.status })
+          .set({ 
+            status: data.status,
+            teacherAssignment: data.teacherAssignment 
+          })
           .where(eq(appointments.id, appointmentId))
           .returning();
 
@@ -165,7 +173,8 @@ export const storage = {
           .update(appointments)
           .set({
             teacherId: data.teacherId,
-            status: data.status || AppointmentStatus.REQUESTED
+            status: data.status || AppointmentStatus.REQUESTED,
+            teacherAssignment: data.teacherAssignment
           })
           .where(eq(appointments.id, appointmentId))
           .returning();
@@ -178,7 +187,10 @@ export const storage = {
         const status = data.responded ? AppointmentStatus.RESPONDED : AppointmentStatus.ASSIGNED;
         const updatedAppointment = await db
           .update(appointments)
-          .set({ status })
+          .set({ 
+            status,
+            teacherAssignment: data.teacherAssignment 
+          })
           .where(eq(appointments.id, appointmentId))
           .returning();
 
@@ -188,14 +200,17 @@ export const storage = {
       // Default update for any other changes
       const updatedAppointment = await db
         .update(appointments)
-        .set(data)
+        .set({
+          ...data,
+          teacherAssignment: data.teacherAssignment
+        })
         .where(eq(appointments.id, appointmentId))
         .returning();
 
       return updatedAppointment[0];
     } catch (error) {
       console.error("Error in updateAppointment:", error);
-      throw error; // Re-throw to allow proper error handling upstream
+      throw error;
     }
   },
 

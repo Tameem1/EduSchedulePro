@@ -412,17 +412,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
     try {
       const appointmentId = parseInt(req.params.id);
-      const { teacherId, status } = req.body;
+      const { teacherId, status, teacherAssignment } = req.body;
 
       // Create update object with only defined values
       const updateData: any = {};
-      
+
       // Validate status if provided
       if (status) {
         console.log("Requested status update:", status);
         console.log("Valid statuses:", Object.values(AppointmentStatus));
         console.log("Status type:", typeof status);
-        
+
         // Special case for rejection to ensure we use the exact database enum value
         if (status === AppointmentStatus.REJECTED || status === 'rejected') {
           // Use literal string exactly as in database enum
@@ -433,7 +433,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           const matchedStatus = Object.entries(AppointmentStatus).find(
             ([key, value]) => value === status || key === status.toUpperCase()
           );
-          
+
           if (matchedStatus) {
             // Use the exact value from the enum
             updateData.status = matchedStatus[1];
@@ -447,9 +447,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
           }
         }
       }
-      
+
       if (teacherId !== undefined && teacherId !== null) {
         updateData.teacherId = teacherId;
+      }
+
+      if (teacherAssignment !== undefined) {
+        updateData.teacherAssignment = teacherAssignment;
       }
 
       const appointment = await storage.updateAppointment(appointmentId, updateData);
@@ -468,7 +472,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
           notificationSent = await notifyTeacherAboutAppointment(appointmentId, teacherId);
         } catch (error) {
           console.error("Failed to send Telegram notification:", error);
-          // Don't fail the request if notification fails
         }
       }
 

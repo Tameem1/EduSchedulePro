@@ -25,6 +25,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 export default function ManagerAppointments() {
   const { toast } = useToast();
@@ -139,9 +141,11 @@ export default function ManagerAppointments() {
     mutationFn: async ({
       appointmentId,
       teacherId,
+      teacherAssignment,
     }: {
       appointmentId: number;
       teacherId: number;
+      teacherAssignment: string;
     }) => {
       const res = await apiRequest(
         "PATCH",
@@ -149,6 +153,7 @@ export default function ManagerAppointments() {
         {
           teacherId,
           status: AppointmentStatus.REQUESTED,
+          teacherAssignment,
         }
       );
       if (!res.ok) {
@@ -374,6 +379,7 @@ export default function ManagerAppointments() {
                             assignTeacherMutation.mutate({
                               appointmentId: selectedAppointment.id,
                               teacherId: teacher.id,
+                              teacherAssignment: selectedAppointment.teacherAssignment || "" // Handle undefined
                             });
                           }
                         }}
@@ -389,6 +395,20 @@ export default function ManagerAppointments() {
                       </div>
                     );
                   })}
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="assignment">المهمة المطلوبة</Label>
+                  <Input
+                    id="assignment"
+                    value={selectedAppointment.teacherAssignment || ''}
+                    onChange={(e) => {
+                      setSelectedAppointment({
+                        ...selectedAppointment,
+                        teacherAssignment: e.target.value,
+                      });
+                    }}
+                    placeholder="أدخل المهمة المطلوبة من المعلم"
+                  />
                 </div>
               </div>
             )}
