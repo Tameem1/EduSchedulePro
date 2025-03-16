@@ -64,7 +64,7 @@ export const questionnaireResponses = pgTable("questionnaire_responses", {
   question2: text("question2").notNull(),
   question3: text("question3").notNull(),
   question4: text("question4").notNull(),
-  submittedAt: timestamp("submitted_at", { mode: 'string' }).defaultNow()
+  submittedAt: timestamp("submitted_at", { mode: 'string' }).defaultNow().notNull()
 });
 
 // Define relationships
@@ -114,9 +114,20 @@ export const insertAppointmentSchema = createInsertSchema(appointments).extend({
   startTime: z.string().transform(str => str),
   teacherAssignment: z.string().optional(),
 }).omit({ teacherId: true });
-export const insertQuestionnaireSchema = createInsertSchema(questionnaireResponses).omit({ 
-  submittedAt: true // Omit submittedAt from insert schema since it's auto-generated
-});
+export const insertQuestionnaireSchema = createInsertSchema(questionnaireResponses)
+  .extend({
+    // Convert the timestamp to GMT+3 before storing
+    submittedAt: z.string().optional().transform(str => {
+      if (!str) return undefined;
+      const date = new Date(str);
+      // Adjust to GMT+3
+      date.setHours(date.getHours() + 3);
+      return date.toISOString();
+    })
+  })
+  .omit({ 
+    id: true 
+  });
 
 // Export types
 export type InsertUser = z.infer<typeof insertUserSchema>;

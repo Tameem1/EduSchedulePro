@@ -267,9 +267,16 @@ export const storage = {
   },
 
   async createQuestionnaireResponse(data: any) {
+    const submissionTime = new Date();
+    // Adjust to GMT+3
+    submissionTime.setHours(submissionTime.getHours() + 3);
+
     const newResponse = await db
       .insert(questionnaireResponses)
-      .values(data)
+      .values({
+        ...data,
+        submittedAt: submissionTime.toISOString()
+      })
       .returning();
 
     return newResponse[0];
