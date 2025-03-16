@@ -179,7 +179,7 @@ export default function ManagerAppointments() {
 
       console.log("Sending appointment data:", appointment); // Debug log
 
-      const res = await apiRequest("POST", "/api/manager/appointments", appointment);
+      const res = await apiRequest("POST", "/api/appointments", appointment);
       if (!res.ok) {
         const errJson = await res.json();
         throw new Error(errJson.error || "Failed to create appointment");

@@ -362,6 +362,34 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Manager appointment creation endpoint
+  app.post("/api/appointments", async (req, res) => {
+    if (!req.isAuthenticated() || req.user.role !== "manager") {
+      return res.sendStatus(403);
+    }
+
+    try {
+      const { startTime, studentId, teacherAssignment } = req.body;
+      
+      const parsedData = insertAppointmentSchema.parse({
+        startTime,
+        studentId,
+        status: "pending",
+        teacherAssignment
+      });
+
+      const appointment = await storage.createAppointment(parsedData);
+      
+      // Broadcast the new appointment
+      broadcastUpdate('appointmentUpdate', { action: 'create', appointment });
+      
+      res.json(appointment);
+    } catch (error) {
+      console.error("Error creating appointment:", error);
+      res.status(400).json({ error: "Invalid appointment data" });
+    }
+  });
+
   // New endpoint to get all appointments
   app.get("/api/appointments", async (req, res) => {
     if (!req.isAuthenticated() || req.user.role !== "manager") {
