@@ -171,11 +171,15 @@ export default function ManagerAppointments() {
       // Create a new Date object from the input and convert to ISO string
       const appointmentDate = new Date(data.startTime);
 
-      const res = await apiRequest("POST", "/api/manager/appointments", {
+      const appointment = {
         studentId: parseInt(data.studentId),
         startTime: appointmentDate.toISOString(), // Convert to ISO string format
         teacherAssignment: data.teacherAssignment,
-      });
+      };
+
+      console.log("Sending appointment data:", appointment); // Debug log
+
+      const res = await apiRequest("POST", "/api/manager/appointments", appointment);
       if (!res.ok) {
         const errJson = await res.json();
         throw new Error(errJson.error || "Failed to create appointment");
@@ -299,12 +303,11 @@ export default function ManagerAppointments() {
           <Button onClick={() => setIsAddAppointmentDialogOpen(true)}>
             إضافة موعد
           </Button>
-          <Button
-            variant="secondary"
-            onClick={() => window.location.href = '/manager/questionnaire'}
-          >
-            إضافة نتيجة استبيان
-          </Button>
+          <Link href="/manager/questionnaire">
+            <Button variant="secondary">
+              إضافة نتيجة استبيان
+            </Button>
+          </Link>
           <Link href="/manager/results">
             <Button variant="outline">عرض النتائج</Button>
           </Link>
