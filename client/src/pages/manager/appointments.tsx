@@ -161,16 +161,19 @@ export default function ManagerAppointments() {
     enabled: !!user,
   });
 
-  // New mutation for creating appointments
+  // Update the createAppointmentMutation to properly format the datetime
   const createAppointmentMutation = useMutation({
     mutationFn: async (data: {
       studentId: string;
       startTime: string;
       teacherAssignment: string;
     }) => {
+      // Create a new Date object from the input and convert to ISO string
+      const appointmentDate = new Date(data.startTime);
+
       const res = await apiRequest("POST", "/api/manager/appointments", {
         studentId: parseInt(data.studentId),
-        startTime: data.startTime,
+        startTime: appointmentDate.toISOString(), // Convert to ISO string format
         teacherAssignment: data.teacherAssignment,
       });
       if (!res.ok) {
@@ -287,6 +290,7 @@ export default function ManagerAppointments() {
     );
   }
 
+  // In the JSX, update the Link to use the correct route
   return (
     <div dir="rtl" className="container mx-auto p-4">
       <div className="flex justify-between items-center mb-4">
@@ -295,9 +299,12 @@ export default function ManagerAppointments() {
           <Button onClick={() => setIsAddAppointmentDialogOpen(true)}>
             إضافة موعد
           </Button>
-          <Link href="/manager/questionnaire">
-            <Button variant="secondary">إضافة نتيجة استبيان</Button>
-          </Link>
+          <Button
+            variant="secondary"
+            onClick={() => window.location.href = '/manager/questionnaire'}
+          >
+            إضافة نتيجة استبيان
+          </Button>
           <Link href="/manager/results">
             <Button variant="outline">عرض النتائج</Button>
           </Link>
