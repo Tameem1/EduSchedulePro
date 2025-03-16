@@ -45,7 +45,8 @@ export default function ManagerAppointments() {
   const [selectedAppointment, setSelectedAppointment] =
     React.useState<Appointment | null>(null);
   const [isAssignDialogOpen, setIsAssignDialogOpen] = React.useState(false);
-  const [isAddAppointmentDialogOpen, setIsAddAppointmentDialogOpen] = React.useState(false);
+  const [isAddAppointmentDialogOpen, setIsAddAppointmentDialogOpen] =
+    React.useState(false);
   const [newAppointmentData, setNewAppointmentData] = React.useState({
     studentId: "",
     startTime: "",
@@ -169,14 +170,30 @@ export default function ManagerAppointments() {
       teacherAssignment: string;
     }) => {
       // Create a new Date object from the input and convert to ISO string
-      const appointmentDate = new Date(data.startTime);
+      // const appointmentDate = new Date(data.startTime);
 
+      // const appointment = {
+      //   studentId: parseInt(data.studentId),
+      //   startTime: appointmentDate.toISOString(), // Convert to ISO string format
+      //   teacherAssignment: data.teacherAssignment,
+      // };
+      // 1. Parse the incoming local datetime into a Date
+      const localDate = new Date(data.startTime);
+      // 2. Extract the pieces
+      const year = localDate.getFullYear();
+      const month = localDate.getMonth();
+      const day = localDate.getDate();
+      const hours = localDate.getHours();
+      const minutes = localDate.getMinutes();
+      // 3. Construct a UTC date so that we store the correct local time as UTC
+      const utcDate = new Date(Date.UTC(year, month, day, hours, minutes, 0));
+
+      // Now store that UTC date
       const appointment = {
         studentId: parseInt(data.studentId),
-        startTime: appointmentDate.toISOString(), // Convert to ISO string format
+        startTime: utcDate.toISOString(), // This ensures the chosen local time is preserved
         teacherAssignment: data.teacherAssignment,
       };
-
       console.log("Sending appointment data:", appointment); // Debug log
 
       const res = await apiRequest("POST", "/api/appointments", appointment);
@@ -304,9 +321,7 @@ export default function ManagerAppointments() {
             إضافة موعد
           </Button>
           <Link href="/manager/questionnaire">
-            <Button variant="secondary">
-              إضافة نتيجة استبيان
-            </Button>
+            <Button variant="secondary">إضافة نتيجة استبيان</Button>
           </Link>
           <Link href="/manager/results">
             <Button variant="outline">عرض النتائج</Button>
@@ -435,7 +450,9 @@ export default function ManagerAppointments() {
 
             <Button
               className="w-full"
-              onClick={() => createAppointmentMutation.mutate(newAppointmentData)}
+              onClick={() =>
+                createAppointmentMutation.mutate(newAppointmentData)
+              }
               disabled={createAppointmentMutation.isPending}
             >
               {createAppointmentMutation.isPending
