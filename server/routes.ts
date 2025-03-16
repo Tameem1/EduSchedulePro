@@ -272,12 +272,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       );
 
       if (!availability) {
-        return res
-          .status(404)
-          .json({
-            error:
-              "Availability not found or you don't have permission to delete it",
-          });
+        return res.status(404).json({
+          error:
+            "Availability not found or you don't have permission to delete it",
+        });
       }
 
       await storage.deleteAvailability(availabilityId);
@@ -312,12 +310,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
     try {
       const { startTime, studentId, teacherAssignment } = req.body;
-      
-      // Convert the time from GMT+3 to UTC if manager is creating
-      let adjustedStartTime = new Date(startTime);
-      if (req.user.role === "manager") {
-        adjustedStartTime.setHours(adjustedStartTime.getHours() - 3);
-      }
+
+      // Simply parse the incoming startTime as-is, without manager-specific offset
+      const adjustedStartTime = new Date(startTime);
 
       console.log(`Appointment requested with data:`, {
         startTime: adjustedStartTime.toISOString(),
@@ -327,9 +322,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       const parsedData = insertAppointmentSchema.parse({
         startTime: adjustedStartTime.toISOString(),
-        studentId: studentId || req.user.id, // Use provided studentId or user's id if not provided
+        // If `studentId` is provided in the request, use that; otherwise default to the user's ID (e.g. student booking themselves)
+        studentId: studentId || req.user.id,
         status: "pending",
-        teacherAssignment, // Include teacherAssignment in parsed data
+        teacherAssignment,
       });
 
       const appointment = await storage.createAppointment(parsedData);
@@ -341,7 +337,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error creating appointment:", error);
 
-      // Check if it's a duplicate appointment error
+      // Check if it's a duplicate appointment error (collision in times, etc.)
       if (
         error instanceof Error &&
         error.message === "لديك حجز موجود بالفعل في هذا الوقت"
