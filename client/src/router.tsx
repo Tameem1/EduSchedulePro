@@ -1,5 +1,6 @@
-import { createBrowserRouter, Navigate } from "react-router-dom";
+import { useAuth } from "@/hooks/use-auth";
 import { UserRole } from "@shared/schema";
+import { Route, Switch, Redirect } from "wouter";
 import AuthPage from "./pages/auth-page";
 import BookAppointment from "./pages/student/book-appointment";
 import StudentAppointments from "./pages/student/appointments";
@@ -10,11 +11,9 @@ import ManagerAppointments from "./pages/manager/appointments";
 import AssignTeacher from "./pages/manager/assign-teacher";
 import ManagerQuestionnaire from "./pages/manager/questionnaire";
 import Dashboard from "./pages/dashboard";
-import RootLayout from "./layouts/root-layout";
-import { useAuth } from "@/hooks/use-auth";
 
 function ProtectedRoute({
-  element,
+  element: Element,
   allowedRoles,
 }: {
   element: React.ReactNode;
@@ -22,108 +21,102 @@ function ProtectedRoute({
 }) {
   const { user, isLoading } = useAuth();
 
-  // Show loading state
   if (isLoading) {
     return <div>Loading...</div>;
   }
 
-  // Redirect if user is not logged in or doesn't have permission
   if (!user || !allowedRoles.includes(user.role)) {
-    return <Navigate to="/auth" replace />;
+    return <Redirect to="/auth" />;
   }
 
-  return element;
+  return Element;
 }
 
-export const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <RootLayout />,
-    children: [
-      {
-        index: true,
-        element: <Dashboard />,
-      },
-      {
-        path: "auth",
-        element: <AuthPage />,
-      },
-      // Student routes
-      {
-        path: "student/book-appointment",
-        element: (
-          <ProtectedRoute
-            element={<BookAppointment />}
-            allowedRoles={[UserRole.STUDENT]}
+export default function Router() {
+  return (
+    <Switch>
+      <Route path="/" element={<Dashboard />} />
+      <Route path="/auth" element={<AuthPage />} />
+
+      {/* Student routes */}
+      <Route 
+        path="/student/book-appointment" 
+        element={
+          <ProtectedRoute 
+            element={<BookAppointment />} 
+            allowedRoles={[UserRole.STUDENT]} 
           />
-        ),
-      },
-      {
-        path: "student/appointments",
-        element: (
-          <ProtectedRoute
-            element={<StudentAppointments />}
-            allowedRoles={[UserRole.STUDENT]}
+        } 
+      />
+      <Route 
+        path="/student/appointments" 
+        element={
+          <ProtectedRoute 
+            element={<StudentAppointments />} 
+            allowedRoles={[UserRole.STUDENT]} 
           />
-        ),
-      },
-      // Teacher routes
-      {
-        path: "teacher/availability",
-        element: (
-          <ProtectedRoute
-            element={<TeacherAvailability />}
-            allowedRoles={[UserRole.TEACHER]}
+        } 
+      />
+
+      {/* Teacher routes */}
+      <Route 
+        path="/teacher/availability" 
+        element={
+          <ProtectedRoute 
+            element={<TeacherAvailability />} 
+            allowedRoles={[UserRole.TEACHER]} 
           />
-        ),
-      },
-      {
-        path: "teacher/appointments",
-        element: (
-          <ProtectedRoute
-            element={<TeacherAppointments />}
-            allowedRoles={[UserRole.TEACHER]}
+        } 
+      />
+      <Route 
+        path="/teacher/appointments" 
+        element={
+          <ProtectedRoute 
+            element={<TeacherAppointments />} 
+            allowedRoles={[UserRole.TEACHER]} 
           />
-        ),
-      },
-      {
-        path: "teacher/questionnaire-submission/:appointmentId?",
-        element: (
-          <ProtectedRoute
-            element={<TeacherQuestionnaireSubmission />}
-            allowedRoles={[UserRole.TEACHER]}
+        } 
+      />
+      <Route 
+        path="/teacher/questionnaire-submission/:appointmentId?" 
+        element={
+          <ProtectedRoute 
+            element={<TeacherQuestionnaireSubmission />} 
+            allowedRoles={[UserRole.TEACHER]} 
           />
-        ),
-      },
-      // Manager routes
-      {
-        path: "manager/appointments",
-        element: (
-          <ProtectedRoute
-            element={<ManagerAppointments />}
-            allowedRoles={[UserRole.MANAGER]}
+        } 
+      />
+
+      {/* Manager routes */}
+      <Route 
+        path="/manager/appointments" 
+        element={
+          <ProtectedRoute 
+            element={<ManagerAppointments />} 
+            allowedRoles={[UserRole.MANAGER]} 
           />
-        ),
-      },
-      {
-        path: "manager/assign-teacher/:appointmentId",
-        element: (
-          <ProtectedRoute
-            element={<AssignTeacher />}
-            allowedRoles={[UserRole.MANAGER]}
+        } 
+      />
+      <Route 
+        path="/manager/assign-teacher/:id" 
+        element={
+          <ProtectedRoute 
+            element={<AssignTeacher />} 
+            allowedRoles={[UserRole.MANAGER]} 
           />
-        ),
-      },
-      // Add the new questionnaire route
-      {
-        path: "manager/questionnaire",
-        element: (
-          <ProtectedRoute
-            element={<ManagerQuestionnaire />}
-            allowedRoles={[UserRole.MANAGER]}
+        } 
+      />
+      <Route 
+        path="/manager/questionnaire" 
+        element={
+          <ProtectedRoute 
+            element={<ManagerQuestionnaire />} 
+            allowedRoles={[UserRole.MANAGER]} 
           />
-        ),
-      },
-    ],
-  },
-]);
+        } 
+      />
+
+      <Route>404 - Not Found</Route>
+    </Switch>
+  );
+}
