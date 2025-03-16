@@ -2,7 +2,8 @@ import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 import migrate from "./migrations/add_telegram_id";
-import renameTelegramField from "./migrations/rename_telegram_field"; // Added import for rename migration
+import renameTelegramField from "./migrations/rename_telegram_field";
+import addIndependentAssignments from "./migrations/add_independent_assignments"; // Added import
 
 const app = express();
 app.use(express.json());
@@ -45,7 +46,8 @@ import { startBot } from './telegram';
   // Run database migrations
   try {
     await migrate();
-    await renameTelegramField(); // Added execution of the rename migration
+    await renameTelegramField();
+    await addIndependentAssignments(); // Added execution of the new migration
     console.log('Database migrations completed successfully');
     startBot(); // Call startBot after successful migrations
   } catch (error) {
