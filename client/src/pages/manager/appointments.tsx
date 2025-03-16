@@ -56,7 +56,7 @@ export default function ManagerAppointments() {
   const [wsConnected, setWsConnected] = React.useState(false);
   const reconnectTimeoutRef = React.useRef<NodeJS.Timeout>();
 
-  // WebSocket connection setup (existing code remains unchanged)
+  // WebSocket connection setup
   const connectWebSocket = React.useCallback(() => {
     if (socketRef.current?.readyState === WebSocket.OPEN) return;
 
@@ -168,7 +168,7 @@ export default function ManagerAppointments() {
       startTime: string;
       teacherAssignment: string;
     }) => {
-      const res = await apiRequest("POST", "/api/appointments", {
+      const res = await apiRequest("POST", "/api/manager/appointments", {
         studentId: parseInt(data.studentId),
         startTime: data.startTime,
         teacherAssignment: data.teacherAssignment,
@@ -304,7 +304,6 @@ export default function ManagerAppointments() {
         </div>
       </div>
 
-      {/* Rest of the component remains unchanged */}
       <Card className="mb-6">
         <CardHeader>
           <CardTitle>المواعيد</CardTitle>
