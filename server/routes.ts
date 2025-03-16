@@ -658,5 +658,35 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Add new routes for independent assignments
+  app.post("/api/independent-assignments", async (req, res) => {
+    if (!req.isAuthenticated() || req.user.role !== "manager") {
+      return res.sendStatus(403);
+    }
+
+    try {
+      console.log("Creating independent assignment with data:", req.body);
+      const assignment = await storage.createIndependentAssignment(req.body);
+      res.json(assignment);
+    } catch (error) {
+      console.error("Error creating independent assignment:", error);
+      res.status(400).json({ error: "Failed to create independent assignment" });
+    }
+  });
+
+  app.get("/api/independent-assignments", async (req, res) => {
+    if (!req.isAuthenticated() || req.user.role !== "manager") {
+      return res.sendStatus(403);
+    }
+
+    try {
+      const assignments = await storage.getIndependentAssignments();
+      res.json(assignments);
+    } catch (error) {
+      console.error("Error fetching independent assignments:", error);
+      res.status(500).json({ error: "Failed to fetch independent assignments" });
+    }
+  });
+
   return httpServer;
 }
