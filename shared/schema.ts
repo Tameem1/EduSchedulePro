@@ -67,6 +67,16 @@ export const questionnaireResponses = pgTable("questionnaire_responses", {
   submittedAt: timestamp("submitted_at", { mode: 'string' }).defaultNow().notNull()
 });
 
+// New table for independent assignments
+export const independentAssignments = pgTable("independent_assignments", {
+  id: serial("id").primaryKey(),
+  studentId: integer("student_id").references(() => users.id).notNull(),
+  completionTime: timestamp("completion_time", { mode: 'string' }).notNull(),
+  assignment: text("assignment").notNull(),
+  notes: text("notes"),
+  submittedAt: timestamp("submitted_at", { mode: 'string' }).defaultNow().notNull()
+});
+
 // Define relationships
 export const usersRelations = relations(users, ({ many }) => ({
   teacherAvailabilities: many(availabilities),
@@ -102,6 +112,15 @@ export const questionnaireResponsesRelations = relations(questionnaireResponses,
   })
 }));
 
+// Add relations for independent assignments
+export const independentAssignmentsRelations = relations(independentAssignments, ({ one }) => ({
+  student: one(users, {
+    fields: [independentAssignments.studentId],
+    references: [users.id]
+  })
+}));
+
+
 // Modified Zod schemas for validation with GMT+3 handling
 export const insertUserSchema = createInsertSchema(users);
 export const insertAvailabilitySchema = createInsertSchema(availabilities).extend({
@@ -129,6 +148,16 @@ export const insertQuestionnaireSchema = createInsertSchema(questionnaireRespons
     id: true 
   });
 
+// Add new insert schema for independent assignments
+export const insertIndependentAssignmentSchema = createInsertSchema(independentAssignments)
+  .extend({
+    completionTime: z.string().transform(str => str),
+  })
+  .omit({ 
+    id: true,
+    submittedAt: true 
+  });
+
 // Export types
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type User = typeof users.$inferSelect;
@@ -138,6 +167,7 @@ export type Appointment = typeof appointments.$inferSelect & {
   teacher?: User;
 };
 export type QuestionnaireResponse = typeof questionnaireResponses.$inferSelect;
+export type IndependentAssignment = typeof independentAssignments.$inferSelect;
 
 export const UserRole = {
   STUDENT: 'student',

@@ -19,6 +19,7 @@ import type {
   Availability,
   Appointment,
   AppointmentStatusType,
+  IndependentAssignment,
 } from "@shared/schema";
 import { AppointmentStatus, AppointmentStatusArabic } from "@shared/schema";
 import { useAuth } from "@/hooks/use-auth";
@@ -56,8 +57,14 @@ export default function ManagerAppointments() {
   const socketRef = React.useRef<WebSocket | null>(null);
   const [wsConnected, setWsConnected] = React.useState(false);
   const reconnectTimeoutRef = React.useRef<NodeJS.Timeout>();
+  const [isAddIndependentAssignmentDialogOpen, setIsAddIndependentAssignmentDialogOpen] = React.useState(false);
+  const [newIndependentAssignmentData, setNewIndependentAssignmentData] = React.useState({
+    studentId: "",
+    completionTime: "",
+    assignment: "",
+    notes: "",
+  });
 
-  // WebSocket connection setup
   const connectWebSocket = React.useCallback(() => {
     if (socketRef.current?.readyState === WebSocket.OPEN) return;
 
@@ -109,7 +116,6 @@ export default function ManagerAppointments() {
     };
   }, [connectWebSocket]);
 
-  // Existing queries remain unchanged
   const { data: teachers, isLoading: isLoadingTeachers } = useQuery<User[]>({
     queryKey: ["/api/users/teachers"],
     queryFn: async () => {
@@ -162,39 +168,38 @@ export default function ManagerAppointments() {
     enabled: !!user,
   });
 
-  // Update the createAppointmentMutation to properly format the datetime
+  const { data: independentAssignments, isLoading: isLoadingIndependentAssignments } = useQuery<IndependentAssignment[]>({
+    queryKey: ["/api/independent-assignments"],
+    queryFn: async () => {
+      const res = await apiRequest("GET", "/api/independent-assignments");
+      if (!res.ok) {
+        throw new Error("Failed to fetch independent assignments");
+      }
+      return res.json();
+    },
+    enabled: !!user,
+  });
+
   const createAppointmentMutation = useMutation({
     mutationFn: async (data: {
       studentId: string;
       startTime: string;
       teacherAssignment: string;
     }) => {
-      // Create a new Date object from the input and convert to ISO string
-      // const appointmentDate = new Date(data.startTime);
-
-      // const appointment = {
-      //   studentId: parseInt(data.studentId),
-      //   startTime: appointmentDate.toISOString(), // Convert to ISO string format
-      //   teacherAssignment: data.teacherAssignment,
-      // };
-      // 1. Parse the incoming local datetime into a Date
       const localDate = new Date(data.startTime);
-      // 2. Extract the pieces
       const year = localDate.getFullYear();
       const month = localDate.getMonth();
       const day = localDate.getDate();
       const hours = localDate.getHours();
       const minutes = localDate.getMinutes();
-      // 3. Construct a UTC date so that we store the correct local time as UTC
       const utcDate = new Date(Date.UTC(year, month, day, hours, minutes, 0));
 
-      // Now store that UTC date
       const appointment = {
         studentId: parseInt(data.studentId),
-        startTime: utcDate.toISOString(), // This ensures the chosen local time is preserved
+        startTime: utcDate.toISOString(),
         teacherAssignment: data.teacherAssignment,
       };
-      console.log("Sending appointment data:", appointment); // Debug log
+      console.log("Sending appointment data:", appointment);
 
       const res = await apiRequest("POST", "/api/appointments", appointment);
       if (!res.ok) {
@@ -225,7 +230,6 @@ export default function ManagerAppointments() {
     },
   });
 
-  // Existing assignTeacherMutation remains unchanged
   const assignTeacherMutation = useMutation({
     mutationFn: async ({
       appointmentId,
@@ -272,7 +276,60 @@ export default function ManagerAppointments() {
     },
   });
 
-  // Helper functions remain unchanged
+  const createIndependentAssignmentMutation = useMutation({
+    mutationFn: async (data: {
+      studentId: string;
+      completionTime: string;
+      assignment: string;
+      notes: string;
+    }) => {
+      const localDate = new Date(data.completionTime);
+      const utcDate = new Date(Date.UTC(
+        localDate.getFullYear(),
+        localDate.getMonth(),
+        localDate.getDate(),
+        localDate.getHours(),
+        localDate.getMinutes(),
+        0
+      ));
+
+      const assignment = {
+        studentId: parseInt(data.studentId),
+        completionTime: utcDate.toISOString(),
+        assignment: data.assignment,
+        notes: data.notes,
+      };
+
+      const res = await apiRequest("POST", "/api/independent-assignments", assignment);
+      if (!res.ok) {
+        const errJson = await res.json();
+        throw new Error(errJson.error || "Failed to create independent assignment");
+      }
+      return res.json();
+    },
+    onSuccess: () => {
+      toast({
+        title: "تم إضافة المهمة المستقلة",
+        description: "تم إضافة المهمة المستقلة بنجاح",
+      });
+      setIsAddIndependentAssignmentDialogOpen(false);
+      setNewIndependentAssignmentData({
+        studentId: "",
+        completionTime: "",
+        assignment: "",
+        notes: "",
+      });
+      queryClient.invalidateQueries({ queryKey: ["/api/independent-assignments"] });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "خطأ في إضافة المهمة المستقلة",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
+
   const getUserName = (
     userId: number | null | undefined,
     role: "student" | "teacher",
@@ -296,13 +353,13 @@ export default function ManagerAppointments() {
     );
   };
 
-  // Show loading state while checking authentication and loading initial data
   if (
     !user ||
     user.role !== "manager" ||
     isLoadingTeachers ||
     isLoadingAppointments ||
-    isLoadingStudents
+    isLoadingStudents ||
+    isLoadingIndependentAssignments
   ) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -311,7 +368,6 @@ export default function ManagerAppointments() {
     );
   }
 
-  // In the JSX, update the Link to use the correct route
   return (
     <div dir="rtl" className="container mx-auto p-4">
       <div className="flex justify-between items-center mb-4">
@@ -319,6 +375,9 @@ export default function ManagerAppointments() {
         <div className="flex gap-2">
           <Button onClick={() => setIsAddAppointmentDialogOpen(true)}>
             إضافة موعد
+          </Button>
+          <Button onClick={() => setIsAddIndependentAssignmentDialogOpen(true)}>
+            إضافة مهمة مستقلة
           </Button>
           <Link href="/manager/questionnaire">
             <Button variant="secondary">إضافة نتيجة استبيان</Button>
@@ -385,7 +444,38 @@ export default function ManagerAppointments() {
         </CardContent>
       </Card>
 
-      {/* Add Appointment Dialog */}
+      <Card className="mb-6">
+        <CardHeader>
+          <CardTitle>المهام المستقلة</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>الوقت</TableHead>
+                <TableHead>الطالب</TableHead>
+                <TableHead>المهمة</TableHead>
+                <TableHead>ملاحظات</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {independentAssignments?.map((assignment) => (
+                <TableRow key={assignment.id}>
+                  <TableCell>
+                    {format(new Date(assignment.completionTime), "yyyy/MM/dd h:mm a")}
+                  </TableCell>
+                  <TableCell>
+                    {getUserName(assignment.studentId, "student")}
+                  </TableCell>
+                  <TableCell>{assignment.assignment}</TableCell>
+                  <TableCell>{assignment.notes}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </CardContent>
+      </Card>
+
       <Dialog
         open={isAddAppointmentDialogOpen}
         onOpenChange={setIsAddAppointmentDialogOpen}
@@ -463,7 +553,6 @@ export default function ManagerAppointments() {
         </DialogContent>
       </Dialog>
 
-      {/* Existing Assign Teacher Dialog */}
       <Dialog open={isAssignDialogOpen} onOpenChange={setIsAssignDialogOpen}>
         <DialogContent>
           <DialogHeader>
@@ -540,6 +629,97 @@ export default function ManagerAppointments() {
                 </div>
               </div>
             )}
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog
+        open={isAddIndependentAssignmentDialogOpen}
+        onOpenChange={setIsAddIndependentAssignmentDialogOpen}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>إضافة مهمة مستقلة</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div>
+              <Label>اختر الطالب</Label>
+              <Select
+                value={newIndependentAssignmentData.studentId}
+                onValueChange={(value) =>
+                  setNewIndependentAssignmentData((prev) => ({
+                    ...prev,
+                    studentId: value,
+                  }))
+                }
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="اختر الطالب" />
+                </SelectTrigger>
+                <SelectContent>
+                  {students?.map((student) => (
+                    <SelectItem key={student.id} value={String(student.id)}>
+                      {student.username}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div>
+              <Label>وقت الإكمال</Label>
+              <input
+                type="datetime-local"
+                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                value={newIndependentAssignmentData.completionTime}
+                onChange={(e) =>
+                  setNewIndependentAssignmentData((prev) => ({
+                    ...prev,
+                    completionTime: e.target.value,
+                  }))
+                }
+              />
+            </div>
+
+            <div>
+              <Label>المهمة المنجزة</Label>
+              <Input
+                value={newIndependentAssignmentData.assignment}
+                onChange={(e) =>
+                  setNewIndependentAssignmentData((prev) => ({
+                    ...prev,
+                    assignment: e.target.value,
+                  }))
+                }
+                placeholder="أدخل وصف المهمة المنجزة"
+              />
+            </div>
+
+            <div>
+              <Label>ملاحظات إضافية</Label>
+              <Input
+                value={newIndependentAssignmentData.notes}
+                onChange={(e) =>
+                  setNewIndependentAssignmentData((prev) => ({
+                    ...prev,
+                    notes: e.target.value,
+                  }))
+                }
+                placeholder="أدخل أي ملاحظات إضافية"
+              />
+            </div>
+
+            <Button
+              className="w-full"
+              onClick={() =>
+                createIndependentAssignmentMutation.mutate(newIndependentAssignmentData)
+              }
+              disabled={createIndependentAssignmentMutation.isPending}
+            >
+              {createIndependentAssignmentMutation.isPending
+                ? "جاري الإضافة..."
+                : "إضافة المهمة"}
+            </Button>
           </div>
         </DialogContent>
       </Dialog>

@@ -4,6 +4,7 @@ import type {
   InsertUser,
   Appointment,
   QuestionnaireResponse,
+  IndependentAssignment,
 } from "@shared/schema";
 import {
   users,
@@ -12,6 +13,7 @@ import {
   questionnaireResponses,
   UserRole,
   AppointmentStatus,
+  independentAssignments,
 } from "@shared/schema";
 import session from "express-session";
 import createMemoryStore from "memorystore";
@@ -311,5 +313,36 @@ export const storage = {
         eq(questionnaireResponses.appointmentId, appointments.id),
       )
       .innerJoin(users, eq(appointments.studentId, users.id));
+  },
+  async createIndependentAssignment(data: any) {
+    const submissionTime = new Date();
+    // Adjust to GMT+3
+    submissionTime.setHours(submissionTime.getHours() + 3);
+
+    const newAssignment = await db
+      .insert(independentAssignments)
+      .values({
+        ...data,
+        submittedAt: submissionTime.toISOString()
+      })
+      .returning();
+
+    return newAssignment[0];
+  },
+
+  async getIndependentAssignments() {
+    return await db
+      .select({
+        id: independentAssignments.id,
+        studentId: independentAssignments.studentId,
+        completionTime: independentAssignments.completionTime,
+        assignment: independentAssignments.assignment,
+        notes: independentAssignments.notes,
+        submittedAt: independentAssignments.submittedAt,
+        studentName: users.username,
+      })
+      .from(independentAssignments)
+      .innerJoin(users, eq(independentAssignments.studentId, users.id))
+      .orderBy(desc(independentAssignments.completionTime));
   },
 };
