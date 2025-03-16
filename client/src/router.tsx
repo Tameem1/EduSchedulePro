@@ -8,6 +8,7 @@ import TeacherAppointments from "./pages/teacher/appointments";
 import TeacherQuestionnaireSubmission from "./pages/teacher/questionnaire-submission";
 import ManagerAppointments from "./pages/manager/appointments";
 import AssignTeacher from "./pages/manager/assign-teacher";
+import ManagerQuestionnaire from "./pages/manager/questionnaire";
 import Dashboard from "./pages/dashboard";
 import RootLayout from "./layouts/root-layout";
 import { useAuth } from "@/hooks/use-auth";
@@ -109,6 +110,16 @@ export const router = createBrowserRouter([
         element: (
           <ProtectedRoute
             element={<AssignTeacher />}
+            allowedRoles={[UserRole.MANAGER]}
+          />
+        ),
+      },
+      // Add the new questionnaire route
+      {
+        path: "manager/questionnaire",
+        element: (
+          <ProtectedRoute
+            element={<ManagerQuestionnaire />}
             allowedRoles={[UserRole.MANAGER]}
           />
         ),

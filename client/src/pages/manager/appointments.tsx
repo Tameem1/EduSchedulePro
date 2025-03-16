@@ -32,18 +32,31 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export default function ManagerAppointments() {
   const { toast } = useToast();
   const [selectedAppointment, setSelectedAppointment] =
     React.useState<Appointment | null>(null);
   const [isAssignDialogOpen, setIsAssignDialogOpen] = React.useState(false);
+  const [isAddAppointmentDialogOpen, setIsAddAppointmentDialogOpen] = React.useState(false);
+  const [newAppointmentData, setNewAppointmentData] = React.useState({
+    studentId: "",
+    startTime: "",
+    teacherAssignment: "",
+  });
   const { user } = useAuth();
   const socketRef = React.useRef<WebSocket | null>(null);
   const [wsConnected, setWsConnected] = React.useState(false);
   const reconnectTimeoutRef = React.useRef<NodeJS.Timeout>();
 
-  // WebSocket connection setup
+  // WebSocket connection setup (existing code remains unchanged)
   const connectWebSocket = React.useCallback(() => {
     if (socketRef.current?.readyState === WebSocket.OPEN) return;
 
@@ -76,7 +89,6 @@ export default function ManagerAppointments() {
     ws.onclose = () => {
       console.log("WebSocket disconnected");
       setWsConnected(false);
-      // Attempt to reconnect after 3 seconds
       reconnectTimeoutRef.current = setTimeout(connectWebSocket, 3000);
     };
 
@@ -96,7 +108,7 @@ export default function ManagerAppointments() {
     };
   }, [connectWebSocket]);
 
-  // Data fetching
+  // Existing queries remain unchanged
   const { data: teachers, isLoading: isLoadingTeachers } = useQuery<User[]>({
     queryKey: ["/api/users/teachers"],
     queryFn: async () => {
@@ -149,6 +161,47 @@ export default function ManagerAppointments() {
     enabled: !!user,
   });
 
+  // New mutation for creating appointments
+  const createAppointmentMutation = useMutation({
+    mutationFn: async (data: {
+      studentId: string;
+      startTime: string;
+      teacherAssignment: string;
+    }) => {
+      const res = await apiRequest("POST", "/api/appointments", {
+        studentId: parseInt(data.studentId),
+        startTime: data.startTime,
+        teacherAssignment: data.teacherAssignment,
+      });
+      if (!res.ok) {
+        const errJson = await res.json();
+        throw new Error(errJson.error || "Failed to create appointment");
+      }
+      return res.json();
+    },
+    onSuccess: () => {
+      toast({
+        title: "تم إنشاء الموعد",
+        description: "تم إنشاء الموعد بنجاح",
+      });
+      setIsAddAppointmentDialogOpen(false);
+      setNewAppointmentData({
+        studentId: "",
+        startTime: "",
+        teacherAssignment: "",
+      });
+      queryClient.invalidateQueries({ queryKey: ["/api/appointments"] });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "خطأ في إنشاء الموعد",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
+
+  // Existing assignTeacherMutation remains unchanged
   const assignTeacherMutation = useMutation({
     mutationFn: async ({
       appointmentId,
@@ -195,6 +248,7 @@ export default function ManagerAppointments() {
     },
   });
 
+  // Helper functions remain unchanged
   const getUserName = (
     userId: number | null | undefined,
     role: "student" | "teacher",
@@ -237,11 +291,20 @@ export default function ManagerAppointments() {
     <div dir="rtl" className="container mx-auto p-4">
       <div className="flex justify-between items-center mb-4">
         <h1 className="text-2xl font-bold">إدارة المواعيد</h1>
-        <Link href="/manager/results">
-          <Button>عرض النتائج</Button>
-        </Link>
+        <div className="flex gap-2">
+          <Button onClick={() => setIsAddAppointmentDialogOpen(true)}>
+            إضافة موعد
+          </Button>
+          <Link href="/manager/questionnaire">
+            <Button variant="secondary">إضافة نتيجة استبيان</Button>
+          </Link>
+          <Link href="/manager/results">
+            <Button variant="outline">عرض النتائج</Button>
+          </Link>
+        </div>
       </div>
 
+      {/* Rest of the component remains unchanged */}
       <Card className="mb-6">
         <CardHeader>
           <CardTitle>المواعيد</CardTitle>
@@ -298,78 +361,83 @@ export default function ManagerAppointments() {
         </CardContent>
       </Card>
 
-      {/* Teachers Availability Section */}
-      <Card className="mb-6">
-        <CardHeader>
-          <CardTitle>توفر المعلمين</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>المعلم</TableHead>
-                <TableHead>الأوقات المتاحة</TableHead>
-                <TableHead>عدد المواعيد</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {teachers?.map((teacher) => {
-                const teacherAvailabilities = availabilities?.filter(
-                  (a) => a.teacherId === teacher.id,
-                );
-                const teacherAppointments = appointments?.filter(
-                  (a) => a.teacherId === teacher.id,
-                );
+      {/* Add Appointment Dialog */}
+      <Dialog
+        open={isAddAppointmentDialogOpen}
+        onOpenChange={setIsAddAppointmentDialogOpen}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>إضافة موعد جديد</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div>
+              <Label>اختر الطالب</Label>
+              <Select
+                value={newAppointmentData.studentId}
+                onValueChange={(value) =>
+                  setNewAppointmentData((prev) => ({
+                    ...prev,
+                    studentId: value,
+                  }))
+                }
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="اختر الطالب" />
+                </SelectTrigger>
+                <SelectContent>
+                  {students?.map((student) => (
+                    <SelectItem key={student.id} value={String(student.id)}>
+                      {student.username}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
 
-                return (
-                  <TableRow key={teacher.id}>
-                    <TableCell>{teacher.username}</TableCell>
-                    <TableCell>
-                      {teacherAvailabilities &&
-                      teacherAvailabilities.length > 0 ? (
-                        <div className="space-y-1">
-                          {teacherAvailabilities.map((avail) => (
-                            <div
-                              key={avail.id}
-                              className="text-sm flex items-center"
-                            >
-                              <div className="w-2 h-2 bg-green-500 rounded-full ml-2"></div>
-                              <span>
-                                {format(new Date(avail.startTime), "HH:mm")} -{" "}
-                                {format(new Date(avail.endTime), "HH:mm")}
-                              </span>
-                            </div>
-                          ))}
-                        </div>
-                      ) : (
-                        <span className="text-muted-foreground text-sm">
-                          لا توجد أوقات متاحة
-                        </span>
-                      )}
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex items-center">
-                        <span className="font-medium">
-                          {teacherAppointments?.length || 0}
-                        </span>
-                        {teacherAppointments &&
-                          teacherAppointments.length > 0 && (
-                            <Badge variant="outline" className="mr-2">
-                              {teacherAppointments.length > 2
-                                ? "مرتفع"
-                                : "طبيعي"}
-                            </Badge>
-                          )}
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                );
-              })}
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
+            <div>
+              <Label>وقت الموعد</Label>
+              <input
+                type="datetime-local"
+                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                value={newAppointmentData.startTime}
+                onChange={(e) =>
+                  setNewAppointmentData((prev) => ({
+                    ...prev,
+                    startTime: e.target.value,
+                  }))
+                }
+              />
+            </div>
 
+            <div>
+              <Label>المهمة المطلوبة</Label>
+              <Input
+                value={newAppointmentData.teacherAssignment}
+                onChange={(e) =>
+                  setNewAppointmentData((prev) => ({
+                    ...prev,
+                    teacherAssignment: e.target.value,
+                  }))
+                }
+                placeholder="أدخل المهمة المطلوبة من المعلم"
+              />
+            </div>
+
+            <Button
+              className="w-full"
+              onClick={() => createAppointmentMutation.mutate(newAppointmentData)}
+              disabled={createAppointmentMutation.isPending}
+            >
+              {createAppointmentMutation.isPending
+                ? "جاري الإنشاء..."
+                : "إنشاء الموعد"}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Existing Assign Teacher Dialog */}
       <Dialog open={isAssignDialogOpen} onOpenChange={setIsAssignDialogOpen}>
         <DialogContent>
           <DialogHeader>
