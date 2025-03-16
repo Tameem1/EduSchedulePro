@@ -312,14 +312,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
     try {
       const { startTime, studentId, teacherAssignment } = req.body;
+      
+      // Convert the time to GMT+3 if it's not already
+      let adjustedStartTime = new Date(startTime);
+      if (req.user.role === "manager") {
+        adjustedStartTime.setHours(adjustedStartTime.getHours() + 3);
+      }
+
       console.log(`Appointment requested with data:`, {
-        startTime,
+        startTime: adjustedStartTime.toISOString(),
         studentId,
         teacherAssignment,
       });
 
       const parsedData = insertAppointmentSchema.parse({
-        startTime,
+        startTime: adjustedStartTime.toISOString(),
         studentId: studentId || req.user.id, // Use provided studentId or user's id if not provided
         status: "pending",
         teacherAssignment, // Include teacherAssignment in parsed data
