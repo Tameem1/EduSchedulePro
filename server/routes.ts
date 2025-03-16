@@ -313,10 +313,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const { startTime, studentId, teacherAssignment } = req.body;
       
-      // Convert the time to GMT+3 if it's not already
+      // Convert the time from GMT+3 to UTC if manager is creating
       let adjustedStartTime = new Date(startTime);
       if (req.user.role === "manager") {
-        adjustedStartTime.setHours(adjustedStartTime.getHours() + 3);
+        adjustedStartTime.setHours(adjustedStartTime.getHours() - 3);
       }
 
       console.log(`Appointment requested with data:`, {
