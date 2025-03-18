@@ -48,6 +48,13 @@ export function setupAuth(app: Express) {
   app.use(passport.initialize());
   app.use(passport.session());
 
+  // Add debugging middleware
+  app.use((req, res, next) => {
+    console.log(`[Auth Debug] ${req.method} ${req.path} - isAuthenticated: ${req.isAuthenticated()}`);
+    console.log(`[Auth Debug] Session ID: ${req.sessionID}`);
+    next();
+  });
+
   passport.use(
     new LocalStrategy(async (username, password, done) => {
       try {
@@ -71,13 +78,6 @@ export function setupAuth(app: Express) {
     } catch (error) {
       done(error);
     }
-  });
-
-  // Add debugging middleware
-  app.use((req, res, next) => {
-    console.log(`[Auth Debug] ${req.method} ${req.path} - isAuthenticated: ${req.isAuthenticated()}`);
-    console.log(`[Auth Debug] Session ID: ${req.sessionID}`);
-    next();
   });
 
   app.post("/api/register", async (req, res, next) => {

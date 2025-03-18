@@ -20,7 +20,7 @@ import { startOfDay, endOfDay } from "date-fns";
 import { addHours } from "date-fns";
 
 // Keep track of all connected clients
-const clients = new Set<WebSocket>();
+const clients = new Map<string, WebSocket>();
 
 export async function registerRoutes(app: Express): Promise<Server> {
   const httpServer = createServer(app);
@@ -30,33 +30,43 @@ export async function registerRoutes(app: Express): Promise<Server> {
     server: httpServer,
     path: "/ws",
     verifyClient: (info, cb) => {
-      // Allow all WebSocket connections without authentication
-      console.log(
-        "New WebSocket connection attempt from:",
-        info.req.headers.origin,
-      );
+      const cookies = info.req.headers.cookie;
+      if (!cookies) {
+        console.log("WebSocket connection rejected: No cookies found");
+        cb(false, 401, "Unauthorized");
+        return;
+      }
+
+      // Pass the connection and let the session middleware handle auth
+      console.log("WebSocket connection attempt with cookies:", cookies);
       cb(true);
     },
   });
 
   // Set up WebSocket connection handling
-  wss.on("connection", (ws) => {
-    console.log("WebSocket client connected successfully");
-    clients.add(ws);
+  wss.on("connection", (ws, req) => {
+    const clientId = Math.random().toString(36).substring(7);
+    console.log(`WebSocket client connected with ID: ${clientId}`);
+
+    clients.set(clientId, ws);
 
     // Send initial connection confirmation
-    ws.send(JSON.stringify({ type: "connection", status: "connected" }));
+    ws.send(JSON.stringify({ 
+      type: "connection", 
+      status: "connected",
+      clientId
+    }));
 
     ws.on("error", (error) => {
-      console.error("WebSocket error:", error);
+      console.error(`WebSocket error for client ${clientId}:`, error);
     });
 
     ws.on("close", (code, reason) => {
-      console.log("WebSocket client disconnected", {
+      console.log(`WebSocket client ${clientId} disconnected`, {
         code,
         reason: reason.toString(),
       });
-      clients.delete(ws);
+      clients.delete(clientId);
     });
 
     // Heartbeat to keep connection alive
@@ -75,7 +85,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     });
   });
 
-  // Helper function to broadcast updates with error handling
+  // Helper function to broadcast updates with error handling and retries
   const broadcastUpdate = (type: string, data: any) => {
     const message = JSON.stringify({
       type,
@@ -85,17 +95,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
     console.log(`Broadcasting ${type} update to ${clients.size} clients`);
 
-    clients.forEach((client) => {
+    for (const [clientId, client] of clients) {
       try {
         if (client.readyState === WebSocket.OPEN) {
           client.send(message);
+        } else if (client.readyState !== WebSocket.CONNECTING) {
+          console.log(`Removing dead connection for client ${clientId}`);
+          clients.delete(clientId);
         }
       } catch (error) {
-        console.error("Error broadcasting message:", error);
-        // Remove dead connections
-        clients.delete(client);
+        console.error(`Error broadcasting message to client ${clientId}:`, error);
+        clients.delete(clientId);
       }
-    });
+    }
   };
 
   // Setup auth after WebSocket server

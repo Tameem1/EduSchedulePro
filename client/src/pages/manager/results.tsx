@@ -31,7 +31,7 @@ export default function ManagerResults() {
     to: new Date(),
   });
 
-  // Add state for all statistics and filtered statistics
+  // Add state for filtered statistics
   const [filteredStatistics, setFilteredStatistics] = React.useState<any[]>([]);
 
   // Fetch questionnaire responses only when authenticated
@@ -137,6 +137,66 @@ export default function ManagerResults() {
           <TabsTrigger value="statistics">الإحصائيات</TabsTrigger>
         </TabsList>
 
+        <TabsContent value="statistics">
+          <Card>
+            <CardHeader>
+              <CardTitle>إحصائيات الطلاب</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center justify-end gap-4 mb-4">
+                <DatePicker
+                  selected={dateRange}
+                  onSelect={setDateRange}
+                  locale={arSA}
+                />
+                <Button 
+                  onClick={handleFilter}
+                  disabled={!dateRange.from || !dateRange.to}
+                >
+                  تصفية
+                </Button>
+              </div>
+
+              {filteredStatistics && filteredStatistics.length > 0 ? (
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>اسم الطالب</TableHead>
+                      <TableHead>عدد الإجابات بنعم (س١)</TableHead>
+                      <TableHead>عدد الإجابات بنعم (س٢)</TableHead>
+                      <TableHead>جميع الإجابات (س٣)</TableHead>
+                      <TableHead>عدد المهام المستقلة</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {filteredStatistics.map((stat: any) => (
+                      <TableRow key={stat.studentId}>
+                        <TableCell className="font-medium">
+                          {stat.studentName}
+                        </TableCell>
+                        <TableCell>{stat.question1YesCount}</TableCell>
+                        <TableCell>{stat.question2YesCount}</TableCell>
+                        <TableCell className="max-w-md truncate">
+                          {stat.question3Responses}
+                        </TableCell>
+                        <TableCell>
+                          {stat.independentAssignments?.length || 0}
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              ) : (
+                <div className="text-center py-8">
+                  <p className="text-muted-foreground">
+                    لا توجد إحصائيات متاحة للفترة المحددة
+                  </p>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+
         <TabsContent value="today">
           <Card>
             <CardHeader>
@@ -236,66 +296,6 @@ export default function ManagerResults() {
                 <div className="text-center py-8">
                   <p className="text-muted-foreground">
                     لا توجد تقارير سابقة متاحة
-                  </p>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="statistics">
-          <Card>
-            <CardHeader>
-              <CardTitle>إحصائيات الطلاب</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="flex items-center justify-end gap-4 mb-4">
-                <DatePicker
-                  selected={dateRange}
-                  onSelect={setDateRange}
-                  locale={arSA}
-                />
-                <Button 
-                  onClick={handleFilter}
-                  disabled={!dateRange.from || !dateRange.to}
-                >
-                  تصفية
-                </Button>
-              </div>
-
-              {filteredStatistics && filteredStatistics.length > 0 ? (
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>اسم الطالب</TableHead>
-                      <TableHead>عدد الإجابات بنعم (س١)</TableHead>
-                      <TableHead>عدد الإجابات بنعم (س٢)</TableHead>
-                      <TableHead>جميع الإجابات (س٣)</TableHead>
-                      <TableHead>عدد المهام المستقلة</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {filteredStatistics.map((stat: any) => (
-                      <TableRow key={stat.studentId}>
-                        <TableCell className="font-medium">
-                          {stat.studentName}
-                        </TableCell>
-                        <TableCell>{stat.question1YesCount}</TableCell>
-                        <TableCell>{stat.question2YesCount}</TableCell>
-                        <TableCell className="max-w-md truncate">
-                          {stat.question3Responses}
-                        </TableCell>
-                        <TableCell>
-                          {stat.independentAssignments?.length || 0}
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              ) : (
-                <div className="text-center py-8">
-                  <p className="text-muted-foreground">
-                    لا توجد إحصائيات متاحة للفترة المحددة
                   </p>
                 </div>
               )}

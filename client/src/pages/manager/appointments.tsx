@@ -54,9 +54,11 @@ export default function ManagerAppointments() {
     teacherAssignment: "",
   });
   const { user } = useAuth();
-  const socketRef = React.useRef<WebSocket | null>(null);
   const [wsConnected, setWsConnected] = React.useState(false);
+  const [wsRetries, setWsRetries] = React.useState(0);
+  const maxRetries = 5;
   const reconnectTimeoutRef = React.useRef<NodeJS.Timeout>();
+  const socketRef = React.useRef<WebSocket | null>(null);
   const [
     isAddIndependentAssignmentDialogOpen,
     setIsAddIndependentAssignmentDialogOpen,
@@ -72,15 +74,26 @@ export default function ManagerAppointments() {
   const connectWebSocket = React.useCallback(() => {
     if (socketRef.current?.readyState === WebSocket.OPEN) return;
 
+    // Clear any existing reconnection timeouts
+    if (reconnectTimeoutRef.current) {
+      clearTimeout(reconnectTimeoutRef.current);
+    }
+
+    if (wsRetries >= maxRetries) {
+      console.error("Max WebSocket reconnection attempts reached");
+      return;
+    }
+
     const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
     const wsUrl = `${protocol}//${window.location.host}/ws`;
 
-    console.log("Connecting to WebSocket:", wsUrl);
+    console.log(`Attempting WebSocket connection (attempt ${wsRetries + 1}):`, wsUrl);
     const ws = new WebSocket(wsUrl);
 
     ws.onopen = () => {
-      console.log("WebSocket connected");
+      console.log("WebSocket connected successfully");
       setWsConnected(true);
+      setWsRetries(0); // Reset retry counter on successful connection
     };
 
     ws.onmessage = (event) => {
@@ -98,14 +111,26 @@ export default function ManagerAppointments() {
       }
     };
 
-    ws.onclose = () => {
-      console.log("WebSocket disconnected");
+    ws.onclose = (event) => {
+      console.log("WebSocket disconnected:", event.code, event.reason);
       setWsConnected(false);
-      reconnectTimeoutRef.current = setTimeout(connectWebSocket, 3000);
+
+      // Implement exponential backoff for reconnection
+      const timeout = Math.min(1000 * Math.pow(2, wsRetries), 30000);
+      console.log(`Scheduling reconnection in ${timeout}ms`);
+
+      reconnectTimeoutRef.current = setTimeout(() => {
+        setWsRetries(prev => prev + 1);
+        connectWebSocket();
+      }, timeout);
+    };
+
+    ws.onerror = (error) => {
+      console.error("WebSocket error:", error);
     };
 
     socketRef.current = ws;
-  }, []);
+  }, [wsRetries]);
 
   React.useEffect(() => {
     connectWebSocket();
