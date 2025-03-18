@@ -175,8 +175,7 @@ export default function ManagerResults() {
                       <TableHead>اسم الطالب</TableHead>
                       <TableHead>عدد الإجابات بنعم (س١)</TableHead>
                       <TableHead>عدد الإجابات بنعم (س٢)</TableHead>
-                      <TableHead>جميع الإجابات (س٣)</TableHead>
-                      <TableHead>عدد المهام المستقلة</TableHead>
+                      <TableHead>جميع الإجابات والمهام</TableHead>
                       <TableHead>تاريخ آخر نشاط</TableHead>
                     </TableRow>
                   </TableHeader>
@@ -189,10 +188,7 @@ export default function ManagerResults() {
                         <TableCell>{stat.question1YesCount}</TableCell>
                         <TableCell>{stat.question2YesCount}</TableCell>
                         <TableCell className="max-w-md truncate">
-                          {stat.question3Responses}
-                        </TableCell>
-                        <TableCell>
-                          {stat.independentAssignments?.length || 0}
+                          {stat.allResponses}
                         </TableCell>
                         <TableCell>
                           {stat.createdAt ? format(new Date(stat.createdAt), "yyyy/MM/dd", { locale: arSA }) : "-"}

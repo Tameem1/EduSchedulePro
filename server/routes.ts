@@ -16,7 +16,7 @@ import {
   sendTelegramNotification,
   notifyTeacherAboutAppointment,
 } from "./telegram";
-import { startOfDay, endOfDay } from "date-fns";
+import { startOfDay, endOfDay, format } from "date-fns"; // Added format import
 import { addHours } from "date-fns";
 
 // Keep track of all connected clients
@@ -702,7 +702,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Get statistics from questionnaire responses and independent assignments
   app.get("/api/statistics", async (req, res) => {
-    if (!req.isAuthenticated() || req.user.role !== "manager") {
+    if (!req.isAuthenticated() || req.user.role !== 'manager') {
       return res.sendStatus(403);
     }
 
@@ -721,7 +721,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           question1YesCount: 0,
           question2YesCount: 0,
           question3Responses: [],
-          independentAssignments: [],
+          assignmentResponses: [],
           createdAt: response.createdAt // Add createdAt from response
         };
 
@@ -731,7 +731,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         if (response.question2?.toLowerCase().includes('نعم')) {
           stats.question2YesCount++;
         }
-        stats.question3Responses.push(response.question3);
+        if (response.question3) {
+          stats.question3Responses.push(`${format(new Date(response.createdAt), 'MM/dd')} - ${response.question3}`);
+        }
 
         studentStats.set(response.studentId, stats);
       });
@@ -743,15 +745,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
           question1YesCount: 0,
           question2YesCount: 0,
           question3Responses: [],
-          independentAssignments: [],
-          createdAt: assignment.submittedAt // Use submittedAt as createdAt
+          assignmentResponses: [],
+          createdAt: assignment.submittedAt
         };
 
-        stats.independentAssignments.push({
-          assignment: assignment.assignment,
-          completionTime: assignment.completionTime,
-          submittedAt: assignment.submittedAt
-        });
+        if (assignment.assignment) {
+          stats.assignmentResponses.push(
+            `${format(new Date(assignment.submittedAt), 'MM/dd')} - مهمة: ${assignment.assignment}`
+          );
+        }
 
         studentStats.set(assignment.studentId, stats);
       });
@@ -760,7 +762,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const statistics = Array.from(studentStats.entries()).map(([studentId, stats]) => ({
         studentId,
         ...stats,
-        question3Responses: stats.question3Responses.join(' | ')
+        // Combine both question3 responses and assignments in chronological order
+        allResponses: [...stats.question3Responses, ...stats.assignmentResponses].sort((a,b)=> new Date(a.split(' - ')[0]).getTime() - new Date(b.split(' - ')[0]).getTime()).join(' | ')
       }));
 
       console.log("Sending statistics:", statistics);
