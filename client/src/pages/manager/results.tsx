@@ -17,15 +17,30 @@ import { arSA } from "date-fns/locale";
 import { apiRequest } from "@/lib/queryClient";
 import { Loader2 } from "lucide-react";
 import type { QuestionnaireResponse } from "@shared/schema";
+import { DatePicker } from "@/components/ui/date-picker";
 
 export default function ManagerResults() {
+  const [selectedDate, setSelectedDate] = React.useState<Date>(new Date());
+
   // Fetch questionnaire responses
-  const { data: responses, isLoading } = useQuery<QuestionnaireResponse[]>({
+  const { data: responses, isLoading: responsesLoading } = useQuery<QuestionnaireResponse[]>({
     queryKey: ["/api/questionnaire-responses"],
     queryFn: async () => {
       const res = await apiRequest("GET", "/api/questionnaire-responses");
       if (!res.ok) {
         throw new Error("Failed to fetch questionnaire responses");
+      }
+      return res.json();
+    },
+  });
+
+  // Fetch statistics
+  const { data: statistics, isLoading: statsLoading } = useQuery({
+    queryKey: ["/api/statistics"],
+    queryFn: async () => {
+      const res = await apiRequest("GET", "/api/statistics");
+      if (!res.ok) {
+        throw new Error("Failed to fetch statistics");
       }
       return res.json();
     },
@@ -49,7 +64,7 @@ export default function ManagerResults() {
 
   const allDates = Object.keys(groupedResponses || {});
 
-  if (isLoading) {
+  if (responsesLoading || statsLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin" />
@@ -70,6 +85,7 @@ export default function ManagerResults() {
         <TabsList className="mb-4">
           <TabsTrigger value="today">تقارير اليوم</TabsTrigger>
           <TabsTrigger value="history">السجل</TabsTrigger>
+          <TabsTrigger value="statistics">الإحصائيات</TabsTrigger>
         </TabsList>
 
         <TabsContent value="today">
@@ -171,6 +187,61 @@ export default function ManagerResults() {
                 <div className="text-center py-8">
                   <p className="text-muted-foreground">
                     لا توجد تقارير سابقة متاحة
+                  </p>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="statistics">
+          <Card>
+            <CardHeader>
+              <CardTitle>إحصائيات الطلاب</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex justify-end mb-4">
+                <DatePicker
+                  selected={selectedDate}
+                  onSelect={setSelectedDate}
+                  locale={arSA}
+                  showMonthYearPicker
+                />
+              </div>
+
+              {statistics && statistics.length > 0 ? (
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>اسم الطالب</TableHead>
+                      <TableHead>عدد الإجابات بنعم (س١)</TableHead>
+                      <TableHead>عدد الإجابات بنعم (س٢)</TableHead>
+                      <TableHead>جميع الإجابات (س٣)</TableHead>
+                      <TableHead>عدد المهام المستقلة</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {statistics.map((stat: any) => (
+                      <TableRow key={stat.studentId}>
+                        <TableCell className="font-medium">
+                          {stat.studentName}
+                        </TableCell>
+                        <TableCell>{stat.question1YesCount}</TableCell>
+                        <TableCell>{stat.question2YesCount}</TableCell>
+                        <TableCell className="max-w-md truncate">
+                          {stat.question3Responses}
+                        </TableCell>
+                        <TableCell>
+                          {stat.independentAssignments?.length || 0}
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              ) : (
+                <div className="text-center py-8">
+                  <p className="text-muted-foreground">
+                    لا توجد إحصائيات متاحة
                   </p>
                 </div>
               )}

@@ -688,5 +688,74 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Get statistics from questionnaire responses and independent assignments
+  app.get("/api/statistics", async (req, res) => {
+    if (!req.isAuthenticated() || req.user.role !== "manager") {
+      return res.sendStatus(403);
+    }
+
+    try {
+      // Get all questionnaire responses
+      const responses = await storage.getAllQuestionnaireResponses();
+
+      // Get all independent assignments
+      const assignments = await storage.getIndependentAssignments();
+
+      // Create a map to store statistics by student
+      const studentStats = new Map();
+
+      // Process questionnaire responses
+      responses.forEach(response => {
+        const stats = studentStats.get(response.studentId) || {
+          studentName: response.studentName,
+          question1YesCount: 0,
+          question2YesCount: 0,
+          question3Responses: [],
+          independentAssignments: []
+        };
+
+        if (response.question1.toLowerCase().includes('نعم')) {
+          stats.question1YesCount++;
+        }
+        if (response.question2.toLowerCase().includes('نعم')) {
+          stats.question2YesCount++;
+        }
+        stats.question3Responses.push(response.question3);
+
+        studentStats.set(response.studentId, stats);
+      });
+
+      // Process independent assignments
+      assignments.forEach(assignment => {
+        const stats = studentStats.get(assignment.studentId) || {
+          studentName: assignment.studentName,
+          question1YesCount: 0,
+          question2YesCount: 0,
+          question3Responses: [],
+          independentAssignments: []
+        };
+
+        stats.independentAssignments.push({
+          assignment: assignment.assignment,
+          completionTime: assignment.completionTime
+        });
+
+        studentStats.set(assignment.studentId, stats);
+      });
+
+      // Convert map to array and format the response
+      const statistics = Array.from(studentStats.entries()).map(([studentId, stats]) => ({
+        studentId,
+        ...stats,
+        question3Responses: stats.question3Responses.join(' | ')
+      }));
+
+      res.json(statistics);
+    } catch (error) {
+      console.error("Error fetching statistics:", error);
+      res.status(500).json({ error: "Failed to fetch statistics" });
+    }
+  });
+
   return httpServer;
 }

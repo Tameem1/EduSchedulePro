@@ -388,7 +388,7 @@ export default function TeacherAvailability() {
                           size="sm"
                           className="h-8 text-red-500 hover:text-red-700 hover:bg-red-100"
                           onClick={() =>
-                            deleteAvailabilityMutation.mutate(availability.id)
+                            deleteAvailabilityMutation.mutate(availability.id.toString())
                           }
                           disabled={deleteAvailabilityMutation.isPending}
                         >
