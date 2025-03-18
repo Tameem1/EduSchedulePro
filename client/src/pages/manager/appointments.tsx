@@ -57,13 +57,17 @@ export default function ManagerAppointments() {
   const socketRef = React.useRef<WebSocket | null>(null);
   const [wsConnected, setWsConnected] = React.useState(false);
   const reconnectTimeoutRef = React.useRef<NodeJS.Timeout>();
-  const [isAddIndependentAssignmentDialogOpen, setIsAddIndependentAssignmentDialogOpen] = React.useState(false);
-  const [newIndependentAssignmentData, setNewIndependentAssignmentData] = React.useState({
-    studentId: "",
-    completionTime: "",
-    assignment: "",
-    notes: "",
-  });
+  const [
+    isAddIndependentAssignmentDialogOpen,
+    setIsAddIndependentAssignmentDialogOpen,
+  ] = React.useState(false);
+  const [newIndependentAssignmentData, setNewIndependentAssignmentData] =
+    React.useState({
+      studentId: "",
+      completionTime: "",
+      assignment: "",
+      notes: "",
+    });
 
   const connectWebSocket = React.useCallback(() => {
     if (socketRef.current?.readyState === WebSocket.OPEN) return;
@@ -168,7 +172,10 @@ export default function ManagerAppointments() {
     enabled: !!user,
   });
 
-  const { data: independentAssignments, isLoading: isLoadingIndependentAssignments } = useQuery<IndependentAssignment[]>({
+  const {
+    data: independentAssignments,
+    isLoading: isLoadingIndependentAssignments,
+  } = useQuery<IndependentAssignment[]>({
     queryKey: ["/api/independent-assignments"],
     queryFn: async () => {
       const res = await apiRequest("GET", "/api/independent-assignments");
@@ -284,14 +291,16 @@ export default function ManagerAppointments() {
       notes: string;
     }) => {
       const localDate = new Date(data.completionTime);
-      const utcDate = new Date(Date.UTC(
-        localDate.getFullYear(),
-        localDate.getMonth(),
-        localDate.getDate(),
-        localDate.getHours(),
-        localDate.getMinutes(),
-        0
-      ));
+      const utcDate = new Date(
+        Date.UTC(
+          localDate.getFullYear(),
+          localDate.getMonth(),
+          localDate.getDate(),
+          localDate.getHours(),
+          localDate.getMinutes(),
+          0,
+        ),
+      );
 
       const assignment = {
         studentId: parseInt(data.studentId),
@@ -300,10 +309,16 @@ export default function ManagerAppointments() {
         notes: data.notes,
       };
 
-      const res = await apiRequest("POST", "/api/independent-assignments", assignment);
+      const res = await apiRequest(
+        "POST",
+        "/api/independent-assignments",
+        assignment,
+      );
       if (!res.ok) {
         const errJson = await res.json();
-        throw new Error(errJson.error || "Failed to create independent assignment");
+        throw new Error(
+          errJson.error || "Failed to create independent assignment",
+        );
       }
       return res.json();
     },
@@ -319,7 +334,9 @@ export default function ManagerAppointments() {
         assignment: "",
         notes: "",
       });
-      queryClient.invalidateQueries({ queryKey: ["/api/independent-assignments"] });
+      queryClient.invalidateQueries({
+        queryKey: ["/api/independent-assignments"],
+      });
     },
     onError: (error: any) => {
       toast({
@@ -334,9 +351,16 @@ export default function ManagerAppointments() {
     userId: number | null | undefined,
     role: "student" | "teacher",
   ) => {
-      if (!userId) return role;
-      const user = users?.find((u) => u.id === userId);
-    return user?.username || `${role} ${userId}`;
+    if (!userId) return ""; // or whatever fallback you prefer
+
+    // If we’re in a Manager component, you likely have teachers[] and students[] fetched from the backend:
+    const userList = role === "teacher" ? teachers : students;
+
+    // Find the corresponding user:
+    const foundUser = userList?.find((u) => u.id === userId);
+
+    // Return the user’s name if found; otherwise fall back on "teacher 123" or "student 123"
+    return foundUser?.username || `${role} ${userId}`;
   };
 
   const getStatusColor = (status: AppointmentStatusType) => {
@@ -378,9 +402,6 @@ export default function ManagerAppointments() {
           <Button onClick={() => setIsAddIndependentAssignmentDialogOpen(true)}>
             إضافة مهمة مستقلة
           </Button>
-          <Link href="/manager/questionnaire">
-            <Button variant="secondary">إضافة نتيجة استبيان</Button>
-          </Link>
           <Link href="/manager/results">
             <Button variant="outline">عرض النتائج</Button>
           </Link>
@@ -461,7 +482,10 @@ export default function ManagerAppointments() {
               {independentAssignments?.map((assignment) => (
                 <TableRow key={assignment.id}>
                   <TableCell>
-                    {format(new Date(assignment.completionTime), "yyyy/MM/dd h:mm a")}
+                    {format(
+                      new Date(assignment.completionTime),
+                      "yyyy/MM/dd h:mm a",
+                    )}
                   </TableCell>
                   <TableCell>
                     {getUserName(assignment.studentId, "student")}
@@ -711,7 +735,9 @@ export default function ManagerAppointments() {
             <Button
               className="w-full"
               onClick={() =>
-                createIndependentAssignmentMutation.mutate(newIndependentAssignmentData)
+                createIndependentAssignmentMutation.mutate(
+                  newIndependentAssignmentData,
+                )
               }
               disabled={createIndependentAssignmentMutation.isPending}
             >
