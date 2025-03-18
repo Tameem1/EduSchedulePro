@@ -45,12 +45,17 @@ export function DatePicker({
     <Popover>
       <PopoverTrigger asChild>
         <Button
+          type="button"
           variant={"outline"}
           className={cn(
             "w-[300px] justify-start text-right font-normal",
             !selectedRange && "text-muted-foreground",
             className
           )}
+          onClick={(e) => {
+            e.preventDefault()
+            e.stopPropagation()
+          }}
         >
           <CalendarIcon className="ml-2 h-4 w-4" />
           {selectedRange?.from ? (
