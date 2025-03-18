@@ -18,9 +18,16 @@ import { apiRequest } from "@/lib/queryClient";
 import { Loader2 } from "lucide-react";
 import type { QuestionnaireResponse } from "@shared/schema";
 import { DatePicker } from "@/components/ui/date-picker";
+import type { DateRange } from "react-day-picker";
 
 export default function ManagerResults() {
-  const [selectedDate, setSelectedDate] = React.useState<Date>(new Date());
+  const [dateRange, setDateRange] = React.useState<{
+    from: Date;
+    to: Date;
+  }>({
+    from: new Date(),
+    to: new Date(),
+  });
 
   // Fetch questionnaire responses
   const { data: responses, isLoading: responsesLoading } = useQuery<QuestionnaireResponse[]>({
@@ -34,11 +41,15 @@ export default function ManagerResults() {
     },
   });
 
-  // Fetch statistics
+  // Fetch statistics with date range
   const { data: statistics, isLoading: statsLoading } = useQuery({
-    queryKey: ["/api/statistics"],
+    queryKey: ["/api/statistics", dateRange.from.toISOString(), dateRange.to.toISOString()],
     queryFn: async () => {
-      const res = await apiRequest("GET", "/api/statistics");
+      const params = new URLSearchParams({
+        startDate: dateRange.from.toISOString(),
+        endDate: dateRange.to.toISOString(),
+      });
+      const res = await apiRequest("GET", `/api/statistics?${params}`);
       if (!res.ok) {
         throw new Error("Failed to fetch statistics");
       }
@@ -202,10 +213,9 @@ export default function ManagerResults() {
             <CardContent>
               <div className="flex justify-end mb-4">
                 <DatePicker
-                  selected={selectedDate}
-                  onSelect={setSelectedDate}
+                  selected={dateRange}
+                  onSelect={setDateRange}
                   locale={arSA}
-                  showMonthYearPicker
                 />
               </div>
 
@@ -241,7 +251,7 @@ export default function ManagerResults() {
               ) : (
                 <div className="text-center py-8">
                   <p className="text-muted-foreground">
-                    لا توجد إحصائيات متاحة
+                    لا توجد إحصائيات متاحة للفترة المحددة
                   </p>
                 </div>
               )}

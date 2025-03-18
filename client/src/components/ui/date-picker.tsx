@@ -9,11 +9,15 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
+import type { DateRange } from "react-day-picker"
 
 interface DatePickerProps {
   date?: Date
-  selected?: Date
-  onSelect?: (date: Date | undefined) => void
+  selected?: {
+    from: Date;
+    to: Date;
+  }
+  onSelect?: (range: { from: Date; to: Date } | undefined) => void
   locale?: any
   showMonthYearPicker?: boolean
   className?: string
@@ -27,14 +31,15 @@ export function DatePicker({
   showMonthYearPicker = false,
   className,
 }: DatePickerProps) {
-  const [selectedDate, setSelectedDate] = React.useState<Date | undefined>(
-    selected || date
-  )
+  const [selectedRange, setSelectedRange] = React.useState<{
+    from: Date;
+    to: Date;
+  } | undefined>(selected)
 
   // Update internal state when prop changes
   React.useEffect(() => {
-    setSelectedDate(selected || date)
-  }, [selected, date])
+    setSelectedRange(selected)
+  }, [selected])
 
   return (
     <Popover>
@@ -42,26 +47,39 @@ export function DatePicker({
         <Button
           variant={"outline"}
           className={cn(
-            "w-[240px] justify-start text-left font-normal",
-            !selectedDate && "text-muted-foreground",
+            "w-[300px] justify-start text-right font-normal",
+            !selectedRange && "text-muted-foreground",
             className
           )}
         >
-          <CalendarIcon className="mr-2 h-4 w-4" />
-          {selectedDate ? (
-            format(selectedDate, "PPP", { locale })
+          <CalendarIcon className="ml-2 h-4 w-4" />
+          {selectedRange?.from ? (
+            selectedRange.to ? (
+              <>
+                {format(selectedRange.from, "PPP", { locale })} -{" "}
+                {format(selectedRange.to, "PPP", { locale })}
+              </>
+            ) : (
+              format(selectedRange.from, "PPP", { locale })
+            )
           ) : (
-            <span>اختر تاريخاً</span>
+            <span>اختر نطاق تاريخ</span>
           )}
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-auto p-0" align="start">
         <Calendar
-          mode="single"
-          selected={selectedDate}
-          onSelect={(date) => {
-            setSelectedDate(date)
-            onSelect?.(date)
+          mode="range"
+          selected={selectedRange as DateRange | undefined}
+          onSelect={(range: DateRange | undefined) => {
+            if (range?.from && range?.to) {
+              const validRange = {
+                from: range.from,
+                to: range.to
+              };
+              setSelectedRange(validRange);
+              onSelect?.(validRange);
+            }
           }}
           initialFocus
           locale={locale}
