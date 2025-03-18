@@ -29,6 +29,9 @@ export default function ManagerResults() {
     to: new Date(),
   });
 
+  // Add a state to track when to trigger the query
+  const [shouldFetch, setShouldFetch] = React.useState(false);
+
   // Fetch questionnaire responses
   const { data: responses, isLoading: responsesLoading } = useQuery<QuestionnaireResponse[]>({
     queryKey: ["/api/questionnaire-responses"],
@@ -42,7 +45,7 @@ export default function ManagerResults() {
   });
 
   // Fetch statistics with date range
-  const { data: statistics, isLoading: statsLoading } = useQuery({
+  const { data: statistics, isLoading: statsLoading, refetch: refetchStats } = useQuery({
     queryKey: ["/api/statistics", dateRange.from.toISOString(), dateRange.to.toISOString()],
     queryFn: async () => {
       const params = new URLSearchParams({
@@ -55,6 +58,7 @@ export default function ManagerResults() {
       }
       return res.json();
     },
+    enabled: shouldFetch, // Only fetch when shouldFetch is true
   });
 
   const groupedResponses = responses?.reduce((acc: any, response: any) => {
@@ -74,6 +78,12 @@ export default function ManagerResults() {
     ) || [];
 
   const allDates = Object.keys(groupedResponses || {});
+
+  // Handle filter button click
+  const handleFilter = () => {
+    setShouldFetch(true);
+    refetchStats();
+  };
 
   if (responsesLoading || statsLoading) {
     return (
@@ -211,12 +221,18 @@ export default function ManagerResults() {
               <CardTitle>إحصائيات الطلاب</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="flex justify-end mb-4">
+              <div className="flex items-center justify-end gap-4 mb-4">
                 <DatePicker
                   selected={dateRange}
                   onSelect={setDateRange}
                   locale={arSA}
                 />
+                <Button 
+                  onClick={handleFilter}
+                  disabled={!dateRange.from || !dateRange.to}
+                >
+                  تصفية
+                </Button>
               </div>
 
               {statistics && statistics.length > 0 ? (
