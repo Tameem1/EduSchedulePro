@@ -34,19 +34,6 @@ export default function ManagerResults() {
   // Add state for filtered statistics
   const [filteredStatistics, setFilteredStatistics] = React.useState<any[]>([]);
 
-  // Fetch questionnaire responses only when authenticated
-  const { data: responses, isLoading: responsesLoading } = useQuery<QuestionnaireResponse[]>({
-    queryKey: ["/api/questionnaire-responses"],
-    queryFn: async () => {
-      const res = await apiRequest("GET", "/api/questionnaire-responses");
-      if (!res.ok) {
-        throw new Error("Failed to fetch questionnaire responses");
-      }
-      return res.json();
-    },
-    enabled: !!user?.id && user.role === 'manager',
-  });
-
   // Fetch all statistics once when authenticated
   const { data: allStatistics, isLoading: statsLoading } = useQuery({
     queryKey: ["/api/statistics"],
@@ -68,24 +55,6 @@ export default function ManagerResults() {
     }
   }, [allStatistics]);
 
-  const groupedResponses = responses?.reduce((acc: any, response: any) => {
-    const date = format(new Date(response.createdAt), "yyyy-MM-dd");
-    if (!acc[date]) {
-      acc[date] = [];
-    }
-    acc[date].push(response);
-    return acc;
-  }, {});
-
-  const todayResponses =
-    responses?.filter(
-      (r: any) =>
-        format(new Date(r.createdAt), "yyyy-MM-dd") ===
-        format(new Date(), "yyyy-MM-dd"),
-    ) || [];
-
-  const allDates = Object.keys(groupedResponses || {});
-
   // Handle filter button click - filter data client-side
   const handleFilter = () => {
     console.log("Filtering with date range:", {
@@ -99,25 +68,43 @@ export default function ManagerResults() {
     }
 
     const filtered = allStatistics.filter((stat: any) => {
-      try {
-        const statDate = parseISO(stat.createdAt);
-        const isInRange = isWithinInterval(statDate, {
-          start: startOfDay(dateRange.from),
-          end: endOfDay(dateRange.to)
-        });
+      // Track if any activities fall within the date range
+      let hasActivityInRange = false;
 
-        console.log("Checking date:", {
-          statDate: statDate.toISOString(),
-          isInRange,
-          start: startOfDay(dateRange.from).toISOString(),
-          end: endOfDay(dateRange.to).toISOString()
-        });
-
-        return isInRange;
-      } catch (error) {
-        console.error("Error filtering date:", error);
-        return false;
+      // Check questionnaire responses date if exists
+      if (stat.createdAt) {
+        try {
+          const responseDate = new Date(stat.createdAt);
+          if (isWithinInterval(responseDate, {
+            start: startOfDay(dateRange.from),
+            end: endOfDay(dateRange.to)
+          })) {
+            hasActivityInRange = true;
+          }
+        } catch (error) {
+          console.error("Error parsing response date:", error);
+        }
       }
+
+      // Check independent assignments dates if they exist
+      if (stat.independentAssignments && stat.independentAssignments.length > 0) {
+        for (const assignment of stat.independentAssignments) {
+          try {
+            const assignmentDate = new Date(assignment.submittedAt);
+            if (isWithinInterval(assignmentDate, {
+              start: startOfDay(dateRange.from),
+              end: endOfDay(dateRange.to)
+            })) {
+              hasActivityInRange = true;
+              break;
+            }
+          } catch (error) {
+            console.error("Error parsing assignment date:", error);
+          }
+        }
+      }
+
+      return hasActivityInRange;
     });
 
     console.log("Filtered statistics:", filtered);
@@ -139,7 +126,7 @@ export default function ManagerResults() {
     return null;
   }
 
-  if (responsesLoading || statsLoading) {
+  if (statsLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin" />
@@ -156,10 +143,8 @@ export default function ManagerResults() {
         </Link>
       </div>
 
-      <Tabs defaultValue="today">
+      <Tabs defaultValue="statistics">
         <TabsList className="mb-4">
-          <TabsTrigger value="today">تقارير اليوم</TabsTrigger>
-          <TabsTrigger value="history">السجل</TabsTrigger>
           <TabsTrigger value="statistics">الإحصائيات</TabsTrigger>
         </TabsList>
 
@@ -175,7 +160,7 @@ export default function ManagerResults() {
                   onSelect={setDateRange}
                   locale={arSA}
                 />
-                <Button 
+                <Button
                   onClick={handleFilter}
                   disabled={!dateRange.from || !dateRange.to}
                 >
@@ -192,6 +177,7 @@ export default function ManagerResults() {
                       <TableHead>عدد الإجابات بنعم (س٢)</TableHead>
                       <TableHead>جميع الإجابات (س٣)</TableHead>
                       <TableHead>عدد المهام المستقلة</TableHead>
+                      <TableHead>تاريخ آخر نشاط</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -208,6 +194,9 @@ export default function ManagerResults() {
                         <TableCell>
                           {stat.independentAssignments?.length || 0}
                         </TableCell>
+                        <TableCell>
+                          {stat.createdAt ? format(new Date(stat.createdAt), "yyyy/MM/dd", { locale: arSA }) : "-"}
+                        </TableCell>
                       </TableRow>
                     ))}
                   </TableBody>
@@ -216,112 +205,6 @@ export default function ManagerResults() {
                 <div className="text-center py-8">
                   <p className="text-muted-foreground">
                     لا توجد إحصائيات متاحة للفترة المحددة
-                  </p>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="today">
-          <Card>
-            <CardHeader>
-              <CardTitle>تقارير جلسات اليوم</CardTitle>
-            </CardHeader>
-            <CardContent>
-              {todayResponses.length > 0 ? (
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>ملاحظات</TableHead>
-                      <TableHead>ماذا سمع؟</TableHead>
-                      <TableHead>هل استجاب؟</TableHead>
-                      <TableHead>هل تمت متابعة الطالب؟</TableHead>
-                      <TableHead>المعلم</TableHead>
-                      <TableHead>الطالب</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {todayResponses.map((response: any) => (
-                      <TableRow key={response.id}>
-                        <TableCell>{response.question4}</TableCell>
-                        <TableCell>{response.question3}</TableCell>
-                        <TableCell>{response.question2}</TableCell>
-                        <TableCell>{response.question1}</TableCell>
-                        <TableCell>
-                          {response.teacherName ||
-                            `معلم رقم ${response.teacherId || 1}`}
-                        </TableCell>
-                        <TableCell className="font-medium">
-                          {response.studentName || `طالب ${response.studentId}`}
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              ) : (
-                <div className="text-center py-8">
-                  <p className="text-muted-foreground">
-                    لم يتم تقديم تقارير اليوم
-                  </p>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="history">
-          <Card>
-            <CardHeader>
-              <CardTitle>جميع تقارير الجلسات</CardTitle>
-            </CardHeader>
-            <CardContent>
-              {allDates.length > 0 ? (
-                <div className="space-y-6">
-                  {allDates.map((date) => (
-                    <div
-                      key={date}
-                      className="border-b pb-4 mb-4 last:border-0"
-                    >
-                      <h3 className="text-lg font-medium mb-3">
-                        {format(new Date(date), "PPPP", { locale: arSA })}
-                      </h3>
-                      <Table>
-                        <TableHeader>
-                          <TableRow>
-                            <TableHead>ملاحظات</TableHead>
-                            <TableHead>ماذا سمع؟</TableHead>
-                            <TableHead>هل استجاب؟</TableHead>
-                            <TableHead>هل تمت متابعة الطالب؟</TableHead>
-                            <TableHead>المعلم</TableHead>
-                            <TableHead>الطالب</TableHead>
-                          </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                          {groupedResponses[date].map((response: any) => (
-                            <TableRow key={response.id}>
-                              <TableCell>{response.question4}</TableCell>
-                              <TableCell>{response.question3}</TableCell>
-                              <TableCell>{response.question2}</TableCell>
-                              <TableCell>{response.question1}</TableCell>
-                              <TableCell>
-                                {response.teacherName ||
-                                  `معلم رقم ${response.teacherId || 1}`}
-                              </TableCell>
-                              <TableCell className="font-medium">
-                                {response.studentName || `طالب ${response.studentId}`}
-                              </TableCell>
-                            </TableRow>
-                          ))}
-                        </TableBody>
-                      </Table>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="text-center py-8">
-                  <p className="text-muted-foreground">
-                    لا توجد تقارير سابقة متاحة
                   </p>
                 </div>
               )}

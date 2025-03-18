@@ -51,8 +51,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
     clients.set(clientId, ws);
 
     // Send initial connection confirmation
-    ws.send(JSON.stringify({ 
-      type: "connection", 
+    ws.send(JSON.stringify({
+      type: "connection",
       status: "connected",
       clientId
     }));
@@ -707,11 +707,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
 
     try {
-      // Get date range from query parameters
-      const { startDate, endDate } = req.query;
-      const start = startDate ? new Date(startDate as string) : new Date(0);
-      const end = endDate ? new Date(endDate as string) : new Date();
-
       // Get all questionnaire responses
       const responses = await storage.getAllQuestionnaireResponses();
       const assignments = await storage.getIndependentAssignments();
@@ -719,55 +714,47 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Create a map to store statistics by student
       const studentStats = new Map();
 
-      // Process questionnaire responses within date range
-      responses
-        .filter(response => {
-          const responseDate = new Date(response.createdAt);
-          return responseDate >= start && responseDate <= end;
-        })
-        .forEach(response => {
-          const stats = studentStats.get(response.studentId) || {
-            studentName: response.studentName,
-            question1YesCount: 0,
-            question2YesCount: 0,
-            question3Responses: [],
-            independentAssignments: []
-          };
+      // Process questionnaire responses
+      responses.forEach(response => {
+        const stats = studentStats.get(response.studentId) || {
+          studentName: response.studentName,
+          question1YesCount: 0,
+          question2YesCount: 0,
+          question3Responses: [],
+          independentAssignments: [],
+          createdAt: response.createdAt // Add createdAt from response
+        };
 
-          if (response.question1.toLowerCase().includes('نعم')) {
-            stats.question1YesCount++;
-          }
-          if (response.question2.toLowerCase().includes('نعم')) {
-            stats.question2YesCount++;
-          }
-          stats.question3Responses.push(response.question3);
+        if (response.question1?.toLowerCase().includes('نعم')) {
+          stats.question1YesCount++;
+        }
+        if (response.question2?.toLowerCase().includes('نعم')) {
+          stats.question2YesCount++;
+        }
+        stats.question3Responses.push(response.question3);
 
-          studentStats.set(response.studentId, stats);
+        studentStats.set(response.studentId, stats);
+      });
+
+      // Process independent assignments
+      assignments.forEach(assignment => {
+        const stats = studentStats.get(assignment.studentId) || {
+          studentName: assignment.studentName,
+          question1YesCount: 0,
+          question2YesCount: 0,
+          question3Responses: [],
+          independentAssignments: [],
+          createdAt: assignment.submittedAt // Use submittedAt as createdAt
+        };
+
+        stats.independentAssignments.push({
+          assignment: assignment.assignment,
+          completionTime: assignment.completionTime,
+          submittedAt: assignment.submittedAt
         });
 
-      // Process independent assignments within date range
-      assignments
-        .filter(assignment => {
-          // Use submittedAt instead of createdAt for independent assignments
-          const assignmentDate = new Date(assignment.submittedAt);
-          return assignmentDate >= start && assignmentDate <= end;
-        })
-        .forEach(assignment => {
-          const stats = studentStats.get(assignment.studentId) || {
-            studentName: assignment.studentName,
-            question1YesCount: 0,
-            question2YesCount: 0,
-            question3Responses: [],
-            independentAssignments: []
-          };
-
-          stats.independentAssignments.push({
-            assignment: assignment.assignment,
-            completionTime: assignment.completionTime
-          });
-
-          studentStats.set(assignment.studentId, stats);
-        });
+        studentStats.set(assignment.studentId, stats);
+      });
 
       // Convert map to array and format the response
       const statistics = Array.from(studentStats.entries()).map(([studentId, stats]) => ({
@@ -776,6 +763,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         question3Responses: stats.question3Responses.join(' | ')
       }));
 
+      console.log("Sending statistics:", statistics);
       res.json(statistics);
     } catch (error) {
       console.error("Error fetching statistics:", error);
