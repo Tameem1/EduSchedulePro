@@ -29,9 +29,6 @@ export default function ManagerResults() {
     to: new Date(),
   });
 
-  // Add a state to track when to trigger the query
-  const [shouldFetch, setShouldFetch] = React.useState(false);
-
   // Fetch questionnaire responses
   const { data: responses, isLoading: responsesLoading } = useQuery<QuestionnaireResponse[]>({
     queryKey: ["/api/questionnaire-responses"],
@@ -58,7 +55,6 @@ export default function ManagerResults() {
       }
       return res.json();
     },
-    enabled: shouldFetch, // Only fetch when shouldFetch is true
   });
 
   const groupedResponses = responses?.reduce((acc: any, response: any) => {
@@ -81,7 +77,6 @@ export default function ManagerResults() {
 
   // Handle filter button click
   const handleFilter = () => {
-    setShouldFetch(true);
     refetchStats();
   };
 
