@@ -10,17 +10,19 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { format } from "date-fns";
+import { format, startOfDay, endOfDay } from "date-fns";
 import { arSA } from "date-fns/locale";
 import { apiRequest } from "@/lib/queryClient";
 import { Loader2 } from "lucide-react";
 import type { QuestionnaireResponse } from "@shared/schema";
 import { DatePicker } from "@/components/ui/date-picker";
-import type { DateRange } from "react-day-picker";
+import { useAuth } from "@/hooks/use-auth";
 
 export default function ManagerResults() {
+  const { user, isLoading: isAuthLoading } = useAuth();
+  const [, setLocation] = useLocation();
   const [dateRange, setDateRange] = React.useState<{
     from: Date;
     to: Date;
@@ -29,7 +31,10 @@ export default function ManagerResults() {
     to: new Date(),
   });
 
-  // Fetch questionnaire responses
+  // Add state for all statistics and filtered statistics
+  const [filteredStatistics, setFilteredStatistics] = React.useState<any[]>([]);
+
+  // Fetch questionnaire responses only when authenticated
   const { data: responses, isLoading: responsesLoading } = useQuery<QuestionnaireResponse[]>({
     queryKey: ["/api/questionnaire-responses"],
     queryFn: async () => {
@@ -39,23 +44,28 @@ export default function ManagerResults() {
       }
       return res.json();
     },
+    enabled: !!user?.id && user.role === 'manager',
   });
 
-  // Fetch statistics with date range
-  const { data: statistics, isLoading: statsLoading, refetch: refetchStats } = useQuery({
-    queryKey: ["/api/statistics", dateRange.from.toISOString(), dateRange.to.toISOString()],
+  // Fetch all statistics once when authenticated
+  const { data: allStatistics, isLoading: statsLoading } = useQuery({
+    queryKey: ["/api/statistics"],
     queryFn: async () => {
-      const params = new URLSearchParams({
-        startDate: dateRange.from.toISOString(),
-        endDate: dateRange.to.toISOString(),
-      });
-      const res = await apiRequest("GET", `/api/statistics?${params}`);
+      const res = await apiRequest("GET", "/api/statistics");
       if (!res.ok) {
         throw new Error("Failed to fetch statistics");
       }
       return res.json();
     },
+    enabled: !!user?.id && user.role === 'manager',
   });
+
+  // Set initial filtered statistics when data is loaded
+  React.useEffect(() => {
+    if (allStatistics) {
+      setFilteredStatistics(allStatistics);
+    }
+  }, [allStatistics]);
 
   const groupedResponses = responses?.reduce((acc: any, response: any) => {
     const date = format(new Date(response.createdAt), "yyyy-MM-dd");
@@ -75,10 +85,33 @@ export default function ManagerResults() {
 
   const allDates = Object.keys(groupedResponses || {});
 
-  // Handle filter button click
+  // Handle filter button click - filter data client-side
   const handleFilter = () => {
-    refetchStats();
+    if (!allStatistics) return;
+
+    const filtered = allStatistics.filter((stat: any) => {
+      const statDate = new Date(stat.createdAt);
+      // Use startOfDay and endOfDay to include the entire day in the range
+      return statDate >= startOfDay(dateRange.from) && statDate <= endOfDay(dateRange.to);
+    });
+
+    setFilteredStatistics(filtered);
   };
+
+  // Handle loading states
+  if (isAuthLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin" />
+      </div>
+    );
+  }
+
+  // Redirect if not authenticated or not a manager
+  if (!user || user.role !== 'manager') {
+    setLocation("/auth");
+    return null;
+  }
 
   if (responsesLoading || statsLoading) {
     return (
@@ -230,7 +263,7 @@ export default function ManagerResults() {
                 </Button>
               </div>
 
-              {statistics && statistics.length > 0 ? (
+              {filteredStatistics && filteredStatistics.length > 0 ? (
                 <Table>
                   <TableHeader>
                     <TableRow>
@@ -242,7 +275,7 @@ export default function ManagerResults() {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {statistics.map((stat: any) => (
+                    {filteredStatistics.map((stat: any) => (
                       <TableRow key={stat.studentId}>
                         <TableCell className="font-medium">
                           {stat.studentName}
