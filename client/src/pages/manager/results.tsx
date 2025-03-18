@@ -12,7 +12,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Link, useLocation } from "wouter";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { format, startOfDay, endOfDay } from "date-fns";
+import { format, isWithinInterval, startOfDay, endOfDay, parseISO } from "date-fns";
 import { arSA } from "date-fns/locale";
 import { apiRequest } from "@/lib/queryClient";
 import { Loader2 } from "lucide-react";
@@ -63,6 +63,7 @@ export default function ManagerResults() {
   // Set initial filtered statistics when data is loaded
   React.useEffect(() => {
     if (allStatistics) {
+      console.log("Initial statistics loaded:", allStatistics);
       setFilteredStatistics(allStatistics);
     }
   }, [allStatistics]);
@@ -87,14 +88,39 @@ export default function ManagerResults() {
 
   // Handle filter button click - filter data client-side
   const handleFilter = () => {
-    if (!allStatistics) return;
-
-    const filtered = allStatistics.filter((stat: any) => {
-      const statDate = new Date(stat.createdAt);
-      // Use startOfDay and endOfDay to include the entire day in the range
-      return statDate >= startOfDay(dateRange.from) && statDate <= endOfDay(dateRange.to);
+    console.log("Filtering with date range:", {
+      from: dateRange.from.toISOString(),
+      to: dateRange.to.toISOString()
     });
 
+    if (!allStatistics) {
+      console.log("No statistics available to filter");
+      return;
+    }
+
+    const filtered = allStatistics.filter((stat: any) => {
+      try {
+        const statDate = parseISO(stat.createdAt);
+        const isInRange = isWithinInterval(statDate, {
+          start: startOfDay(dateRange.from),
+          end: endOfDay(dateRange.to)
+        });
+
+        console.log("Checking date:", {
+          statDate: statDate.toISOString(),
+          isInRange,
+          start: startOfDay(dateRange.from).toISOString(),
+          end: endOfDay(dateRange.to).toISOString()
+        });
+
+        return isInRange;
+      } catch (error) {
+        console.error("Error filtering date:", error);
+        return false;
+      }
+    });
+
+    console.log("Filtered statistics:", filtered);
     setFilteredStatistics(filtered);
   };
 
