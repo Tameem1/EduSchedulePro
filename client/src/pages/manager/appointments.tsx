@@ -1,12 +1,5 @@
 import * as React from "react";
-import { useAuth } from "@/hooks/use-auth";
-import { Link } from "wouter";
-import { useQuery } from "@tanstack/react-query";
-import { apiRequest } from "@/lib/queryClient";
-import { useToast } from "@/hooks/use-toast";
-import { Loader2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { AppointmentStatus, type Appointment } from "@shared/schema";
+import { useQuery, useMutation } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Table,
@@ -16,8 +9,22 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { useToast } from "@/hooks/use-toast";
+import { Loader2 } from "lucide-react";
+import { apiRequest, queryClient } from "@/lib/queryClient";
+import type {
+  User,
+  Availability,
+  Appointment,
+  AppointmentStatusType,
+  IndependentAssignment,
+} from "@shared/schema";
+import { AppointmentStatus, AppointmentStatusArabic } from "@shared/schema";
+import { useAuth } from "@/hooks/use-auth";
 import { format } from "date-fns";
+import { Link } from "wouter";
 import {
   Dialog,
   DialogContent,
@@ -33,26 +40,20 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import type {
-  User,
-  Availability,
-  AppointmentStatusType,
-  IndependentAssignment,
-} from "@shared/schema";
-import { AppointmentStatusArabic } from "@shared/schema";
-
 
 export default function ManagerAppointments() {
-  const { user } = useAuth();
   const { toast } = useToast();
-  const [selectedAppointment, setSelectedAppointment] = React.useState<Appointment | null>(null);
+  const [selectedAppointment, setSelectedAppointment] =
+    React.useState<Appointment | null>(null);
   const [isAssignDialogOpen, setIsAssignDialogOpen] = React.useState(false);
-  const [isAddAppointmentDialogOpen, setIsAddAppointmentDialogOpen] = React.useState(false);
+  const [isAddAppointmentDialogOpen, setIsAddAppointmentDialogOpen] =
+    React.useState(false);
   const [newAppointmentData, setNewAppointmentData] = React.useState({
     studentId: "",
     startTime: "",
     teacherAssignment: "",
   });
+  const { user } = useAuth();
   const socketRef = React.useRef<WebSocket | null>(null);
   const [wsConnected, setWsConnected] = React.useState(false);
   const reconnectTimeoutRef = React.useRef<NodeJS.Timeout>();
@@ -63,61 +64,6 @@ export default function ManagerAppointments() {
     assignment: "",
     notes: "",
   });
-
-  // Add proper data fetching
-  const { data: teachers, isLoading: isLoadingTeachers } = useQuery({
-    queryKey: ["teachers"],
-    queryFn: () => apiRequest("/api/users/teachers"),
-  });
-
-  const { data: students, isLoading: isLoadingStudents } = useQuery({
-    queryKey: ["students"],
-    queryFn: () => apiRequest("/api/users/students"),
-  });
-
-  const { data: appointments, isLoading: isLoadingAppointments } = useQuery({
-    queryKey: ["appointments"],
-    queryFn: () => apiRequest("/api/appointments"),
-  });
-
-  const { data: independentAssignments, isLoading: isLoadingIndependentAssignments } = useQuery({
-    queryKey: ["independentAssignments"],
-    queryFn: () => apiRequest("/api/independent-assignments"),
-  });
-
-  const { data: availabilities, isLoading: isLoadingAvailabilities } = useQuery<
-    Availability[]
-  >({
-    queryKey: ["/api/availabilities"],
-    queryFn: async () => {
-      const res = await apiRequest("GET", "/api/availabilities");
-      if (!res.ok) {
-        throw new Error("Failed to fetch availabilities");
-      }
-      return res.json();
-    },
-    enabled: !!user,
-  });
-
-  const getUsername = (userId: number | null | undefined, role: "student" | "teacher") => {
-    if (!userId) return role;
-    const userList = role === "student" ? students : teachers;
-    const user = userList?.find((u) => u.id === userId);
-    return user?.username || `${role} ${userId}`;
-  };
-
-  const getStatusColor = (status: string) => {
-    return (
-      {
-        [AppointmentStatus.PENDING]: "bg-gray-500",
-        [AppointmentStatus.REQUESTED]: "bg-blue-500",
-        [AppointmentStatus.ASSIGNED]: "bg-yellow-500",
-        [AppointmentStatus.RESPONDED]: "bg-green-500",
-        [AppointmentStatus.DONE]: "bg-purple-500",
-        [AppointmentStatus.REJECTED]: "bg-red-500",
-      }[status] || "bg-gray-500"
-    );
-  };
 
   const connectWebSocket = React.useCallback(() => {
     if (socketRef.current?.readyState === WebSocket.OPEN) return;
@@ -140,8 +86,8 @@ export default function ManagerAppointments() {
           data.type === "appointmentUpdate" ||
           data.type === "availabilityUpdate"
         ) {
-          queryClient.invalidateQueries({ queryKey: ["appointments"] });
-          queryClient.invalidateQueries({ queryKey: ["availabilities"] });
+          queryClient.invalidateQueries({ queryKey: ["/api/appointments"] });
+          queryClient.invalidateQueries({ queryKey: ["/api/availabilities"] });
         }
       } catch (error) {
         console.error("Error handling WebSocket message:", error);
@@ -170,6 +116,69 @@ export default function ManagerAppointments() {
     };
   }, [connectWebSocket]);
 
+  const { data: teachers, isLoading: isLoadingTeachers } = useQuery<User[]>({
+    queryKey: ["/api/users/teachers"],
+    queryFn: async () => {
+      const res = await apiRequest("GET", "/api/users/teachers");
+      if (!res.ok) {
+        throw new Error("Failed to fetch teachers");
+      }
+      return res.json();
+    },
+    enabled: !!user,
+  });
+
+  const { data: students, isLoading: isLoadingStudents } = useQuery<User[]>({
+    queryKey: ["/api/users/students"],
+    queryFn: async () => {
+      const res = await apiRequest("GET", "/api/users/students");
+      if (!res.ok) {
+        throw new Error("Failed to fetch students");
+      }
+      return res.json();
+    },
+    enabled: !!user,
+  });
+
+  const { data: appointments, isLoading: isLoadingAppointments } = useQuery<
+    Appointment[]
+  >({
+    queryKey: ["/api/appointments"],
+    queryFn: async () => {
+      const res = await apiRequest("GET", "/api/appointments");
+      if (!res.ok) {
+        throw new Error("Failed to fetch appointments");
+      }
+      return res.json();
+    },
+    enabled: !!user,
+  });
+
+  const { data: availabilities, isLoading: isLoadingAvailabilities } = useQuery<
+    Availability[]
+  >({
+    queryKey: ["/api/availabilities"],
+    queryFn: async () => {
+      const res = await apiRequest("GET", "/api/availabilities");
+      if (!res.ok) {
+        throw new Error("Failed to fetch availabilities");
+      }
+      return res.json();
+    },
+    enabled: !!user,
+  });
+
+  const { data: independentAssignments, isLoading: isLoadingIndependentAssignments } = useQuery<IndependentAssignment[]>({
+    queryKey: ["/api/independent-assignments"],
+    queryFn: async () => {
+      const res = await apiRequest("GET", "/api/independent-assignments");
+      if (!res.ok) {
+        throw new Error("Failed to fetch independent assignments");
+      }
+      return res.json();
+    },
+    enabled: !!user,
+  });
 
   const createAppointmentMutation = useMutation({
     mutationFn: async (data: {
@@ -210,7 +219,7 @@ export default function ManagerAppointments() {
         startTime: "",
         teacherAssignment: "",
       });
-      queryClient.invalidateQueries({ queryKey: ["appointments"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/appointments"] });
     },
     onError: (error: any) => {
       toast({
@@ -254,7 +263,7 @@ export default function ManagerAppointments() {
         title: "تم تعيين المعلم",
         description: notificationMessage,
       });
-      queryClient.invalidateQueries({ queryKey: ["appointments"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/appointments"] });
       setIsAssignDialogOpen(false);
       setSelectedAppointment(null);
     },
@@ -310,7 +319,7 @@ export default function ManagerAppointments() {
         assignment: "",
         notes: "",
       });
-      queryClient.invalidateQueries({ queryKey: ["independentAssignments"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/independent-assignments"] });
     },
     onError: (error: any) => {
       toast({
@@ -321,13 +330,35 @@ export default function ManagerAppointments() {
     },
   });
 
+  const getUserName = (
+    userId: number | null | undefined,
+    role: "student" | "teacher",
+  ) => {
+      if (!userId) return role;
+      const user = users?.find((u) => u.id === userId);
+    return user?.username || `${role} ${userId}`;
+  };
+
+  const getStatusColor = (status: AppointmentStatusType) => {
+    return (
+      {
+        [AppointmentStatus.PENDING]: "bg-gray-500",
+        [AppointmentStatus.REQUESTED]: "bg-blue-500",
+        [AppointmentStatus.ASSIGNED]: "bg-yellow-500",
+        [AppointmentStatus.RESPONDED]: "bg-green-500",
+        [AppointmentStatus.DONE]: "bg-purple-500",
+        [AppointmentStatus.REJECTED]: "bg-red-500",
+      }[status] || "bg-gray-500"
+    );
+  };
+
   if (
     !user ||
     user.role !== "manager" ||
     isLoadingTeachers ||
     isLoadingAppointments ||
     isLoadingStudents ||
-    isLoadingIndependentAssignments || isLoadingAvailabilities
+    isLoadingIndependentAssignments
   ) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -378,10 +409,10 @@ export default function ManagerAppointments() {
                     {format(new Date(appointment.startTime), "h:mm a")}
                   </TableCell>
                   <TableCell>
-                    {getUsername(appointment.studentId, "student")}
+                    {getUserName(appointment.studentId, "student")}
                   </TableCell>
                   <TableCell>
-                    {getUsername(appointment.teacherId, "teacher")}
+                    {getUserName(appointment.teacherId, "teacher")}
                   </TableCell>
                   <TableCell>
                     <Badge
@@ -433,7 +464,7 @@ export default function ManagerAppointments() {
                     {format(new Date(assignment.completionTime), "yyyy/MM/dd h:mm a")}
                   </TableCell>
                   <TableCell>
-                    {getUsername(assignment.studentId, "student")}
+                    {getUserName(assignment.studentId, "student")}
                   </TableCell>
                   <TableCell>{assignment.assignment}</TableCell>
                   <TableCell>{assignment.notes}</TableCell>
@@ -536,7 +567,7 @@ export default function ManagerAppointments() {
                   </p>
                   <p>
                     الطالب:{" "}
-                    {getUsername(selectedAppointment.studentId, "student")}
+                    {getUserName(selectedAppointment.studentId, "student")}
                   </p>
                 </div>
                 <div className="space-y-2">
