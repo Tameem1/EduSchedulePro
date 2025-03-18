@@ -334,7 +334,8 @@ export default function ManagerAppointments() {
     userId: number | null | undefined,
     role: "student" | "teacher",
   ) => {
-    if (!userId) return role === "tnd((u) => u.id === userId);
+      if (!userId) return role;
+      const user = users?.find((u) => u.id === userId);
     return user?.username || `${role} ${userId}`;
   };
 
