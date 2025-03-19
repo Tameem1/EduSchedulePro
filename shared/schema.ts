@@ -6,6 +6,7 @@ import { relations } from "drizzle-orm";
 // Define enums using pgEnum
 export const userRoleEnum = pgEnum('user_role', ['student', 'teacher', 'manager']);
 export const appointmentStatusEnum = pgEnum('appointment_status', ['pending', 'requested', 'assigned', 'responded', 'done', 'rejected']);
+export const sectionEnum = pgEnum('section', ['section1', 'section2', 'section3', 'section4', 'section5']);
 
 // Export const values for use in the application - make sure these match exactly with the enum values
 export const AppointmentStatus = {
@@ -26,6 +27,14 @@ export const AppointmentStatusArabic = {
   rejected: 'مرفوض'
 } as const;
 
+export const Section = {
+  SECTION1: 'section1',
+  SECTION2: 'section2',
+  SECTION3: 'section3',
+  SECTION4: 'section4',
+  SECTION5: 'section5'
+} as const;
+
 export type UserRoleType = typeof UserRole[keyof typeof UserRole];
 export type AppointmentStatusType = typeof AppointmentStatus[keyof typeof AppointmentStatus];
 
@@ -35,7 +44,8 @@ export const users = pgTable("users", {
   username: text("username").notNull().unique(),
   password: text("password").notNull(),
   role: userRoleEnum("role").notNull(),
-  telegramUsername: text("telegram_username") 
+  telegramUsername: text("telegram_username"),
+  section: sectionEnum("section")  // Optional section field
 });
 
 // Teacher availability slots
@@ -50,7 +60,7 @@ export const availabilities = pgTable("availabilities", {
 export const appointments = pgTable("appointments", {
   id: serial("id").primaryKey(),
   studentId: integer("student_id").references(() => users.id).notNull(),
-  teacherId: integer("teacher_id").references(() => users.id), 
+  teacherId: integer("teacher_id").references(() => users.id),
   startTime: timestamp("start_time", { mode: 'string' }).notNull(),
   status: appointmentStatusEnum("status").notNull().default('pending'),
   teacherAssignment: text("teacherAssignment")
@@ -144,8 +154,8 @@ export const insertQuestionnaireSchema = createInsertSchema(questionnaireRespons
       return date.toISOString();
     })
   })
-  .omit({ 
-    id: true 
+  .omit({
+    id: true
   });
 
 // Add new insert schema for independent assignments
@@ -153,9 +163,9 @@ export const insertIndependentAssignmentSchema = createInsertSchema(independentA
   .extend({
     completionTime: z.string().transform(str => str),
   })
-  .omit({ 
+  .omit({
     id: true,
-    submittedAt: true 
+    submittedAt: true
   });
 
 // Export types
