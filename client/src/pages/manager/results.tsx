@@ -12,11 +12,10 @@ import {
 import { Button } from "@/components/ui/button";
 import { Link, useLocation } from "wouter";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { format, isWithinInterval, startOfDay, endOfDay, parseISO } from "date-fns";
+import { format, isWithinInterval, startOfDay, endOfDay } from "date-fns";
 import { arSA } from "date-fns/locale";
 import { apiRequest } from "@/lib/queryClient";
 import { Loader2 } from "lucide-react";
-import type { QuestionnaireResponse } from "@shared/schema";
 import { DatePicker } from "@/components/ui/date-picker";
 import { useAuth } from "@/hooks/use-auth";
 
@@ -44,7 +43,7 @@ export default function ManagerResults() {
       }
       return res.json();
     },
-    enabled: !!user?.id && user.role === 'manager',
+    enabled: !!user?.id && user.role === "manager",
   });
 
   // Set initial filtered statistics when data is loaded
@@ -59,7 +58,7 @@ export default function ManagerResults() {
   const handleFilter = () => {
     console.log("Filtering with date range:", {
       from: dateRange.from.toISOString(),
-      to: dateRange.to.toISOString()
+      to: dateRange.to.toISOString(),
     });
 
     if (!allStatistics) {
@@ -68,17 +67,18 @@ export default function ManagerResults() {
     }
 
     const filtered = allStatistics.filter((stat: any) => {
-      // Track if any activities fall within the date range
       let hasActivityInRange = false;
 
       // Check questionnaire responses date if exists
       if (stat.createdAt) {
         try {
           const responseDate = new Date(stat.createdAt);
-          if (isWithinInterval(responseDate, {
-            start: startOfDay(dateRange.from),
-            end: endOfDay(dateRange.to)
-          })) {
+          if (
+            isWithinInterval(responseDate, {
+              start: startOfDay(dateRange.from),
+              end: endOfDay(dateRange.to),
+            })
+          ) {
             hasActivityInRange = true;
           }
         } catch (error) {
@@ -87,14 +87,19 @@ export default function ManagerResults() {
       }
 
       // Check independent assignments dates if they exist
-      if (stat.independentAssignments && stat.independentAssignments.length > 0) {
+      if (
+        stat.independentAssignments &&
+        stat.independentAssignments.length > 0
+      ) {
         for (const assignment of stat.independentAssignments) {
           try {
             const assignmentDate = new Date(assignment.submittedAt);
-            if (isWithinInterval(assignmentDate, {
-              start: startOfDay(dateRange.from),
-              end: endOfDay(dateRange.to)
-            })) {
+            if (
+              isWithinInterval(assignmentDate, {
+                start: startOfDay(dateRange.from),
+                end: endOfDay(dateRange.to),
+              })
+            ) {
               hasActivityInRange = true;
               break;
             }
@@ -121,7 +126,7 @@ export default function ManagerResults() {
   }
 
   // Redirect if not authenticated or not a manager
-  if (!user || user.role !== 'manager') {
+  if (!user || user.role !== "manager") {
     setLocation("/auth");
     return null;
   }
@@ -173,9 +178,9 @@ export default function ManagerResults() {
                   <TableHeader>
                     <TableRow>
                       <TableHead>اسم الطالب</TableHead>
-                      <TableHead>عدد الإجابات بنعم (س١)</TableHead>
-                      <TableHead>عدد الإجابات بنعم (س٢)</TableHead>
-                      <TableHead>جميع الإجابات والمهام</TableHead>
+                      <TableHead>عدد مرات المتابعة</TableHead>
+                      <TableHead>عدد مرات الاستجابة</TableHead>
+                      <TableHead>الإنتاج</TableHead>
                       <TableHead>تاريخ آخر نشاط</TableHead>
                     </TableRow>
                   </TableHeader>
@@ -187,11 +192,18 @@ export default function ManagerResults() {
                         </TableCell>
                         <TableCell>{stat.question1YesCount}</TableCell>
                         <TableCell>{stat.question2YesCount}</TableCell>
-                        <TableCell className="max-w-md truncate">
-                          {stat.allResponses}
+                        {/* Wrap in a div to allow horizontal scroll */}
+                        <TableCell>
+                          <div className="max-w-md overflow-x-auto whitespace-nowrap">
+                            {stat.allResponses}
+                          </div>
                         </TableCell>
                         <TableCell>
-                          {stat.createdAt ? format(new Date(stat.createdAt), "yyyy/MM/dd", { locale: arSA }) : "-"}
+                          {stat.createdAt
+                            ? format(new Date(stat.createdAt), "yyyy/MM/dd", {
+                                locale: arSA,
+                              })
+                            : "-"}
                         </TableCell>
                       </TableRow>
                     ))}
