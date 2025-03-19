@@ -18,6 +18,13 @@ import { apiRequest } from "@/lib/queryClient";
 import { Loader2 } from "lucide-react";
 import { DatePicker } from "@/components/ui/date-picker";
 import { useAuth } from "@/hooks/use-auth";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export default function ManagerResults() {
   const { user, isLoading: isAuthLoading } = useAuth();
@@ -29,6 +36,7 @@ export default function ManagerResults() {
     from: new Date(),
     to: new Date(),
   });
+  const [selectedSection, setSelectedSection] = React.useState<string>("all");
 
   // Add state for filtered statistics
   const [filteredStatistics, setFilteredStatistics] = React.useState<any[]>([]);
@@ -46,6 +54,13 @@ export default function ManagerResults() {
     enabled: !!user?.id && user.role === "manager",
   });
 
+  // Get unique sections from statistics
+  const sections = React.useMemo(() => {
+    if (!allStatistics) return [];
+    const uniqueSections = new Set(allStatistics.map((stat: any) => stat.section));
+    return Array.from(uniqueSections);
+  }, [allStatistics]);
+
   // Set initial filtered statistics when data is loaded
   React.useEffect(() => {
     if (allStatistics) {
@@ -56,9 +71,10 @@ export default function ManagerResults() {
 
   // Handle filter button click - filter data client-side
   const handleFilter = () => {
-    console.log("Filtering with date range:", {
+    console.log("Filtering with date range and section:", {
       from: dateRange.from.toISOString(),
       to: dateRange.to.toISOString(),
+      section: selectedSection,
     });
 
     if (!allStatistics) {
@@ -67,6 +83,11 @@ export default function ManagerResults() {
     }
 
     const filtered = allStatistics.filter((stat: any) => {
+      // First apply section filter if a specific section is selected
+      if (selectedSection !== "all" && stat.section !== selectedSection) {
+        return false;
+      }
+
       let hasActivityInRange = false;
 
       // Check questionnaire responses date if exists
@@ -87,10 +108,7 @@ export default function ManagerResults() {
       }
 
       // Check independent assignments dates if they exist
-      if (
-        stat.independentAssignments &&
-        stat.independentAssignments.length > 0
-      ) {
+      if (stat.independentAssignments && stat.independentAssignments.length > 0) {
         for (const assignment of stat.independentAssignments) {
           try {
             const assignmentDate = new Date(assignment.submittedAt);
@@ -160,6 +178,22 @@ export default function ManagerResults() {
             </CardHeader>
             <CardContent>
               <div className="flex items-center justify-end gap-4 mb-4">
+                <Select
+                  value={selectedSection}
+                  onValueChange={(value) => setSelectedSection(value)}
+                >
+                  <SelectTrigger className="w-[200px]">
+                    <SelectValue placeholder="اختر القسم" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">جميع الأقسام</SelectItem>
+                    {sections.map((section) => (
+                      <SelectItem key={section} value={section}>
+                        {section}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
                 <DatePicker
                   selected={dateRange}
                   onSelect={setDateRange}
@@ -178,6 +212,7 @@ export default function ManagerResults() {
                   <TableHeader>
                     <TableRow>
                       <TableHead>اسم الطالب</TableHead>
+                      <TableHead>القسم</TableHead>
                       <TableHead>عدد مرات المتابعة</TableHead>
                       <TableHead>عدد مرات الاستجابة</TableHead>
                       <TableHead>الإنتاج</TableHead>
@@ -190,9 +225,9 @@ export default function ManagerResults() {
                         <TableCell className="font-medium">
                           {stat.studentName}
                         </TableCell>
+                        <TableCell>{stat.section}</TableCell>
                         <TableCell>{stat.question1YesCount}</TableCell>
                         <TableCell>{stat.question2YesCount}</TableCell>
-                        {/* Wrap in a div to allow horizontal scroll */}
                         <TableCell>
                           <div className="max-w-md overflow-x-auto whitespace-nowrap">
                             {stat.allResponses}

@@ -700,7 +700,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Get statistics from questionnaire responses and independent assignments
+  // Modify the statistics endpoint to include section information
   app.get("/api/statistics", async (req, res) => {
     if (!req.isAuthenticated() || req.user.role !== 'manager') {
       return res.sendStatus(403);
@@ -710,19 +710,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Get all questionnaire responses
       const responses = await storage.getAllQuestionnaireResponses();
       const assignments = await storage.getIndependentAssignments();
+      const students = await db.select().from(users).where(eq(users.role, "student"));
 
       // Create a map to store statistics by student
       const studentStats = new Map();
 
       // Process questionnaire responses
       responses.forEach(response => {
+        const student = students.find(s => s.id === response.studentId);
         const stats = studentStats.get(response.studentId) || {
+          studentId: response.studentId,
           studentName: response.studentName,
+          section: student?.section || 'غير محدد', // Add section information
           question1YesCount: 0,
           question2YesCount: 0,
           question3Responses: [],
           assignmentResponses: [],
-          createdAt: response.createdAt // Add createdAt from response
+          createdAt: response.createdAt
         };
 
         if (response.question1?.toLowerCase().includes('نعم')) {
@@ -740,8 +744,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Process independent assignments
       assignments.forEach(assignment => {
+        const student = students.find(s => s.id === assignment.studentId);
         const stats = studentStats.get(assignment.studentId) || {
+          studentId: assignment.studentId,
           studentName: assignment.studentName,
+          section: student?.section || 'غير محدد', // Add section information
           question1YesCount: 0,
           question2YesCount: 0,
           question3Responses: [],
@@ -762,8 +769,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const statistics = Array.from(studentStats.entries()).map(([studentId, stats]) => ({
         studentId,
         ...stats,
-        // Combine both question3 responses and assignments in chronological order
-        allResponses: [...stats.question3Responses, ...stats.assignmentResponses].sort((a,b)=> new Date(a.split(' - ')[0]).getTime() - new Date(b.split(' - ')[0]).getTime()).join(' | ')
+        allResponses: [...stats.question3Responses, ...stats.assignmentResponses]
+          .sort((a,b)=> new Date(a.split(' - ')[0]).getTime() - new Date(b.split(' - ')[0]).getTime())
+          .join(' | ')
       }));
 
       console.log("Sending statistics:", statistics);
