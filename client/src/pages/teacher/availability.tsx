@@ -16,6 +16,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import type { Availability } from "@shared/schema";
+import { TelegramGuide } from "@/components/telegram/telegram-guide";
 
 // Start and end times for availability
 const START_HOUR = 7; // 7 AM
@@ -224,6 +225,11 @@ export default function TeacherAvailability() {
           <Button>الذهاب إلى الاستبيان</Button>
         </Link>
       </div>
+
+      {/* Show Telegram Guide if teacher doesn't have telegramUsername */}
+      {user && user.role === 'teacher' && !user.telegramUsername && (
+        <TelegramGuide />
+      )}
 
       <Card>
         <CardHeader>
