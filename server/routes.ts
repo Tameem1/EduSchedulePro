@@ -757,9 +757,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
         };
 
         if (assignment.assignment) {
-          stats.assignmentResponses.push(
-            `${format(new Date(assignment.submittedAt), 'MM/dd')} - مهمة: ${assignment.assignment}`
-          );
+          const assignmentText = `${format(new Date(assignment.submittedAt), 'MM/dd')} - مهمة: ${assignment.assignment}`;
+          stats.assignmentResponses.push(assignmentText);
+          
+          // If this is a more recent activity, update the createdAt timestamp
+          const assignmentDate = new Date(assignment.submittedAt);
+          const currentDate = stats.createdAt ? new Date(stats.createdAt) : new Date(0);
+          
+          if (assignmentDate > currentDate) {
+            stats.createdAt = assignment.submittedAt;
+          }
         }
 
         studentStats.set(assignment.studentId, stats);

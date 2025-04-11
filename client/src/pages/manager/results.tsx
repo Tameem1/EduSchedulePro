@@ -57,7 +57,14 @@ export default function ManagerResults() {
   // Get unique sections from statistics
   const sections = React.useMemo(() => {
     if (!allStatistics) return [];
-    const uniqueSections = new Set(allStatistics.map((stat: any) => stat.section));
+    const uniqueSections = new Set<string>();
+    
+    allStatistics.forEach((stat: any) => {
+      if (stat.section && typeof stat.section === 'string') {
+        uniqueSections.add(stat.section);
+      }
+    });
+    
     return Array.from(uniqueSections);
   }, [allStatistics]);
 
@@ -107,26 +114,29 @@ export default function ManagerResults() {
         }
       }
 
-      // Check assignment responses if they exist (now included in the allResponses)
-      // We can determine if the stat has assignments by checking if any allResponses contain "مهمة:"
-      if (stat.assignmentResponses && stat.assignmentResponses.length > 0) {
+      // Check assignment responses if they exist
+      if (stat.assignmentResponses && Array.isArray(stat.assignmentResponses) && stat.assignmentResponses.length > 0) {
         for (const assignmentResponse of stat.assignmentResponses) {
           try {
             // Format is "MM/dd - مهمة: Assignment Name"
             const dateStr = assignmentResponse.split(' - ')[0];
-            const assignmentDate = new Date(`2025/${dateStr}`); // Assuming current year
-            
-            if (
-              isWithinInterval(assignmentDate, {
-                start: startOfDay(dateRange.from),
-                end: endOfDay(dateRange.to),
-              })
-            ) {
-              hasActivityInRange = true;
-              break;
+            if (dateStr) {
+              // Create a date using the current year for comparison
+              const currentYear = new Date().getFullYear();
+              const assignmentDate = new Date(`${currentYear}/${dateStr}`);
+              
+              if (
+                isWithinInterval(assignmentDate, {
+                  start: startOfDay(dateRange.from),
+                  end: endOfDay(dateRange.to),
+                })
+              ) {
+                hasActivityInRange = true;
+                break;
+              }
             }
           } catch (error) {
-            console.error("Error parsing assignment date:", error);
+            console.error("Error parsing assignment date:", error, "for string:", assignmentResponse);
           }
         }
       }
@@ -200,7 +210,11 @@ export default function ManagerResults() {
                 </Select>
                 <DatePicker
                   selected={dateRange}
-                  onSelect={setDateRange}
+                  onSelect={(range) => {
+                    if (range) {
+                      setDateRange(range);
+                    }
+                  }}
                   locale={arSA}
                 />
                 <Button
