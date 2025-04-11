@@ -72,6 +72,17 @@ export const storage = {
       return newUser;
     });
   },
+  
+  async updateUser(userId: number, userData: Partial<User>) {
+    return await withRetry(async () => {
+      const [updatedUser] = await db
+        .update(users)
+        .set(userData)
+        .where(eq(users.id, userId))
+        .returning();
+      return updatedUser;
+    });
+  },
 
   async createAvailability(data: any) {
     return await withRetry(async () => {
