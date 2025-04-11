@@ -18,6 +18,7 @@ import {
   type AppointmentStatusType,
 } from "@shared/schema";
 import { formatGMT3Time } from "@/lib/date-utils";
+import { TelegramGuide } from "@/components/telegram/telegram-guide";
 
 // shadcn/ui dialog + select + label
 import {
@@ -263,6 +264,11 @@ export default function TeacherAppointments() {
 
   return (
     <div className="container mx-auto p-4">
+      {/* Show Telegram Guide if teacher doesn't have telegramUsername */}
+      {user && user.role === 'teacher' && !user.telegramUsername && (
+        <TelegramGuide />
+      )}
+      
       {/* Top actions: availability, plus button */}
       <div className="flex justify-between items-center mb-4">
         <h1 className="text-2xl font-bold">مواعيد المعلم</h1>
