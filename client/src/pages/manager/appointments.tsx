@@ -23,7 +23,7 @@ import type {
 } from "@shared/schema";
 import { AppointmentStatus, AppointmentStatusArabic } from "@shared/schema";
 import { useAuth } from "@/hooks/use-auth";
-import { format } from "date-fns";
+import { format, startOfDay, endOfDay } from "date-fns";
 import { Link } from "wouter";
 import {
   Dialog,
@@ -197,17 +197,23 @@ export default function ManagerAppointments() {
     enabled: !!user,
   });
 
-  const {
-    data: independentAssignments,
-    isLoading: isLoadingIndependentAssignments,
-  } = useQuery<IndependentAssignment[]>({
+  const { data: independentAssignments, isLoading: isLoadingIndependentAssignments } = useQuery<IndependentAssignment[]>({
     queryKey: ["/api/independent-assignments"],
     queryFn: async () => {
       const res = await apiRequest("GET", "/api/independent-assignments");
       if (!res.ok) {
         throw new Error("Failed to fetch independent assignments");
       }
-      return res.json();
+      const assignments = await res.json();
+      // Filter assignments for today only
+      const now = new Date();
+      const todayStart = startOfDay(now);
+      const todayEnd = endOfDay(now);
+
+      return assignments.filter((assignment) => {
+        const assignmentDate = new Date(assignment.completionTime);
+        return assignmentDate >= todayStart && assignmentDate <= todayEnd;
+      });
     },
     enabled: !!user,
   });
