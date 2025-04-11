@@ -89,60 +89,139 @@ export default function ManagerResults() {
       return;
     }
 
-    const filtered = allStatistics.filter((stat: any) => {
-      // First apply section filter if a specific section is selected
-      if (selectedSection !== "all" && stat.section !== selectedSection) {
-        return false;
-      }
-
-      let hasActivityInRange = false;
-
-      // Check questionnaire responses date if exists
-      if (stat.createdAt) {
-        try {
-          const responseDate = new Date(stat.createdAt);
-          if (
-            isWithinInterval(responseDate, {
-              start: startOfDay(dateRange.from),
-              end: endOfDay(dateRange.to),
-            })
-          ) {
-            hasActivityInRange = true;
-          }
-        } catch (error) {
-          console.error("Error parsing response date:", error);
+    const filtered = allStatistics
+      .filter((stat: any) => {
+        // First apply section filter if a specific section is selected
+        if (selectedSection !== "all" && stat.section !== selectedSection) {
+          return false;
         }
-      }
 
-      // Check assignment responses if they exist
-      if (stat.assignmentResponses && Array.isArray(stat.assignmentResponses) && stat.assignmentResponses.length > 0) {
-        for (const assignmentResponse of stat.assignmentResponses) {
+        let hasActivityInRange = false;
+
+        // Check questionnaire responses date if exists
+        if (stat.createdAt) {
           try {
-            // Format is "MM/dd - مهمة: Assignment Name"
-            const dateStr = assignmentResponse.split(' - ')[0];
-            if (dateStr) {
-              // Create a date using the current year for comparison
-              const currentYear = new Date().getFullYear();
-              const assignmentDate = new Date(`${currentYear}/${dateStr}`);
-              
-              if (
-                isWithinInterval(assignmentDate, {
-                  start: startOfDay(dateRange.from),
-                  end: endOfDay(dateRange.to),
-                })
-              ) {
-                hasActivityInRange = true;
-                break;
-              }
+            const responseDate = new Date(stat.createdAt);
+            if (
+              isWithinInterval(responseDate, {
+                start: startOfDay(dateRange.from),
+                end: endOfDay(dateRange.to),
+              })
+            ) {
+              hasActivityInRange = true;
             }
           } catch (error) {
-            console.error("Error parsing assignment date:", error, "for string:", assignmentResponse);
+            console.error("Error parsing response date:", error);
           }
         }
-      }
 
-      return hasActivityInRange;
-    });
+        // Check assignment responses if they exist
+        if (stat.assignmentResponses && Array.isArray(stat.assignmentResponses) && stat.assignmentResponses.length > 0) {
+          for (const assignmentResponse of stat.assignmentResponses) {
+            try {
+              // Format is "MM/dd - مهمة: Assignment Name"
+              const dateStr = assignmentResponse.split(' - ')[0];
+              if (dateStr) {
+                // Create a date using the current year for comparison
+                const currentYear = new Date().getFullYear();
+                const assignmentDate = new Date(`${currentYear}/${dateStr}`);
+                
+                if (
+                  isWithinInterval(assignmentDate, {
+                    start: startOfDay(dateRange.from),
+                    end: endOfDay(dateRange.to),
+                  })
+                ) {
+                  hasActivityInRange = true;
+                  break;
+                }
+              }
+            } catch (error) {
+              console.error("Error parsing assignment date:", error, "for string:", assignmentResponse);
+            }
+          }
+        }
+
+        return hasActivityInRange;
+      })
+      .map((stat: any) => {
+        // Create a deep copy of the stat to avoid mutating the original
+        const filteredStat = { ...stat };
+        
+        // Reset counters for filtering
+        filteredStat.question1YesCount = 0;
+        filteredStat.question2YesCount = 0;
+        
+        // Filter question3Responses by date and count filtered responses
+        const filteredQuestion3Responses: string[] = [];
+        if (stat.question3Responses && Array.isArray(stat.question3Responses)) {
+          stat.question3Responses.forEach((response: string) => {
+            try {
+              const dateStr = response.split(' - ')[0];
+              if (dateStr) {
+                const currentYear = new Date().getFullYear();
+                const responseDate = new Date(`${currentYear}/${dateStr}`);
+                
+                if (isWithinInterval(responseDate, {
+                  start: startOfDay(dateRange.from),
+                  end: endOfDay(dateRange.to),
+                })) {
+                  filteredQuestion3Responses.push(response);
+                  
+                  // Since we don't have direct access to the original question1/question2 values,
+                  // we need to increment these counters differently
+                  // This is handled in the next step by analyzing all responses in the filtered date range
+                }
+              }
+            } catch (error) {
+              console.error("Error parsing response date:", error, "for string:", response);
+            }
+          });
+        }
+        filteredStat.question3Responses = filteredQuestion3Responses;
+        
+        // Filter assignmentResponses by date
+        const filteredAssignmentResponses: string[] = [];
+        if (stat.assignmentResponses && Array.isArray(stat.assignmentResponses)) {
+          stat.assignmentResponses.forEach((response: string) => {
+            try {
+              const dateStr = response.split(' - ')[0];
+              if (dateStr) {
+                const currentYear = new Date().getFullYear();
+                const responseDate = new Date(`${currentYear}/${dateStr}`);
+                
+                if (isWithinInterval(responseDate, {
+                  start: startOfDay(dateRange.from),
+                  end: endOfDay(dateRange.to),
+                })) {
+                  filteredAssignmentResponses.push(response);
+                }
+              }
+            } catch (error) {
+              console.error("Error parsing assignment date:", error, "for string:", response);
+            }
+          });
+        }
+        filteredStat.assignmentResponses = filteredAssignmentResponses;
+        
+        // Recalculate allResponses based on filtered responses
+        const allResponses = [...filteredStat.question3Responses, ...filteredStat.assignmentResponses]
+          .sort((a,b) => new Date(a.split(' - ')[0]).getTime() - new Date(b.split(' - ')[0]).getTime())
+          .join(' | ');
+        
+        filteredStat.allResponses = allResponses;
+        
+        // We need to estimate the question1YesCount and question2YesCount based on questionnaire responses
+        // Since we don't have direct access to these values in the original data
+        // Using the number of filtered responses as an approximation
+        filteredStat.question1YesCount = filteredStat.question3Responses.length > 0 ? 
+          Math.min(filteredStat.question3Responses.length, stat.question1YesCount) : 0;
+        
+        filteredStat.question2YesCount = filteredStat.question3Responses.length > 0 ? 
+          Math.min(filteredStat.question3Responses.length, stat.question2YesCount) : 0;
+        
+        return filteredStat;
+      });
 
     console.log("Filtered statistics:", filtered);
     setFilteredStatistics(filtered);
