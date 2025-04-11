@@ -211,14 +211,33 @@ export default function ManagerResults() {
         
         filteredStat.allResponses = allResponses;
         
-        // We need to estimate the question1YesCount and question2YesCount based on questionnaire responses
-        // Since we don't have direct access to these values in the original data
-        // Using the number of filtered responses as an approximation
-        filteredStat.question1YesCount = filteredStat.question3Responses.length > 0 ? 
-          Math.min(filteredStat.question3Responses.length, stat.question1YesCount) : 0;
+        // For both questions and assignments, we'll calculate what percentage is in the date range
+        const originalQuestionResponseCount = stat.question3Responses.length;
+        const filteredQuestionResponseCount = filteredStat.question3Responses.length;
         
-        filteredStat.question2YesCount = filteredStat.question3Responses.length > 0 ? 
-          Math.min(filteredStat.question3Responses.length, stat.question2YesCount) : 0;
+        // This approach considers all responses (questions and assignments) for calculation
+        const totalOriginalCount = originalQuestionResponseCount + stat.assignmentResponses.length;
+        const totalFilteredCount = filteredQuestionResponseCount + filteredStat.assignmentResponses.length;
+        
+        if (totalOriginalCount > 0) {
+          // Calculate what percentage of all activities is in the filtered range
+          const filterRatio = totalFilteredCount / totalOriginalCount;
+          
+          // Apply the ratio to the original counts
+          // Makes sure to at least include the minimum number of actual responses we found in the date range
+          filteredStat.question1YesCount = Math.min(
+            stat.question1YesCount, 
+            Math.max(filteredQuestionResponseCount, Math.round(stat.question1YesCount * filterRatio))
+          );
+          
+          filteredStat.question2YesCount = Math.min(
+            stat.question2YesCount,
+            Math.max(filteredQuestionResponseCount, Math.round(stat.question2YesCount * filterRatio))
+          );
+        } else {
+          filteredStat.question1YesCount = 0;
+          filteredStat.question2YesCount = 0;
+        }
         
         return filteredStat;
       });
