@@ -81,8 +81,8 @@ export function TelegramGuide() {
             <h3 className="font-medium">كيفية الاتصال بتيليجرام:</h3>
             <ol className="list-decimal list-inside space-y-2 text-gray-700">
               <li>قم بتنزيل تطبيق تيليجرام على الهاتف أو استخدم نسخة الويب <a href="https://web.telegram.org" target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">web.telegram.org</a></li>
-              <li>ابحث عن روبوت المدرسة بالمعرف: <span className="font-semibold">@YourSchoolBot</span></li>
-              <li>اضغط على زر "ابدأ" أو أرسل الرسالة /start</li>
+              <li>ابحث عن روبوت المدرسة على تيليجرام (يمكنك الحصول على المعرف من إدارة المدرسة)</li>
+              <li>اضغط على زر "ابدأ" أو أرسل الرسالة /start ثم أرسل /register للحصول على معرف تيليجرام الخاص بك</li>
               <li>أدخل اسم المستخدم الخاص بك في تيليجرام في الحقل أدناه (بدون علامة @)</li>
             </ol>
           </div>
@@ -112,6 +112,7 @@ export function TelegramGuide() {
           <div className="bg-blue-100 p-3 rounded-md text-blue-800 text-sm">
             <p className="font-medium">ملاحظة هامة:</p>
             <p>يجب أن تكون متصلاً بتيليجرام لتتمكن من استلام إشعارات عن المواعيد المخصصة لك. سيتم إخطارك عند تعيين موعد جديد.</p>
+            <p className="mt-2">إذا واجهت أي مشكلة في الاتصال بروبوت تيليجرام، يرجى التواصل مع مدير النظام للحصول على المساعدة وتفاصيل الروبوت الصحيحة.</p>
           </div>
         </div>
       </CardContent>
