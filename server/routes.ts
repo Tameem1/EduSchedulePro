@@ -148,6 +148,32 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ error: "Failed to fetch teachers" });
     }
   });
+  
+  // Update user data
+  app.patch("/api/users/:id", async (req, res) => {
+    if (!req.isAuthenticated()) {
+      return res.sendStatus(401);
+    }
+
+    try {
+      const userId = parseInt(req.params.id);
+      
+      // Users can only update their own data
+      if (req.user.id !== userId) {
+        return res.status(403).json({ error: "You can only update your own profile" });
+      }
+      
+      const { telegramUsername } = req.body;
+      
+      // Update user with provided data
+      const updatedUser = await storage.updateUser(userId, { telegramUsername });
+      
+      res.json(updatedUser);
+    } catch (error) {
+      console.error("Error updating user:", error);
+      res.status(500).json({ error: "Failed to update user" });
+    }
+  });
 
   // New endpoint to fetch all availabilities
   app.get("/api/availabilities", async (req, res) => {

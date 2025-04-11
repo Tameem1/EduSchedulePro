@@ -5,6 +5,7 @@ import type {
   Appointment,
   QuestionnaireResponse,
   IndependentAssignment,
+  User,
 } from "@shared/schema";
 import {
   users,
