@@ -608,7 +608,7 @@ export default function ManagerAppointments() {
       </Dialog>
 
       <Dialog open={isAssignDialogOpen} onOpenChange={setIsAssignDialogOpen}>
-        <DialogContent>
+        <DialogContent className="max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>تعيين معلم للموعد</DialogTitle>
           </DialogHeader>
@@ -691,7 +691,7 @@ export default function ManagerAppointments() {
         open={isAddIndependentAssignmentDialogOpen}
         onOpenChange={setIsAddIndependentAssignmentDialogOpen}
       >
-        <DialogContent>
+        <DialogContent className="max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>إضافة مهمة مستقلة</DialogTitle>
           </DialogHeader>
