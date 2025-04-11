@@ -89,60 +89,68 @@ export default function ManagerResults() {
       return;
     }
 
-    const filtered = allStatistics.filter((stat: any) => {
-      // First apply section filter if a specific section is selected
+    const filtered = allStatistics.map((stat: any) => {
+      // First check section filter
       if (selectedSection !== "all" && stat.section !== selectedSection) {
-        return false;
+        return null;
       }
 
       let hasActivityInRange = false;
+      let followUpCount = 0;
+      let responseCount = 0;
+      const filteredResponses: string[] = [];
 
-      // Check questionnaire responses date if exists
-      if (stat.createdAt) {
+      // Process questionnaire responses
+      stat.question3Responses.forEach((response: string) => {
         try {
-          const responseDate = new Date(stat.createdAt);
-          if (
-            isWithinInterval(responseDate, {
-              start: startOfDay(dateRange.from),
-              end: endOfDay(dateRange.to),
-            })
-          ) {
+          const dateStr = response.split(' - ')[0];
+          const currentYear = new Date().getFullYear();
+          const responseDate = new Date(`${currentYear}/${dateStr}`);
+          
+          if (isWithinInterval(responseDate, {
+            start: startOfDay(dateRange.from),
+            end: endOfDay(dateRange.to),
+          })) {
             hasActivityInRange = true;
+            followUpCount++;
+            responseCount++;
+            filteredResponses.push(response);
           }
         } catch (error) {
           console.error("Error parsing response date:", error);
         }
-      }
+      });
 
-      // Check assignment responses if they exist
-      if (stat.assignmentResponses && Array.isArray(stat.assignmentResponses) && stat.assignmentResponses.length > 0) {
-        for (const assignmentResponse of stat.assignmentResponses) {
-          try {
-            // Format is "MM/dd - مهمة: Assignment Name"
-            const dateStr = assignmentResponse.split(' - ')[0];
-            if (dateStr) {
-              // Create a date using the current year for comparison
-              const currentYear = new Date().getFullYear();
-              const assignmentDate = new Date(`${currentYear}/${dateStr}`);
-              
-              if (
-                isWithinInterval(assignmentDate, {
-                  start: startOfDay(dateRange.from),
-                  end: endOfDay(dateRange.to),
-                })
-              ) {
-                hasActivityInRange = true;
-                break;
-              }
-            }
-          } catch (error) {
-            console.error("Error parsing assignment date:", error, "for string:", assignmentResponse);
+      // Process assignment responses
+      stat.assignmentResponses.forEach((response: string) => {
+        try {
+          const dateStr = response.split(' - ')[0];
+          const currentYear = new Date().getFullYear();
+          const assignmentDate = new Date(`${currentYear}/${dateStr}`);
+          
+          if (isWithinInterval(assignmentDate, {
+            start: startOfDay(dateRange.from),
+            end: endOfDay(dateRange.to),
+          })) {
+            hasActivityInRange = true;
+            filteredResponses.push(response);
           }
+        } catch (error) {
+          console.error("Error parsing assignment date:", error);
         }
+      });
+
+      if (!hasActivityInRange) {
+        return null;
       }
 
-      return hasActivityInRange;
-    });
+      return {
+        ...stat,
+        question1YesCount: followUpCount,
+        question2YesCount: responseCount,
+        allResponses: filteredResponses.join(' | ')
+      };
+    }).filter(Boolean);
 
     console.log("Filtered statistics:", filtered);
     setFilteredStatistics(filtered);
