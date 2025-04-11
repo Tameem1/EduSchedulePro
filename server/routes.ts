@@ -766,13 +766,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
 
       // Convert map to array and format the response
-      const statistics = Array.from(studentStats.entries()).map(([studentId, stats]) => ({
-        studentId,
-        ...stats,
-        allResponses: [...stats.question3Responses, ...stats.assignmentResponses]
+      const statistics = Array.from(studentStats.entries()).map(([studentId, stats]) => {
+        // Include independent assignments in allResponses
+        const allResponses = [...stats.question3Responses, ...stats.assignmentResponses]
           .sort((a,b)=> new Date(a.split(' - ')[0]).getTime() - new Date(b.split(' - ')[0]).getTime())
-          .join(' | ')
-      }));
+          .join(' | ');
+          
+        return {
+          studentId,
+          ...stats,
+          allResponses
+        };
+      });
 
       console.log("Sending statistics:", statistics);
       res.json(statistics);

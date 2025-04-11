@@ -107,11 +107,15 @@ export default function ManagerResults() {
         }
       }
 
-      // Check independent assignments dates if they exist
-      if (stat.independentAssignments && stat.independentAssignments.length > 0) {
-        for (const assignment of stat.independentAssignments) {
+      // Check assignment responses if they exist (now included in the allResponses)
+      // We can determine if the stat has assignments by checking if any allResponses contain "مهمة:"
+      if (stat.assignmentResponses && stat.assignmentResponses.length > 0) {
+        for (const assignmentResponse of stat.assignmentResponses) {
           try {
-            const assignmentDate = new Date(assignment.submittedAt);
+            // Format is "MM/dd - مهمة: Assignment Name"
+            const dateStr = assignmentResponse.split(' - ')[0];
+            const assignmentDate = new Date(`2025/${dateStr}`); // Assuming current year
+            
             if (
               isWithinInterval(assignmentDate, {
                 start: startOfDay(dateRange.from),
