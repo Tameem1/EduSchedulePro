@@ -1,7 +1,12 @@
-const fs = require('fs');
-const path = require('path');
-const bcrypt = require('bcrypt');
-const { pool } = require('../server/db');
+import fs from 'fs';
+import path from 'path';
+import bcrypt from 'bcrypt';
+import { pool } from '../server/db.js';
+import { fileURLToPath } from 'url';
+
+// Get current file's directory name
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // Define teacher groups
 const teacherGroups = ['aasem', 'khaled', 'mmdoh', 'obada', 'awab', 'zuhair', 'yahia'];
