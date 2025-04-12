@@ -11,7 +11,7 @@ import {
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, sql } from "drizzle-orm";
-import { users, availabilities, Section } from "@shared/schema";
+import { users, availabilities, Group } from "@shared/schema";
 import {
   sendTelegramNotification,
   notifyTeacherAboutAppointment,
@@ -113,50 +113,50 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Setup auth after WebSocket server
   setupAuth(app);
   
-  // Endpoint to get all sections
+  // Endpoint to get all groups
   app.get("/api/sections", async (req, res) => {
     try {
-      // Get all users with non-null sections
+      // Get all users with non-null groups
       const allUsers = await db
         .select()
         .from(users)
         .where(eq(users.role, "student"))
         .execute();
         
-      // Extract unique sections
-      const sectionsSet = new Set<string>();
+      // Extract unique groups
+      const groupsSet = new Set<string>();
       allUsers.forEach(user => {
-        if (user.section) {
-          sectionsSet.add(user.section);
+        if (user.group) {
+          groupsSet.add(user.group);
         }
       });
       
       // Convert to array
-      const sections = Array.from(sectionsSet);
-      res.json(sections);
+      const groups = Array.from(groupsSet);
+      res.json(groups);
     } catch (error) {
-      console.error("Error fetching sections:", error);
-      res.status(500).json({ error: "Failed to fetch sections" });
+      console.error("Error fetching groups:", error);
+      res.status(500).json({ error: "Failed to fetch groups" });
     }
   });
 
-  // Endpoint to get students by section
+  // Endpoint to get students by group
   app.get("/api/section/:section/students", async (req, res) => {
     try {
       const { section } = req.params;
       
-      // Get all students and filter by section
+      // Get all students and filter by group
       const students = await db
         .select()
         .from(users)
         .where(eq(users.role, "student"))
         .execute()
-        .then(allStudents => allStudents.filter(student => student.section === section));
+        .then(allStudents => allStudents.filter(student => student.group === section));
         
       res.json(students);
     } catch (error) {
-      console.error("Error fetching students by section:", error);
-      res.status(500).json({ error: "Failed to fetch students by section" });
+      console.error("Error fetching students by group:", error);
+      res.status(500).json({ error: "Failed to fetch students by group" });
     }
   });
 
@@ -773,7 +773,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Modify the statistics endpoint to include section information
+  // Modify the statistics endpoint to include group information
   app.get("/api/statistics", async (req, res) => {
     if (!req.isAuthenticated() || req.user.role !== 'manager') {
       return res.sendStatus(403);
@@ -794,7 +794,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         const stats = studentStats.get(response.studentId) || {
           studentId: response.studentId,
           studentName: response.studentName,
-          section: student?.section || 'غير محدد', // Add section information
+          group: student?.group || 'غير محدد', // Add group information
           question1YesCount: 0,
           question2YesCount: 0,
           question3Responses: [],
