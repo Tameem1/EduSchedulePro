@@ -45,12 +45,12 @@ async function verifyAuth() {
       secretCodeMap[student.id] = student.secret_code;
     });
     
-    // Get 25 random users
+    // Get 50 random users (about 14% of all users)
     const result = await pool.query(`
       SELECT id, username, password, role 
       FROM users 
       ORDER BY RANDOM() 
-      LIMIT 25
+      LIMIT 50
     `);
     
     const users = result.rows;
