@@ -112,6 +112,42 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Setup auth after WebSocket server
   setupAuth(app);
+  
+  // Endpoint to get all sections
+  app.get("/api/sections", async (req, res) => {
+    try {
+      // Return all sections from the enum
+      const sections = Object.values(Section);
+      res.json(sections);
+    } catch (error) {
+      console.error("Error fetching sections:", error);
+      res.status(500).json({ error: "Failed to fetch sections" });
+    }
+  });
+
+  // Endpoint to get students by section
+  app.get("/api/section/:section/students", async (req, res) => {
+    try {
+      const { section } = req.params;
+      
+      // Validate that the section is valid
+      if (!Object.values(Section).includes(section as any)) {
+        return res.status(400).json({ error: "Invalid section" });
+      }
+      
+      const students = await db
+        .select()
+        .from(users)
+        .where(eq(users.role, "student"))
+        .execute()
+        .then(allStudents => allStudents.filter(student => student.section === section));
+        
+      res.json(students);
+    } catch (error) {
+      console.error("Error fetching students by section:", error);
+      res.status(500).json({ error: "Failed to fetch students by section" });
+    }
+  });
 
   // Add new endpoint to get all students
   app.get("/api/users/students", async (req, res) => {
