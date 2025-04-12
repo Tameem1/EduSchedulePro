@@ -1,99 +1,169 @@
-import { db } from './server/db.js';
-import { users } from './shared/schema.js';
 import fs from 'fs';
+import path from 'path';
 import bcrypt from 'bcrypt';
-import { eq } from 'drizzle-orm';
+import pg from 'pg';
+import { fileURLToPath } from 'url';
 
+// Get current directory
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Define teacher groups
+const teacherGroups = ['aasem', 'khaled', 'mmdoh', 'obada', 'awab', 'zuhair', 'yahia'];
+
+// Connection setup
+const pool = new pg.Pool({
+  connectionString: process.env.DATABASE_URL
+});
+
+// Hash password function
 async function hashPassword(password) {
   const saltRounds = 10;
-  return bcrypt.hash(password, saltRounds);
+  return await bcrypt.hash(password, saltRounds);
 }
 
+// Function to convert section name to valid section enum value
 function mapSectionToEnum(sectionName) {
-  // Map the section name to the correct enum value
-  const sectionMapping = {
-    'aasem': 'aasem',
-    'khaled': 'khaled',
-    'mmdoh': 'mmdoh',
-    'obada': 'obada',
-    'awab': 'awab',
-    'zuhair': 'zuhair',
-    'yahia': 'yahia',
-    'omar': 'omar',
-    'motaa': 'motaa',
-    'mahmoud': 'mahmoud',
-    'dubai-omar': 'omar',
-    'bader': 'omar',
-    'kibar': 'omar',
-    'other': 'omar'
+  // Check if section name matches one of our enum values
+  const validSections = ['section1', 'section2', 'section3', 'section4', 'section5'];
+  if (validSections.includes(sectionName)) {
+    return sectionName;
+  }
+  
+  // Otherwise map it to a default section based on some logic
+  const sectionMap = {
+    'aasem': 'section1',
+    'khaled': 'section2',
+    'mmdoh': 'section3',
+    'obada': 'section4',
+    'awab': 'section1',
+    'zuhair': 'section5',
+    'yahia': 'section3',
+    'omar': 'section2',
+    'motaa': 'section4',
+    'mahmoud': 'section5'
   };
   
-  return sectionMapping[sectionName.toLowerCase()] || 'omar';
+  return sectionMap[sectionName] || 'section1'; // Default to section1 if not found
 }
 
+// Function to find the highest ID in the database
 async function getHighestUserId() {
-  const result = await db.select({ id: users.id }).from(users).orderBy(users.id).limit(1);
-  return result.length > 0 ? result[0].id : 0;
+  try {
+    const result = await pool.query('SELECT MAX(id) FROM users');
+    return result.rows[0].max || 0;
+  } catch (error) {
+    console.error('Error getting highest user ID:', error);
+    return 0;
+  }
 }
 
+// Continue importing users
 async function continueImport() {
   try {
-    // Read the students.json file
-    const data = fs.readFileSync('./attached_assets/students.json', 'utf8');
-    const jsonData = JSON.parse(data);
+    // Read users from JSON file
+    console.log('Reading users from JSON file...');
+    const jsonFilePath = path.join(__dirname, 'attached_assets', 'students.json');
+    const usersData = JSON.parse(fs.readFileSync(jsonFilePath, 'utf8'));
     
-    // Get the highest current user ID
-    const highestId = await getHighestUserId();
-    console.log(`Starting import from ID: ${highestId}`);
+    console.log(`Found ${usersData.length} users in JSON file.`);
     
-    // Filter to only include users with IDs higher than the highest current ID
-    const newUsers = jsonData.filter(user => user.id > highestId);
-    console.log(`Found ${newUsers.length} new users to import`);
+    // Get existing user IDs
+    const existingUsersResult = await pool.query('SELECT id FROM users');
+    const existingIds = new Set(existingUsersResult.rows.map(row => row.id));
     
-    // Process each user
-    for (const user of newUsers) {
-      const section = mapSectionToEnum(user.section);
-      
-      // Determine role based on section
-      const role = ['aasem', 'khaled', 'mmdoh', 'obada', 'awab', 'zuhair', 'yahia'].includes(section)
-        ? 'teacher'
-        : 'student';
-      
-      // Hash the password (using phone or a default)
-      const hashedPassword = await hashPassword(user.phone || '12345678');
-      
-      // Check if user already exists
-      const existingUser = await db.select().from(users).where(eq(users.username, user.name)).limit(1);
-      
-      if (existingUser.length === 0) {
-        // Insert the new user
-        await db.insert(users).values({
-          id: user.id,
-          username: user.name,
-          password: hashedPassword,
-          role: role,
-          section: section,
-          email: user.email || null,
-          phone: user.phone || null,
-          telegram_id: user.telegram_id || null,
-          telegram_username: user.telegram_username || null,
-          created_at: new Date(),
-          updated_at: new Date()
-        });
-        console.log(`Added user: ${user.name}, ID: ${user.id}, Role: ${role}, Section: ${section}`);
-      } else {
-        console.log(`User ${user.name} already exists, skipping.`);
+    // Filter users that haven't been imported yet
+    const usersToImport = usersData.filter(user => !existingIds.has(user.id));
+    
+    console.log(`Found ${usersToImport.length} users to import (${usersData.length - usersToImport.length} already exist).`);
+    
+    // Get existing usernames to avoid duplicates
+    const existingUsernamesResult = await pool.query('SELECT username FROM users');
+    const existingUsernames = new Set(existingUsernamesResult.rows.map(row => row.username));
+    
+    // Process and import each user
+    let successCount = 0;
+    let failCount = 0;
+    let teacherCount = 0;
+    let studentCount = 0;
+    
+    for (const user of usersToImport) {
+      try {
+        // Determine role based on group
+        const role = teacherGroups.includes(user.group) ? 'teacher' : 'student';
+        
+        // Update counters
+        if (role === 'teacher') {
+          teacherCount++;
+        } else {
+          studentCount++;
+        }
+        
+        // Map section
+        const section = mapSectionToEnum(user.group);
+        
+        // Hash password
+        const hashedPassword = await hashPassword(user.secret_code);
+        
+        // Check if username already exists
+        let username = user.name;
+        if (existingUsernames.has(username)) {
+          // Create a unique username by appending the ID
+          username = `${user.name}_${user.id}`;
+          console.log(`Username ${user.name} already exists, using ${username} instead.`);
+        }
+        
+        // Remember this username to avoid duplicates within this batch
+        existingUsernames.add(username);
+        
+        // Insert user
+        const query = `
+          INSERT INTO users (id, username, password, role, section, telegram_username, telegram_id)
+          VALUES ($1, $2, $3, $4, $5, $6, $7)
+          ON CONFLICT (id) DO UPDATE
+          SET username = $2, password = $3, role = $4, section = $5, telegram_username = $6, telegram_id = $7
+          RETURNING id
+        `;
+        
+        const values = [
+          user.id,
+          username,
+          hashedPassword,
+          role,
+          section,
+          null, // telegram_username is null initially
+          null  // telegram_id is null initially
+        ];
+        
+        const result = await pool.query(query, values);
+        
+        successCount++;
+        console.log(`Registered user ID ${result.rows[0].id}: ${username} as ${role}`);
+      } catch (error) {
+        failCount++;
+        console.error(`Error registering user ${user.name} (ID: ${user.id}):`, error.message);
       }
     }
     
-    console.log('Import completed successfully');
+    console.log('\nUser import summary:');
+    console.log(`Users to import: ${usersToImport.length}`);
+    console.log(`Successfully imported: ${successCount}`);
+    console.log(`Failed to import: ${failCount}`);
+    console.log(`Teachers registered: ${teacherCount}`);
+    console.log(`Students registered: ${studentCount}`);
+    
+    // Get final count of users in the database
+    const finalCountResult = await pool.query('SELECT COUNT(*) FROM users');
+    console.log(`\nTotal users in database: ${finalCountResult.rows[0].count}`);
+    
+    console.log('\nUser import completed!');
   } catch (error) {
-    console.error('Error during import:', error);
+    console.error('Unhandled error during user import:', error);
   } finally {
-    // Close the database connection
-    await db.end();
+    await pool.end();
+    console.log('Database connection closed.');
   }
 }
 
 // Run the import
-continueImport().catch(console.error);
+continueImport();

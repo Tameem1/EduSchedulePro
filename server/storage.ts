@@ -85,17 +85,6 @@ export const storage = {
     });
   },
 
-  async getUsersBySection(section: string) {
-    return await withRetry(async () => {
-      const usersList = await db
-        .select()
-        .from(users)
-        .where(eq(users.section, section as any)) // Type cast to handle enum
-        .orderBy(users.username);
-      return usersList;
-    });
-  },
-
   async createAvailability(data: any) {
     return await withRetry(async () => {
       const newAvailability = await db

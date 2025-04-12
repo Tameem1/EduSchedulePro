@@ -6,7 +6,7 @@ import { relations } from "drizzle-orm";
 // Define enums using pgEnum
 export const userRoleEnum = pgEnum('user_role', ['student', 'teacher', 'manager']);
 export const appointmentStatusEnum = pgEnum('appointment_status', ['pending', 'requested', 'assigned', 'responded', 'done', 'rejected']);
-export const sectionEnum = pgEnum('section', ['aasem', 'khaled', 'mmdoh', 'obada', 'awab', 'zuhair', 'yahia', 'omar', 'motaa', 'mahmoud']);
+export const sectionEnum = pgEnum('section', ['section1', 'section2', 'section3', 'section4', 'section5']);
 
 // Export const values for use in the application - make sure these match exactly with the enum values
 export const AppointmentStatus = {
@@ -28,16 +28,11 @@ export const AppointmentStatusArabic = {
 } as const;
 
 export const Section = {
-  AASEM: 'aasem',
-  KHALED: 'khaled',
-  MMDOH: 'mmdoh',
-  OBADA: 'obada',
-  AWAB: 'awab',
-  ZUHAIR: 'zuhair',
-  YAHIA: 'yahia',
-  OMAR: 'omar',
-  MOTAA: 'motaa',
-  MAHMOUD: 'mahmoud'
+  SECTION1: 'section1',
+  SECTION2: 'section2',
+  SECTION3: 'section3',
+  SECTION4: 'section4',
+  SECTION5: 'section5'
 } as const;
 
 export type UserRoleType = typeof UserRole[keyof typeof UserRole];

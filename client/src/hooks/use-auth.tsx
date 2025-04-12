@@ -22,7 +22,7 @@ type AuthContextType = {
   registerMutation: UseMutationResult<SelectUser, Error, InsertUser>;
 };
 
-type LoginData = Pick<InsertUser, "username" | "password"> & { section?: string };
+type LoginData = Pick<InsertUser, "username" | "password">;
 
 export const AuthContext = createContext<AuthContextType | null>(null);
 
@@ -165,8 +165,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   return (
     <AuthContext.Provider
       value={{
-        // Fix the nullish value issue by ensuring user is either a valid user or null
-        user: user || null,
+        user,
         isLoading,
         error,
         loginMutation,

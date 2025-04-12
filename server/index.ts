@@ -8,7 +8,6 @@ import addIndependentAssignments from "./migrations/add_independent_assignments"
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-app.use(express.static('public')); // Serve static files from public directory
 
 app.use((req, res, next) => {
   const start = Date.now();
@@ -40,7 +39,7 @@ app.use((req, res, next) => {
   next();
 });
 
-// Import the startBot function from telegram.ts
+// Import the actual startBot function from telegram.ts
 import { startBot } from './telegram';
 
 (async () => {
@@ -50,23 +49,7 @@ import { startBot } from './telegram';
     await renameTelegramField();
     await addIndependentAssignments(); // Added execution of the new migration
     console.log('Database migrations completed successfully');
-    
-    // Start Telegram bot in the background with max isolation
-    // Use setTimeout with 0 delay to ensure it runs after event loop is free,
-    // completely separating it from the main application flow
-    setTimeout(() => {
-      try {
-        // Additional try/catch to make absolutely sure Telegram doesn't affect the main app
-        startBot().catch(err => {
-          // Just log errors without letting them propagate to the main application
-          console.error('Non-critical Telegram bot error (app will continue):', err);
-        });
-      } catch (botError) {
-        console.error('Telegram bot initialization error (non-critical):', botError);
-        // Do nothing else - the application should continue running
-      }
-    }, 2000); // Longer delay to ensure app is fully started first
-    
+    startBot(); // Call startBot after successful migrations
   } catch (error) {
     console.error('Database migrations failed:', error);
     // Continue startup even if migrations fail
