@@ -11,7 +11,7 @@ import {
 } from "@shared/schema";
 import { db } from "./db";
 import { eq } from "drizzle-orm";
-import { users, availabilities } from "@shared/schema";
+import { users, availabilities, Section } from "@shared/schema";
 import {
   sendTelegramNotification,
   notifyTeacherAboutAppointment,
