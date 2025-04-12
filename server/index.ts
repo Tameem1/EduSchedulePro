@@ -50,7 +50,14 @@ import { startBot } from './telegram';
     await renameTelegramField();
     await addIndependentAssignments(); // Added execution of the new migration
     console.log('Database migrations completed successfully');
-    startBot(); // Call startBot after successful migrations
+    
+    // Start Telegram bot in the background
+    setTimeout(() => {
+      startBot().catch(error => {
+        console.error('Telegram bot startup error:', error);
+      });
+    }, 1000);
+    
   } catch (error) {
     console.error('Database migrations failed:', error);
     // Continue startup even if migrations fail

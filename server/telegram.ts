@@ -99,39 +99,29 @@ export const startBot = async () => {
     }
   });
 
-  // Launch the bot with more detailed logging and retry mechanism
-  try {
-    console.log('=== ATTEMPTING TO LAUNCH TELEGRAM BOT ===');
-    console.log(`Using bot token (first 5 chars): ${botToken ? botToken.substring(0, 5) : 'none'}`);
+  // Launch the bot with non-blocking initialization
+  console.log('=== ATTEMPTING TO LAUNCH TELEGRAM BOT ===');
+  console.log(`Using bot token (first 5 chars): ${botToken ? botToken.substring(0, 5) : 'none'}`);
 
-    let launchPromise = bot.launch();
+  // Use a non-blocking approach to bot initialization
+  bot.launch()
+    .then(() => {
+      console.log('=== TELEGRAM BOT INITIALIZED SUCCESSFULLY ===');
+      console.log(`Bot username: @${bot.botInfo?.username || 'unknown'}`);
+      console.log(`Bot ID: ${bot.botInfo?.id || 'unknown'}`);
+      console.log('Teachers should start a conversation with the bot by sending /start to @' + (bot.botInfo?.username || 'your_bot_username'));
+      console.log('=============================================');
+    })
+    .catch(err => {
+      console.error('=== TELEGRAM BOT INITIALIZATION FAILED ===');
+      console.error('Failed to start Telegram bot:', err);
+      console.error('Error details:', JSON.stringify(err, null, 2));
+      console.error('Make sure your TELEGRAM_BOT_TOKEN is correct and the bot is properly configured');
+      console.error('===========================================');
+    });
 
-    // Set up a timeout to ensure we don't wait forever
-    const timeout = new Promise((_, reject) =>
-      setTimeout(() => reject(new Error('Bot launch timeout after 10 seconds')), 10000)
-    );
-
-    await Promise.race([launchPromise, timeout]);
-
-    console.log('=== TELEGRAM BOT INITIALIZED SUCCESSFULLY ===');
-    console.log(`Bot username: @${bot.botInfo?.username || 'unknown'}`);
-    console.log(`Bot ID: ${bot.botInfo?.id || 'unknown'}`);
-    console.log('Full bot details:', JSON.stringify(bot.botInfo || {}, null, 2));
-    console.log('Teachers should start a conversation with the bot by sending /start to @' + (bot.botInfo?.username || 'your_bot_username'));
-    console.log('=============================================');
-
-    // Return the initialized bot
-    return bot;
-  } catch (err) {
-    console.error('=== TELEGRAM BOT INITIALIZATION FAILED ===');
-    console.error('Failed to start Telegram bot:', err);
-    console.error('Error details:', JSON.stringify(err, null, 2));
-    console.error('Make sure your TELEGRAM_BOT_TOKEN is correct and the bot is properly configured');
-    console.error('===========================================');
-
-    // Return the bot even though initialization failed - we can still try to use it later
-    return bot;
-  }
+  // Return the bot immediately, don't wait for initialization
+  return bot;
 };
 
 export async function sendTelegramNotification(telegramUsername: string, message: string, callbackUrl?: string): Promise<boolean | { success: false; error: string }> {
