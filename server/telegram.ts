@@ -6,17 +6,20 @@ import { Telegraf } from 'telegraf';
 import { format } from 'date-fns';
 import { format as formatGMT3Time } from "date-fns-tz";
 
+// Global variable to track bot initialization status
+let botInitialized = false;
+let botInstance: Telegraf | null = null;
 
 // Check if bot token is provided
 const botToken = process.env.TELEGRAM_BOT_TOKEN;
 
-// Initialize bot if token is available
-export const bot = botToken ? new Telegraf(botToken) : null;
+// Safe accessor for the bot instance
+export const getBotInstance = () => botInstance;
 
 // Function to send a message to a specific Telegram user
 export const sendTelegramMessage = async (telegramPhone: string, message: string): Promise<boolean> => {
-  if (!bot) {
-    console.log('Telegram bot token not provided, cannot send message');
+  if (!botInitialized || !botInstance) {
+    console.log('Telegram bot not initialized yet, cannot send message');
     return false;
   }
 
@@ -36,92 +39,107 @@ export const sendTelegramMessage = async (telegramPhone: string, message: string
       return false;
     }
 
-    await bot.telegram.sendMessage(formattedPhone, message);
+    await botInstance.telegram.sendMessage(formattedPhone, message);
     console.log(`Message sent to Telegram user ${formattedPhone}`);
     return true;
   } catch (error) {
     console.error(`Failed to send message to Telegram user ${telegramPhone}:`, error);
-    throw error;
+    return false; // Don't throw, just return false to prevent disruption
   }
 };
 
-// Start the bot
+// Start the bot in a completely non-blocking way
 export const startBot = async () => {
-  if (!bot) {
-    console.log('Telegram bot token not provided, skipping bot initialization');
-    return null;
-  }
-
-  console.log('Initializing Telegram bot...');
-
-  // Check token validity
-  const botToken = process.env.TELEGRAM_BOT_TOKEN;
-  if (!botToken) {
-    console.error('TELEGRAM_BOT_TOKEN environment variable is not set');
-    return null;
-  }
-
+  // Use a try/catch to prevent any bot initialization errors from affecting the main application
   try {
-    // Test the token with a simple getMe request
-    const response = await axios.get(`https://api.telegram.org/bot${botToken}/getMe`);
-    console.log('Telegram bot token is valid. Bot details:', JSON.stringify(response.data, null, 2));
-
-    // Important: Show the actual bot username that teachers should interact with
-    if (response.data.ok && response.data.result) {
-      console.log(`IMPORTANT: Teachers must send /start to @${response.data.result.username}`);
+    if (!botToken) {
+      console.log('Telegram bot token not provided, skipping bot initialization');
+      return null;
     }
+
+    console.log('Initializing Telegram bot...');
+
+    // Check token validity in a non-blocking way
+    axios.get(`https://api.telegram.org/bot${botToken}/getMe`)
+      .then(response => {
+        console.log('Telegram bot token is valid. Bot details:', JSON.stringify(response.data, null, 2));
+        // Important: Show the actual bot username that teachers should interact with
+        if (response.data.ok && response.data.result) {
+          console.log(`IMPORTANT: Teachers must send /start to @${response.data.result.username}`);
+        }
+        
+        // Only initialize the bot if the token is valid
+        initializeBotAfterValidation();
+      })
+      .catch(error => {
+        console.error('Telegram bot token test failed:', error.message);
+        console.error('Full error:', JSON.stringify(error.response?.data || error.message, null, 2));
+      });
+
+    // Return immediately, don't wait for bot initialization
+    return null;
   } catch (error) {
-    console.error('Telegram bot token test failed:', error.message);
-    console.error('Full error:', JSON.stringify(error.response?.data || error.message, null, 2));
+    console.error('Error during bot startup (non-fatal):', error);
+    return null;
   }
+};
 
-  bot.start(async (ctx) => {
-    try {
-      console.log('=== BOT START COMMAND RECEIVED ===');
-      console.log('User details:', JSON.stringify(ctx.from, null, 2));
-      console.log('Chat details:', JSON.stringify(ctx.chat, null, 2));
-      console.log('===================================');
-      await ctx.reply('مرحبًا بك في روبوت التعليم المساعد! استخدم /register للتسجيل كمعلم.');
-      console.log('Reply sent successfully to user');
-    } catch (error) {
-      console.error('Error in start command handler:', error);
-    }
-  });
+// Separate function to initialize bot after validation to keep main flow non-blocking
+const initializeBotAfterValidation = () => {
+  try {
+    // Create the bot instance
+    botInstance = new Telegraf(botToken || '');
 
-  bot.command('register', async (ctx) => {
-    try {
-      const userId = ctx.from.id;
-      const username = ctx.from.username || '';
-      console.log(`User registering with Telegram ID: ${userId}, username: @${username}`);
-      await ctx.reply(`معرف التيليجرام الخاص بك هو: ${userId}\nاسم المستخدم الخاص بك هو: @${username}\nيرجى إضافة هذه المعلومات في ملفك الشخصي على منصة التعليم.`);
-    } catch (error) {
-      console.error('Error in register command handler:', error);
-    }
-  });
-
-  // Launch the bot with non-blocking initialization
-  console.log('=== ATTEMPTING TO LAUNCH TELEGRAM BOT ===');
-  console.log(`Using bot token (first 5 chars): ${botToken ? botToken.substring(0, 5) : 'none'}`);
-
-  // Use a non-blocking approach to bot initialization
-  bot.launch()
-    .then(() => {
-      console.log('=== TELEGRAM BOT INITIALIZED SUCCESSFULLY ===');
-      console.log(`Bot username: @${bot.botInfo?.username || 'unknown'}`);
-      console.log(`Bot ID: ${bot.botInfo?.id || 'unknown'}`);
-      console.log('Teachers should start a conversation with the bot by sending /start to @' + (bot.botInfo?.username || 'your_bot_username'));
-      console.log('=============================================');
-    })
-    .catch(err => {
-      console.error('=== TELEGRAM BOT INITIALIZATION FAILED ===');
-      console.error('Failed to start Telegram bot:', err);
-      console.error('Error details:', JSON.stringify(err, null, 2));
-      console.error('Make sure your TELEGRAM_BOT_TOKEN is correct and the bot is properly configured');
-      console.error('===========================================');
+    botInstance.start(async (ctx) => {
+      try {
+        console.log('=== BOT START COMMAND RECEIVED ===');
+        console.log('User details:', JSON.stringify(ctx.from, null, 2));
+        console.log('Chat details:', JSON.stringify(ctx.chat, null, 2));
+        console.log('===================================');
+        await ctx.reply('مرحبًا بك في روبوت التعليم المساعد! استخدم /register للتسجيل كمعلم.');
+        console.log('Reply sent successfully to user');
+      } catch (error) {
+        console.error('Error in start command handler:', error);
+      }
     });
 
-  // Return the bot immediately, don't wait for initialization
-  return bot;
+    botInstance.command('register', async (ctx) => {
+      try {
+        const userId = ctx.from.id;
+        const username = ctx.from.username || '';
+        console.log(`User registering with Telegram ID: ${userId}, username: @${username}`);
+        await ctx.reply(`معرف التيليجرام الخاص بك هو: ${userId}\nاسم المستخدم الخاص بك هو: @${username}\nيرجى إضافة هذه المعلومات في ملفك الشخصي على منصة التعليم.`);
+      } catch (error) {
+        console.error('Error in register command handler:', error);
+      }
+    });
+
+    // Launch the bot with non-blocking initialization
+    console.log('=== ATTEMPTING TO LAUNCH TELEGRAM BOT ===');
+    console.log(`Using bot token (first 5 chars): ${botToken ? botToken.substring(0, 5) : 'none'}`);
+
+    // Use a non-blocking approach to bot initialization
+    botInstance.launch()
+      .then(() => {
+        botInitialized = true;
+        console.log('=== TELEGRAM BOT INITIALIZED SUCCESSFULLY ===');
+        if (botInstance && botInstance.botInfo) {
+          console.log(`Bot username: @${botInstance.botInfo.username || 'unknown'}`);
+          console.log(`Bot ID: ${botInstance.botInfo.id || 'unknown'}`);
+          console.log('Teachers should start a conversation with the bot by sending /start to @' + (botInstance.botInfo.username || 'your_bot_username'));
+        }
+        console.log('=============================================');
+      })
+      .catch(err => {
+        console.error('=== TELEGRAM BOT INITIALIZATION FAILED ===');
+        console.error('Failed to start Telegram bot:', err);
+        console.error('Error details:', JSON.stringify(err, null, 2));
+        console.error('Make sure your TELEGRAM_BOT_TOKEN is correct and the bot is properly configured');
+        console.error('===========================================');
+      });
+  } catch (error) {
+    console.error('Error setting up Telegram bot (non-fatal):', error);
+  }
 };
 
 export async function sendTelegramNotification(telegramUsername: string, message: string, callbackUrl?: string): Promise<boolean | { success: false; error: string }> {
@@ -139,8 +157,8 @@ export async function sendTelegramNotification(telegramUsername: string, message
     }
 
     // Log bot initialization status
-    console.log(`Bot initialized: ${bot?.botInfo ? 'Yes' : 'No'}`);
-    if (bot && !bot.botInfo) {
+    console.log(`Bot initialized: ${botInitialized && botInstance ? 'Yes' : 'No'}`);
+    if (!botInitialized && botInstance) {
       console.log('Bot is defined but not fully initialized. Waiting...');
       // Wait briefly for bot to initialize if needed
       await new Promise(resolve => setTimeout(resolve, 1000));
@@ -184,7 +202,7 @@ export async function sendTelegramNotification(telegramUsername: string, message
       console.log(`Original username/ID provided: "${telegramUsername}"`);
       console.log(`Formatted username: "${formattedUsername}"`);
       console.log(`Using as chat_id: "${chatId}" (${isNumeric ? 'numeric ID' : 'username'})`);
-      console.log(`Bot info from Telegraf: ${bot ? JSON.stringify(bot.botInfo || 'Not initialized') : 'Bot not initialized'}`);
+      console.log(`Bot info from Telegraf: ${botInstance ? JSON.stringify(botInstance.botInfo || 'Not initialized') : 'Bot not initialized'}`);
       console.log('==============================');
 
       console.log(`Attempting to send message to Telegram ${isNumeric ? 'chat ID' : 'username'}: ${chatId}`);
