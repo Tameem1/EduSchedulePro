@@ -8,6 +8,7 @@ import addIndependentAssignments from "./migrations/add_independent_assignments"
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+app.use(express.static('public')); // Serve static files from public directory
 
 app.use((req, res, next) => {
   const start = Date.now();
