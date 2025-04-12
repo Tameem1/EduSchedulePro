@@ -7,103 +7,129 @@ const pool = new pg.Pool({
 
 async function updateSectionEnum() {
   const client = await pool.connect();
-  
   try {
-    // Start a transaction
+    console.log('Starting to update section enum...');
+    
+    // Begin transaction
     await client.query('BEGIN');
     
-    console.log('Backing up existing users data...');
-    const usersResult = await client.query('SELECT * FROM users');
-    console.log(`Backed up ${usersResult.rows.length} user records.`);
+    // First, check current enum values
+    const checkEnum = await client.query(`
+      SELECT enumlabel
+      FROM pg_enum
+      JOIN pg_type ON pg_enum.enumtypid = pg_type.oid
+      WHERE pg_type.typname = 'section'
+      ORDER BY enumsortorder;
+    `);
     
-    // Map old sections to new sections
-    const sectionMapping = {
+    console.log('Current section enum values:', checkEnum.rows.map(row => row.enumlabel));
+    
+    // Create a temporary column to hold the existing values
+    await client.query(`
+      ALTER TABLE users 
+      ADD COLUMN temp_section text;
+    `);
+    
+    // Copy current section values to the temporary column
+    await client.query(`
+      UPDATE users 
+      SET temp_section = section::text 
+      WHERE section IS NOT NULL;
+    `);
+    
+    console.log('Copied existing section values to temporary column');
+    
+    // Drop existing section column
+    await client.query(`
+      ALTER TABLE users 
+      DROP COLUMN section;
+    `);
+    
+    console.log('Dropped old section column');
+    
+    // Drop existing section enum type
+    await client.query(`
+      DROP TYPE section;
+    `);
+    
+    console.log('Dropped old section enum type');
+    
+    // Create new section enum with all the required values
+    await client.query(`
+      CREATE TYPE section AS ENUM (
+        'aasem', 'khaled', 'mmdoh', 'obada', 'awab', 
+        'zuhair', 'yahia', 'omar', 'motaa', 'mahmoud'
+      );
+    `);
+    
+    console.log('Created new section enum type with updated values');
+    
+    // Add section column back with new enum type
+    await client.query(`
+      ALTER TABLE users 
+      ADD COLUMN section section;
+    `);
+    
+    console.log('Added new section column with updated enum type');
+    
+    // Map old values to new values for the update
+    // This is just a basic mapping as an example
+    const valueMapping = {
       'section1': 'aasem',
       'section2': 'khaled',
       'section3': 'mmdoh',
       'section4': 'obada',
-      'section5': 'zuhair'
+      'section5': 'awab',
+      'section6': 'zuhair',
+      'section7': 'yahia',
+      'section8': 'omar',
+      'section9': 'motaa',
+      'section10': 'mahmoud'
     };
     
-    // Update the section enum type
-    console.log('Updating section enum type...');
-    
-    // Step 1: Create a temporary column with the new type
-    await client.query(`
-      ALTER TABLE users
-      ADD COLUMN new_section VARCHAR(50)
-    `);
-    
-    // Step 2: Transfer data to the new column with mapping
-    console.log('Transferring section data to new column with proper mapping...');
-    for (const user of usersResult.rows) {
-      let newSection = user.section; // keep original if no mapping
+    // Update for each possible section value
+    for (const [oldValue, newValue] of Object.entries(valueMapping)) {
+      await client.query(`
+        UPDATE users 
+        SET section = $1::section 
+        WHERE temp_section = $2;
+      `, [newValue, oldValue]);
       
-      if (user.section in sectionMapping) {
-        // Map old section to new section name
-        newSection = sectionMapping[user.section];
-      }
-      
-      // If null or not in mapping, get it from the group name in the original data
-      if (!newSection) {
-        // Use the original group from the import file
-        // For now, set it to null, we'll update from the import file later
-        newSection = null;
-      }
-      
-      await client.query(
-        'UPDATE users SET new_section = $1 WHERE id = $2',
-        [newSection, user.id]
-      );
+      console.log(`Mapped ${oldValue} to ${newValue}`);
     }
     
-    // Step C: Drop the old section column
-    console.log('Dropping old section column...');
-    await client.query('ALTER TABLE users DROP COLUMN section');
-    
-    // Step D: Create a new section enum type
-    console.log('Creating new section enum type...');
+    // Drop temporary column
     await client.query(`
-      DROP TYPE IF EXISTS new_section CASCADE;
-      CREATE TYPE new_section AS ENUM (
-        'aasem', 'khaled', 'mmdoh', 'obada', 'awab', 'zuhair', 'yahia', 'omar', 'motaa', 'mahmoud'
-      );
+      ALTER TABLE users 
+      DROP COLUMN temp_section;
     `);
     
-    // Step E: Add a new column with the new enum type
-    await client.query(`
-      ALTER TABLE users
-      ADD COLUMN section new_section
-    `);
+    console.log('Dropped temporary column');
     
-    // Step F: Convert and copy the data from the temporary column
-    console.log('Copying data to new enum column...');
-    await client.query(`
-      UPDATE users
-      SET section = new_section::new_section
-      WHERE new_section IS NOT NULL
-    `);
-    
-    // Step G: Drop the temporary column
-    console.log('Dropping temporary column...');
-    await client.query('ALTER TABLE users DROP COLUMN new_section');
-    
-    // Step H: Rename the new type to the original name
-    console.log('Renaming enum type...');
-    await client.query(`
-      ALTER TYPE new_section RENAME TO section;
-    `);
-    
-    // Commit the transaction
+    // Commit transaction
     await client.query('COMMIT');
-    console.log('Section enum update completed successfully!');
+    
+    console.log('Successfully updated section enum and migrated existing data!');
+    
+    // Verify new enum values
+    const verifyEnum = await client.query(`
+      SELECT enumlabel
+      FROM pg_enum
+      JOIN pg_type ON pg_enum.enumtypid = pg_type.oid
+      WHERE pg_type.typname = 'section'
+      ORDER BY enumsortorder;
+    `);
+    
+    console.log('New section enum values:', verifyEnum.rows.map(row => row.enumlabel));
     
   } catch (error) {
+    // Rollback on error
     await client.query('ROLLBACK');
     console.error('Error updating section enum:', error);
   } finally {
     client.release();
     await pool.end();
+    console.log('Database connection closed.');
   }
 }
 
