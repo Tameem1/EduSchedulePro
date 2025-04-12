@@ -4,6 +4,8 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useAuth } from "@/hooks/use-auth";
+import { useQuery } from "@tanstack/react-query";
+import { Section } from "@shared/schema";
 
 import {
   Form,
@@ -15,22 +17,68 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { apiRequest } from "@/lib/queryClient";
 
 const formSchema = z.object({
-  username: z.string().min(3, "اسم المستخدم مطلوب"),
+  section: z.string({
+    required_error: "يرجى اختيار القسم",
+  }),
+  username: z.string().min(1, "يرجى اختيار اسم المستخدم"),
   password: z.string().min(1, "كلمة المرور مطلوبة"),
 });
 
+// Convert section keys to Arabic names
+const sectionNames = {
+  aasem: "عاصم",
+  khaled: "خالد",
+  mmdoh: "ممدوح",
+  obada: "عبادة",
+  awab: "أواب",
+  zuhair: "زهير",
+  yahia: "يحيى",
+  omar: "عمر",
+  motaa: "مطاع",
+  mahmoud: "محمود",
+};
+
 export function LoginForm() {
   const { loginMutation } = useAuth();
+  const [selectedSection, setSelectedSection] = React.useState<string | null>(null);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
+      section: "",
       username: "",
       password: "",
     },
   });
+
+  // Get users by section
+  const { data: usersBySection } = useQuery({
+    queryKey: ['users-by-section', selectedSection],
+    queryFn: async () => {
+      if (!selectedSection) return [];
+      const response = await apiRequest(`/api/users/by-section/${selectedSection}`);
+      return response.json();
+    },
+    enabled: !!selectedSection,
+  });
+
+  // When section changes, reset username field
+  React.useEffect(() => {
+    if (selectedSection) {
+      form.setValue('section', selectedSection);
+      form.setValue('username', '');
+    }
+  }, [selectedSection, form]);
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     loginMutation.mutate({
@@ -39,22 +87,72 @@ export function LoginForm() {
     });
   }
 
+  // Get all available sections
+  const sections = Object.values(Section);
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+        <FormField
+          control={form.control}
+          name="section"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>القسم</FormLabel>
+              <Select
+                onValueChange={(value) => {
+                  field.onChange(value);
+                  setSelectedSection(value);
+                }}
+                defaultValue={field.value}
+              >
+                <FormControl>
+                  <SelectTrigger dir="rtl">
+                    <SelectValue placeholder="اختر القسم" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent dir="rtl">
+                  {sections.map((section) => (
+                    <SelectItem key={section} value={section}>
+                      {sectionNames[section as keyof typeof sectionNames] || section}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
         <FormField
           control={form.control}
           name="username"
           render={({ field }) => (
             <FormItem>
               <FormLabel>اسم المستخدم</FormLabel>
-              <FormControl>
-                <Input dir="rtl" placeholder="اسم المستخدم" {...field} />
-              </FormControl>
+              <Select
+                onValueChange={field.onChange}
+                defaultValue={field.value}
+                disabled={!selectedSection}
+              >
+                <FormControl>
+                  <SelectTrigger dir="rtl">
+                    <SelectValue placeholder="اختر اسم المستخدم" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent dir="rtl">
+                  {usersBySection && usersBySection.map((user: any) => (
+                    <SelectItem key={user.id} value={user.username}>
+                      {user.username}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
               <FormMessage />
             </FormItem>
           )}
         />
+
         <FormField
           control={form.control}
           name="password"
