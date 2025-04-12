@@ -821,7 +821,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         const stats = studentStats.get(assignment.studentId) || {
           studentId: assignment.studentId,
           studentName: assignment.studentName,
-          section: student?.section || 'غير محدد', // Add section information
+          group: student?.group || 'غير محدد', // Add group information
           question1YesCount: 0,
           question2YesCount: 0,
           question3Responses: [],
