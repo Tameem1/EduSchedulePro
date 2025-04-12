@@ -240,7 +240,7 @@ export async function sendTelegramNotification(telegramUsername: string, message
         console.log('For Telegram to work correctly:');
         console.log('1. The username must be entered WITHOUT the @ symbol in the user profile');
         console.log('2. The teacher MUST start a conversation with the bot first by sending /start');
-        console.log(`3. The bot username is: ${bot ? `@${bot.botInfo?.username || 'unknown'}` : '(Bot not initialized yet)'}`);
+        console.log(`3. The bot username is: ${botInstance ? `@${botInstance.botInfo?.username || 'unknown'}` : '(Bot not initialized yet)'}`);
         console.log('4. Verify that the username in the platform matches their exact Telegram username (case sensitive)');
 
         // Return a more specific error flag that could be used by the frontend
@@ -272,7 +272,12 @@ export async function notifyTeacherAboutAppointment(appointmentId: number, teach
       return false;
     }
 
-    const telegramContact = teacher[0].telegramUsername;
+    // Make sure we have a valid telegram username 
+    const telegramContact = teacher[0].telegramUsername || '';
+    if (!telegramContact) {
+      console.error(`Teacher ${teacherId} has empty Telegram username`);
+      return false;
+    }
 
     // Get appointment details
     const appointment = await db.select().from(appointments).where(eq(appointments.id, appointmentId)).limit(1);
@@ -295,11 +300,20 @@ export async function notifyTeacherAboutAppointment(appointmentId: number, teach
     const message = `تم تعيينك لموعد جديد مع ${studentName} الساعة ${appointmentTime}. الرجاء قبول الموعد في أقرب وقت.`;
 
     // Send notification
-    return await sendTelegramNotification(
+    const result = await sendTelegramNotification(
       telegramContact,
       message,
       callbackUrl
     );
+    
+    // Handle different return types
+    if (typeof result === 'boolean') {
+      return result;
+    } else {
+      // If it's an object with success:false, log the error and return false
+      console.log(`Telegram notification failed: ${result.error}`);
+      return false;
+    }
   } catch (error) {
     console.error('Failed to notify teacher about appointment:', error);
     return false;
