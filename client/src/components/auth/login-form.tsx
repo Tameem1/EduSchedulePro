@@ -66,7 +66,7 @@ export function LoginForm() {
     queryKey: ['users-by-section', selectedSection],
     queryFn: async () => {
       if (!selectedSection) return [];
-      const response = await apiRequest(`/api/users/by-section/${selectedSection}`);
+      const response = await apiRequest(`/api/users/by-section/${selectedSection}`, { method: 'GET' });
       return response.json();
     },
     enabled: !!selectedSection,
@@ -88,7 +88,7 @@ export function LoginForm() {
   }
 
   // Get all available sections
-  const sections = Object.values(Section);
+  const sections = Object.keys(Section) as Array<keyof typeof Section>;
 
   return (
     <Form {...form}>

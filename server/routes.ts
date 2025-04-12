@@ -23,6 +23,18 @@ import { addHours } from "date-fns";
 const clients = new Map<string, WebSocket>();
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // API endpoint to get users by section
+  app.get('/api/users/by-section/:section', async (req, res) => {
+    try {
+      const { section } = req.params;
+      // Get users with the given section
+      const users = await storage.getUsersBySection(section);
+      res.json(users);
+    } catch (error) {
+      console.error('Error fetching users by section:', error);
+      res.status(500).json({ error: 'Failed to fetch users by section' });
+    }
+  });
   const httpServer = createServer(app);
 
   // Create WebSocket server before setting up auth
