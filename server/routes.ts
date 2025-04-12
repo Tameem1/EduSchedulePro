@@ -23,13 +23,23 @@ import { addHours } from "date-fns";
 const clients = new Map<string, WebSocket>();
 
 export async function registerRoutes(app: Express): Promise<Server> {
-  // API endpoint to get users by section
+  // API endpoint to get users by section (PUBLIC - needed for login)
   app.get('/api/users/by-section/:section', async (req, res) => {
     try {
+      console.log(`Fetching users for section: ${req.params.section}`);
       const { section } = req.params;
+      
       // Get users with the given section
       const users = await storage.getUsersBySection(section);
-      res.json(users);
+      
+      // For security, only return id and username
+      const sanitizedUsers = users.map(user => ({
+        id: user.id,
+        username: user.username
+      }));
+      
+      console.log(`Found ${sanitizedUsers.length} users in section ${section}`);
+      res.json(sanitizedUsers);
     } catch (error) {
       console.error('Error fetching users by section:', error);
       res.status(500).json({ error: 'Failed to fetch users by section' });
@@ -107,7 +117,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
     console.log(`Broadcasting ${type} update to ${clients.size} clients`);
 
-    for (const [clientId, client] of clients) {
+    // Using Array.from to avoid iteration issue with Map
+    Array.from(clients.entries()).forEach(([clientId, client]) => {
       try {
         if (client.readyState === WebSocket.OPEN) {
           client.send(message);
@@ -119,7 +130,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         console.error(`Error broadcasting message to client ${clientId}:`, error);
         clients.delete(clientId);
       }
-    }
+    });
   };
 
   // Setup auth after WebSocket server

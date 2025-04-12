@@ -165,7 +165,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   return (
     <AuthContext.Provider
       value={{
-        user,
+        // Fix the nullish value issue by ensuring user is either a valid user or null
+        user: user || null,
         isLoading,
         error,
         loginMutation,

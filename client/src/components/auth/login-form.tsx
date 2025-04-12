@@ -89,7 +89,8 @@ export function LoginForm() {
   }
 
   // Get all available sections
-  const sections = Object.keys(Section) as Array<keyof typeof Section>;
+  // Use an array of section values to avoid any issues with object keys
+  const sections = ['aasem', 'khaled', 'mmdoh', 'obada', 'awab', 'zuhair', 'yahia', 'omar', 'motaa', 'mahmoud'];
 
   return (
     <Form {...form}>
