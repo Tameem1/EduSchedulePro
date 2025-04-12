@@ -66,7 +66,7 @@ export function LoginForm() {
     queryKey: ['users-by-section', selectedSection],
     queryFn: async () => {
       if (!selectedSection) return [];
-      const response = await apiRequest(`/api/users/by-section/${selectedSection}`, { method: 'GET' });
+      const response = await apiRequest("GET", `/api/users/by-section/${selectedSection}`);
       return response.json();
     },
     enabled: !!selectedSection,
@@ -84,6 +84,7 @@ export function LoginForm() {
     loginMutation.mutate({
       username: values.username,
       password: values.password,
+      section: values.section,
     });
   }
 

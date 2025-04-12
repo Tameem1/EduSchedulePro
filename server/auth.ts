@@ -56,12 +56,25 @@ export function setupAuth(app: Express) {
   });
 
   passport.use(
-    new LocalStrategy(async (username, password, done) => {
+    new LocalStrategy({
+      usernameField: 'username',
+      passwordField: 'password',
+      passReqToCallback: true,
+    }, async (req, username, password, done) => {
       try {
+        const { section } = req.body;
         const user = await storage.getUserByUsername(username);
+        
+        // Check if user exists and password is correct
         if (!user || !(await comparePasswords(password, user.password))) {
-          return done(null, false, { message: 'Invalid username or password' });
+          return done(null, false, { message: 'اسم المستخدم أو كلمة المرور غير صحيحة' });
         }
+        
+        // Validate section if it was provided
+        if (section && user.section !== section) {
+          return done(null, false, { message: 'اسم المستخدم غير موجود في هذا القسم' });
+        }
+        
         return done(null, user);
       } catch (error) {
         return done(error);
