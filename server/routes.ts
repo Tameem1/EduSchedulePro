@@ -10,7 +10,7 @@ import {
   AppointmentStatus,
 } from "@shared/schema";
 import { db } from "./db";
-import { eq } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 import { users, availabilities, Section } from "@shared/schema";
 import {
   sendTelegramNotification,
@@ -116,8 +116,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Endpoint to get all sections
   app.get("/api/sections", async (req, res) => {
     try {
-      // Return all sections from the enum
-      const sections = Object.values(Section);
+      // Get all users with non-null sections
+      const allUsers = await db
+        .select()
+        .from(users)
+        .where(eq(users.role, "student"))
+        .execute();
+        
+      // Extract unique sections
+      const sectionsSet = new Set<string>();
+      allUsers.forEach(user => {
+        if (user.section) {
+          sectionsSet.add(user.section);
+        }
+      });
+      
+      // Convert to array
+      const sections = Array.from(sectionsSet);
       res.json(sections);
     } catch (error) {
       console.error("Error fetching sections:", error);
@@ -130,11 +145,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const { section } = req.params;
       
-      // Validate that the section is valid
-      if (!Object.values(Section).includes(section as any)) {
-        return res.status(400).json({ error: "Invalid section" });
-      }
-      
+      // Get all students and filter by section
       const students = await db
         .select()
         .from(users)

@@ -5,7 +5,6 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useAuth } from "@/hooks/use-auth";
-import { Section } from "@shared/schema";
 import axios from "axios";
 
 import {
@@ -32,23 +31,8 @@ const formSchema = z.object({
   password: z.string().min(1, "كلمة المرور مطلوبة"),
 });
 
-// Helper function to translate section names to Arabic
-const getSectionName = (section: string) => {
-  switch (section) {
-    case Section.SECTION1:
-      return "القسم الأول";
-    case Section.SECTION2:
-      return "القسم الثاني";
-    case Section.SECTION3:
-      return "القسم الثالث";
-    case Section.SECTION4:
-      return "القسم الرابع";
-    case Section.SECTION5:
-      return "القسم الخامس";
-    default:
-      return section;
-  }
-};
+// The section names are already in Arabic as stored in the database
+// so we can use them directly without translation
 
 export function LoginForm() {
   const { loginMutation } = useAuth();
@@ -124,7 +108,7 @@ export function LoginForm() {
                 <SelectContent>
                   {sections.map((section) => (
                     <SelectItem key={section} value={section}>
-                      {getSectionName(section)}
+                      {section}
                     </SelectItem>
                   ))}
                 </SelectContent>
