@@ -148,14 +148,36 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const { section } = req.params;
       
-      // Get all students and filter by section
-      const students = await db
+      // Create a mapping for section names between schema and database
+      const sectionMapping: Record<string, string[]> = {
+        'aasem': ['aasem'],
+        'khaled': ['khaled', 'bader'],
+        'mmdoh': ['mmdoh'],
+        'obada': ['obada', 'other'],
+        'awab': ['awab'],
+        'zuhair': ['zuhair', 'jaddubai'],
+        'yahia': ['yahia'],
+        'omar': ['omar', 'dubai-omar'],
+        'motaa': ['motaa'],
+        'mahmoud': ['mahmoud']
+      };
+      
+      // Get all students
+      const allStudents = await db
         .select()
         .from(users)
         .where(eq(users.role, "student"))
-        .execute()
-        .then(allStudents => allStudents.filter(student => student.section === section));
-        
+        .execute();
+      
+      // Get the corresponding database section names for the provided schema section
+      const dbSections = sectionMapping[section] || [section];
+      
+      // Filter students by any of the corresponding database section names
+      const students = allStudents.filter(student => 
+        student.section && dbSections.includes(student.section)
+      );
+      
+      console.log(`Found ${students.length} students for section ${section} (mapped to ${dbSections.join(', ')})`);
       res.json(students);
     } catch (error) {
       console.error("Error fetching students by section:", error);
