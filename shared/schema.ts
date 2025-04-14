@@ -1,4 +1,4 @@
-import { pgTable, text, serial, integer, boolean, timestamp, pgEnum } from "drizzle-orm/pg-core";
+import { pgTable, text, serial, integer, boolean, timestamp, pgEnum, unique } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 import { relations } from "drizzle-orm";
@@ -6,7 +6,6 @@ import { relations } from "drizzle-orm";
 // Define enums using pgEnum
 export const userRoleEnum = pgEnum('user_role', ['student', 'teacher', 'manager']);
 export const appointmentStatusEnum = pgEnum('appointment_status', ['pending', 'requested', 'assigned', 'responded', 'done', 'rejected']);
-export const sectionEnum = pgEnum('section', ['aasem', 'khaled', 'mmdoh', 'obada', 'awab', 'zuhair', 'yahia', 'omar', 'motaa', 'mahmoud']);
 
 // Export const values for use in the application - make sure these match exactly with the enum values
 export const AppointmentStatus = {
@@ -47,11 +46,16 @@ export type SectionType = typeof Section[keyof typeof Section];
 // User table with role enum
 export const users = pgTable("users", {
   id: serial("id").primaryKey(),
-  username: text("username").notNull().unique(),
+  username: text("username").notNull(),
   password: text("password").notNull(),
   role: userRoleEnum("role").notNull(),
   telegramUsername: text("telegram_username"),
-  section: sectionEnum("section")  // Optional section field
+  section: text("section")  // Optional section field as text to support any values
+}, (table) => {
+  return {
+    // Make username unique only within a section
+    usernameUniqueInSection: unique().on(table.username, table.section),
+  }
 });
 
 // Teacher availability slots
