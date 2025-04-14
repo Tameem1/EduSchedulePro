@@ -66,6 +66,19 @@ export const storage = {
       return user;
     });
   },
+  
+  async getUserByUsernameAndSection(username: string, section: string) {
+    return await withRetry(async () => {
+      const [user] = await db
+        .select()
+        .from(users)
+        .where(and(
+          eq(users.username, username),
+          eq(users.section, section)
+        ));
+      return user;
+    });
+  },
 
   async createUser(user: InsertUser) {
     return await withRetry(async () => {

@@ -56,12 +56,26 @@ export function setupAuth(app: Express) {
   });
 
   passport.use(
-    new LocalStrategy(async (username, password, done) => {
+    new LocalStrategy({
+      usernameField: 'username',
+      passwordField: 'password',
+      passReqToCallback: true
+    }, async (req, username, password, done) => {
       try {
-        const user = await storage.getUserByUsername(username);
-        if (!user || !(await comparePasswords(password, user.password))) {
-          return done(null, false, { message: 'Invalid username or password' });
+        // Get section from request body
+        const section = req.body.section;
+        
+        if (!section) {
+          return done(null, false, { message: 'Section is required' });
         }
+        
+        // Find user by username AND section
+        const user = await storage.getUserByUsernameAndSection(username, section);
+        
+        if (!user || !(await comparePasswords(password, user.password))) {
+          return done(null, false, { message: 'Invalid username, section, or password' });
+        }
+        
         return done(null, user);
       } catch (error) {
         return done(error);
@@ -82,11 +96,22 @@ export function setupAuth(app: Express) {
 
   app.post("/api/register", async (req, res, next) => {
     try {
-      const existingUser = await storage.getUserByUsername(req.body.username);
+      // Check if section is provided
+      if (!req.body.section) {
+        return res.status(400).json({ error: "Section is required" });
+      }
+      
+      // Check if a user with the same username AND section already exists
+      const existingUser = await storage.getUserByUsernameAndSection(
+        req.body.username, 
+        req.body.section
+      );
+      
       if (existingUser) {
-        return res.status(400).json({ error: "Username already exists" });
+        return res.status(400).json({ error: "A user with this username already exists in the selected section" });
       }
 
+      // Create the user
       const user = await storage.createUser({
         ...req.body,
         password: await hashPassword(req.body.password),
@@ -102,7 +127,7 @@ export function setupAuth(app: Express) {
   });
 
   app.post("/api/login", (req, res, next) => {
-    passport.authenticate("local", (err, user, info) => {
+    passport.authenticate("local", (err: any, user: any, info: any) => {
       if (err) return next(err);
       if (!user) {
         return res.status(401).json({ error: info?.message || "Authentication failed" });

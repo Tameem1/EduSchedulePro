@@ -6,6 +6,7 @@ export interface IStorage {
   sessionStore: Store;
   getUser(id: number): Promise<User | undefined>;
   getUserByUsername(username: string): Promise<User | undefined>;
+  getUserByUsernameAndSection(username: string, section: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
   updateUser(userId: number, userData: Partial<User>): Promise<User>;
   createAvailability(availability: Omit<Availability, "id">): Promise<Availability>;
