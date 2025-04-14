@@ -49,10 +49,12 @@ export default function ManagerAppointments() {
   const [isAddAppointmentDialogOpen, setIsAddAppointmentDialogOpen] =
     React.useState(false);
   const [newAppointmentData, setNewAppointmentData] = React.useState({
+    section: "",
     studentId: "",
     startTime: "",
     teacherAssignment: "",
   });
+  const [filteredStudentsForAppointment, setFilteredStudentsForAppointment] = React.useState<User[]>([]);
   const { user } = useAuth();
   const [wsConnected, setWsConnected] = React.useState(false);
   const [wsRetries, setWsRetries] = React.useState(0);
