@@ -5,6 +5,7 @@ import { fileURLToPath } from 'url';
 import pg from 'pg';
 import { scrypt, timingSafeEqual } from 'crypto';
 import { promisify } from 'util';
+import bcrypt from 'bcrypt';
 
 // Get current directory
 const __filename = fileURLToPath(import.meta.url);
@@ -19,41 +20,33 @@ const pool = new Pool({
 // Promisify scrypt
 const scryptAsync = promisify(scrypt);
 
-// Compare passwords function
+// Compare passwords function (supports both bcrypt and scrypt)
 async function comparePasswords(supplied, stored) {
   try {
-    if (stored && stored.includes('.')) {
+    // Check if it's a bcrypt hash
+    if (stored.startsWith('$2')) {
+      return await bcrypt.compare(supplied, stored);
+    } 
+    // Check if it's a scrypt hash (with salt)
+    else if (stored.includes('.')) {
       const [hashed, salt] = stored.split(".");
-      
-      if (!hashed || !salt) {
-        return false;
-      }
-      
       const hashedBuf = Buffer.from(hashed, "hex");
       const suppliedBuf = await scryptAsync(supplied, salt, 64);
-      
-      // Ensure both buffers are the same length before comparing
-      if (hashedBuf.length !== suppliedBuf.length) {
-        console.log(`Buffer length mismatch: ${hashedBuf.length} vs ${suppliedBuf.length}`);
-        return false;
-      }
-      
       return timingSafeEqual(hashedBuf, suppliedBuf);
     } else {
-      // Old format or invalid format
+      console.log(`Unknown password format: ${stored.substring(0, 10)}...`);
       return false;
     }
   } catch (error) {
-    // Safely handle any errors during comparison
-    console.log(`Password comparison error for "${supplied.substring(0, 3)}...": ${error.message}`);
+    console.log(`Password comparison error: ${error.message}`);
     return false;
   }
 }
 
-// Test logins using the JSON data
+// Test logins
 async function testLogins() {
   try {
-    console.log('Starting login tests...');
+    console.log('Starting login tests with multi-format support...');
     
     // Read users from JSON file to get original passwords
     console.log('Reading users from JSON file...');
@@ -66,54 +59,51 @@ async function testLogins() {
       secretCodeMap.set(user.id, user.secret_code);
     });
     
-    // Get a test sample with different roles
-    const testUsersQuery = `
-      (SELECT id, username, password, role, section FROM users WHERE role = 'student' ORDER BY RANDOM() LIMIT 5)
-      UNION
-      (SELECT id, username, password, role, section FROM users WHERE role = 'teacher' ORDER BY RANDOM() LIMIT 5)
+    // Get test users specifically including the ones mentioned
+    const testUsers = await pool.query(`
+      SELECT id, username, password, role, section 
+      FROM users 
+      WHERE username IN ('محمد خير', 'معاذ ش', 'عمر ع', 'ابي')
+      OR id IN (SELECT id FROM users WHERE password LIKE '%.%' ORDER BY RANDOM() LIMIT 3)
       ORDER BY id
-    `;
+    `);
     
-    const testUsers = await pool.query(testUsersQuery);
-    console.log(`Testing ${testUsers.rows.length} random users (students and teachers)...`);
+    console.log(`Testing ${testUsers.rows.length} users with different password formats...`);
     
     // Test each user
-    let successCount = 0;
-    let failCount = 0;
+    let bcryptSuccess = 0;
+    let bcryptFail = 0;
+    let scryptSuccess = 0;
+    let scryptFail = 0;
     
     for (const user of testUsers.rows) {
       const originalPassword = secretCodeMap.get(user.id);
       
       if (!originalPassword) {
         console.log(`❌ No original password found for user ID ${user.id} (${user.username}). Skipping.`);
-        failCount++;
         continue;
       }
       
+      const isBcrypt = user.password.startsWith('$2');
       const passwordMatches = await comparePasswords(originalPassword, user.password);
       
       if (passwordMatches) {
-        console.log(`✅ PASS: User ${user.id} (${user.username}) - ${user.role} in ${user.section} - Login successful with original password`);
-        successCount++;
+        console.log(`✅ PASS: User ${user.id} (${user.username}) - ${user.role} in ${user.section} - Hash format: ${isBcrypt ? 'bcrypt' : 'scrypt'}`);
+        if (isBcrypt) bcryptSuccess++;
+        else scryptSuccess++;
       } else {
-        console.log(`❌ FAIL: User ${user.id} (${user.username}) - ${user.role} in ${user.section} - Unable to authenticate`);
-        failCount++;
+        console.log(`❌ FAIL: User ${user.id} (${user.username}) - ${user.role} in ${user.section} - Hash format: ${isBcrypt ? 'bcrypt' : 'scrypt'}`);
+        console.log(`   Password: ${originalPassword}`);
+        console.log(`   Hash: ${user.password.substring(0, 20)}...`);
+        if (isBcrypt) bcryptFail++;
+        else scryptFail++;
       }
     }
     
     console.log('\nLogin test summary:');
-    console.log(`Total users tested: ${testUsers.rows.length}`);
-    console.log(`Successful logins: ${successCount}`);
-    console.log(`Failed logins: ${failCount}`);
-    
-    const successRate = (successCount / testUsers.rows.length) * 100;
-    console.log(`Success rate: ${successRate.toFixed(2)}%`);
-    
-    if (successRate === 100) {
-      console.log('\n✅ SUCCESS: All tested users can login successfully with their original passwords!');
-    } else {
-      console.log('\n⚠️ WARNING: Some user logins are failing. Authentication system may need further review.');
-    }
+    console.log(`Bcrypt passwords: ${bcryptSuccess} successful, ${bcryptFail} failed`);
+    console.log(`Scrypt passwords: ${scryptSuccess} successful, ${scryptFail} failed`);
+    console.log(`Total success rate: ${((bcryptSuccess + scryptSuccess) / testUsers.rows.length * 100).toFixed(2)}%`);
     
   } catch (error) {
     console.error('Error during login tests:', error);
