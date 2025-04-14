@@ -1,3 +1,4 @@
+
 import * as React from "react";
 import { useEffect, useState } from "react";
 import { z } from "zod";
@@ -29,9 +30,6 @@ const formSchema = z.object({
   username: z.string().min(1, "اسم المستخدم مطلوب"),
   password: z.string().min(1, "كلمة المرور مطلوبة"),
 });
-
-// The section names are already in Arabic as stored in the database
-// so we can use them directly without translation
 
 export function LoginForm() {
   const { loginMutation } = useAuth();
@@ -69,26 +67,24 @@ export function LoginForm() {
     fetchSections();
   }, []);
 
-  // Fetch students when section changes
+  // Fetch users when section changes
   const handleSectionChange = async (section: string) => {
     console.log("[Login Debug] Section selected:", section);
-
+    
     // Set the section value in the form
     form.setValue("section", section);
     // Reset username when section changes
     form.setValue("username", "");
-
+    
     // Trigger validation for the section field
     await form.trigger("section");
-
+    
     setIsLoadingUsers(true);
     try {
       console.log(`[Login Debug] Fetching users for section: ${section}`);
-      const response = await axios.get(`/api/section/${section}/sectionUsers`);
+      const response = await axios.get(`/api/section/${section}/students`);
       setSectionUsers(response.data);
-      console.log(
-        `[Login Debug] Fetched ${response.data.length} users for section ${section}`,
-      );
+      console.log(`[Login Debug] Fetched ${response.data.length} users for section ${section}`);
     } catch (error) {
       console.error("[Login Error] Failed to fetch users for section:", error);
       setSectionUsers([]);
@@ -102,20 +98,12 @@ export function LoginForm() {
     if (loginError) {
       setLoginError(null);
     }
-  }, [
-    form.watch("section"),
-    form.watch("username"),
-    form.watch("password"),
-    loginError,
-  ]);
+  }, [form.watch("section"), form.watch("username"), form.watch("password"), loginError]);
 
   // Handle login mutation errors
   useEffect(() => {
     if (loginMutation.isError) {
-      setLoginError(
-        loginMutation.error?.message ||
-          "فشل تسجيل الدخول. يرجى التحقق من القسم واسم المستخدم وكلمة المرور.",
-      );
+      setLoginError(loginMutation.error?.message || "فشل تسجيل الدخول. يرجى التحقق من القسم واسم المستخدم وكلمة المرور.");
     }
   }, [loginMutation.isError, loginMutation.error]);
 
@@ -125,10 +113,10 @@ export function LoginForm() {
       section: values.section,
       passwordLength: values.password.length,
     });
-
+    
     // Clear any previous errors
     setLoginError(null);
-
+    
     loginMutation.mutate({
       username: values.username,
       password: values.password,
@@ -209,9 +197,9 @@ export function LoginForm() {
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    {students.map((student) => (
-                      <SelectItem key={student.id} value={student.username}>
-                        {student.username}
+                    {sectionUsers.map((user) => (
+                      <SelectItem key={user.id} value={user.username}>
+                        {user.username}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -225,18 +213,14 @@ export function LoginForm() {
                       {...field}
                       disabled={!form.getValues().section}
                       onChange={(e) => {
-                        console.log(
-                          "[Login Debug] Username input:",
-                          e.target.value,
-                        );
+                        console.log("[Login Debug] Username input:", e.target.value);
                         field.onChange(e);
                       }}
                     />
                   </FormControl>
                   {form.getValues().section && (
                     <p className="text-xs text-muted-foreground mt-1">
-                      لا يوجد طلاب مسجلين في هذا القسم. يمكنك إدخال اسم المستخدم
-                      يدويًا.
+                      لا يوجد مستخدمين مسجلين في هذا القسم. يمكنك إدخال اسم المستخدم يدويًا.
                     </p>
                   )}
                 </>
