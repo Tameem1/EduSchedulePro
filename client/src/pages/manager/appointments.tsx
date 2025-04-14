@@ -40,6 +40,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { TelegramGuide } from "@/components/telegram/telegram-guide";
 
 export default function ManagerAppointments() {
   const { toast } = useToast();
