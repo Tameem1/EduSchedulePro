@@ -1,6 +1,8 @@
-import { Pool } from 'pg';
+import pg from 'pg';
 import { readFileSync } from 'fs';
 import { resolve } from 'path';
+
+const { Pool } = pg;
 
 // Database connection
 const pool = new Pool({
