@@ -1,0 +1,3152 @@
+[
+  {
+    "id": 308,
+    "username": "أحمد عقاد",
+    "password": "cdd283dd2864b0a00bbb042832eb6e2dffd736f0475509a7e1219bfe84daf7d7485e9bd9149436d24caf5f762f7080328127a43430a4c334e5944eaee382e4d2.bedd95043a0386161d0c3391eb3de094",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "dubai-omar"
+  },
+  {
+    "id": 74,
+    "username": "بلال_74",
+    "password": "8e9c7ddbdb8f4760874bf6cd0f33bc8ecbe6d471c2225bce4fa72ca1955d4611a4231a3e0e86c20e736ced28880ba52e44bb496f4caf62a4b8454b7ac903d2b3.11086b25d6d0b71f4020f738412b7c7a",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "mmdoh"
+  },
+  {
+    "id": 283,
+    "username": "بشر ص",
+    "password": "c7b402a1726d03c6b03618cf4ec8a6e42429c96109a796f017c74a838b1c4775ef432958e04d925aff9fa10e33da498888aa7f0256e6a734ead7c41a35a1f860.89f90337dd67945e5f88510d189ba329",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "awab"
+  },
+  {
+    "id": 299,
+    "username": "أواب",
+    "password": "4829c1d098e0cca3e42ebf28539f89e55de33bac8c66414d8d56584d5f2b097518ff728d95db2886be5ff35341465626d717f30e227d276b06475853a872c742.e011ceffc947458a7c3a960efb469101",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "awab"
+  },
+  {
+    "id": 295,
+    "username": "طارق_295",
+    "password": "3f835ba0d5299f18d8ed489c03378f203ef4cc7c229fa5e986fcff18744801b8372577d55dba3d0577b609820dc6805975972db1afa69bf79e4e7eb7d60f5563.edaa934f758595e51e83a34eb07a2596",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "aasem"
+  },
+  {
+    "id": 301,
+    "username": "أحمد قصار",
+    "password": "c10f4dbcdc4601fbdfdb7fff277e6fa45163d5935bc580483b0d454803cd964273e3bacbc9024135283b5aa72f9cb5c8d35d5a873f30a4ebaa5b5c76530d8986.48b0229b0616ca0eaa7738c69191a232",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "awab"
+  },
+  {
+    "id": 147,
+    "username": "فؤاد_147",
+    "password": "ad9c51866d477f2fbc3f4218d01ceed52a34905a71c093428d46fc26917bf33b668afef98722e3d7dd98871b794cee80a002f6dce44ab1259821537c8d7aa560.1c9690d2cd07ff9364c98d4df2ee35b5",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "obada"
+  },
+  {
+    "id": 161,
+    "username": "همام_161",
+    "password": "3fefd638366e9bba538c395ce9ab92cb9f891cd113e6c6583d2b48e5c91b4b34339ef37839dfb787e07adb290e3106f3585a053bd23d16ba6a31ea986605c5af.bcf0fc05a7b062fb005ccc01fe890870",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "obada"
+  },
+  {
+    "id": 169,
+    "username": "أسامة_169",
+    "password": "200ad4f84379e8154add19714a9160f5a5ccddfd15850c818d6ef0a527ef88e49e84fce32aa3764f482f6fb1bc89a253b98117b5853f17127b25e10346e108ed.30a1801ed3a5ce436f71311581af6460",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "obada"
+  },
+  {
+    "id": 176,
+    "username": "كريم_176",
+    "password": "1ddb4c1e2f20c72672520451a36dcc4ea1b45951dace857fe097efae281b8e00dcd327920e595bea2164cf2139884a323bc9a49496ce07f958cb48771dbdabc7.683b74f5adb982b87f3aa7a3bd4e9247",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "obada"
+  },
+  {
+    "id": 384,
+    "username": "تميم_384",
+    "password": "478ab7a5c8b981b617e38005c5f032d6cc1205b91e7894c425113b992d0a1ee54097d324beda690c52689da27a098b96d8d007fb0915a16cf79b73ffb6069d56.f2fec9f3894d01bb95309f5e515c1c60",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "mmdoh"
+  },
+  {
+    "id": 86,
+    "username": "عابدين",
+    "password": "8ee79fb7066849a64b4c46f96a748e7ae15223e59bdfef325aab1fb1ae86524247af6454e1f064271570a17d9530c8425a8a93eac19ca7d0011cde1177dc89d6.00e6a87f9e67c49e8e2a7f7b28ac8752",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "mmdoh"
+  },
+  {
+    "id": 138,
+    "username": "عبادة غو",
+    "password": "e661157e35f72f2fce614381829e9b8609710872cf8bf1b76e1cc6735de92f1133359d38bbd5f1c6c38b08a19e45eee64784f3727dacfeac0ecc4deaa4709021.cadb40bd8517703610b576aab908755b",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "motaa"
+  },
+  {
+    "id": 159,
+    "username": "سوار",
+    "password": "413684d53068f256dc6e783d023eb94bfd6cbf3c14d1fbbf38620e4369bd200528fb8c312a05c91fe4da4e6b60f232761371abf7127b15abbce8338a552708ef.b17a6df953cf50c00211a7c383ce340f",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "obada"
+  },
+  {
+    "id": 163,
+    "username": "عبادة الزين",
+    "password": "153da5aeb3b8263ad753261059e0adbefd85009e1029b26fd15760d4e27c5128e9970d5da323c1bf82181938f9fe68d18652f87181d4a0649b859201e4d19f51.13b3c967c264545c288afed99b94b193",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "obada"
+  },
+  {
+    "id": 166,
+    "username": "عمر موات",
+    "password": "6202e910dfd05fa909cd19e21559b2cf64b604b48c28fdf1f957cf255db038760bb303ed043e37a8d98ae352fde92349d0561daf12aed79b0f5be516f54aa89c.b688b54cefb2aca639ec335317ae9b17",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "obada"
+  },
+  {
+    "id": 172,
+    "username": "يزن",
+    "password": "b47b3f62734682f5748a5f83381b61d66a94be397922d5aa1e13d63d9e245c3d0475fedb25c17250b22129dea4b66e89b25ac4e8b36978aef3c07f3abdee5885.0dd7789b97d57eeeb0f89d6b58e29a8d",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "obada"
+  },
+  {
+    "id": 174,
+    "username": "ربيع",
+    "password": "90541587fd9ee71aed9530a153142b15fb3ce197629c69603c0c42a5bb8985fcd83be45119f6727dbbecbaa971318982ccc4441328ff9e18a880118c983569c9.93038c2ae73c064b97496bd237894c93",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "obada"
+  },
+  {
+    "id": 180,
+    "username": "عبدالرحمن سكر",
+    "password": "8a2835b4973f43fb102ce06255b7953cb7a07aee1a22d60bdff385bd3a656312ea7f30e7f55f2007818dc734794b6cd340e91f1b3f5d3a16cffbb5e6c29da608.711d5f1a02b10a9d62a898f7d7f71b72",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "khaled"
+  },
+  {
+    "id": 182,
+    "username": "محمود س",
+    "password": "aac605325d7a3c649a759f458f7dd1a2a1aa0f542230450d0d26795029b3412c7d4afc568ba3abd78239849f167316185a5b95755dda284d178ce08ec20ff65f.a763f365882a3449e85ebc6c0582b956",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "mahmoud"
+  },
+  {
+    "id": 185,
+    "username": "يمان سم",
+    "password": "7f0958e82b2dd155bd4a05d712438c1c3f561eea8a424c4795397925cdc1ea71728c0062c45b906b7032d3dcb3c7f117b513059c71b9aeda21d31ffecdca92a9.a59a51308c29a04d88008275bf8b1879",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "mahmoud"
+  },
+  {
+    "id": 187,
+    "username": "اواب شح",
+    "password": "a9f68b1eaefa613abdd8c30ca4f7c3175bbba0e5cdf00d5eb15189558f624f0ddf1594f77164137f2eca04ea463021f9a3b26d3e5a4cf404d896b1651f49ff9c.158dfc04f33b7b748ab8df4071e9d461",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "mahmoud"
+  },
+  {
+    "id": 190,
+    "username": "كريم ش",
+    "password": "fa48b6a420cf67023838db6fa55a9702f3d0b80dca7dc7cb56d11a78c96a8fbce699c3c89ea533febd5460efe779134fa5df29c1cef4103ad74927baf1c24846.57c96928002e3bf65a22f31726652b05",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "mahmoud"
+  },
+  {
+    "id": 98,
+    "username": "حمزة ش",
+    "password": "dcf1fe0812aa7318cb6c1af9e5cd5c2bd9354c6d0eb4a2c09ef4a92fca24afc7f86dfb8f8f9a4447912233904f198012b20ea817c4b24c956d6a1665b3a98523.c4bdc79c6408c6ea0ff72317b41e0e36",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "mahmoud"
+  },
+  {
+    "id": 195,
+    "username": "مهند الع",
+    "password": "7f659eccfb60f7d6b013b8ce5693b9ce3b3f1522ace5ec51652af9236408b7dfdd30883e6b90ee43c29c436ba154aae2db4298a38bafce16b5848c5ee3416ba3.8564ea2fd1a1a967c50653c21f2df13f",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "dubai-omar"
+  },
+  {
+    "id": 243,
+    "username": "عبادة حا",
+    "password": "a79f9a87e1122f2491ff5eeb7ec98317c296505ed287fdd864f3e831e165a54ca5afb413fb35e235018bc593042536e248e1601ed70cab47d0c1b0e4673ea511.04c7091f3d97976d83004ed380de6834",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "mmdoh"
+  },
+  {
+    "id": 250,
+    "username": "هشام مشنوق // معطل",
+    "password": "372603c39ecfa738e5065595bb2c708f4d0b6b829944163b93e1ce60d2ea55be6578a296c73d9407da5d6d6e76e1ec52847f7e8c96b65e1c0d3cfc8a7739f4d6.0b827c73e6299a99cbe04d60a3c0455e",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "aasem"
+  },
+  {
+    "id": 203,
+    "username": "هيثم سبي",
+    "password": "7155a1dd3d6147758b92129cbcaf35c2c55024f41882b283a49d18c877dc474e842d8601221fb6d8ec9f260949e06e7d70f5f43f8b32b49d4057831a7b9dbd18.8ffe0f97393238d24439ca9671a8977f",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "mahmoud"
+  },
+  {
+    "id": 285,
+    "username": "زهير_285",
+    "password": "761bd0c550704f80fffcdb5dd65da1f6fc75cd6d8a544c50615b345b1ad1cb5818e557f588ef8c61b4c529b67819edd2215fbbe74d160afb470a187efdb2750e.98156178cee7b6f3f1517ffad3f32a15",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "awab"
+  },
+  {
+    "id": 317,
+    "username": "بشر // معطل_317",
+    "password": "710133bbcae1e437b7736c973a551cc004a2c22dbe4da2f013ba4e76c1553fd2e404216abec79e56d46c5105c8be8cec42334aa85bbff7293f57a2d54d80fb13.94295e39653638ea7c97949ccd57a350",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "aasem"
+  },
+  {
+    "id": 303,
+    "username": "ياسين_303",
+    "password": "59dd20b0ccfdad4d4164f001b631ea344324fad97903e1527e7c6c78bd4d02637f7355704c4f49c3d01c80778258685cfecf19301d78744e1e4aca7587abfac9.23f5a41a91ec9cc4769feac6698ed6d3",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "mmdoh"
+  },
+  {
+    "id": 318,
+    "username": "حسام_318",
+    "password": "a27606c3b0667d6e2a3bfc780ba2f5e1e3d95843f8b4a82bd72d2f4cd8c220322fa7756d1fc44a75bf0bfa86334d2326eb047afd5386e777b4518973c08f3372.af94f861f3e2bf04cc4c3203fd7757c3",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "mmdoh"
+  },
+  {
+    "id": 329,
+    "username": "محمد جاجة",
+    "password": "ba4191d157494a607601be8ae22534cc2c4f819ad467a9ebcc86ba86052854f6726e4e556e07089337773b85f49dc1ac39c310619477a95e79baa1413b19377b.452edafacf5735eff359086497aaf6aa",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "awab"
+  },
+  {
+    "id": 332,
+    "username": "محمد ق_332",
+    "password": "5daeae86567a0da9895622579c73bcc6a2e0cd02df95dbca63617cf9497d962af2cb536ab1cf9b129957c238cf4cd1790d987bb2ef2c6da37201d15a561c3094.05459b223d3ba19a7561f840e9576b40",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "omar"
+  },
+  {
+    "id": 321,
+    "username": "وسيم",
+    "password": "fcd4ca17fe2e6309f62851ed32e855005b6dc92672836b09ba0da6622687e36b978cb7f122605becc817fed467c80a5e8d99805cf4e8730346d755a74f49f471.3c0cde204b470dab4084608ca787a42d",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "jaddubai"
+  },
+  {
+    "id": 394,
+    "username": "احمد ق_394",
+    "password": "99fb00d070b61595d19b3180cda4e01ba81d859f9a78e1ca0f6bd7676b4db922170a75b8811abf49fa08877097814fea6bfc1d3635a9cd5c5cd30678306abc03.a65ca6f1cf3ae8bc0945b50133c5cbe8",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "omar"
+  },
+  {
+    "id": 397,
+    "username": "نصر",
+    "password": "079c24c53e09177294172c16c6fca811e21ab267e17287ad11c83ca857fbf60926180e370b1b100f3f2363f3c8f241a5caa6e6c6fe55948c2be134e86d0cfd84.3317f0f07a1680eee273390241f0fb64",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "jaddubai"
+  },
+  {
+    "id": 363,
+    "username": "بلال حباب",
+    "password": "cfa8a36872c6daf1b53886d003da47be2a0650822be00896bad38491ffc650c99b2eac59f13e370967d2dd0ec324f95992d5abc6e4d63c658673d47c5e251ada.e6af2b596e6e3707f7a4cbde15584650",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "aasem"
+  },
+  {
+    "id": 396,
+    "username": "ممدوح_396",
+    "password": "6a89079d5cd0ebf9da81e0cf2a371cf3ef57b4555178eef9de5b9fb29a44a0318990c677fd329300116a9af852f235bf05285e7b2575af1ba05c3a6c46131c99.025d25ace5363a2705e6a4faf647f787",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "omar"
+  },
+  {
+    "id": 404,
+    "username": "مالك ح",
+    "password": "47f673f6a0b71478ebbdc1578e969a8fcaf7ed93791ed620d9b8961b000cc1501888bdb9c899e05bd8c8a3d9e79d33a5fb277ccfc71d0668588efc05ab1a6c83.dd0a16570970133f94d47535e08eae1f",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "aasem"
+  },
+  {
+    "id": 408,
+    "username": "سعيد_408",
+    "password": "8ff6419e8d4fd9af52189de71cc8178e76bf31805247d63a1155cdd379c0a9ab0885b126e0c68567b7f78126b2560afe1ecd66a477eff58f829fc46b1011e23d.ab9e7d828399e199be44dfe0b1e4b712",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "aasem"
+  },
+  {
+    "id": 411,
+    "username": "محمد قني",
+    "password": "ee6705edcb4ed3483cd876e8339a2108b3fccdf868fb88b944da043620a6dd7cd6900ab4b92f65115ca8dfab1349d50e5196cdaa19289cde81828004da3688a2.7d704802bd0fed1e1893e9e3c27a1d74",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "awab"
+  },
+  {
+    "id": 15,
+    "username": "براء",
+    "password": "74b7037fc066adafb537c08c9a4598a57f731e769facce63b2cef96e5d6a67cd0dc27842731a56c64751d158ddca97cbff88941c8da67eeacb9b316862b22cf4.a4f62ceb9a2e6506de29d314969f493d",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "khaled"
+  },
+  {
+    "id": 18,
+    "username": "عمر تيناوي",
+    "password": "6447867a23f82350c09004bf9c118a830928cfdeb8862915b1e1c21289b68b655762dba5853fd447b23fdc643755bc02d4bb3dabe80a0092c44ec91655691527.b6ce1e3651b04b3b2a4b37a6f8a3ab9f",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "khaled"
+  },
+  {
+    "id": 21,
+    "username": "عمر ش",
+    "password": "40a807b79d474e8a638b9212a29c16ecd1a0a3a6a6cd430fdeba03d946304faa45a9ef7bacfede92da7a1877e6fd73bb176872787b23535a6f1db2cc6bd3682b.6e917c2a66493f58b0a999058cb5e76b",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "khaled"
+  },
+  {
+    "id": 24,
+    "username": "محمد النحلة",
+    "password": "d05bf67fce2874e8adf0a1c42acb20b8a4d92b0d5d866fdcf3115858e9171cdae1cd17c46a03c6ecbcd28ae3fbb9f6e108c613a7507dca09f31fad09c6a47f1d.0545de27aeb63c3fc40e2636cdf4d494",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "khaled"
+  },
+  {
+    "id": 28,
+    "username": "محمد س",
+    "password": "e5ec942ebe5a65452b356f8ea61a7f663a34e1a4a630eebd4a1a47086c73a3aa67a078c89f6ea5a627fb2fe75b07c0a123eeecb7d00fc09a4ec2b283bc41bf6a.27233950c58cbc9dbeb974e04cd60206",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "khaled"
+  },
+  {
+    "id": 37,
+    "username": "بشير",
+    "password": "267f549137ed2919728cf8914102d44f9a90ddc9313ef9a4b10ecce9849d59536cc83e2aea61a76efbc53fa6f2ea86c7ace3d8ea7f560091127b4dc05838dba2.fff3260e83c69b6f01a4cef673e8ee5b",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "omar"
+  },
+  {
+    "id": 41,
+    "username": "حسين",
+    "password": "5ec40eb7e56ce42bf44eedc3a346a16c78412cbffcfa4c40757842961357b6d8d4486b38bcf38cfc2a024d2cb063984fcba25bd669ad5176197cc1309c4af0f9.c4b837c08071c0c6d8e05e943c64cc91",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "omar"
+  },
+  {
+    "id": 46,
+    "username": "خالد ق",
+    "password": "6f528508d6caf8decd8108d47bb224f5e7a366e7b8e1cb6899af9082dd8f6fb9f4594bf50e660989b996ab3d0fc4701b54e656b16d5af1e2ef1b22a74e8088af.42c22fcdefd180d1b70f7b00515f8568",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "omar"
+  },
+  {
+    "id": 58,
+    "username": "زيد ش",
+    "password": "616f11ee39fa53c28191d36dd6734cbaaccd6ef501711c727e67c4d2454e917acd00f4b0f57efe35073fe3e7e1b71810b5ee8e1608ecac4703b7f85f9201329a.206cdcc5945c02a222d19c6a68d0b351",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "omar"
+  },
+  {
+    "id": 81,
+    "username": "MERO",
+    "password": "c53b96f83eaa31051cfac218926417ede4c8b86bc9fc719d130f76ed92f60d3fec12baa62de93aada7f4863aef04c3afa8474abdaa7d0b0e139399e77e5f0af5.dac4355a702a4951c36a31101ce1c9dd",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "mmdoh"
+  },
+  {
+    "id": 100,
+    "username": "بدر🌕",
+    "password": "dbec26bb0e28614ba361c7b26178261167fe8ecd81cc5ffdf2765adbaa444e618d6c8b59c3a620ac2cc8f15dd6e36bdfc00594bc04d307644bb653c06cee8727.9881eaf3957fba1b3bcfe0cc754bd9c9",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "mmdoh"
+  },
+  {
+    "id": 206,
+    "username": "زيد وت",
+    "password": "7d565c8008a142ad51fcbb37d44f2c22e139967f80a5bf5ee0d39a51941dcdb608ad0a3cab6e3fdd7dc0a0b926594c6f236aa6c0e892a8c8d95046b1bd3bb6f2.5d47a5455d266965693e8c9a95b5c468",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "other"
+  },
+  {
+    "id": 60,
+    "username": "عبادة_60",
+    "password": "efdca8e7e3d1bee21fc4d624877f2df8f0da8fade071d9758fc881811504e791da86a643376b34f72de773bdeed0289fc9f6a78de5172b1918c4aca0911926d1.044e6a3afe7571da63f1515cbc9e7852",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "khaled"
+  },
+  {
+    "id": 370,
+    "username": "هشام مش",
+    "password": "befa402d14b27bd111de5ff3ddddc3ff43867a7b0e0349343a12b637325e714800d6164b90db27b18d1fb3890ed083dd821575fafa51feae8843ccf952a5e66a.207c3c2281ff34d503e0c959ec280cd6",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "aasem"
+  },
+  {
+    "id": 251,
+    "username": "قاسم // معطل",
+    "password": "cffe42b11a4e78555af15b2a83858ef7f016149599895c47b88ff0e1b0d17b6c16fe627c32343f77619c422d106a4985c26eb7a88cd08dd2eb9a5a1e90ff35ca.4627c6015b27b727f75de7533acc4442",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "aasem"
+  },
+  {
+    "id": 266,
+    "username": "ربيع س",
+    "password": "23b5d39119cf37192df3ae02831b20b813b926442c190ea252dbc7bd7353318e8c4e87a19e2f2aa4815e7d1d40aed597b7a0b95c7cb5a9b2a024025ad101bb47.e82b4792ddb26ebce91f25238e9121c6",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "aasem"
+  },
+  {
+    "id": 280,
+    "username": "أويس م",
+    "password": "8d6a39af83ef1c6375ddf4484396a679e6b87e41a7d76b1af92b75afd0329a2b8daf3fffba944ed04e178021b2187e50b9fd0957f027e2e98e7a2fdc47c7401e.df96bf046c1da448eefdec8bbd6c8f97",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "awab"
+  },
+  {
+    "id": 282,
+    "username": "ياسر غم",
+    "password": "ca747f4a18b42cf136068272896c9e745f4b301e10691d776dfea018776bf53ef8ccf763adb2c496b8e77d4da72570ab4b0465b24c42f9218d551935da8acdeb.76a714f247a25c6c403fc2f0ec5c7652",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "awab"
+  },
+  {
+    "id": 298,
+    "username": "أمير",
+    "password": "62996edae0904a83ce736629d8d5263d975a2b7627c37609be2c7dc9e0c736a8b53221f4abff5352abb62bcb5a0964393c0835779333ec66121076e29274df88.ef8db7022f5a0b20c879cc88aed2abb6",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "awab"
+  },
+  {
+    "id": 220,
+    "username": "نائل",
+    "password": "16f3bb0f468af16803b95c032984dbdc456a25fbdcaa7a98ec2129c7b5acb3b74f21ef7fc7b7ae7025d9cdecece7ae331340c19e283f135b0d2afd47461ac010.08d9acb1589872ef6e4fc71693cc06f9",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "aasem"
+  },
+  {
+    "id": 246,
+    "username": "أحمد صبح // معطل",
+    "password": "622c52443aa9216df365b5b0dff1ec1f29b356ff92f2533c92dc02760ce923bfc3622dc2adffbd04af546b7c5b22a7e61fcda40d6f584046df91403dad6f3ea7.e39f9f341aa40c0aa6e6293c13ace126",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "aasem"
+  },
+  {
+    "id": 278,
+    "username": "زيد س",
+    "password": "cf77ae116bcf5527da900eb44cc1a2f2ff19c49156ce8000e1a3d982ddfb0441afefaf1417c2d88819cc818045180372782b5e6ff54a922f3b4a1a33c226edfb.bb076c54da4e1f1b685b44ac89542df4",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "awab"
+  },
+  {
+    "id": 51,
+    "username": "عمر جودة",
+    "password": "c159f7bd933ba79b82d7e4c219cd42465ef040bc115b9eb17cd0cc66877525983ea1392c0db81e5e2405ce0333e154ac1e5efab8920d1d004c8aa7406dd2ff7e.914cf803b6f1abb9d36972564cde843b",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "omar"
+  },
+  {
+    "id": 56,
+    "username": "امين",
+    "password": "d8deb29a6c888a6acfa5477849d7625ac26f2b007d540a309e439304750bcf6baefbd8c6335bb65e368109ebc9181d511d8c5ba3ae7399bdfa3a191861955289.d2866574ccf6251f410b2170d7c65b0f",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "omar"
+  },
+  {
+    "id": 67,
+    "username": "ذهبي",
+    "password": "7ded3c50a5094855cd58e64fee50064055ec7339b96d16485ac4996e637162e122de91d83960d1bd5f77212826855b4e908e89ced75469ac2fbc902e159f7ac1.5af034903147553e621c2852c2808751",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "mmdoh"
+  },
+  {
+    "id": 72,
+    "username": "أبي",
+    "password": "2f4265f6cc46baf029ba4a15f07841c59fd1e62ab246eed8a138a243d41574bf1ff78c2d27821d2d6813398345b55d3b2a97032621e8f1b3d55dfdc1eb8f58f0.a17e28a5f1cd68d99ba044cefbbffc60",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "mmdoh"
+  },
+  {
+    "id": 75,
+    "username": "محمد ع",
+    "password": "529b2c4883777ec9b39c5352320031bbc6a8c66c44154e038772d8e507814eb922347232d6069eff02e8dd222facc0d5153992364792eedaff51bd3ebe3eb3e7.666727e3f68a10023dd02185250402d2",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "mmdoh"
+  },
+  {
+    "id": 151,
+    "username": "عمر حسنين",
+    "password": "3845d6bd5454ed68eaafabbb38c2bd38927b4aabeadeb56facb3df0b7591a2247580197f19ff7a46ee4e6799f3062ef83dea77f119ef725dbd484de3dad3e449.26792fd29dc0e2232b73b458f2b9ad3d",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "aasem"
+  },
+  {
+    "id": 90,
+    "username": "هاشم سيوفي",
+    "password": "c752d7a71bc0fb50053c2946f9388c703065dbe017cccfb1f303740986c9831c7f399288cf504869f78eae873c6e1a7055e0f99425cea6a078974ef565659101.89b3131a55a3fb0afb26f15ffde8b473",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "aasem"
+  },
+  {
+    "id": 92,
+    "username": "زيد شماع",
+    "password": "5252f50d7e72b07848d2406ca194ed40eb8079503cd84a5dc87a0388e314d6c6df09526478ef5ce52e6f099350492311db84f1cc3bfb02a85b2291295468c63c.255c20b437d05051dbe08388127c1ad0",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "aasem"
+  },
+  {
+    "id": 94,
+    "username": "اياد",
+    "password": "be23fc5a294ac65a4a3540c371ef9c9807109b3ecd8a0a70aa334c00c91c3baf2b4950e5f41fe8c505a42d606bab157d19542c917bdfadf30cbaa534ca8b8792.abe08eef3ce791085e14f5b734a1397d",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "aasem"
+  },
+  {
+    "id": 110,
+    "username": "بشر // معطل",
+    "password": "561e353490cd67cd2d1dfed77c182e3a6b6649a5ecba0b20e78df60dc255074202b09ea1cbf1bb1128903bca1ceb4336f7bc52870d905d1781d78931ae77122a.bc7b683b4e8d385e5086a141ca354718",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "aasem"
+  },
+  {
+    "id": 153,
+    "username": "محمد خلي //  معطل",
+    "password": "eb1a7d030f6ff470f7d94511287bb41cdf7fb06178dcae66270a5ef954b82d863aa53058c19573130bea1245a173e6f6fd7e1525b839e61e737495d7cbf725dc.9a989e9bb0c94331947537154b11bc9c",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "aasem"
+  },
+  {
+    "id": 157,
+    "username": "مؤمن",
+    "password": "60bc1ed5ea9de98c353127dd127baf81a23a27b46cd9632c6988afafe64a087648022efee4d271eca2d70ea6964371e90b5c494d9ea3fb4e05c4fff075aa4643.3820b06c66cef5afdb2b0d3069ef31a3",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "aasem"
+  },
+  {
+    "id": 183,
+    "username": "يمان سل",
+    "password": "9c23c826610918c0c65986af7e11ad44537b4d3e12160137253fd38dcd45dd8c12195878624ebcd0249e7e5809cb97b9e34a9915afdc5985c168faddbed919ee.752ce824fa7546357545d0a3b1551efc",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "bader"
+  },
+  {
+    "id": 192,
+    "username": "بدر م",
+    "password": "baf7ee9c8e5230612d4753ff013a69c1ae1984a216f852600aa6775d16a7ab6bb8ca556c233539710e31f7f3ade77a7ca83f77c4e9fc57e609b81e959a6c6774.2740fa1f7485914c88a7d3da71a5c11a",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "bader"
+  },
+  {
+    "id": 194,
+    "username": "محمد الع",
+    "password": "8bf95647e1ea288c33615728065b0fe0d3215d904809e26cab742794c8cb0c4105edd98c6b96877178db3322781871099661ec00d87dd31af160e608bdfaeeab.cd7ec84031623e60b65b85c6270b0626",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "dubai-omar"
+  },
+  {
+    "id": 304,
+    "username": "يوسف_304",
+    "password": "5e76072b98c900bccd4e8a258b57e79bf5b107549d8e21671bd49d5913a041776291f5ae2fa8dd391af0fc966feefe5b095cfcecd6edd1a2194d1f0b5db95ed8.c774cb35b55c76095f335ac442ffb379",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "omar"
+  },
+  {
+    "id": 31,
+    "username": "خالد_31",
+    "password": "f831d15d8840b84f1fba703729c7ed0a3e87595a7bbdf36d6c057a724b41f3f7fa613a16a1bde3b6c11bacec4114f2a1b95d0f955864c0fe9f35c30a18b3622e.75891dfe63e152da440c09476696620d",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "aasem"
+  },
+  {
+    "id": 366,
+    "username": "نور ق",
+    "password": "420c2633396665352003c6b0699a56efeb6712cb7474366314e4efc3a28d30cfcdc91be412996a8fc381994655f2a569cfe8bd566aa8f05532c27aeb1a533a36.cf059a51706b3e8097f3a0a9cea60062",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "aasem"
+  },
+  {
+    "id": 326,
+    "username": "يحيى ت",
+    "password": "0b50e2a48dbdec7c37525e251af2fbdf508ff433d22cb731726f477cb418233951a48204cb94c1d94f17816e156c7e6550e03e8c1e4353f08747d97896e1d53a.3c503e6f99b489a6fafe45d32b1e9c13",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "awab"
+  },
+  {
+    "id": 402,
+    "username": "مروان س",
+    "password": "40b2a312a77b424a4a60da702553a322048b1f40076b831171d5613ecaa1dd2b298ad1d0917f414fa5994328f8f6796d9ee170fd06a5ea1a2551b33645314f11.0d716c16051d195a89f0a83829518787",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "awab"
+  },
+  {
+    "id": 388,
+    "username": "وسيم_388",
+    "password": "a932512cc0b7fe7f01a7c5fe90611134e8cba15c51966780133415793ea277bef0dd122dec4326710ede70b17dac69899e3e2ba523eeb7e71762249fadab84a5.7a44f244ce73d7ef698d5f95c127f71c",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "aasem"
+  },
+  {
+    "id": 416,
+    "username": "نور_416",
+    "password": "18b1df73ef7969f909168aba50b17de21f897729ff441812951f84c61c5c3fa3541f43034f8555836f9de1f87bffe78e85433ce48bb30a84fd18764e4b0457c3.be7897d873b4de76c7742ef8620a13b3",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "aasem"
+  },
+  {
+    "id": 296,
+    "username": "عمر",
+    "password": "592b3a29f23d8d417f9d9c160e59a50c453ceb485cae6bf8bc36cee3796e8cc5cc8773833b09864490b21a22684bc1a7bb0c3392b286567c1ffc1ad9a4428103.6d2e77c0cf704d0cdb861f5cc08c1bda",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "kibar"
+  },
+  {
+    "id": 10,
+    "username": "جواد",
+    "password": "c567e1d934cf7eea64a5b87affa9e83cf8cef286924c90ecdc2fce2bdc4f293c675ed8a2deacbc5cbb1891baa93efa2f6b3f0a6b98fca99ce654a641894c6c54.7c7cb2aa99411df91f99ad0e2e869f94",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "khaled"
+  },
+  {
+    "id": 82,
+    "username": "ابي",
+    "password": "cb7dc5dfc0973e1407d0ea13fd8485918740444260b3a522a73cfcca2cf7e70534f344e538bfc807e70609450af2b306a328f8534a6e17e3ec497c5598b44624.6aa25aba662e2b258c3c842362b06a40",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "aasem"
+  },
+  {
+    "id": 12,
+    "username": "عبادة",
+    "password": "9c850fbb81ef2d05aa2e53d56df61cb50a1f93efadb02a95aee7c419a80e5586ae0055af121460d9e9b45fb9d1c7dd0b000d223a5e09681c2d87a85a4e32649c.047a35ab5caf4a7d0c63720ae36c8f86",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "omar"
+  },
+  {
+    "id": 107,
+    "username": "جاد",
+    "password": "1a637cec93612671044ff6f88e89c64b97a3852abac4e4df1ca918add1b9f5c0e6c172f14bbbdcfe14af103c5f7dd0aa98bf903d7967209606bd418a0c84bdf0.b878c85d2aa9a810912ee9c08f357687",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "aasem"
+  },
+  {
+    "id": 386,
+    "username": "جاد عقاد",
+    "password": "d6426ccda4aa0be6d513041412538264fd5876637f5c88a7df3d7299bfbd5071da151d1c1e9d4cc4e4f54eb2af990c5e31fb75b0539d2e5513e4e8fb66a275e2.c4be4a30691ded5890e979b137ccb0ab",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "jaddubai"
+  },
+  {
+    "id": 300,
+    "username": "كنان",
+    "password": "9c53355fbda26f582c31f5d9a797ae9a3d037507f740d7738832d72b45f6dc2874b04c0f04e84aeeda68efd49ae9d0508d6c79bf629a68fffdc79bd40813d7e2.c35c155184871f5ee40bb848d6e064b6",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "motaa"
+  },
+  {
+    "id": 306,
+    "username": "زيد اد",
+    "password": "39bc203908eb456962edeeb690c7e08c4ee82bd915273a01b3615a73e4e0a62303793ec7f27b5635299981db7c5cffaca80aba9b4b2a93a8955bccd40b8e96d1.561776b6f0356e7459f1e4c0ed635264",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "dubai-omar"
+  },
+  {
+    "id": 320,
+    "username": "مامون",
+    "password": "dbc55bbcef0fc2495f91144db271c6a908185a63d9494bcc78d311e79d7443e5ab8e75491fa78cda6773c9fd85d6e9c4ece73c7e38cf8908b2a9d568e2de1f0c.dacba4e9d675efc5a691b5e453add3a4",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "dubai-omar"
+  },
+  {
+    "id": 331,
+    "username": "أحمد ر",
+    "password": "ca77f243d3e12f07e2f1f90ffd75faaa036eb50b690c0e459861cfbb5e476e6173df4775f17d5912185efb81e40cb99f3b91a9a2e04431efdea507a795ab6f7e.72c92a900b98eb4c62a904ffb567468b",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "dubai-omar"
+  },
+  {
+    "id": 144,
+    "username": "غيث_144",
+    "password": "cfe48d6ce717e1fa6f84dba32c6d66d3ce340f2248d2e12a1673c83a6fbec11bd32fe9c4f9a6420e7c31df37247f2b31e4c14d3a4e97134781eb589385b65924.4f5bc299d17044d4c39187beec17d71b",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "khaled"
+  },
+  {
+    "id": 406,
+    "username": "يوسف_406",
+    "password": "df2199f1f21deaf59287027f05118c3ac9f2772921e47f44991585ec2c170cbd99449f43208601036419ba2f24f913cfab00926e53a39ff15a68b54a87f58efb.442e144414ab150bc87def82534115c0",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "aasem"
+  },
+  {
+    "id": 324,
+    "username": "عبد الله سراج",
+    "password": "9a527b8c38984f7866c9f1f90bdfe2fc90e6a4ef868b438c777e4440c2822b01bc1e962cc46736d366af03d211d76b04a888f4922573ea636d454c386228c3e0.683eb266a21c9481b2b2c1b19f7fecbf",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "khaled"
+  },
+  {
+    "id": 284,
+    "username": "معاذ",
+    "password": "5b173a6a607f0b11f0312b0d8f0845f6577a2ffa85962ff3aec3cc9c8a60da694ff7163934bd44a2f537c591b1502d5e40fc4632abae215977d6c9b672d2f48f.a6dcdfec22cfdf164e330f03892d3428",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "jaddubai"
+  },
+  {
+    "id": 50,
+    "username": "موفق",
+    "password": "36e570e934a97cfa4ccc2e4875d4674b9cd86404d7f3cc301434dac821a54fc72971b22afa2fe0fa024c4b0a342bb78f2716e14617f695b4dfcf3aed8751406d.e6ea14d3b4417b60cdfa0dcab9d98ee6",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "omar"
+  },
+  {
+    "id": 17,
+    "username": "عبد الرحمن",
+    "password": "ba12e5deb40b9c632e08f4c9cd7eb86da0283eeb3331df024047878a2796c20c69ecb87a7f1f027dd8822c339d803788a5f6d9cd83aa5e039d6361c428eb29a3.93bd75f3b0c0098636340c1814f21513",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "khaled"
+  },
+  {
+    "id": 20,
+    "username": "كريم ز",
+    "password": "fc2d12d0bbe12805e3dfe7ca504e5df24b828736846a38bab6afc5e9ad92f04ea6eea1e9c255bd606c1650d4ecd1b176cb14f0c58414bca9d3212585832e208b.61cbf603372498b43382dfbf21876731",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "khaled"
+  },
+  {
+    "id": 22,
+    "username": "أحمد",
+    "password": "c50eb4a587107ae61d4f96152a6b18dbfef0b3d8c3ced65bba4246d1db2f9ad5343ba5d0128d19af0ea1063c06682fff876941380603b8999ac31d64d30fe391.d45f58ad7b76a538a0e9316da31879c0",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "khaled"
+  },
+  {
+    "id": 23,
+    "username": "ياسر ك",
+    "password": "54f7650f38f00f17e041e528d323e82fa766071ca0ffd38f4ebc79bf723b6f51523808554cc88f8b355678b64dbd65fc87abbb27f9480cd1602fe58771151b15.8c2137ecdcc2cc238d4876e6c9ed141a",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "khaled"
+  },
+  {
+    "id": 26,
+    "username": "محمد عيد",
+    "password": "e8203694147a6954b404cdc9ce5cae798d56987033b8286f24b8444da69f82dbafc056a22d5d9e5f5eab03cd0fdf235dd6230e6fd5fc37754519faf45c82cfda.ff99d7505650aeaa2c283080f80d0975",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "khaled"
+  },
+  {
+    "id": 36,
+    "username": "شعار",
+    "password": "742c2fecfa82420c3ee94f999df4d0629f332d4d97683ecd00b3302d900bd2b84d3e97fc4f5bc23f6ac3ccba656d51da81874db317dbf97a618cf3a8ccd29be7.2098a9addcae7c94ef0f7c073de43acb",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "omar"
+  },
+  {
+    "id": 39,
+    "username": "عمر عابدين",
+    "password": "45ea3e4dddcae330a2360dc2c6c21165c710af68610f7b88d974740dec921290f4e299af816e8168374825468fab92dbc0fdb37ab5e6c627564e37172ff9dbe4.5e559bf8fa17e8f89f786424fb35bb9f",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "omar"
+  },
+  {
+    "id": 211,
+    "username": "أنس ب",
+    "password": "748d746ed769554be30fd6cca97576112e2121619f16cc9829d696c22bc213b8a9c5203d2a5013a5000977a1857876b1348ba14533dde49a63b66e73fc47f633.51fe5d5701dd499b0b47996576fe013f",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "omar"
+  },
+  {
+    "id": 42,
+    "username": "نشواتي",
+    "password": "591624cc87e7ad66805c696a3f9cfb1e64aef5ad2f5489818b827e83cf62f893bf5892f48403124ba2a095b2e49d9857fee0b88b844df1523235b9d695ec3541.746fcb8b33e04133d796c499d7bad925",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "omar"
+  },
+  {
+    "id": 48,
+    "username": "بسام",
+    "password": "ac294ab34adab18e07d08397d720a4b3dcd2173fd277fdfd679f722401f00b037b50b54f72bb7fcb9ef80adf549fa7a223099476bf58ad9a77025ef1adac04ce.a9ddf7479f35e77887d48bac4a98a113",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "omar"
+  },
+  {
+    "id": 16,
+    "username": "حسن",
+    "password": "5af5a2b4a74a267c16c9c7e6346c58b720bed1c1767fad9d87eea00e878cbc9e06fb53b73d085c3fb95aa2ba7742955095f6c402bc7263633aae625f47f566af.eec8c81836c4c54a08bb095ac35c72b4",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "aasem"
+  },
+  {
+    "id": 53,
+    "username": "فاروق",
+    "password": "8a0e42b867589f5cd52b69c1c7ec6caf7379e25139e494568959469eca2e40160192613bb01eecbdac159b2692cb6ad51997a54f6747a0026e431580ca568a63.a20bcdec82f6ed70c449177d9dc99643",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "omar"
+  },
+  {
+    "id": 55,
+    "username": "سامي",
+    "password": "cbffae332337ad3dc5340502d04eeb29d60f1b9834b077a79e0231816933fdb151041242ad91132c9578e43e1a3ac68fc552d4b6141efb2ca55a39753572d2b5.11bd2f8f573b06fb41f9e8ddb162e719",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "omar"
+  },
+  {
+    "id": 40,
+    "username": "همام",
+    "password": "eeeba696afc5ab7fc15af13aab20d9838e21970214dfd59c1ef309b75626ea147d98f034b8405af4442bd0e9545aaac40cae4e95c466e25bc42c99b060750285.dd92d75b92f8b5de70a3a51224e99701",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "obada"
+  },
+  {
+    "id": 68,
+    "username": "وليد",
+    "password": "df1cf1263a67a0b6c66270949b0cd7a4d54adc0ce194eba94d827c7e8d9098c694d6576dd731a81b178fa7494cd2da0665213e1a77d33018571955f9b506c6e7.716b2258d0673f45b311eba4fda8238f",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "mmdoh"
+  },
+  {
+    "id": 70,
+    "username": "هشام",
+    "password": "36e8092f33b8e2a84f83efd3578075a9740a19904039f57061251d8feb844dac4476847c1e4bae00641345574da1102bed6081a8984be3937e15617c1b192aa4.d3b34f74b8981f0a5304a64b432659b8",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "mmdoh"
+  },
+  {
+    "id": 77,
+    "username": "براء ح",
+    "password": "cf7c4e11669a614f6387f5ad8872f51e934cb05dbc41ae17bd885e87b37c122aa55594bac1ed930d71e111833b3331538f9c27f3d36d5b9c24e93eb54dead96a.a9dfd4002c1042120f919d7eb09cfa12",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "mmdoh"
+  },
+  {
+    "id": 142,
+    "username": "أويس",
+    "password": "8a22abe009d540afd4caf59d66a1bd42c2648887a9088edad50bdcdc9ef4ba886b5f2b3cb11f7eae173de1e563a38ad39a2c3402435fedbe92938e693173ff78.91169a9dc9bc9ecdc4d6be6b193a9b96",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "khaled"
+  },
+  {
+    "id": 64,
+    "username": "فؤاد",
+    "password": "0bc69e12dc264fdd11166b41afbbf3b99f79ba8015e94dafc0c0a271a4cf3c9ac74a38c4e2042151cbd80cf156bdb4ccd04e68205263ab8e187a711c527d6f71.5ad34fb0f9ac7bdd0cfadedd422a4746",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "motaa"
+  },
+  {
+    "id": 343,
+    "username": "سعيد",
+    "password": "ea0bab10f354ca1fc1345bc77eef5fb47133be5e97ec40693bc3aa2a5ae9882611aba770bcbd9d4fffd4a38362023072b4ec5248374ed20e98039dbcbc48027d.6866f1d2a1c1ac18dea227f42676d77d",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "aasem"
+  },
+  {
+    "id": 383,
+    "username": "ضياء ظب",
+    "password": "b2ead78f6212819e8121535896a05637f68be83712c8616af54afda7ba78f141b06972bbdec3aa9759245dc154bf1a8370c7060e7ca7637893a9beeeae59b0be.ad4b3273666358bbbe0d8fe38be17b6b",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "aasem"
+  },
+  {
+    "id": 344,
+    "username": "غيث_344",
+    "password": "e279b01a2f2ad8f3f3cfac4ac9fed9468bbc8568ce8ff096fdcddc20fe5cddb86650a437d0cf3c921ab79f56f57ecfc5d33134fe518d37d90b252cb84756be86.940835d41ed62e38789891e29e888f43",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "mmdoh"
+  },
+  {
+    "id": 244,
+    "username": "طالب",
+    "password": "416eb4460acb18e05b2bf71d3d28479302b33d8e53a82194c9679afb1d744cd675ffd18d41092cddc9634727c915b8a9aec0b40df4c7a491992b8769c03596c5.6c2648cb8343a66502f87b0f5a1c087d",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "mmdoh"
+  },
+  {
+    "id": 293,
+    "username": "أحمد ع_293",
+    "password": "3dd1cd6fff9b58491f64f7fc2caf5655ad4815b8a5112ca1a85fb44aff935bc8ba692374b529a529ea9291e55268eb50c0e1791211c5188cfb7d57ac52e35320.a9fb761e3f2d617eef6a7d4a371db2e8",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "mmdoh"
+  },
+  {
+    "id": 341,
+    "username": "يحيى_341",
+    "password": "ff909bbae64aa0d9e0beba08c2232abd62514a82bad9adc7f57f52a86f3f21a1fb5ea06f12d519101795a2d8d5f2691da0e0ed5602a762981c3a18b4fece315b.12013344e0b39d0ef2d4189d3597551e",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "mmdoh"
+  },
+  {
+    "id": 362,
+    "username": "كنان_362",
+    "password": "1bb7790077b077aefd756717017f96bc2ef6fd5e80db1f7776a15be69e92ece983c33a8375f7a2edcd511e6fceb22a3a03638e09eece7eb9e3c6a8bf98299e0a.33c3fa229c194410f945a16723a97d57",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "obada"
+  },
+  {
+    "id": 84,
+    "username": "سارية🏔️",
+    "password": "49d1d496e9f54b38ff2ac79e501d384ca36c30ff459846560a5c4837ef8f600a47f4b1ef81d04179ce471f08dd7063d712681a2134ef215c9c3ea7d93bd40db7.77c3ac2c90fcc665a5f8ca0a84de3bb2",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "mmdoh"
+  },
+  {
+    "id": 85,
+    "username": "هاشم",
+    "password": "6a1b0795160010d425e3cc7f29827ca5f87624b9a9ba4af892e472a97afc011b95a75324df49e35dc0ec64b57acbe20e5016c7ed9ee1386912b1f616db27bcc2.d21f661b7acc99d52f88e23fbbdac608",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "mmdoh"
+  },
+  {
+    "id": 87,
+    "username": "براء ش",
+    "password": "c54584cf06c1015cc68777ebedb91898daf347f87a9f4c40b3a0d9e6b985feb8a7d2b6c86ac051be9ca45bd054b88c4eab4f9d2ed1f9f169d0a4c28baa1474d4.4e1591ca48a9722ab0d7459bcc4a3d86",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "mmdoh"
+  },
+  {
+    "id": 177,
+    "username": "أويس 💎",
+    "password": "b732a4f01ba6b92e9c248dbdca681446c7f7203e8e83815f1520b60a4d4aed9557ba6e283fcf46509d8b218ac64a8dd6b66a516f9592f183c26d16f6fd22bbcc.888b9db3a3221e59d5d6490cb71d009a",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "mmdoh"
+  },
+  {
+    "id": 99,
+    "username": "أنس",
+    "password": "a97aee276ab2b44f33052652edc2ab54b199126b10917aaf82ea189b0eb6116f1c015dc8b3be2c2199ca34ca072d2b77f6d4f12e715391157336755865311d3c.434e663232ea775dd39c9dac64aad514",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "mmdoh"
+  },
+  {
+    "id": 111,
+    "username": "زيدان",
+    "password": "1edbbf1743b3c7084289de9ca3762d6385cba8d1e400ccc4bdfc31f2027a5ea568be47263f43d7dc0d8df39636b3b76fe3a8177e80ec7672dc7f21c6bf8c20a2.a7a93c72c9c5ab23d8a5556386a45900",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "mmdoh"
+  },
+  {
+    "id": 117,
+    "username": "محمد رز",
+    "password": "040eb1e9b94968ed1f8bba39a46be405201d7f9037579c30117c71f26a7cef2b6f09fc85b7aa0e334984eb4726f327f23b69c57ad658e317cd079f06254eafd9.3203e3d889f5970ee3cad2f1a29020f5",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "motaa"
+  },
+  {
+    "id": 118,
+    "username": "محمود",
+    "password": "f80368a564e238d615c3e9c7564cd1c819c799a096e12aaa371cd0a5522bf621b6f8fac5bdbafe4af1c718e5bdc4aeeb4a98315439f0124062fcf56d278e65a7.02dd68f89b7bfc3d0749a6a1020cc4c5",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "motaa"
+  },
+  {
+    "id": 120,
+    "username": "توفيق",
+    "password": "ec4295e30af271e1e1017d6188ddecb905380127cad51e4fe3fe753da445b0325f7f0b7961ddd6e3880b9d67c0a2ada909a7949e801f74ee54f1abed24b40395.f8519411df0f4303dea7ed672226ddb8",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "motaa"
+  },
+  {
+    "id": 123,
+    "username": "عمر مس",
+    "password": "ba5d17865cf12a77489b9fa4ce6eeb5a65e7e4f634f6d49890ccb59bd1f41139e49f1e239938f2f16ca7eb17efe7aeec3999ad6d941563b39f3cbffc8699265f.85d242d4d70df9d9bc43a5ec96045d83",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "motaa"
+  },
+  {
+    "id": 125,
+    "username": "عمر شع",
+    "password": "ad41895ed67c89159f5d1efce7000fb6829bfb96147e2a422895242ea51229160db949291c1f9ad743ebbef3710bf04fc9f9ca0669412fc736238f27f3bec5f7.868f4c506072838b98941d0b69f89c40",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "motaa"
+  },
+  {
+    "id": 128,
+    "username": "محمد نور",
+    "password": "038bbd57674dc37739353ae07a1e45fb7f486375786f89c66890517ae7e3332fd0b9df3157646b3902fafd4250dfa1daaf57701e60343e68963418912a2fe3db.c7066670eaaa89a371ca7652b7dc03f2",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "motaa"
+  },
+  {
+    "id": 150,
+    "username": "عبد الله",
+    "password": "1460c0765235c1345242b6fbf0497cbdefe76666d1bf16d83d44e7a6202158f3bec2501c8576f5d3e76f0c523d459fff84990f9828636408ce455ccb0bafe0d3.a4a1d556fa56641ab0d47272174a70b6",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "mmdoh"
+  },
+  {
+    "id": 97,
+    "username": "أسامة",
+    "password": "c41975e1cca1cf7844dfe24f3253a9abd3f530589e51d0b28de76fc604fc5d11283f25cec12e70aa0be1191851a2efa15e86d2de3c07d58e26ce618cfd5935b9.ae843ab6e93ee5f4f91ecc6894063147",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "obada"
+  },
+  {
+    "id": 209,
+    "username": "نور",
+    "password": "d54ceadf5ad47b7a6d60d4d09281ee7af2ec944f8d7e4970278f522e64f926fe02a243f7eaf054fa77188179c7cf4f06ceb319c46630ce2743ee45117c7b565d.bc4c8b1e09a69ed9ad5353e385edb426",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "jaddubai"
+  },
+  {
+    "id": 162,
+    "username": "مأمون_162",
+    "password": "3e939c8a6ccd6743bb404ede66099b3060d8c2e544f153d1f4ad9b22a164b6920487602056471073ef5833b32bd7e1ed4189703915eb3bf1307fb7442be8be86.815b811c187b763be4152f10d4deff6f",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "obada"
+  },
+  {
+    "id": 167,
+    "username": "عرفان_167",
+    "password": "fd7d62c2e96078b80b809ee6a92445086b2338939e855484fcf7b5a3c42077faba5a08169aa9fc9402e0c99513db355796dcfd48355393af44a66948bbe1bb3b.4a1987d5f3c850e2914f092af457c491",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "obada"
+  },
+  {
+    "id": 184,
+    "username": "ابراهيم س_184",
+    "password": "4e134719e0e1d40d2c3d0c27adcd2585a2857bebd785d1a4602d2c1a3622c40d6e6e9ef2ed7a6ca68f3b8f1e99af136d2cefb4bcc80fc1b46a79e8c1b70cf0ff.e25ba0df5fd39d5d01d4e08f7000a84b",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "awab"
+  },
+  {
+    "id": 418,
+    "username": "جواد ح",
+    "password": "2b513cf3294157ca5a9caf19ab04394f30ce9577aa17921e1bf5ae86dfec0f71851a5d50b0fd127db417517bcb66612829e070fc6066581788e43cdc48ab878f.7a427d3516262a4137c021dae7bab430",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "jaddubai"
+  },
+  {
+    "id": 191,
+    "username": "حمزة ش_191",
+    "password": "5d5a3f36c9059c925fe89bdd6a04aab5d69300ff3858c70d4848781458d3c4686088403528a67437a5e1b8fc08c56052f8d99742d90515c5ddd9a285ad91699f.d68ca1bfe7237327c23f43f1360e7521",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "awab"
+  },
+  {
+    "id": 135,
+    "username": "محمد شماع",
+    "password": "9816ca38b5276abddf598b988570707179a03ce1258b73d0d90bedce75cb8e3cab7f6e9fbf23f156e699af05ca7486e3040650faa897a2669215e43861edf145.5419862fa2921bd3b6cd64d6965a4da0",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "motaa"
+  },
+  {
+    "id": 137,
+    "username": "زيد أيو",
+    "password": "8f88dace57d14db39e423f8836eda2082790f5369f2c2752df0caf1c083b3d971d825adccf30ea91d23b960f1a29178f56c040b64a633fba0639892d3abd2a0a.db7befa2cbcd8ef4782ca30e5c1a7dea",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "motaa"
+  },
+  {
+    "id": 139,
+    "username": "عمرو غو",
+    "password": "8db1c9f097d7bf13385d1a1ee7b237660f44c9ad8dd771c7dc078e213d59020a82ae02a848570f77403418f0953460bdd0638d8ce984515f2c6795cd524ad616.f5bc91307feca2a63cedfd25a123e0e4",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "motaa"
+  },
+  {
+    "id": 148,
+    "username": "امير",
+    "password": "1ccc38be3a050679f78c4a6f740ecd22f643fddf4b057b74cef16c7de07eb9592f33fcbad4c727b2ca61c6417574e1b263a23915ae56d934ad4ffc8b2fa4b907.c2c6315d706b93ec695dc99e027d43dc",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "motaa"
+  },
+  {
+    "id": 158,
+    "username": "عمر قب",
+    "password": "7abf1dd2ec2f75e785489298ba48e332bc2da3dea7c7f894df6c73e874c309daecd508c6b7bc4590f18db494c227768d30a3bdc7b40ddf1c5023bbd4d0d413b9.8d5e9b1cd8d04f3c319249807dbb713d",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "motaa"
+  },
+  {
+    "id": 160,
+    "username": "غيث رمض",
+    "password": "9919a7c31e2522789a71fc87df7f6c9343983d38c1fb8c98fa455ba275fe186f15e6f8c3692632d85b93f4c59da750b3b6cd399e4c3d339971e325459d0febaa.c3c427c49484b6476c64b4351911bf91",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "obada"
+  },
+  {
+    "id": 164,
+    "username": "عبادة خولي",
+    "password": "28bdbaee1d73296e605876b95030cfe519db06180764eec5bd6240b90ce9630a1c29ea675885e292957efa5902c774e6cb05bc99aea58f6b0abfb8b7f04fba20.03ec56a3178c2aa5efedaf651181fe14",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "obada"
+  },
+  {
+    "id": 165,
+    "username": "عبادة سكر",
+    "password": "3e1d407decf0fb53faa8472fa0bc57b2a3816699c087188e95e0d7e1339bfc62eaf44772fb0bbd4d2d97ad38a3ad0c77ec262c204b7e1beaaa6f76a60824f87f.f4c3ba05e625ab5947729c70b84baf01",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "obada"
+  },
+  {
+    "id": 170,
+    "username": "صبحي",
+    "password": "098322cee564f090012eafd0a9af8fc4d32de2d30ef951f6bf7539e7abd908dedcae21743434cf5f12d9b76a3ba5831a335589299b305333fcf73c27fd48ca7e.233647995cca9cb71005cea54c5b4401",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "obada"
+  },
+  {
+    "id": 171,
+    "username": "ياسر س",
+    "password": "3580f12f5aefae9b5c8b9e2ecc7bf1dc9ac854a45be05cd2b0b0408fb4a1ad9cc961a6037556c5a76eb98ca19ca9947ccffa5076f36216146afc912871d836c5.50a07be3789f83f242e7e5cca6f41d1a",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "obada"
+  },
+  {
+    "id": 173,
+    "username": "عبادة الحافي",
+    "password": "92cd4a029b97b5f81388c82f3ab907da742953518ceed670f7fbd57ab70c8c2603539aa28a8a91a2eae904b18f4da8cbba16943cf7566aef38d8a09f74fda2e2.f8c590f4fce1ba37e08e5ad7aecf4248",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "obada"
+  },
+  {
+    "id": 175,
+    "username": "غيث سيروان",
+    "password": "66e46ea45cb94a8a64b7f402b64afae023398b77bfcdf061606268dd435fba02776ff92fefe25497bd0246ecd77b031c40741e931b456a4235b3508f7374c723.27b5f53ed9aae4eb7a5cac31e2ab5a8c",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "obada"
+  },
+  {
+    "id": 178,
+    "username": "عمر صم",
+    "password": "b746d700334f882f91a3e0a8beb1ba33f90b805a773faeec1ae68aa462eb7527c36ff33baa0683fa3782564ceaa60959a385cf832da8d99d56565e66791d4c62.905dd83d77abd13861141f4f5932ff9f",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "motaa"
+  },
+  {
+    "id": 181,
+    "username": "اسامة ش",
+    "password": "319b8ddb7b268b566430492989bbb5501669f039902b2c0623b390d69ad1133ad0ebd86a192c40e13b756147e9bdfdacfea2695d37334873627f13dd914bd4cb.8dc2ac61ea435069f2c01ffafa9834af",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "mahmoud"
+  },
+  {
+    "id": 186,
+    "username": "محمد الل",
+    "password": "c1ca32ba583b0f0ecbf1365a7d4822f74458ebaa3106be515060492dd84b7f56bfaeb6872a284ee91a1d753084cbe7b48954121cc94cc0fc559dd8e5a251c4b0.bb07eba2a022c5283d034808570917c2",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "mahmoud"
+  },
+  {
+    "id": 188,
+    "username": "انس الر",
+    "password": "44cdf46eb250f87e1e0dfdb4c45347de0f18c2cd0524663fb039505191f8089ecafdf51cc62385778a6cf94c2a57e183c632eca0f4683c24d9df060b02b75218.b69eff84f11bcaa49d140f0df76ece63",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "mahmoud"
+  },
+  {
+    "id": 197,
+    "username": "خالد ص",
+    "password": "fc92bf4e66a99b67d19c4de29e65c028fa83db048d94040524c38821fa2fcec99ff2550bbfef7c2bc68dfa013e19c43fab8b66f02bb2448bcb991dde8f868540.53db3ae76de0199012e8af864a00138f",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "mahmoud"
+  },
+  {
+    "id": 29,
+    "username": "محمود الحمود",
+    "password": "42994aaee9b381695904f1461cdca0c767bb985992607776773826b44c3309d1538e285067a14be681744deb84490c90af50b15db1dd18ff90bf33b1106ae064.8d271c1ad88fe9cea26d8dda27efb4f6",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": null
+  },
+  {
+    "id": 292,
+    "username": "رضوان_292",
+    "password": "9a298c8c3fd1c8eafac2d94f66a3e637044ca635b5fc1ca0e49d16ae908beb2f22dea2e8cbc6af193c268ee136c4aeafd86e2004cec741cf5498169fc97226ac.d14c585d4c2e416b9653d127c6fcd3a5",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "awab"
+  },
+  {
+    "id": 265,
+    "username": "خالد الص",
+    "password": "16534f8ac90c68826403f62dfb08620ec9c538f8787110cd56bf3fbb1d802bf5a23930ce81ef25fc6c0cea63976f575f4b9144ee6ca18daf6c72b200e7958f43.5541042273c3d043d5a408730cebeeee",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "aasem"
+  },
+  {
+    "id": 414,
+    "username": "معاذ_414",
+    "password": "9b60ebbeab0b1bbbc0857e985b0f273a5b24110ff75d50ca0921003a8a552105a1e5649f854dae67904d1111c0a420b54ed617e36d991296c5032fa8d7724d14.be5b7c10a76e56d279fa4a7e3110f097",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "aasem"
+  },
+  {
+    "id": 392,
+    "username": "سامر",
+    "password": "b289f29e5630294779da5ed5bd67e6d4a3aa85a8f73267a02473222bbfcf02886aae2a9de5daf470f5c9f9f687781df71afa97568f909312fea77a4c6910e8ab.1889f16c94edaadf80dbf8f0c97aebc6",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "jaddubai"
+  },
+  {
+    "id": 78,
+    "username": "محمد خير",
+    "password": "c812bcd94bbc2bcc22bbd894f4d101624ecbe96b026b96b31ecb6c26d8922ad303657a2e435ce87aa304953a44db483129ad342fd9f5912b1f6d8e82cba386e5.167f4740c8fd8e4f147f427c389556ed",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "aasem"
+  },
+  {
+    "id": 89,
+    "username": "دقر",
+    "password": "bf734ef2fcf7924c2988829f15f2a4b0c8c5df226d46a78217e991348f45bc5e511a89da40ba70f91600b128430ef630b27374f7784cd9d8bfddb538c65f7ec3.6f987fcd2f3ccc0eb960bbae59a02eec",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "aasem"
+  },
+  {
+    "id": 91,
+    "username": "سمهوري",
+    "password": "53b1d3113064b6ae3d05f64c09c475f308d4e558e651acddae1112c391de4a0eea14976fddfbdbdd1e06a46aa5f92551605b25ef6295a936908c45a231a89111.8d3be34e834dfac4f1108cf42fd59d1d",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "aasem"
+  },
+  {
+    "id": 93,
+    "username": "زياد",
+    "password": "55e665c13dbea4cea467a795cf901eedd1c60200310030c806abafa7d0226c206ed50bbd65e1859903ebed81773142163fee3c1b6152e0c42791bcaf6fbf4e4a.89aaa2efa3af8a1437409b278eb4fab0",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "aasem"
+  },
+  {
+    "id": 96,
+    "username": "حمزة قنواتي",
+    "password": "4f28d2070761c42e56810c79816e042a5d6105aa45834334e1f956e8023ccb78a0625117a0a780ee08066be88c3a18776bbac73e1f967251aebde6346ee45ce7.eb264c6f057bb9f9ca3606fc465640a0",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "aasem"
+  },
+  {
+    "id": 152,
+    "username": "حمزة س",
+    "password": "9644e790e43b136362ef87ce302b5738183bc3ec7a95589e9a497bfda405aedeb4ad11a8eb5b27a03e9631e75de33ad66577fb0f6b17430d797ec6a3b7144736.891f0a5be2903bb58075340b2ad57dce",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "aasem"
+  },
+  {
+    "id": 154,
+    "username": "ابراهيم",
+    "password": "e424c5bc5fe4f5a01b17d13c361fdc55fdf24b1aa4f96a8fd1750631db921a318ae647732eed39f18f5120349cbe74ec84881dfdabc9c0e2220a7ebd4d641ce4.4610587f29417ffb8dd59689aea8be6c",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "aasem"
+  },
+  {
+    "id": 156,
+    "username": "عمر مزيك",
+    "password": "195c7199a77e570c61a7f93aa4ae3a7913b0037b8a651d9a200c878965e8bbd21d0b57942ea56e1692ad3b886eaafe0cc4544994f8606644a36db3b61921bb89.b7609e7af3cc1774181547c07bd32cb1",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "aasem"
+  },
+  {
+    "id": 297,
+    "username": "بشر",
+    "password": "ad553b5afe5afc7d04e9aa3068a1148482acc6bd572e24b8e84d06bfe5a565485f6fcaef7d99da98172b6c2194ff22c5701349b126ccc5dff82b554971705d5a.ca7bfacc7392bf48c2106ddc2d1183eb",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "kibar"
+  },
+  {
+    "id": 305,
+    "username": "زيد ح",
+    "password": "e0e8a85cf316210a4317909a5ed0af482b3e84f4304f08cc5d1d676ff9ad02b8e5ab58343cb10c988d3198226b8c43ad2d8aedef6e74c575b9ebfa6abeadb0a7.84ced6765d68da99531173e41f92d3c1",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "dubai-omar"
+  },
+  {
+    "id": 109,
+    "username": "كريم_109",
+    "password": "5b0d88bf3c3b5ff0b5569c480ca81e90629a215e9b8993a69682e54accf41bc6d64df65de7cfd57695de5624f5a0692179f8ffd19e78febdbf1113113703d456.c47535d166df8f303c7e2a3b0b44ed8f",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "khaled"
+  },
+  {
+    "id": 307,
+    "username": "قيس",
+    "password": "4514d8592b630c0197e5cace1281ec88bf4882e234b4c5fdf081396835fd864946a5ceb879b296de0a12f7895eedbd286dbe376a1883c8d32b3541a1bf265e29.be59d5ddcfe93bf361d3d146430d7f55",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "dubai-omar"
+  },
+  {
+    "id": 49,
+    "username": "حسن_49",
+    "password": "d98c854716a272bea9d874b270f0ddcd75af88734f30be1f1a4a336f194c1ba25b26b1bc1673c72cd4339618bba987af99310ad75363f8f9696abd67b92a9026.92db679cc78ea7772902ade6c2166eef",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "aasem"
+  },
+  {
+    "id": 409,
+    "username": "يوسف_409",
+    "password": "cd0f81441a61555d946583b954511006553a8b42f99c9358aa51d535b63c8de661b47cd9e6d2f34325b95a3f754a15b7a00aeda75ff12b86b9a6a5ce7ecc12de.5250edb789838d5fc75ef7177d1d8036",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "aasem"
+  },
+  {
+    "id": 313,
+    "username": "عمر س_313",
+    "password": "546b8e31ff1996092d9a6825f8e0d37a29afd15cacf637b35c7f689d3e612d2781c886426dc8f1109c7da3f6b63efbdfba393e9b662043070a97c74ecab999e2.2318dd25a52bda899061aaa8c17d3b08",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "omar"
+  },
+  {
+    "id": 316,
+    "username": "عبادة قب",
+    "password": "982880130797331e14cb4f59d90a776c29faa934a4a45ec0324efa757dfacff2b36298bfd8cbc40b1ef84d53fcdd43d4e2d1564ce6d750a9f470a796d8b3e876.657250ed687724f0081ff043fc50a8a4",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "awab"
+  },
+  {
+    "id": 247,
+    "username": "زيد",
+    "password": "944ae42c2f04199a31f4250c8c863d1b9e2becb90b8f5d25f94848b713170e62548108a5bac96daa85c4990cdff5dd46c184c8a8c8581927a3edcbd91e8c2903.05567cd2c180abc37baddf3f15af666f",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "obada"
+  },
+  {
+    "id": 279,
+    "username": "عبدو عابدين",
+    "password": "5e369b4b6c896954173b801d24a6fbaedcaca9b87ad4a005a91220e5fe4f1b9d9f447ff2481118853800ad4ae064b2457ea7479d42286318a65bb25493b6b86a.436f4fb090460f280bbe4e4308c1f6f6",
+    "role": "manager",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "awab"
+  },
+  {
+    "id": 3,
+    "username": "مهدي",
+    "password": "edb6c65225c1575a05f490ac87728cd62d91a0c216569912073a4050e90362d37ced34de73b3873b40ada55cab9d83c2f35948c2a247cb9086954260cc8c7041.f3dc684319c58aba04fe8244e51f4129",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "aasem"
+  },
+  {
+    "id": 4,
+    "username": "عدنان",
+    "password": "1c11e74c7d20d109505d5c764a7d66932f22e70e75d4268ef119586eca058dc76766587a55937dd7c4278c75d75fbc7c8cd286fdc785b9a2ae879cbf113fe177.f308d8a5e99af6b4306160d55c22d911",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "aasem"
+  },
+  {
+    "id": 9,
+    "username": "كريم",
+    "password": "60859abc0b2fc1bf5e57b0a76de661351147a2d640ce0ef2d017fb31517214006ea68142792670fca63233c98971a4191624d1074967395ccb62e1a384188fb4.9a95f51e81048d959e0befd1149d7a56",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "obada"
+  },
+  {
+    "id": 30,
+    "username": "عمر شماع",
+    "password": "99d968da0ce8a8e07d77f498d7ab26914a69448e82f49bb99c7ab4f936095177d8adffdc2b218244c911abd10b8ec2922fb0c25365d38ef7223c429f3c88401d.cbcde35229745477c84780a05b9aae3b",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "aasem"
+  },
+  {
+    "id": 32,
+    "username": "هيثم",
+    "password": "a26e52c3634fabd7b0860305936539ad05ed2aa27005cf794b1ab37e177bc63ce20930158721e463c96690708f48720535292064ffa26eb9f0ea69c3984fdd19.e0d28fcbe1b27c2de6822a9c6344ee9d",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "aasem"
+  },
+  {
+    "id": 33,
+    "username": "عبد الرحمن جودة",
+    "password": "9a466991225db2b634107ee92913fb3283a63ff022e939772453573ff236db99fd0d7ee98a35d7582ed81c638974b97ec55ec59b7b24419a0b76c20223c9bfbd.2746f8f87b89939edbf695ab96f12477",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "aasem"
+  },
+  {
+    "id": 34,
+    "username": "هشام سيوفي",
+    "password": "e5dfe9c4753ace007853bb2681e6f1da6ade205bbe9fd35458e9ed3c8e81fad7045d97fa49ebdc8e9cf735783acaae45d2e1c67c10b0c9ba9353250ee7d24434.39cd00a898d921f170eb98ed191f3a70",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "aasem"
+  },
+  {
+    "id": 35,
+    "username": "مكي",
+    "password": "e302bd9c02ca4e97ad240f5ac1072f6232efade06b36bc6ebeddc702a8d7ac282d0969d4ba7ec68a15e6a161753929232147c2d858e75fc75919882ff673e06f.7107732c70cebe22d1da8c9ab79d8295",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "aasem"
+  },
+  {
+    "id": 44,
+    "username": "عاصم",
+    "password": "3548f5bb441dfeb165ac70b9605821985d75fb7f7796390b2e9998219479f7f5a147899026a5cbbfd7bab40ef8a8a27a266903199fb135b44d584b14af25b31d.9435626ab2a0c32322adc03d031abed9",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "aasem"
+  },
+  {
+    "id": 52,
+    "username": "عماد ج",
+    "password": "97df5532b3795c7ce925d45c0b59d50958bb1f2469e35bba1994a4ffe93a944ac8c828f492868b60341a844993d939757fe11c8d7370df4f43c4ad1dd51084df.4fae3fec8a6e113a47501b430469d9f5",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "aasem"
+  },
+  {
+    "id": 54,
+    "username": "عمر دالاتي",
+    "password": "cb86f7e74224a911eeedf2ee2605ac28647c796893ab66d103e201301cffa786a08061a46c5cf18bfb88b7ec4a6bff7426d0645f027422e76f46d7cd85dad3b1.598b2173858fdaabc22c565aec118a39",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "aasem"
+  },
+  {
+    "id": 57,
+    "username": "عبد الرحمن خوام",
+    "password": "b81ad5f71c9a61e29bb9b1c9ebe93cb7e31800a019b18043257dbe19202bec4b579dec426846e51287ce0feaea2487edfe172399c1a56157bace50ce8b06e5f9.1e619382ae8e1f646cc470067e092f09",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "aasem"
+  },
+  {
+    "id": 76,
+    "username": "معاذ ش",
+    "password": "1a7e1f2a6dd1cda57b61df2042a3e5d12febc8684232ff8371db5f75e61b1fdb374c381571b20b4b44ed8296adac4b76d26e0f11b3d6b2420bf8338a73619bfb.b52fed6b81f075f51a5a26e8e833898f",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "mmdoh"
+  },
+  {
+    "id": 71,
+    "username": "بلال",
+    "password": "e0c1847848b8ab5cdb390dd056b24deecd86e6606392cefeb4390932a040381b67483be39f3c7e30d50e30b115c842d414960b7eed054904bb682d373d9a0fa2.a2f79db2721e8fea16c0b402bb22bb0d",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "mmdoh"
+  },
+  {
+    "id": 119,
+    "username": "ابراهيم س",
+    "password": "1e194e4a7881d8d7534aad4f98e2b2aa4676e1cb357afbe7104d743e92a6c970050055d39fd24f97daa12b9a4361dbd28c5868cef3207f98f04522bbf11e5ddf.393f68354a2f36331928c9fead4ec543",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "mahmoud"
+  },
+  {
+    "id": 122,
+    "username": "مطاع",
+    "password": "b94abb6e183ef8a357a00c06c5110c20cc1c69b936e87a2c474c8018371c34f6ca9d7ad8a8b4dbfea015d012fb0155138ff7edecf44f62c6aefd26df044be309.4c1a572abdd5b9cd12a0b0b80bc5b4d6",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "motaa"
+  },
+  {
+    "id": 126,
+    "username": "عبد دالاتي",
+    "password": "1dabfcca75dddcf23d8bf189e37f16d9db0dbc654c42ebaa0466dc6a8efd4d89dbedae6266289598b4f63cbff3c56fbeb1a53383b3e9d8b7ef2097024c9a5352.2fa308d9f6452e1f7549aa0c942639b5",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "omar"
+  },
+  {
+    "id": 143,
+    "username": "علي",
+    "password": "334be7976eff4ba3886e0b6f80390d30dcbf0b15090dc178776467245278096db757f11f604b485a27d2bb4c8e77ec211433f03f3cfb4c5a165326f6242868c8.bf3f2812c89424426d6559acc969898c",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "khaled"
+  },
+  {
+    "id": 146,
+    "username": "معاذ م",
+    "password": "c519bebce327fb721af3ac6b22db2918cfc194a84384025b254b1f635c1689b55586f7a708b785bfa22947fc9391d12640fa8d8e492baef2a992debabe53f82e.113964986ea6fe7204f3d67554164b9e",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "mmdoh"
+  },
+  {
+    "id": 5,
+    "username": "عرفان",
+    "password": "01932af3faac60e74616d62fde0d84f29e3645fd0d73a7e304879d394663acc00edd4bdc02c7af035b62747f5db73213feffc46fdf727ee6379a2c70fddadb43.1762f52d28adb10f2e2d84cd38267f95",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "obada"
+  },
+  {
+    "id": 245,
+    "username": "اويس_245",
+    "password": "f639f9a2f00f349a0c38edc52de1417efe5cf555fa2374bbd4ad80e70733dc4713c0ee40ceb0708a097edb273f712d6c74ff7b6d33811eb03ff221d7414574b4.3e305754cdec300e44bc206a3f27d3d3",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "omar"
+  },
+  {
+    "id": 221,
+    "username": "منير",
+    "password": "3331982e673257ef394f4fe912a2907a03612c7ad586164ccf8cbed3e819a2565ed1d87e544dfaae8c86229b9ced0a92e53fdf04c8f348fc20821c50da8f6bbc.93a334e0eaf5982a7b27b754101dfa24",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "aasem"
+  },
+  {
+    "id": 271,
+    "username": "عبادة مولوي",
+    "password": "209cc3f6e8c7a11c135224fc2b5e52c5ff6a564961e915c258194891c3013757c729e30892f855b6360c2e395c7e660eca498926a5aabc6f1f1442f9abe16768.8cbc0feaa8caee28ba2faa9381d2e35d",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "awab"
+  },
+  {
+    "id": 274,
+    "username": "عمرو_274",
+    "password": "14009cc8f26838632b2da2d98ddda63f4a0742c603d868f370f909339a1209ef167ae2ba4d83f11ee39e749d819270418fd96177f11d8ade0eacd64e6b3134eb.6beba1a05d000e02105dbe07f69af024",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "awab"
+  },
+  {
+    "id": 199,
+    "username": "ابراهيم بر",
+    "password": "bd477728a68dda4d310fa259252374cf67fbb0282455500495d92712301a0921ae3398bf0df069d9493210ceb157d6b75eafc7c2e4455b4775c8e848c552ef1e.1dfdf5046a728ed7ae6b5845544539db",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "mahmoud"
+  },
+  {
+    "id": 339,
+    "username": "عبد الرحمن حافظ",
+    "password": "661b4c49fc61c08c7f23dcecc173c7c494a2b4b84df0caff5043bb7deb40df393ea8d5c53815898dad0b9ced19818da02458f25270255c45605fd779457d6f75.08b359a013bb7bafda3a61e87af5eec0",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "yahia"
+  },
+  {
+    "id": 398,
+    "username": "بدر طرابيشي",
+    "password": "8f6b6de2e2f6430d2f0374e40f47f5a22f3f724ce62d725a702316bb6fcbe0bd92327830efbb6a8b280367c0accb36b42146f4e00560be743adcb424f8349a37.9e8f814edfc02f022cc6bacd44f89eab",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "yahia"
+  },
+  {
+    "id": 201,
+    "username": "عبد الرحمن سق",
+    "password": "9c804a4ca639b4de14f7ff267bcd9292ee4552359a5ce17d5300e400e38c4f9559bc493b8770176b3d6f802e425b4f143b3d9e636401c55e95c3b94a0faa28d7.ab280403ad5bd286b754fb758ba2d157",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "mahmoud"
+  },
+  {
+    "id": 193,
+    "username": "ياسين",
+    "password": "98e483e6803d695222ae8f8fc60628397860a4cf6232782f6ce452db43e59ad14b47c62283a646dcc89379afd684e276fc6003ba9087b563d097ccdd20492549.6c5f3e603cc81d9c955faaf10d5f3cb2",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "yahia"
+  },
+  {
+    "id": 205,
+    "username": "زيد حم",
+    "password": "24ccc6f1b47824949ca8203224ac41124f48916bdea91b3f1ed954a5e8595b8934a1323dbf33857f78439d98800376f4a35a78fedb7c49cbdb7b2a07db6e8270.99641f5e99aa2eab166c1632afc0ea95",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "mahmoud"
+  },
+  {
+    "id": 222,
+    "username": "راتب",
+    "password": "bb8935abbd84c538e6b72f5c0ec1b594d50605fbd1329a715b88d80390815a5dbcaa379e6f1cbf7a55d8a80bd19a4dbfaac6c78e99809becc714f92f87fb9fb1.f24bee2ec76bcee307a39f80a0431360",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "zuhair"
+  },
+  {
+    "id": 210,
+    "username": "حمزة",
+    "password": "f9ce3e5e822d9bcdfccefbe3c8bf589deb2108b0642331ba550c24424131a5b71c0ccc24dd2022fa9787bb50296cfc2c7560f4494b1cf4c408e55aa611122c0b.ecc0ec295cb7b68d71ebd2eb85bc6fc3",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "omar"
+  },
+  {
+    "id": 212,
+    "username": "اسامة",
+    "password": "8b4297e8968dee8fdf9056fec3ff730088677fbbd485af33d563d1eb4f705e92405b0387c1593dc7fe8e3f2f09184d73b70abb1d8d0e23d4940f6952b4a70fb7.492644eae44d116d2d05a061077633e2",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "omar"
+  },
+  {
+    "id": 214,
+    "username": "أنس حسنين",
+    "password": "0253dfccabba1e1d620435f368071348e458f1d1d0ce9ce6ff01fda0d5c4ee224813fb9b8397e1a117e04143429777253e2fe72ffeb316a3d0881e983b45c9b3.1c3b80e4fa4efedbc9fefb2e9a3c3753",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "omar"
+  },
+  {
+    "id": 124,
+    "username": "عبادة نج",
+    "password": "f3caf8c5ce4fde39a549e8a53acb5ad96f1117bd36295c707f6fd4713e42f9049b81c3b5b17c7884ff15e33a24c4c215148d27cc6d44b74fecdd1d041c8c2025.6cc897b33a89e03525d00008ccd05e6a",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "motaa"
+  },
+  {
+    "id": 249,
+    "username": "كريم مش",
+    "password": "881d54c3597f94766625b916cc36bd1744d49d1436a04b27601c441d90f779660d8f1c0f4d3eaa2e9f55f1beb4af8c2aef0f625d9432e5853532d24ae177b814.fecf266346eaa6de0e5696f10b7dad65",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "motaa"
+  },
+  {
+    "id": 239,
+    "username": "احمد ط",
+    "password": "46126063ce84cb9b821001c7ee6291aa1badfe47481a0ff53ab0b9bcfc615d4963367468dbcc172ec2c597e7359e141549269aa273da6b1e19d592974af57594.d5cb32597c673ff83208eec1707ec074",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "mahmoud"
+  },
+  {
+    "id": 230,
+    "username": "أنس مو",
+    "password": "13110ae38cb885c5fc70cf95a303450b379d949f006a74b7635d949037374f4190c41e28135ec94f79286370f1135fe965d6b1f52b744ff0bd7129b0b745ab21.8e0f2e6f5df6ee8777cf8eedff8f75d0",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "omar"
+  },
+  {
+    "id": 240,
+    "username": "خالد طر",
+    "password": "02054bb42a98fa24539266908998d88b38e5ce103dd5d066599d321e2f5544a4aad01d9495a63a45d371baf1a492bb9bbdaee93b14afa8eeb7ed2bd66ba2c2cc.7ff9505bb6c464fa2e308dc81f8f62cd",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "omar"
+  },
+  {
+    "id": 237,
+    "username": "ياسر غب",
+    "password": "495ed0bdc32df880ef07f6bcab8522bbff0f4a2c4d4684e3945148fe75dd492d1aa620a208898dda9221046cce0f47ecd397d57c763f754cd4d62ad9532653f2.6c090752eb8c092c58336cb785ae8795",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "yahia"
+  },
+  {
+    "id": 269,
+    "username": "إدريس",
+    "password": "0fbd96849d3884fe60db1f6f8bf162574cda034f8291d2914a5972f1c474901b1feffb79747f21040d10c1d11b484f80ba579912f97e5b261501d23dc9a3d0f9.53bb18c865e6a8d6c78b3b7ac79ccc87",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "omar"
+  },
+  {
+    "id": 275,
+    "username": "زاهر",
+    "password": "2356b91d92f61353ecf007584f129c51b913113181e82252c3f1d7b64b699e46b293d09e44b2854aae543f7898b99d365a3215cee5b0f9b007454a9139af9e6c.373dce93efc1f011443dd50e4c86d3a9",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "zuhair"
+  },
+  {
+    "id": 288,
+    "username": "حسام",
+    "password": "2d6f4ab2d60585670167e673a66ae7ef16d60ea220a67adde8df5080f48ecbea7c273cb65f2f3fdc33daa0c584809fe6efb850afe0d14d7ed2fc7477fba42518.99f9300198c5258b864c6e9c06d2994b",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "yahia"
+  },
+  {
+    "id": 290,
+    "username": "أنس ح",
+    "password": "e2536bc823e387dbaa9d4906ad05124cc0206431de713e3647ded70c139e03cea608c9f8fac09a2140afdcd4cc01a3ab1a8abb42518d553bb5f53ce87013dead.e6fb1e42c2001d65c6c776c3695e6231",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "zuhair"
+  },
+  {
+    "id": 310,
+    "username": "رؤوف",
+    "password": "e514f85c6e2e8a6e10fbc6ae72a6eb66a3dc91361968849bcc68ac985eaae2a47ffaa900ff7977c021aa20fcefb3f30a30068cddf209a74e7ce3a2f2114a9d47.b09369cb7b98588d4463b60c7395e0f9",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "dubai-omar"
+  },
+  {
+    "id": 314,
+    "username": "عمر ن",
+    "password": "b9ffa6caa13a6c4addc589e724a29d9a4c4060f86c284b3696e89e53df14b8cfb2937c90979609228965a9f6205cd93952522a981c08ed002af0bb643fa66bd9.b9a514f815d9abf8f3a041356ec25850",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "dubai-omar"
+  },
+  {
+    "id": 322,
+    "username": "أسامة الكسم",
+    "password": "c9dca91a71eed02737d815d917875a52a05f6e21a4b1d607a1347a491dc865436e1346dab0e9f5d28897c7c1f0c357bd08369e3c04d53d5976355e8eed1979e0.06bbd0b2250f174c28e287cd91b0511a",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "yahia"
+  },
+  {
+    "id": 379,
+    "username": "ادم فقير",
+    "password": "ad929f9e3817d380c76dd9af5a90a70e16ffd7786093fb9beeb2d1e163ed609c77687af1647f8b47964f8fce4229bd9bfd195f14c63a0e83f12e9197f4b6909f.bf25cb107b92556074035467da071477",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "motaa"
+  },
+  {
+    "id": 130,
+    "username": "عبد حمامي",
+    "password": "d798ca2f878ebb9d01fc8d5d6e30cd0b30c0e2e797132ea10f6b3c090d8194d154b8b0c317b3a554c1e187ac2ce00db8c3e44d22e9fb78ccb2d802f1c7af28ce.87b63b214ddbb24a70a18bc5a793f53e",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "motaa"
+  },
+  {
+    "id": 131,
+    "username": "زيد قنو",
+    "password": "651c8d9ac8a39d4c322af87f3b7c415470eab8a7b03a45b0daff748eee3d69c4e58fa3d6a4b213d24b288263cc23d8ced55a09a66727a6a79ca44eda12a1113f.b5b76ef255395fbb4b3696156f1446c0",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "motaa"
+  },
+  {
+    "id": 132,
+    "username": "عمر عيد",
+    "password": "a3fa4c6e180f661895db1f845060aeb766f62940aa6803403b72d95fe9b881366d58a90425eb272bd79ba41bd3b5b73d760ad59478a7de63deaa7cf73ed5e650.b1c92800c56394c97ed808ee69778868",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "motaa"
+  },
+  {
+    "id": 403,
+    "username": "جود",
+    "password": "6bf30a02a044afeccac2696fdfdb2fe402942805678c9d0ccbf7c949fe07aecbf54c0507af9e8fad08c7d86463ce6c39bb99f6021df4f243402e9b4b627f4aa5.ce55344e5df5e696b4ba291ab49e4755",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "motaa"
+  },
+  {
+    "id": 136,
+    "username": "مأمون",
+    "password": "86a779676ebfa046d927c58d13804db63ad20a1261097385c5deca19c47405d674c0ac839e19e3e064d7e832ca4a5e7370b7a2c24e57069a6f3fa39d0d776a8d.65d2991688b2f716fc7f2af0be2369be",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "obada"
+  },
+  {
+    "id": 330,
+    "username": "حمزة سراج",
+    "password": "6fce0e746324238b11ee62f559d5d36bd41d215c30955efaa8df2261dec01ca17fc7f46a85578a309a23461b481da2f56ddec74e3afc174041d4db27ff6909da.0f435e32f110c4c74b4e3ceff15b7da4",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "zuhair"
+  },
+  {
+    "id": 352,
+    "username": "احمد ق",
+    "password": "8cf567efe60b6158329b23850cbca897d83bf985917d96a6fc1467164c33ed2cddf11242a6db7845bf748d319ae7b681e7bab74737d4a6bbc8c9e907e0b0d8b6.239af6a02bebc0d359dfab2022270b7a",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "dubai-omar"
+  },
+  {
+    "id": 358,
+    "username": "عمر سي",
+    "password": "1e6dce04b335f7a146afc77faa438c0b79850c7c39c8aa4c91bb581038f8b57baaa7281dd00806a5cbee85a5409d2f89c4d10382c55c4a0942153eac3e69a02b.bef9402107aa892ed0ba835d17d11df0",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "mahmoud"
+  },
+  {
+    "id": 302,
+    "username": "ياسردياب",
+    "password": "684623f8caf90185cb983e583fde2717df7ea226286fb6e3714e331251f37faa88725a64c5f04b9dafcdbb18570129a29ca48d7b65393ff5ba04dcb5fc018c5d.21f0dad47afe46c483b25b44c6acbca6",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "zuhair"
+  },
+  {
+    "id": 345,
+    "username": "زيد ص",
+    "password": "e497eda00add3d2d994536002e2b72983fc8098e199ec0877fa2337f5868c9ac9c48e0bd1cfcfd79202519368274457dd90059bd3425bed7d811cc496867deb3.68bfeec9e3a6bdccbcacf163d4455a4f",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "dubai-omar"
+  },
+  {
+    "id": 351,
+    "username": "ملاذ",
+    "password": "f6037fa9f3a31d90e317b832c75db583af5f382df02760686dd60d0edc3d9474a594a009d332b5fadebba2165829f26f08571388db4a6bdd0a717da17512060d.058c37a437ffd9f69cb688b993f0ce5f",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "bader"
+  },
+  {
+    "id": 356,
+    "username": "عمرو ق",
+    "password": "1db7c6f6cfb5bc46b8953c25daf2e4f135182fca42980d9724373c493f5a0e4f956bfa2a439359f6f652ccd08f19aa90169151736cdd83e4c3c79e3a160b837d.6cf04e01df8da9799171a6159dcf2ed6",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "bader"
+  },
+  {
+    "id": 371,
+    "username": "بشر حا",
+    "password": "9feda1333b1352fdeb20c1d5275365d3deeaeb3ce8ce24b88b2ea464e5952c3e882832c13b0ee8119c12b1fa30005ed4ff89c35b99c521fca786dc0dd5a37c9d.87809b2489cba4ed7a171c380983ed58",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "dubai-omar"
+  },
+  {
+    "id": 337,
+    "username": "صالح",
+    "password": "8b26c0a7f538bfbd8ab23849a40f56849ffa6994c44ae4f0d62e7e516a7118c61d645bf7284d8015d6a83b8346e165289a6ef95ab1d0ede7d16db411ac371b3d.f346865ed79acf7f7a6acf16cd8f06bc",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "yahia"
+  },
+  {
+    "id": 391,
+    "username": "خالد قبيطري",
+    "password": "ad5c1e318d47b44fcd634927e3779fed8d471057db92ece5511b84f91386e89863cf7f66e86487216266696d4aeaaf646709f1e334c2e047c6fdd15d07b47441.ef30caa247062e25588ce78095dffea1",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "yahia"
+  },
+  {
+    "id": 365,
+    "username": "طه نو",
+    "password": "4b5c87d20d76c168b694090ba3e693363ead384dce356c7b59bb86c92acbbb718ec9b6c910eac303070cbda13a285520f760cffb1124f4a4726f17c99e6d331a.a6b3a16be5f446ee5dfaf3f2bee9236f",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "motaa"
+  },
+  {
+    "id": 410,
+    "username": "اواب قواص",
+    "password": "1bfbd32b5bd5f8b003ff7881073bda94957fa524025b3dd808ee8395e8d63c688f75a4104d58dd617fc9c8359aaadfff330510f903ba01ef4c0a968625d3a027.8259c9a4ae59eb39e0007de109aaac3d",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "motaa"
+  },
+  {
+    "id": 340,
+    "username": "علاء",
+    "password": "e3ce3a37d8a7f8ddd2a01b8f660b015d764e8182550fa9a3d8267aad06af85060f0a362b1aa7b43ca72bbe08f8b1abf6ee4c2dc35b5375c217c075c7bbf2b036.945a387c46d3b3a86deabed99a0d559c",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "zuhair"
+  },
+  {
+    "id": 372,
+    "username": "يمان أ",
+    "password": "9670d2d7fc217fe895731d4674cbc34dd9d5dcbf7c8ab442dc43ed954dffe52e0f90abff873ef9478d52a0edd1a08822ac1b3e8ac86b2245f5581442aab44b2f.0543885b210d66df642b71bbe1d0ecc8",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "mahmoud"
+  },
+  {
+    "id": 413,
+    "username": "خالد سلطان",
+    "password": "34aae0f000ec6b7319cc2494b8824a9a3d886cb43ccd48f77505727bdb05b35784d34210f63f20ef1b37a0bccdd4b75af5a90d1760d65bcac20cb8ef980efb66.39b113f8588062cf04ac74c213e7b3f5",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "zuhair"
+  },
+  {
+    "id": 350,
+    "username": "حمزة م",
+    "password": "5ebe835db6913b9eaaffbd79782ad8950f43158ef6fd6bff22acbdbef2732b83fff89e9b739bb4c8c45356f256e140974d32533a4c0e03b1d8b0cc203e83a30f.42de8fbc1b47f980a35a8d36f649ed16",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "bader"
+  },
+  {
+    "id": 359,
+    "username": "غياث س",
+    "password": "7a019252f0e3f23f762d757b647c40c683350494e949cf37c1e10a9e5d33a73329a0cbdbf7f5c5f2f3fdbd185bcda5da1bb30721fa09d377f68ece7ccd4311e9.a8a0c4f60b9d75d0eda4784aea1fe6c7",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "bader"
+  },
+  {
+    "id": 369,
+    "username": "هيثم ز",
+    "password": "9bcf5a9194ca010037d9926b7fd31a451665239abf246afe20ceb1501ea8c3a469b09717008b533182d9ccc353e1893e4b2ef6226f32462a8c41c057061765b9.fd13c1d4013f8e294b89ff3fed708a5c",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "mahmoud"
+  },
+  {
+    "id": 381,
+    "username": "هشام س",
+    "password": "09815f7e067064b0b5e28fc587b3a521bc2de6f20c2e181524a6659d27c228646779878048c6010286fc7c9798714ca9b5cde6a09e7a248e05ca7543bf7b55f8.6a3270d10bad3861280c36234b6c6b22",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "mahmoud"
+  },
+  {
+    "id": 382,
+    "username": "يحيى ق",
+    "password": "e4191f3c1083fd46d69a761fde251156f86529b7185deff0fd8d2679fbe5c4fa210cc8d56650892176d8e1794726948bdc3b2af6205c1b9b4c5b560dcb12dd60.864fa92f8b37f9c45925120c473ab69b",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "dubai-omar"
+  },
+  {
+    "id": 373,
+    "username": "عبد الرحمن ح",
+    "password": "a5a0ca058acc61afab4dd60d1f8784cda984f451b99d25bb05ceac75c7ef4feb53c5dc2d65e4514d7f17f7cb99258b63d2ab2fa4cdeec828a2f6f8fcc2e6b3c9.89f95dd3a1babbc662971948d4c46963",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "omar"
+  },
+  {
+    "id": 272,
+    "username": "عبد القادر",
+    "password": "a8e0669c7915bad2fca009ed67b3e7ccdbf958ea71a4600a0804ad53b8858d967cad76caf6ea21b9cf7b38676acc745912c1406c829fe0fafb8f75700d40b2b2.39a0647b160d3a21a4ed1901da5f0d1e",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "kibar"
+  },
+  {
+    "id": 276,
+    "username": "Abd M",
+    "password": "9422c4871001f768c40963e652ac08a166560ea2c66239805fdd2138003ea46f6dc3c5d7fb7edfa7738f896f06aa8e49b581fe4ed6820f3155c52842c6a554c0.b69fbb724ed28fc4660460981886cf47",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "other"
+  },
+  {
+    "id": 294,
+    "username": "داني 1",
+    "password": "bcd3e57f7f4eca28d3ce37106508b140a6b0a8295d4423a3145e8cb319071fcff5f87995a719d8df0e8c192b69657edbd2059e02b2121252ab6177680982551d.f826c823708be9aaad6dc1c98919e359",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "kibar"
+  },
+  {
+    "id": 95,
+    "username": "رضوان",
+    "password": "a9fe03e4059dec7d9bc4cf3a3243483c2fde6f28b82fb66b33f2797cf869a5deeabfa4873b6363ebe13f44de6907e00d91886f7c95286568053703d21495b382.7bf6561eb02edd991153d83cff9f892b",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "zuhair"
+  },
+  {
+    "id": 88,
+    "username": "غيث",
+    "password": "337bef3b92464c0cf9903cd9155c032454cd0c3a0eb4fd3f3b0a7d6b9c97d2cc48572f6aeb393f1eafde2eb28e61501bdd38371d42a60a832b5cbb52dcc5fbad.7b7ac82559437423d9eb284baa220eac",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "yahia"
+  },
+  {
+    "id": 155,
+    "username": "طارق",
+    "password": "06e9de7005e819179364fd6801905f5d12f59dfdc973aaeb5cc7ff67f0d425c1efbd67dc1a3382dd0c8a61dccb56746f9853dde78c5dc844ff4258728d039b9e.e8051c3d315b0b314245ced8abb5cc16",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "kibar"
+  },
+  {
+    "id": 334,
+    "username": "عبادة ح",
+    "password": "c29e301408fd0dfa7b002928c0756b2839b7877568092908e55c7c1805dd5bb0bd052f3f00bba479d32fc97be15228feb1d8e55821a4c0b0b7b7dc5e84e9a5f8.6ffd0097898767fe3cfad15af23c8f30",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "dubai-omar"
+  },
+  {
+    "id": 335,
+    "username": "مظهر",
+    "password": "bbca3acf15f659ff537dca447189b94b9c245b4a7f06686da32394f14a82f960506d80c943ab3df5129d3b1965ba69ada0989100368f721fce9d370f790b4c60.699f71f351bd7a21ee96e4af41fe27f1",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "dubai-omar"
+  },
+  {
+    "id": 346,
+    "username": "مجد",
+    "password": "1ae230a10f9d7b687da16101aa6376376b2dea4930da0654573cbe98b93961486f92c4a5ace72229247778fa25803413d78b08e5c266cbe9d2c6540fb2bdf798.a8d65f57f8e711bc99b7332e17de0754",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "bader"
+  },
+  {
+    "id": 353,
+    "username": "براء ق",
+    "password": "b60653f7302d210034ab6b8d7e901e3934ff3c5ec7c03aac3399f899c6d784ac0cf4150d4aebe7581735c3e1850b1057617b87e17fd0717762d473966560949a.ab483f0df88abd9f9e6cda9866d1a0eb",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "bader"
+  },
+  {
+    "id": 347,
+    "username": "كريم ف",
+    "password": "b83e053b301f322e2ca6e225007588a227e52be630bdffffd96990fab9ad5949429a8c828823b41f37824afe22d8b2b52b756edfe60f0b301d4534558fe6f391.e21f9b1362dffd3fae994833e9a169d7",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "bader"
+  },
+  {
+    "id": 354,
+    "username": "عبدالحليم",
+    "password": "d199f3727324afa33d53dfcd714713ac91b6bd3fdc80afb08b514f987c9bd7d1d4d4d86d320aee3a08fea263f3e924bbde5a28c8ef4b69ad974dcf265d8d2059.877547dbbf89c766fc398a1391a5dc4e",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "bader"
+  },
+  {
+    "id": 355,
+    "username": "مصعب",
+    "password": "8b02e036cff9172127b79054ae573631cbb99690b0734efbfc62c65c129992485587976ca07167fe3cd4cdf0972e11b61e58a7f3efe01529b707b787e3c94bc9.d4bb0c39242a1dea50483695fec1bcfe",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "bader"
+  },
+  {
+    "id": 361,
+    "username": "عمر ه",
+    "password": "9cf992fdf39d0bed9e10c0983467a38b41aa6286bc4adad23231bb761d79c16e9583015a5b2962ab02545d22ac851af40976f71c9f1b60b9949ee0a627164bbb.c55aaa2bf6b0a53068c4f6ae28f1b099",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "bader"
+  },
+  {
+    "id": 393,
+    "username": "اسامة ق",
+    "password": "b5bf2d99f8c8fc3f4dc3b509619a1bf3b846696f448adcfc1dd7c9de2487440638fbc0173028f602c66342b4df3c9a659b28b9e48895aae44926a48e5a1f3a4d.fa3126cff01a8dfc2e919ef0946a1281",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "bader"
+  },
+  {
+    "id": 405,
+    "username": "زيد ادل",
+    "password": "21f4d6e13090dda41c699b8a241c5e788f1e53ae96c8b4ef9809ab33608f0f519d27def420c7d248d84b033d6a88c26b58ca760c2332c0c1d24e2ad9faf65f98.f874c69b696bb3b7bafbee8a963aaace",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "dubai-omar"
+  },
+  {
+    "id": 415,
+    "username": "فواز ح",
+    "password": "82c9a930509eecb34389bd264e6f622e3b075c9e244d81d0b4188445d177e326cbf59746c9cd723afe177b5e635621420e2b9172d7c2a9cc6a3efad5fc965ff8.432cc7f2b62d543690a3a67546c7fe83",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "dubai-omar"
+  },
+  {
+    "id": 309,
+    "username": "مصطفى",
+    "password": "c9e307fa7039ba0ef8b34e28c660dfdb553cb5497a98a602a8f7eb87d3c817681d4b731ddb7ae2cff586ae99a53875525de5fa3ad080123948ef8d17cf3e5458.dba8761a20e42bf12dd811cd85fbc8e6",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "dubai-omar"
+  },
+  {
+    "id": 213,
+    "username": "خالد د",
+    "password": "c74ae2292dc2e62fd47012de897c989900872090839153158698bfb80d8890364b592780427a6bf698adf0b9ed7438213b0fa27d3dd2a1bd513d0459e76aeda0.9a774f3ea2c9338a23831145a546db61",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "omar"
+  },
+  {
+    "id": 215,
+    "username": "معتز",
+    "password": "aa684d4940e500164986ed29e2b2b7437ecd0007b1e88a00fb4457dc39c2ded7ed28214e235b488cb3deed8e257c73f7f898cbe46cd8fed671646ced7c30a490.a696ecd79281bdbb8da63dfa7a58199c",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "omar"
+  },
+  {
+    "id": 217,
+    "username": "انس ش",
+    "password": "82cf5e4ab154313da85171ec393d1c6b5fe9f3b331ef56ca62c11fb587de224f6600989ec8682499a902af955431739d8a59a442e2c214370a6ae70044599791.b6912f99e760f92a7146e997d5487df6",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "omar"
+  },
+  {
+    "id": 234,
+    "username": "محمد يو",
+    "password": "1d61a4022b13fcb3e01b3fc51861afdad504b46200ea19c5c73b24271c4e0b935580afbf9f15d89f89ef756ab11433489cbee0d3f55c7d03f38089eb0baf1d80.69a60624239da0216a3e1831594aff69",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "omar"
+  },
+  {
+    "id": 264,
+    "username": "براء جباري",
+    "password": "e243c849c1b5ba7881100ea256219afa558100267e5c88380398b73e10a4484e7505e9ccd419e534dff38904ca1b75e3f068a548a34f4605b9ee3e01e3f1df07.426cc2989c9d73b2b962d9716923b967",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "omar"
+  },
+  {
+    "id": 208,
+    "username": "حذيفة",
+    "password": "dc1243efc103c2f789b7635f6f91ead3f6ad5a71ba02b0c37d2c039847126fea6862e3880b9fa9c64158080f8c453e989f48e5a1a4cf2c49b95af7edc599f97b.425109cb65b80d804285a7c5389b1d95",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "omar"
+  },
+  {
+    "id": 367,
+    "username": "محمد خط",
+    "password": "bafcaa0b4e4de7e259ebdff472023fe108b88e271e9f206e70f292e1ffabc439c1aec2c03373822ebe7a9c6366c91130cc18576413332ec43978bfae6960e7a6.6d929972961118043734494647c32435",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "omar"
+  },
+  {
+    "id": 374,
+    "username": "رياض",
+    "password": "3a4faccd7e87624841b41d1cd68a910150abfa7a8926712209be20a882423980f14824cc92c6711ce43cac4b0e148528738b31bf0990fea6d06203f0d205bb80.4c00b73b74a82c0ba75718f4a916f32a",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "omar"
+  },
+  {
+    "id": 380,
+    "username": "احمد خطيب",
+    "password": "af516b56fc3c6516b2aa320552258537de7de3cbc07ac0cabb75ae61fedd36480a2686c9f9a50c779560bb1696e2f858c03ba4b069944b645e712d395d98daf7.4aca6be7c6c0507d81d64eb931470597",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "omar"
+  },
+  {
+    "id": 385,
+    "username": "محمد الزين",
+    "password": "8d6ac638c92b2abc0a954dbd98068a3c6adff08c267c2e09cec15dca86410bdb71b1131384acf5e939da3558992e14360224d6b295b04e309d97c319107d7bab.5e57e115f4cd4063215ad2de685baca7",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "yahia"
+  },
+  {
+    "id": 390,
+    "username": "فراس",
+    "password": "4b0abca0f5150c25a57a062851d9631eb38c988dd25d3abbca9c5b167149c8c62f35db5e0cce070a0e8909e5b32b328b610fdb83e5bbd317649428c6f740d373.ed5de498f583860956e6ea119824ebbd",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "yahia"
+  },
+  {
+    "id": 273,
+    "username": "عبد ح",
+    "password": "c5e563fad7a807b08434d62141af77650705cc7ff10eb3f6d92cba23fef659fe2acfe834741844b87bab521743bdc4dd963c913c915082d93c300cce5260ea54.28fbfd4faabe278791d55461b4ff27d2",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "yahia"
+  },
+  {
+    "id": 311,
+    "username": "مؤمن عناية",
+    "password": "9923f77520e17c9b65119875087904d5c81a519197dd6600c100dbb6bf3efc629eb70650eefcdc2387ad64ce5d5b46637d4a47d4a561821fa9e9aaccd63b23fa.bed003999c0e98fb2197c7c243baf4b3",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "yahia"
+  },
+  {
+    "id": 319,
+    "username": "عمرو عقاد ش",
+    "password": "3c4369b8697db64b06944f22ee4f8cb1225fe5313c74eadbe1e0112c7158cde98e2fc3ef20bcd90721b2751d3280f44d97376d9dfc2bd50deb86734c7a740fd7.51e49257a0495e44a840676af927c1b5",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "yahia"
+  },
+  {
+    "id": 323,
+    "username": "عبد جيرودية",
+    "password": "718445cfffaadd64b5753bf170145b85242982a77918790714f653f268b09752b25bf09068079ea79eb2ec8fa54b20a2c508e3a043700a9070acfb23c9ea66bc.d23299c3f9ad53a11690fbacb1ad8ed6",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "yahia"
+  },
+  {
+    "id": 325,
+    "username": "اسامة الدقر",
+    "password": "bf8243c985c701ce307349d625d1e02874ca347d0832162c7b5353d794e4869de57fcb51fd9b5ccfdbfe6e63aedfba87aad2b9ee412964f6c669c845ab1284d0.d979e54370fd384b617e180ec2c62c5e",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "yahia"
+  },
+  {
+    "id": 327,
+    "username": "محمد حجازي",
+    "password": "4a3a5bcfec73e7fc6eaadc2d2135df30abeba6e5b8ca172df370be31b4ba80d0241d366ca00c10970fe67b8dc990e367d2d4bb71b5748d8d0828ac010f2ebe1b.e4351cb74e56d2b68df8fe74517cb38a",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "yahia"
+  },
+  {
+    "id": 336,
+    "username": "عبد الرحمن شرف",
+    "password": "f20592d4396b9492339afd9e8283979f11876fa5ae8dd94edb6977a1c9faa639565c36bbe1e9557977ff418b4a01b511d52110ced1d8411245c1b27c863188ed.b5772cc372ec60e712f30543025b2d5f",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "yahia"
+  },
+  {
+    "id": 417,
+    "username": "عمرو عقاد س",
+    "password": "5f643057bc00b017fe109a1976f8328d2c54484d521451da7f77678b1e14df04113b8b2261be749337850f66789d065ad9cae6e8641b24360aa9008c763fc87d.92d9440fe920d8622c7291390d909cb1",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "yahia"
+  },
+  {
+    "id": 375,
+    "username": "كريم قب",
+    "password": "96d14b3a0f463462e49212da5ddc4ecaade8101559faef812173765696f24ecdd434bc6b05eed0f938aa44fd853843793fb66341fe7526dcfb5d2ae5f86fe7ae.e17b0da14f57468d588a5fd722e15231",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "motaa"
+  },
+  {
+    "id": 105,
+    "username": "عمر س",
+    "password": "b45079990e0fc4e019d93b9f0494916fd85655c7d38bbebeebebbc1f1e88effba3da11d59d5089ebb1af375e910fcdd9982166a208938e2845d1a55ec659f3a4.4e4636d39a2da69430f32bbfdafe6ea9",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "dubai-omar"
+  },
+  {
+    "id": 399,
+    "username": "عبد ورع",
+    "password": "7cfc4b7ee64be3bcc7655e900efa9c9d895f4de467374c10e3640591072e3d219ed79a206935a0f45a50cf22ec6236c334ce26c60bb7d5b0ca5449e11da75441.7550a518479cc3a6a0c2435a4722cd07",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "motaa"
+  },
+  {
+    "id": 412,
+    "username": "طارق قني",
+    "password": "ce09415289c3e42e34b5c70fb5b07cbb1fd2c8beb02e1001133cb10e219505cd02b4b1b8b8b75249c3716f36dc4a00324efbbe5e7e5f58579555e7da473b78e3.b211a96b7880626febaa3811a52f3858",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "motaa"
+  },
+  {
+    "id": 198,
+    "username": "كمال ع",
+    "password": "eb0cb16685a1f0b542d1c5ee1c9154e861a7d2057849f1d43c2b6b340d31abe5e9f75f8ae6acdeeb3d81ccd7b1164ed2ee50b728a1e9457d8642d9fde0f8a274.721367b9502c84c1d4907d2c03295632",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "mahmoud"
+  },
+  {
+    "id": 200,
+    "username": "عامر ع",
+    "password": "75688a2eab685647b4c81c0bac6b07447d912f95592347b08abd6bb893bd12f00a9dcf712de79d2acaa577feedc0d48e4d1fd2053bae9eb224f10ae056a5ad9f.91779f7c18aada4ae7e656eae15210b4",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "mahmoud"
+  },
+  {
+    "id": 242,
+    "username": "عمر الحكيم",
+    "password": "9f671081bc644c583eebca3bf823f64489d4e1716d87be6b0675401606fab4974493f97d3ff2418170da086786a039c3b47932941c918cfb9424aa84c904602c.be24017f88af05959a904ccb493dcad6",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "motaa"
+  },
+  {
+    "id": 252,
+    "username": "عبدالكريم",
+    "password": "d8208e50f7c551fc48748ebc1852e1083cef61cc48515e6a7bc4c25e42fd5568e5006108574fba6c8c8c986cd94af82eab9b98936e98a4bf97f3b983f95346f1.3c8f8c3274853c0922b766482f7b8e7f",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "motaa"
+  },
+  {
+    "id": 377,
+    "username": "محمد مك",
+    "password": "c208c17433d33e8e6e256a19d18c8bf74ef6406a9e0cf5697c7eb3afcdecb1d5eabd60f6c430814b357ee607ef480cc6dae6d6d45da8ef21bb201bc1daf8d1a9.7eb55ef57f4454992d6444b2c2f568bf",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "motaa"
+  },
+  {
+    "id": 338,
+    "username": "عمار ف",
+    "password": "345347ff8f4cb479e56bd6288dd758a537b16a43c347b783f6eaf13845d0eb51d9fbbca3e315ef04130739f3bbf4936b07b45a597b158b8e03619b9551011493.79fa0eb620ef84ec294d656398bacfe9",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "zuhair"
+  },
+  {
+    "id": 348,
+    "username": "كريم د",
+    "password": "cabfd6262bcbb328122c0085cb2a93db082a590989ce21a402da74111b35f0d61cf5cb39eb26bda082896e7af62444a79db54ae01fe807ab1e1457f80032c519.ca26c1cc7b42ddea1b454fbc9248aa38",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "mahmoud"
+  },
+  {
+    "id": 357,
+    "username": "عمر سب",
+    "password": "dd3387e59541ebb435c14ef7d1d2df62dc318b4348dd8b4705c8c86c8dc719218c492ab2e12c85da0f3f6e4761d9ff014c9f570de8f5c2cf30d19a7d6cf6eb35.d9d165360d1da19adfe6b41e6130aea9",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "mahmoud"
+  },
+  {
+    "id": 360,
+    "username": "بشر م",
+    "password": "2282ea2c6b0d08b4ebf0287d6511fb09ccd6aeb7ad4267290af6c7f049f9a05409df281967fa390506e97899a58d8ef54a8f392650b1b9bca4cc42f94d8a0709.b8f19e5c730135d999e978fc33f14cba",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "mahmoud"
+  },
+  {
+    "id": 364,
+    "username": "عثمان",
+    "password": "70a04e6938c8dd0ef0efab8b7be00d866c6aeb90dca7bb00707c39fd9f19ae8dcc10c274c6d9767d581123a8848f022fe1fc69751f299944ddeb29d0c4fb8b23.97d4aedeb1479ba157bb78c119a92546",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "mahmoud"
+  },
+  {
+    "id": 376,
+    "username": "فرزت",
+    "password": "fd01d2ac5997f871d25336bf63b9e93514154265628cfaccadeba8da64e6f27df36b1bbd4f6d7b6d7d588f362acf150d95cccfeef791d53716d4c4139350b670.e23f9b8b37ea3cea971dec5976257ca3",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "zuhair"
+  },
+  {
+    "id": 400,
+    "username": "كنان ح",
+    "password": "0427da15f41f1a39e809d15f75831f44168ca2a0ee0526e44b9c3af6e654e442d30a1b5f7ba23442af632c735776e91393310b765dcc9183162d40f8069d2024.6a61e0376d6e857379a27307d3c10142",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "mahmoud"
+  },
+  {
+    "id": 407,
+    "username": "كريم خ",
+    "password": "10f18d07ce128f5e4960564f5260943bbb149faeb79a1f3bbf20566486c19d89b5e9f9b7c63f75fa36fc334aa8a3252f005c0b1b1098685ef105364bece15287.5a3a6c502b3b09ae098ed2cb826a9734",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "mahmoud"
+  },
+  {
+    "id": 202,
+    "username": "عبد الرحمن دق",
+    "password": "b4df3ebdab7d01936ee98a9bb6b6bceb3dda45c9190a017f75e50c737a6d4ecb22d66d783642abdfd03f44d794152ba5fd2bf430ebaae3135919df433487fa65.4cb5ce459da1c0e68e9de1eb27af2a29",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "mahmoud"
+  },
+  {
+    "id": 204,
+    "username": "كرم نش",
+    "password": "aa6706013cbd18ebe45a87450ca85ca96afe5fc04364d08439285a58a1f014cef9cfb6f9077c165014cd587e366c02e27c505968434f6178ab19a7484359410c.83d7441bc23651b60cb33b74fc987bdf",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "mahmoud"
+  },
+  {
+    "id": 207,
+    "username": "زيد نائ",
+    "password": "3f6661990953482649111b541eb83f73111d37c7916ba0c783dc6f8068cff569a8db83ac1812dee7d9e0c1a2bab78c618d06b422a1c28b907bc76d6091567041.c59b2312023a124987a05c6c1b01b4ac",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "mahmoud"
+  },
+  {
+    "id": 216,
+    "username": "وحيد",
+    "password": "d8d08b3c0bd14e82c8bf578108b916c4dd20eb7836d470aa5b7c31e4482bae2a0bf2323ebfd8680c3965a82034bb1c13f6884b2911d3abbda4cc7443e9ccf4ce.0c1bcfe2f4c41f9193a2cd8f21ecd0ca",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "mahmoud"
+  },
+  {
+    "id": 232,
+    "username": "عبدالغني",
+    "password": "18f2cc41e857862889b397dd7f719b19a6021955ee1a2e55a1321b8aef6927c877363e03939ed77942fd75e99e57e0221a950c22f4749e5b79fa0f1f0c21e4f1.d7eb21cec14974d55306680cec9d19e7",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "mahmoud"
+  },
+  {
+    "id": 241,
+    "username": "خالد حكيم",
+    "password": "24ef4016ce23f90ab0552aac50c823951c770e187fedc054f293c7846b25321591475d4c9b9fdee4ab7708e3ca1703f5bf70e14bc9a3a5159f0a4787b92eaaa7.c419c8ac3b5934d50d57794c74cb3b42",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "mahmoud"
+  },
+  {
+    "id": 286,
+    "username": "ياسر خ",
+    "password": "cfa4f5804447f4200fc96502bc6d9fd97f2822d9d68efed63d823b2955a022bb2069e79d02732076e608d1f9d4cc0da73d18934be0d717649282c162a0ece547.223cf74ae1d1123597ef8bdc60774ad7",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "zuhair"
+  },
+  {
+    "id": 287,
+    "username": "أزهر",
+    "password": "4f899c92af17850e184544f2da69466abbd51123427ac894bc0b485d7abbdbf3a01d840f4e755faa8b3786f13ed3a43b87aa11e31f437f3b8c2897abd6297b00.2147037834e57a90fa4022a9c18a879d",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "zuhair"
+  },
+  {
+    "id": 289,
+    "username": "أنس ع",
+    "password": "4db8081974e8373189f446b491d9e7274ccaaca37c1a3f9958d1fd2f947186bf224f21e31aa51e38ff56195b46e46f08a7ed9a4d164acd7a9db3b1bbc4620c73.60f6bfe58620f405bfbb7c9db682c576",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "zuhair"
+  },
+  {
+    "id": 291,
+    "username": "محمد ف",
+    "password": "9eefe6e3d05225c28484d45b752c3ffa75d06e2a559fb7614f8cae989db958d11f5c610c03dcdb9529eb6e19b282207c5e6cd96c0c3ee901527c3ffc26d6204d.b055d2d4871f08f2c5f2b0177a43eaa3",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "zuhair"
+  },
+  {
+    "id": 312,
+    "username": "غيث س",
+    "password": "60b4aba14b3170effb3f06368751a54e6c61446256193c3f0e29c7f7cda78ac4d454cc03dcbcada307dd67dcc9d797d6525be47781c5c93f2b7fce109fd99256.36fe3e43603be237cfc0ef37463b75a8",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "zuhair"
+  },
+  {
+    "id": 349,
+    "username": "عبادة ر",
+    "password": "7ac9e31ef2dac4aca57dd752e9e58df387f4752fd92d3220d56cd1bb54ceca10903a3910fe8f15de84ca9cefe312f210f861ecaadc8792ddcb66697bd1996fc9.184614e08d0a1344c0a4a2bfed8edf1a",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "mahmoud"
+  },
+  {
+    "id": 395,
+    "username": "غيث سبيعي 2",
+    "password": "0d3c6cd6793830d45de9a5deb314d37c451ed8cee4877dda1016fbabf571b99a1e99295bca89aeb35b3a2af077f135f4422ebadcbd40d5cea5a8487433d088f8.8e11bf04ad3645c674b94c803341e6f8",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "zuhair"
+  },
+  {
+    "id": 401,
+    "username": "زيد اك",
+    "password": "2e2ce49593dafd4bfb51f17591b51deb0ca8c734ae13ce8b7bfcc5a5eff098f5592f8e8e11d9c90e136ca65f807566033e85eb3ef61aa5fe2c8f3f7d1f7d8a37.c825577ed63596a07fb051e92af4c286",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "mahmoud"
+  },
+  {
+    "id": 145,
+    "username": "يحيى",
+    "password": "b0ff6a7bf3d09d4fc96b0e2b4798678e3dcd49f9e1193367bb25fafd7e99c3c350fe62c160d171c4a9450dccfc8e088f920f8b4fc17698c899a49b3c1019a8a2.be6004e89405cccd80f2dc29829d5b79",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "yahia"
+  },
+  {
+    "id": 2,
+    "username": "يمان",
+    "password": "e9e8533a5acee97036ec150a3ea04e02d6d5671952bd8dc2a6d13ae033c35cb048e5f31512f41f0edda33668861cd73bb5edb333756198d9e7db1c147de15b92.6dcb5103973f6be3bde8ab09cd114008",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "aasem"
+  },
+  {
+    "id": 8,
+    "username": "جلال",
+    "password": "6f7c23db9232d660eee1f5a3af26d43d8c49984467c53820bd2b8ad1cc8c785d049ebfc7485688ced2c732cbff54ae49a760840b4fc679b4ea4e7a1edded6af1.31e492aedee353937bc089bd3b202b4c",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "khaled"
+  },
+  {
+    "id": 13,
+    "username": "رفيق",
+    "password": "1b15885f4bb749c60f2db39ac11d4a1f2de49b7b61102bb49b66987245fb2b47a102f695cbdd74e34588be11167b1fbc948d1fd027292befdbfd5e8c49ae90da.2bb53c83e8c5ef0fce3b55595ab2e2cd",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "khaled"
+  },
+  {
+    "id": 14,
+    "username": "عامر",
+    "password": "31326426fed766304d6e0cb930dd5fa8614235e867554480c25d41fbbfef02dac7a4cf5eca90cc75e07c2a4c3463f1a05abd8d0e68a5905b11b4f95107b5860b.2f97debc49506aebf115d1730bebba0c",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "khaled"
+  },
+  {
+    "id": 7,
+    "username": "خالد",
+    "password": "cde842e3fd855a2c6b759778f3dfa2a9831f379393a753ba316968546436807d2ea3e44d9326d2b82b3bc78c7c5b3d1049e0d9861b667bf19c010dfa2434e566.4eabe68f24e4a7767c852f9e1ef4395e",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "aasem"
+  },
+  {
+    "id": 43,
+    "username": "زنبركجي",
+    "password": "a94c1680fc31271e688ae4c3f237d2529ccb1c2354dbae382a50869b3a07d678b8d579fae7c1919b3a8b52ec5636d21f643e5ee262756114404506735c86e031.1b1fda12cf2f36e3e39f4e5256da0933",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "omar"
+  },
+  {
+    "id": 79,
+    "username": "عمر ع",
+    "password": "5cc211ffd951a2762fa62fcfb730e697d93c10e4746665623f2b8391164da2b36e453759aa1bce19e24b0390974d57f23a5ed89fa71a496a181fb50f0569cc00.791d540c682ecc93f4faad47e1548205",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "mmdoh"
+  },
+  {
+    "id": 108,
+    "username": "زيد قباني",
+    "password": "319ede140c3408930704a2b23ad883f6b124762524258de10fe26fc33c47c8d33f97b3671ea659218cbcd7536f37a7bdf57c05b6f4088ca0be4624c63dd0e9b5.f0bd454854e924e7b5f51f8adbae6183",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "aasem"
+  },
+  {
+    "id": 116,
+    "username": "عبد عابدين",
+    "password": "f767e706eaaf07a3a7b684f24a324680ad567e23c5a90912fa972f29b5469f0c980af6003a4c07d7a036aaa6f1db6cd2a519e3a26c01937d49f74e768cc732d9.acfb19765f18fc5be13cd0c87f656b95",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "motaa"
+  },
+  {
+    "id": 11,
+    "username": "زهير",
+    "password": "14297d3af037ba97170640158a88068a6dde697bc3fa141e835c8ffc5efe663b8b3b8b5a3d904750af2c4ddefb8df3b40b313a473ab96b16f117debe0b9be04f.c7f13110ca39f3e367c476dab67a63e0",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "zuhair"
+  },
+  {
+    "id": 189,
+    "username": "عبد الكريم",
+    "password": "5e6b153dfb6e6977fc476113bc8b8e013d20167e129fde902cb628b1625b785f5c91bfe8b92c35296608940e1b62e2715a2f71b23baa25db260ebeb7c989d625.61829f091f3e492daae6e99ae845ba6f",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "mahmoud"
+  },
+  {
+    "id": 387,
+    "username": "عمر كسم",
+    "password": "72e15da99ea56ea714b0b2b49b59611bd2d5d5ff8e78683cbd7fb244308195e9ed9e2e5dd0a1f79b2dd36ddac395898d4ad711e71affa5c7d543d392c2698d37.5892b53acc30125360de8427a66a6b3e",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "jaddubai"
+  },
+  {
+    "id": 389,
+    "username": "زيد أ",
+    "password": "c55556ae5d68648607e910a6bb54e2f5f69329bab1231f910fc60277e61ee175d6c87d55a425ad938154a13da040f543b9aab6186223c4f523da942bf228c933.7ff25293a2e21051d7fb736b897fbe39",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "jaddubai"
+  },
+  {
+    "id": 66,
+    "username": "تميم",
+    "password": "dfa2c1dff9055c37328b965d902a46486acc101e92bd2cfbc80afbcaecfbc11dbd1cfa90d2627c032cb9de956c5db72b4661f8c1162d8a92ab59329fc8dd0779.953accede237264214b2aa7c72d5af60",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "mmdoh"
+  },
+  {
+    "id": 101,
+    "username": "ممدوح",
+    "password": "8a11a11693e18dc5ed4290438a31bfdbe3718e4c121a7d939ebd30c6fda99e63933fc30fef06aca314d00a607dd3feb5901d8e25454518ea74c7dcd1d2cb7167.087f9ae06ba21ef3faa39557fe65ba23",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "dubai-omar"
+  },
+  {
+    "id": 103,
+    "username": "محمد ق",
+    "password": "f57f0900c02596751228974f06cb7730c7a5b4d7a39bafc2f3b52ce387501c3bf0ab7de847fc408b0c645e67833b9b3aeff2baddb8c38002883b36aab2b37386.58515a05b0d40429f0345b019d46da9c",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "dubai-omar"
+  },
+  {
+    "id": 106,
+    "username": "عمرو",
+    "password": "af088c38536fd4b025c677a9e768c4551249f494ef773f2291792b21a01aab86ad6b78055de60fed03e141e469874dba68b48d35ff9a386c14d10f98f69e69d3.5bfad3ed66744db412b987d9938b0a6b",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "awab"
+  },
+  {
+    "id": 281,
+    "username": "أحمد ع",
+    "password": "e54bf5b1ca876cf529c0cb6647099c61ed6be0a5fc7ffb1e66399579eaf94a1d9deae241477565c560510ab7bdc078bfd70925cfdc22a9c8c24df6395935ab42.39ec9440af357faff800f93d01ef684b",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "yahia"
+  },
+  {
+    "id": 80,
+    "username": "يوسف",
+    "password": "e30143b21f570e30452fb9d899dcee8cfd98bc944180801a782bf0de5e141b9f2c22ef45c415a968a58afc7a80fb1a235964d532b19ac603ab9632f76024a4a3.37ea092d9e85f28476c093b87175af3f",
+    "role": "teacher",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "aasem"
+  },
+  {
+    "id": 134,
+    "username": "اويس",
+    "password": "d426509b631913fc16af383990dec124d0589c7260a6fea78abdf4f754a66b900b666abcdf0c22537a5a572efaaa7c9c9d4e517ea6cf83a6658e75054e6441ef.7fdef0dfcb3fa832801166885162606b",
+    "role": "student",
+    "telegram_username": null,
+    "telegram_id": null,
+    "section": "bader"
+  }
+]

@@ -152,8 +152,8 @@ async function importUsers() {
     
     for (const user of usersData) {
       try {
-        // Determine role based on group
-        const role = teacherGroups.includes(user.group) ? 'teacher' : 'student';
+        // Determine role based on section
+        const role = teacherGroups.includes(user.section) ? 'teacher' : 'student';
         
         // Update counters
         if (role === 'teacher') {
@@ -163,7 +163,7 @@ async function importUsers() {
         }
         
         // Map section
-        const section = mapSectionToEnum(user.group);
+        const sectionValue = mapSectionToEnum(user.section);
         
         // Hash password
         const hashedPassword = await hashPassword(user.secret_code);
@@ -179,10 +179,10 @@ async function importUsers() {
         
         const values = [
           user.id,
-          user.name,
+          user.username,
           hashedPassword,
           role,
-          section,
+          sectionValue,
           null, // telegram_username is null initially
           null  // telegram_id is null initially
         ];
@@ -190,7 +190,7 @@ async function importUsers() {
         const result = await pool.query(query, values);
         
         successCount++;
-        console.log(`Registered user ID ${result.rows[0].id}: ${user.name} as ${role}`);
+        console.log(`Registered user ID ${result.rows[0].id}: ${user.username} as ${role}`);
       } catch (error) {
         failCount++;
         console.error(`Error registering user ${user.name}:`, error.message);
