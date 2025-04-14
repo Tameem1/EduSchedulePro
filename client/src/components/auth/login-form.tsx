@@ -1,4 +1,3 @@
-
 import * as React from "react";
 import { useEffect, useState } from "react";
 import { z } from "zod";
@@ -73,21 +72,23 @@ export function LoginForm() {
   // Fetch students when section changes
   const handleSectionChange = async (section: string) => {
     console.log("[Login Debug] Section selected:", section);
-    
+
     // Set the section value in the form
     form.setValue("section", section);
     // Reset username when section changes
-    form.setValue("username", ""); 
-    
+    form.setValue("username", "");
+
     // Trigger validation for the section field
     await form.trigger("section");
-    
+
     setIsLoadingUsers(true);
     try {
       console.log(`[Login Debug] Fetching users for section: ${section}`);
-      const response = await axios.get(`/api/section/${section}/students`);
+      const response = await axios.get(`/api/section/${section}/sectionUsers`);
       setSectionUsers(response.data);
-      console.log(`[Login Debug] Fetched ${response.data.length} users for section ${section}`);
+      console.log(
+        `[Login Debug] Fetched ${response.data.length} users for section ${section}`,
+      );
     } catch (error) {
       console.error("[Login Error] Failed to fetch users for section:", error);
       setSectionUsers([]);
@@ -101,12 +102,20 @@ export function LoginForm() {
     if (loginError) {
       setLoginError(null);
     }
-  }, [form.watch("section"), form.watch("username"), form.watch("password"), loginError]);
+  }, [
+    form.watch("section"),
+    form.watch("username"),
+    form.watch("password"),
+    loginError,
+  ]);
 
   // Handle login mutation errors
   useEffect(() => {
     if (loginMutation.isError) {
-      setLoginError(loginMutation.error?.message || "فشل تسجيل الدخول. يرجى التحقق من القسم واسم المستخدم وكلمة المرور.");
+      setLoginError(
+        loginMutation.error?.message ||
+          "فشل تسجيل الدخول. يرجى التحقق من القسم واسم المستخدم وكلمة المرور.",
+      );
     }
   }, [loginMutation.isError, loginMutation.error]);
 
@@ -116,10 +125,10 @@ export function LoginForm() {
       section: values.section,
       passwordLength: values.password.length,
     });
-    
+
     // Clear any previous errors
     setLoginError(null);
-    
+
     loginMutation.mutate({
       username: values.username,
       password: values.password,
@@ -145,10 +154,7 @@ export function LoginForm() {
                   />
                 </FormControl>
               ) : (
-                <Select
-                  onValueChange={handleSectionChange}
-                  value={field.value}
-                >
+                <Select onValueChange={handleSectionChange} value={field.value}>
                   <FormControl>
                     <SelectTrigger>
                       <SelectValue placeholder="اختر القسم" />
@@ -173,14 +179,14 @@ export function LoginForm() {
             </FormItem>
           )}
         />
-        
+
         <FormField
           control={form.control}
           name="username"
           render={({ field }) => (
             <FormItem>
               <FormLabel>اسم المستخدم</FormLabel>
-              {isLoadingStudents ? (
+              {isLoadingUsers ? (
                 <FormControl>
                   <Input
                     dir="rtl"
@@ -188,7 +194,7 @@ export function LoginForm() {
                     disabled={true}
                   />
                 </FormControl>
-              ) : students.length > 0 ? (
+              ) : sectionUsers.length > 0 ? (
                 <Select
                   onValueChange={(value) => {
                     console.log("[Login Debug] Username selected:", value);
@@ -219,14 +225,18 @@ export function LoginForm() {
                       {...field}
                       disabled={!form.getValues().section}
                       onChange={(e) => {
-                        console.log("[Login Debug] Username input:", e.target.value);
+                        console.log(
+                          "[Login Debug] Username input:",
+                          e.target.value,
+                        );
                         field.onChange(e);
                       }}
                     />
                   </FormControl>
                   {form.getValues().section && (
                     <p className="text-xs text-muted-foreground mt-1">
-                      لا يوجد طلاب مسجلين في هذا القسم. يمكنك إدخال اسم المستخدم يدويًا.
+                      لا يوجد طلاب مسجلين في هذا القسم. يمكنك إدخال اسم المستخدم
+                      يدويًا.
                     </p>
                   )}
                 </>
@@ -235,7 +245,7 @@ export function LoginForm() {
             </FormItem>
           )}
         />
-        
+
         <FormField
           control={form.control}
           name="password"
@@ -254,22 +264,22 @@ export function LoginForm() {
             </FormItem>
           )}
         />
-        
+
         {loginError && (
           <div className="bg-red-50 border border-red-200 text-red-800 rounded-md p-3 text-sm text-right">
             {loginError}
           </div>
         )}
-        
+
         <Button
           type="submit"
           className="w-full"
           disabled={
-            loginMutation.isPending || 
-            isLoadingSections || 
-            isLoadingStudents || 
-            !form.getValues().section || 
-            !form.getValues().username || 
+            loginMutation.isPending ||
+            isLoadingSections ||
+            isLoadingUsers ||
+            !form.getValues().section ||
+            !form.getValues().username ||
             !form.getValues().password
           }
         >
