@@ -3,8 +3,9 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import pg from 'pg';
-import { scrypt, randomBytes, timingSafeEqual } from 'crypto';
+import { scrypt, timingSafeEqual } from 'crypto';
 import { promisify } from 'util';
+import bcrypt from 'bcrypt';
 
 // Get current directory
 const __filename = fileURLToPath(import.meta.url);
@@ -19,25 +20,36 @@ const pool = new Pool({
 // Promisify scrypt
 const scryptAsync = promisify(scrypt);
 
-// Compare passwords function (directly copied from auth.ts)
+// Compare passwords function that handles multiple formats
 async function comparePasswords(supplied, stored) {
   try {
-    if (stored.includes('.')) {
-      const [hashed, salt] = stored.split(".");
-      const hashedBuf = Buffer.from(hashed, "hex");
-      const suppliedBuf = await scryptAsync(supplied, salt, 64);
-      return timingSafeEqual(hashedBuf, suppliedBuf);
+    // Check if it's a bcrypt hash
+    if (stored.startsWith('$2')) {
+      return await bcrypt.compare(supplied, stored);
+    }
+    // Check if it's a scrypt hash (with salt)
+    else if (stored.includes('.')) {
+      try {
+        const [hashed, salt] = stored.split(".");
+        const hashedBuf = Buffer.from(hashed, "hex");
+        const suppliedBuf = await scryptAsync(supplied, salt, 64);
+        return timingSafeEqual(hashedBuf, suppliedBuf);
+      } catch (error) {
+        console.log(`Scrypt comparison error: ${error.message}`);
+        return false;
+      }
     } else {
-      // Old format passwords
+      // Unknown format
+      console.log(`Unknown password format: ${stored.substring(0, 10)}...`);
       return false;
     }
   } catch (error) {
-    console.error('Error comparing passwords:', error);
+    console.log(`Password comparison error: ${error.message}`);
     return false;
   }
 }
 
-// Verify authentication and test logins
+// Verify auth with original passwords
 async function verifyAuth() {
   try {
     console.log('Starting auth verification...');
@@ -53,55 +65,57 @@ async function verifyAuth() {
       secretCodeMap.set(user.id, user.secret_code);
     });
     
-    // Get password hash format stats
-    const verifyQuery = `
-      SELECT COUNT(*) as total_users,
-             COUNT(CASE WHEN password LIKE '%.%' THEN 1 END) as hashed_passwords,
-             COUNT(CASE WHEN password NOT LIKE '%.%' THEN 1 END) as unhashed_passwords
-      FROM users
+    // Test a good sample of users with different hash formats
+    const sampleQuery = `
+      (SELECT id, username, password, role, section FROM users WHERE password LIKE '%.%' ORDER BY RANDOM() LIMIT 5)
+      UNION
+      (SELECT id, username, password, role, section FROM users WHERE password LIKE '$2%' ORDER BY RANDOM() LIMIT 5)
+      ORDER BY id
     `;
     
-    const verifyResult = await pool.query(verifyQuery);
-    const { total_users, hashed_passwords, unhashed_passwords } = verifyResult.rows[0];
+    const sampleUsers = await pool.query(sampleQuery);
+    console.log(`Testing ${sampleUsers.rows.length} random users with different password formats...`);
     
-    console.log('\nPassword hashing verification:');
-    console.log(`Total users: ${total_users}`);
-    console.log(`Users with properly hashed passwords: ${hashed_passwords}`);
-    console.log(`Users with incorrectly hashed passwords: ${unhashed_passwords}`);
+    let successCount = 0;
+    let failCount = 0;
     
-    // Test authentication with real credentials
-    console.log('\nTesting authentication with real credentials from JSON file...');
-    
-    // Get a sample of users to test
-    const sampleUsersQuery = `
-      SELECT id, username, password
-      FROM users
-      WHERE password LIKE '%.%'
-      ORDER BY RANDOM()
-      LIMIT 5
-    `;
-    
-    const sampleUsersResult = await pool.query(sampleUsersQuery);
-    
-    for (const user of sampleUsersResult.rows) {
-      // Get the original password from JSON
+    for (const user of sampleUsers.rows) {
       const originalPassword = secretCodeMap.get(user.id);
       
-      if (originalPassword) {
-        // Test if auth works with the original password
-        const passwordMatches = await comparePasswords(originalPassword, user.password);
-        
-        console.log(`User ${user.id} (${user.username}) - Authentication test: ${passwordMatches ? '✅ WORKS' : '❌ FAILS'}`);
+      if (!originalPassword) {
+        console.log(`❌ No original password found for user ID ${user.id} (${user.username}). Skipping.`);
+        failCount++;
+        continue;
+      }
+      
+      // Try to authenticate with original password
+      const passwordMatches = await comparePasswords(originalPassword, user.password);
+      
+      if (passwordMatches) {
+        console.log(`✅ PASS: User ${user.id} (${user.username}) - ${user.role} in ${user.section} - Hash format: ${user.password.startsWith('$2') ? 'bcrypt' : 'scrypt'}`);
+        successCount++;
       } else {
-        console.log(`User ${user.id} (${user.username}) - No original password found in JSON file`);
+        console.log(`❌ FAIL: User ${user.id} (${user.username}) - ${user.role} in ${user.section} - Hash format: ${user.password.startsWith('$2') ? 'bcrypt' : 'scrypt'}`);
+        // Print first few chars of password and hash
+        console.log(`   Original password: ${originalPassword}`);
+        console.log(`   Stored hash: ${user.password.substring(0, 20)}...`);
+        failCount++;
       }
     }
     
-    console.log('\nAuthentication verification completed.');
+    console.log('\nAuthentication test summary:');
+    console.log(`Total users tested: ${sampleUsers.rows.length}`);
+    console.log(`Successful authentications: ${successCount}`);
+    console.log(`Failed authentications: ${failCount}`);
+    
+    const successRate = (successCount / sampleUsers.rows.length) * 100;
+    console.log(`Success rate: ${successRate.toFixed(2)}%`);
+    
   } catch (error) {
-    console.error('Error during authentication verification:', error);
+    console.error('Error during auth verification:', error);
   } finally {
     await pool.end();
+    console.log('\nAuth verification completed.');
   }
 }
 
