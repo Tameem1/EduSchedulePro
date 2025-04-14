@@ -96,7 +96,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
     console.log(`Broadcasting ${type} update to ${clients.size} clients`);
 
-    for (const [clientId, client] of clients) {
+    // Use Array.from to convert the Map entries to an array for iteration
+    Array.from(clients.entries()).forEach(([clientId, client]) => {
       try {
         if (client.readyState === WebSocket.OPEN) {
           client.send(message);
@@ -104,11 +105,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
           console.log(`Removing dead connection for client ${clientId}`);
           clients.delete(clientId);
         }
-      } catch (error) {
-        console.error(`Error broadcasting message to client ${clientId}:`, error);
+      } catch (error: unknown) {
+        console.error(`Error broadcasting message to client ${clientId}:`, error instanceof Error ? error.message : String(error));
         clients.delete(clientId);
       }
-    }
+    });
   };
 
   // Setup auth after WebSocket server

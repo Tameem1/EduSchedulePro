@@ -359,8 +359,8 @@ export async function notifyManagerAboutAppointment(appointmentId: number): Prom
     }
     
     return anyNotificationSent;
-  } catch (error) {
-    console.error('Failed to notify managers about appointment:', error);
+  } catch (error: unknown) {
+    console.error('Failed to notify managers about appointment:', error instanceof Error ? error.message : String(error));
     return false;
   }
 }
