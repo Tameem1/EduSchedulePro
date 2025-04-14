@@ -113,30 +113,30 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Setup auth after WebSocket server
   setupAuth(app);
   
-  // Endpoint to get all groups
+  // Endpoint to get all sections
   app.get("/api/sections", async (req, res) => {
     try {
-      // Get all users with non-null groups
+      // Get all users with non-null sections
       const allUsers = await db
         .select()
         .from(users)
         .where(eq(users.role, "student"))
         .execute();
         
-      // Extract unique groups
-      const groupsSet = new Set<string>();
+      // Extract unique sections
+      const sectionsSet = new Set<string>();
       allUsers.forEach(user => {
-        if (user.group) {
-          groupsSet.add(user.group);
+        if (user.section) {
+          sectionsSet.add(user.section);
         }
       });
       
       // Convert to array
-      const groups = Array.from(groupsSet);
-      res.json(groups);
+      const sections = Array.from(sectionsSet);
+      res.json(sections);
     } catch (error) {
-      console.error("Error fetching groups:", error);
-      res.status(500).json({ error: "Failed to fetch groups" });
+      console.error("Error fetching sections:", error);
+      res.status(500).json({ error: "Failed to fetch sections" });
     }
   });
 
