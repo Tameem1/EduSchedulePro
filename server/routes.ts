@@ -10,7 +10,7 @@ import {
   AppointmentStatus,
 } from "@shared/schema";
 import { db } from "./db";
-import { eq, sql } from "drizzle-orm";
+import { eq, sql, inArray } from "drizzle-orm";
 import { users, availabilities, Section } from "@shared/schema";
 import {
   sendTelegramNotification,
@@ -165,16 +165,28 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Get all users in the section
       const dbSections = sectionMapping[section] || [section];
 
-      // Use a simpler approach with 'in' instead of 'ANY' with array
-      const sectionUsers = await db
-        .select()
-        .from(users)
-        .where(
-          dbSections.length === 1
-            ? eq(users.section, dbSections[0]) 
-            : inArray(users.section, dbSections)
-        )
-        .execute();
+      // Fetch all students that match any of the sections in dbSections
+      let sectionUsers = [];
+      
+      if (dbSections.length === 1) {
+        // If there's only one section, use simple equals
+        sectionUsers = await db
+          .select()
+          .from(users)
+          .where(eq(users.section, dbSections[0]))
+          .execute();
+      } else {
+        // Otherwise, fetch all users and filter in memory
+        const allUsers = await db
+          .select()
+          .from(users)
+          .where(eq(users.role, "student"))
+          .execute();
+          
+        sectionUsers = allUsers.filter(user => 
+          user.section && dbSections.includes(user.section)
+        );
+      }
 
       console.log(`Found ${sectionUsers.length} users for section ${section} (mapped to ${dbSections.join(', ')})`);
       res.json(sectionUsers);
