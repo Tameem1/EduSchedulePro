@@ -112,20 +112,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Setup auth after WebSocket server
   setupAuth(app);
-  
+
   // Endpoint to get all sections
   app.get("/api/sections", async (req, res) => {
     try {
       // Get all defined sections from the Section constant
       const predefinedSections = Object.values(Section);
-      
+
       // Get all users with non-null sections
       const allUsers = await db
         .select()
         .from(users)
         .where(eq(users.role, "student"))
         .execute();
-        
+
       // Extract unique sections from database
       const sectionsSet = new Set<string>(predefinedSections);
       allUsers.forEach(user => {
@@ -133,7 +133,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           sectionsSet.add(user.section);
         }
       });
-      
+
       // Convert to array
       const sections = Array.from(sectionsSet);
       res.json(sections);
@@ -147,7 +147,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/section/:section/students", async (req, res) => {
     try {
       const { section } = req.params;
-      
+
       // Create a mapping for section names between schema and database
       const sectionMapping: Record<string, string[]> = {
         'aasem': ['aasem'],
@@ -161,24 +161,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
         'motaa': ['motaa'],
         'mahmoud': ['mahmoud']
       };
-      
-      // Get all students
-      const allStudents = await db
+
+      // Get all users in the section
+      const dbSections = sectionMapping[section] || [section];
+
+      const sectionUsers = await db
         .select()
         .from(users)
-        .where(eq(users.role, "student"))
+        .where(
+          sql`${users.section} = ANY(${sql.array(dbSections, 'text')})`
+        )
         .execute();
-      
-      // Get the corresponding database section names for the provided schema section
-      const dbSections = sectionMapping[section] || [section];
-      
-      // Filter students by any of the corresponding database section names
-      const students = allStudents.filter(student => 
-        student.section && dbSections.includes(student.section)
-      );
-      
-      console.log(`Found ${students.length} students for section ${section} (mapped to ${dbSections.join(', ')})`);
-      res.json(students);
+
+      console.log(`Found ${sectionUsers.length} users for section ${section} (mapped to ${dbSections.join(', ')})`);
+      res.json(sectionUsers);
     } catch (error) {
       console.error("Error fetching students by section:", error);
       res.status(500).json({ error: "Failed to fetch students by section" });
@@ -220,7 +216,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ error: "Failed to fetch teachers" });
     }
   });
-  
+
   // Update user data
   app.patch("/api/users/:id", async (req, res) => {
     if (!req.isAuthenticated()) {
@@ -229,17 +225,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
     try {
       const userId = parseInt(req.params.id);
-      
+
       // Users can only update their own data
       if (req.user.id !== userId) {
         return res.status(403).json({ error: "You can only update your own profile" });
       }
-      
+
       const { telegramUsername } = req.body;
-      
+
       // Update user with provided data
       const updatedUser = await storage.updateUser(userId, { telegramUsername });
-      
+
       res.json(updatedUser);
     } catch (error) {
       console.error("Error updating user:", error);
@@ -857,11 +853,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
         if (assignment.assignment) {
           const assignmentText = `${format(new Date(assignment.submittedAt), 'MM/dd')} - مهمة: ${assignment.assignment}`;
           stats.assignmentResponses.push(assignmentText);
-          
+
           // If this is a more recent activity, update the createdAt timestamp
           const assignmentDate = new Date(assignment.submittedAt);
           const currentDate = stats.createdAt ? new Date(stats.createdAt) : new Date(0);
-          
+
           if (assignmentDate > currentDate) {
             stats.createdAt = assignment.submittedAt;
           }
@@ -876,7 +872,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         const allResponses = [...stats.question3Responses, ...stats.assignmentResponses]
           .sort((a,b)=> new Date(a.split(' - ')[0]).getTime() - new Date(b.split(' - ')[0]).getTime())
           .join(' | ');
-          
+
         return {
           studentId,
           ...stats,

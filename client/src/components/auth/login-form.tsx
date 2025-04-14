@@ -37,8 +37,8 @@ const formSchema = z.object({
 export function LoginForm() {
   const { loginMutation } = useAuth();
   const [sections, setSections] = useState<string[]>([]);
-  const [students, setStudents] = useState<any[]>([]);
-  const [isLoadingStudents, setIsLoadingStudents] = useState(false);
+  const [sectionUsers, setSectionUsers] = useState<any[]>([]);
+  const [isLoadingUsers, setIsLoadingUsers] = useState(false);
   const [isLoadingSections, setIsLoadingSections] = useState(true);
   const [loginError, setLoginError] = useState<string | null>(null);
 
@@ -82,17 +82,17 @@ export function LoginForm() {
     // Trigger validation for the section field
     await form.trigger("section");
     
-    setIsLoadingStudents(true);
+    setIsLoadingUsers(true);
     try {
-      console.log(`[Login Debug] Fetching students for section: ${section}`);
+      console.log(`[Login Debug] Fetching users for section: ${section}`);
       const response = await axios.get(`/api/section/${section}/students`);
-      setStudents(response.data);
-      console.log(`[Login Debug] Fetched ${response.data.length} students for section ${section}`);
+      setSectionUsers(response.data);
+      console.log(`[Login Debug] Fetched ${response.data.length} users for section ${section}`);
     } catch (error) {
-      console.error("[Login Error] Failed to fetch students for section:", error);
-      setStudents([]);
+      console.error("[Login Error] Failed to fetch users for section:", error);
+      setSectionUsers([]);
     } finally {
-      setIsLoadingStudents(false);
+      setIsLoadingUsers(false);
     }
   };
 
