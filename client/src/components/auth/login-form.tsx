@@ -124,24 +124,42 @@ export function LoginForm() {
           render={({ field }) => (
             <FormItem>
               <FormLabel>اسم المستخدم</FormLabel>
-              <Select
-                onValueChange={field.onChange}
-                defaultValue={field.value}
-                disabled={!form.getValues().section || isLoadingStudents}
-              >
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder={isLoadingStudents ? "جاري التحميل..." : "اختر اسم المستخدم"} />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  {students.map((student) => (
-                    <SelectItem key={student.id} value={student.username}>
-                      {student.username}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              {students.length > 0 ? (
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                  disabled={!form.getValues().section || isLoadingStudents}
+                >
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder={isLoadingStudents ? "جاري التحميل..." : "اختر اسم المستخدم"} />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {students.map((student) => (
+                      <SelectItem key={student.id} value={student.username}>
+                        {student.username}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              ) : (
+                <>
+                  <FormControl>
+                    <Input
+                      dir="rtl"
+                      placeholder="ادخل اسم المستخدم"
+                      {...field}
+                      disabled={!form.getValues().section || isLoadingStudents}
+                    />
+                  </FormControl>
+                  {!isLoadingStudents && form.getValues().section && (
+                    <p className="text-xs text-muted-foreground mt-1">
+                      لا يوجد طلاب مسجلين في هذا القسم. يمكنك إدخال اسم المستخدم يدويًا.
+                    </p>
+                  )}
+                </>
+              )}
               <FormMessage />
             </FormItem>
           )}
