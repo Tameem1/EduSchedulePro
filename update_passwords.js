@@ -1,96 +1,111 @@
-import pg from 'pg';
-import crypto from 'crypto';
-import { promisify } from 'util';
+// Import required modules
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import pg from 'pg';
+import { scrypt, randomBytes } from 'crypto';
+import { promisify } from 'util';
 
 // Get current directory
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Connection setup
-const pool = new pg.Pool({
+// Connect to database
+const { Pool } = pg;
+const pool = new Pool({
   connectionString: process.env.DATABASE_URL
 });
 
-// Use the same password hashing method as in auth.ts
-const scryptAsync = promisify(crypto.scrypt);
+// Promisify scrypt
+const scryptAsync = promisify(scrypt);
 
+// Password hashing function (copied from auth.ts)
 async function hashPassword(password) {
-  const salt = crypto.randomBytes(16).toString("hex");
-  const buf = await scryptAsync(password, salt, 64);
+  const salt = randomBytes(16).toString("hex");
+  const buf = (await scryptAsync(password, salt, 64));
   return `${buf.toString("hex")}.${salt}`;
 }
 
+// Function to update user passwords in a specific range
 async function updateUserPasswords() {
   try {
-    console.log('Starting password update for all users...');
-    
-    // Read the JSON file to get the secret codes
+    // Read users from JSON file to get original passwords
+    console.log('Reading users from JSON file...');
     const jsonFilePath = path.join(__dirname, 'attached_assets', 'students.json');
-    const studentsData = JSON.parse(fs.readFileSync(jsonFilePath, 'utf8'));
+    const jsonData = JSON.parse(fs.readFileSync(jsonFilePath, 'utf8'));
     
-    // Create a map of user IDs to secret codes for quick lookup
-    const secretCodeMap = {};
-    studentsData.forEach(student => {
-      secretCodeMap[student.id] = student.secret_code;
+    // Create a map of user ID to secret_code (original password)
+    const userPasswordMap = new Map();
+    jsonData.forEach(user => {
+      userPasswordMap.set(user.id, user.secret_code);
     });
     
-    // Get all users
-    const result = await pool.query('SELECT id, username FROM users');
-    const users = result.rows;
+    console.log(`Found ${jsonData.length} users in JSON file.`);
     
-    console.log(`Found ${users.length} users to update with correct passwords.`);
+    // Set the range of user IDs to update (1-100)
+    const startId = 1;
+    const endId = 100;
     
-    // Process users in batches to avoid timeouts
-    const batchSize = 50;
-    const totalBatches = Math.ceil(users.length / batchSize);
+    // Get users in the range from the database
+    const dbResult = await pool.query('SELECT id, username FROM users WHERE id >= $1 AND id <= $2 ORDER BY id', [startId, endId]);
+    console.log(`Found ${dbResult.rows.length} users in database in range ${startId}-${endId}.`);
     
-    for (let batchNum = 0; batchNum < totalBatches; batchNum++) {
-      const start = batchNum * batchSize;
-      const end = Math.min(start + batchSize, users.length);
-      const batchUsers = users.slice(start, end);
-      
-      console.log(`Processing batch ${batchNum + 1}/${totalBatches} (users ${start + 1}-${end})`);
-      
-      // Update each user in the batch
-      let batchSuccessCount = 0;
-      
-      for (const user of batchUsers) {
-        try {
-          // Get the secret code for this user ID
-          const secretCode = secretCodeMap[user.id] || user.id.toString();
-          
-          // Hash the password using the application's method
-          const hashedPassword = await hashPassword(secretCode);
-          
-          const updateQuery = `
-            UPDATE users
-            SET password = $1
-            WHERE id = $2
-          `;
-          
-          await pool.query(updateQuery, [hashedPassword, user.id]);
-          
-          batchSuccessCount++;
-          console.log(`Updated password for user ID ${user.id}: ${user.username} (secret code: ${secretCode})`);
-        } catch (error) {
-          console.error(`Error updating password for user ${user.username} (ID: ${user.id}):`, error.message);
+    // Begin a transaction
+    await pool.query('BEGIN');
+    
+    let successCount = 0;
+    let failCount = 0;
+    
+    // Update each user's password
+    for (const user of dbResult.rows) {
+      try {
+        // Get the original password from the JSON data
+        const originalPassword = userPasswordMap.get(user.id);
+        
+        if (!originalPassword) {
+          console.log(`No original password found for user ID ${user.id} (${user.username}). Skipping.`);
+          continue;
         }
+        
+        // Hash the password using the auth.ts method
+        const hashedPassword = await hashPassword(originalPassword);
+        
+        // Update the user's password in the database
+        const updateQuery = 'UPDATE users SET password = $1 WHERE id = $2';
+        await pool.query(updateQuery, [hashedPassword, user.id]);
+        
+        successCount++;
+        console.log(`Updated password for user ID ${user.id}: ${user.username}`);
+      } catch (error) {
+        failCount++;
+        console.error(`Error updating password for user ${user.username} (ID: ${user.id}):`, error.message);
       }
-      
-      console.log(`Batch ${batchNum + 1} completed: ${batchSuccessCount}/${batchUsers.length} passwords updated successfully.`);
     }
     
-    console.log('\nPassword update completed!');
+    // Commit the transaction
+    await pool.query('COMMIT');
+    
+    console.log('\nPassword update summary for range ' + startId + '-' + endId + ':');
+    console.log(`Total users processed: ${dbResult.rows.length}`);
+    console.log(`Successfully updated: ${successCount}`);
+    console.log(`Failed to update: ${failCount}`);
+    
   } catch (error) {
+    // Rollback transaction in case of error
+    try {
+      await pool.query('ROLLBACK');
+    } catch (rollbackError) {
+      console.error('Error during rollback:', rollbackError);
+    }
     console.error('Unhandled error during password update:', error);
   } finally {
     await pool.end();
-    console.log('Database connection closed.');
+    console.log('\nPassword update completed for range 1-100.');
   }
 }
 
 // Run the password update
-updateUserPasswords();
+updateUserPasswords().catch(error => {
+  console.error('Error in password update process:', error);
+  process.exit(1);
+});
