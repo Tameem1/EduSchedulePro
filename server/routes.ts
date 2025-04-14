@@ -159,7 +159,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         'yahia': ['yahia'],
         'omar': ['omar', 'dubai-omar'],
         'motaa': ['motaa'],
-        'mahmoud': ['mahmoud']
+        'mahmoud': ['mahmoud'],
+        'kibar': ['kibar']
       };
 
       // Get all users in the section

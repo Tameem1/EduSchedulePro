@@ -36,7 +36,8 @@ export const Section = {
   YAHIA: 'yahia',
   OMAR: 'omar',
   MOTAA: 'motaa',
-  MAHMOUD: 'mahmoud'
+  MAHMOUD: 'mahmoud',
+  KIBAR: 'kibar'
 } as const;
 
 export type UserRoleType = typeof UserRole[keyof typeof UserRole];
