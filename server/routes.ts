@@ -165,11 +165,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Get all users in the section
       const dbSections = sectionMapping[section] || [section];
 
+      // Use a simpler approach with 'in' instead of 'ANY' with array
       const sectionUsers = await db
         .select()
         .from(users)
         .where(
-          sql`${users.section} = ANY(${sql.array(dbSections, 'text')})`
+          dbSections.length === 1
+            ? eq(users.section, dbSections[0]) 
+            : inArray(users.section, dbSections)
         )
         .execute();
 
