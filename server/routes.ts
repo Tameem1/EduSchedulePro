@@ -456,7 +456,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Broadcast the new appointment
       broadcastUpdate("appointmentUpdate", { action: "create", appointment });
 
-      res.json(appointment);
+      // Send notification to managers
+      let managerNotificationSent = false;
+      try {
+        managerNotificationSent = await notifyManagerAboutAppointment(appointment.id);
+        console.log(`Manager notification ${managerNotificationSent ? 'sent' : 'failed'} for appointment ${appointment.id}`);
+      } catch (notificationError) {
+        console.error('Error sending manager notification:', notificationError);
+      }
+
+      res.json({
+        ...appointment,
+        managerNotificationSent
+      });
     } catch (error) {
       console.error("Error creating appointment:", error);
 

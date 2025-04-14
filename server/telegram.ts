@@ -258,13 +258,11 @@ export async function notifyTeacherAboutAppointment(appointmentId: number, teach
       return false;
     }
 
-    const hasTelegramUsername = !!teacher[0].telegramUsername;
-    if (!hasTelegramUsername) {
+    const telegramContact = teacher[0].telegramUsername;
+    if (!telegramContact) {
       console.error(`Teacher ${teacherId} has no Telegram username`);
       return false;
     }
-
-    const telegramContact = teacher[0].telegramUsername;
 
     // Get appointment details
     const appointment = await db.select().from(appointments).where(eq(appointments.id, appointmentId)).limit(1);
@@ -287,11 +285,12 @@ export async function notifyTeacherAboutAppointment(appointmentId: number, teach
     const message = `تم تعيينك لموعد جديد مع ${studentName} الساعة ${appointmentTime}. الرجاء قبول الموعد في أقرب وقت.`;
 
     // Send notification
-    return await sendTelegramNotification(
+    const result = await sendTelegramNotification(
       telegramContact,
       message,
       callbackUrl
     );
+    return typeof result === 'boolean' ? result : false;
   } catch (error) {
     console.error('Failed to notify teacher about appointment:', error);
     return false;
@@ -345,7 +344,7 @@ export async function notifyManagerAboutAppointment(appointmentId: number): Prom
           manager.telegramUsername,
           message,
           callbackUrl
-        );
+        ) as boolean;
         if (sent) {
           anyNotificationSent = true;
           console.log(`Notification sent to manager ${manager.username}`);
