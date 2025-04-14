@@ -40,6 +40,7 @@ export function LoginForm() {
   const [students, setStudents] = useState<any[]>([]);
   const [isLoadingStudents, setIsLoadingStudents] = useState(false);
   const [isLoadingSections, setIsLoadingSections] = useState(true);
+  const [loginError, setLoginError] = useState<string | null>(null);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -53,6 +54,7 @@ export function LoginForm() {
   // Fetch sections when component mounts
   useEffect(() => {
     const fetchSections = async () => {
+      setIsLoadingSections(true);
       try {
         console.log("[Login Debug] Fetching sections");
         const response = await axios.get("/api/sections");
@@ -60,6 +62,8 @@ export function LoginForm() {
         console.log("[Login Debug] Fetched sections:", response.data);
       } catch (error) {
         console.error("[Login Error] Failed to fetch sections:", error);
+      } finally {
+        setIsLoadingSections(false);
       }
     };
 
@@ -92,12 +96,29 @@ export function LoginForm() {
     }
   };
 
+  // Reset login error when form values change
+  useEffect(() => {
+    if (loginError) {
+      setLoginError(null);
+    }
+  }, [form.watch("section"), form.watch("username"), form.watch("password"), loginError]);
+
+  // Handle login mutation errors
+  useEffect(() => {
+    if (loginMutation.isError) {
+      setLoginError(loginMutation.error?.message || "فشل تسجيل الدخول. يرجى التحقق من القسم واسم المستخدم وكلمة المرور.");
+    }
+  }, [loginMutation.isError, loginMutation.error]);
+
   function onSubmit(values: z.infer<typeof formSchema>) {
     console.log("[Auth Debug] Login form submitted with values:", {
       username: values.username,
       section: values.section,
       passwordLength: values.password.length,
     });
+    
+    // Clear any previous errors
+    setLoginError(null);
     
     loginMutation.mutate({
       username: values.username,
@@ -115,29 +136,39 @@ export function LoginForm() {
           render={({ field }) => (
             <FormItem>
               <FormLabel>القسم</FormLabel>
-              <Select
-                onValueChange={handleSectionChange}
-                value={field.value}
-              >
+              {isLoadingSections ? (
                 <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="اختر القسم" />
-                  </SelectTrigger>
+                  <Input
+                    dir="rtl"
+                    placeholder="جاري تحميل الأقسام..."
+                    disabled={true}
+                  />
                 </FormControl>
-                <SelectContent>
-                  {sections.length > 0 ? (
-                    sections.map((section) => (
-                      <SelectItem key={section} value={section}>
-                        {section}
+              ) : (
+                <Select
+                  onValueChange={handleSectionChange}
+                  value={field.value}
+                >
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="اختر القسم" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {sections.length > 0 ? (
+                      sections.map((section) => (
+                        <SelectItem key={section} value={section}>
+                          {section}
+                        </SelectItem>
+                      ))
+                    ) : (
+                      <SelectItem value="loading" disabled>
+                        لم يتم العثور على أقسام
                       </SelectItem>
-                    ))
-                  ) : (
-                    <SelectItem value="loading" disabled>
-                      جاري تحميل الأقسام...
-                    </SelectItem>
-                  )}
-                </SelectContent>
-              </Select>
+                    )}
+                  </SelectContent>
+                </Select>
+              )}
               <FormMessage />
             </FormItem>
           )}
@@ -224,10 +255,23 @@ export function LoginForm() {
           )}
         />
         
+        {loginError && (
+          <div className="bg-red-50 border border-red-200 text-red-800 rounded-md p-3 text-sm text-right">
+            {loginError}
+          </div>
+        )}
+        
         <Button
           type="submit"
           className="w-full"
-          disabled={loginMutation.isPending}
+          disabled={
+            loginMutation.isPending || 
+            isLoadingSections || 
+            isLoadingStudents || 
+            !form.getValues().section || 
+            !form.getValues().username || 
+            !form.getValues().password
+          }
         >
           {loginMutation.isPending ? "جاري الدخول..." : "تسجيل الدخول"}
         </Button>
