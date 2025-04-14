@@ -70,9 +70,15 @@ export const startBot = async () => {
     if (response.data.ok && response.data.result) {
       console.log(`IMPORTANT: Teachers must send /start to @${response.data.result.username}`);
     }
-  } catch (error) {
-    console.error('Telegram bot token test failed:', error.message);
-    console.error('Full error:', JSON.stringify(error.response?.data || error.message, null, 2));
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    console.error('Telegram bot token test failed:', errorMessage);
+    
+    const errorResponse = error && typeof error === 'object' && 'response' in error 
+      ? (error.response as any)?.data || errorMessage 
+      : errorMessage;
+      
+    console.error('Full error:', JSON.stringify(errorResponse, null, 2));
   }
 
   bot.start(async (ctx) => {
@@ -83,8 +89,8 @@ export const startBot = async () => {
       console.log('===================================');
       await ctx.reply('مرحبًا بك في روبوت التعليم المساعد! استخدم /register للتسجيل كمعلم.');
       console.log('Reply sent successfully to user');
-    } catch (error) {
-      console.error('Error in start command handler:', error);
+    } catch (error: unknown) {
+      console.error('Error in start command handler:', error instanceof Error ? error.message : String(error));
     }
   });
 
@@ -94,8 +100,8 @@ export const startBot = async () => {
       const username = ctx.from.username || '';
       console.log(`User registering with Telegram ID: ${userId}, username: @${username}`);
       await ctx.reply(`معرف التيليجرام الخاص بك هو: ${userId}\nاسم المستخدم الخاص بك هو: @${username}\nيرجى إضافة هذه المعلومات في ملفك الشخصي على منصة التعليم.`);
-    } catch (error) {
-      console.error('Error in register command handler:', error);
+    } catch (error: unknown) {
+      console.error('Error in register command handler:', error instanceof Error ? error.message : String(error));
     }
   });
 
@@ -243,8 +249,8 @@ export async function sendTelegramNotification(telegramUsername: string, message
 
       return false;
     }
-  } catch (error) {
-    console.error('Failed to send Telegram notification:', error);
+  } catch (error: unknown) {
+    console.error('Failed to send Telegram notification:', error instanceof Error ? error.message : String(error));
     return false;
   }
 }
@@ -291,8 +297,8 @@ export async function notifyTeacherAboutAppointment(appointmentId: number, teach
       callbackUrl
     );
     return typeof result === 'boolean' ? result : false;
-  } catch (error) {
-    console.error('Failed to notify teacher about appointment:', error);
+  } catch (error: unknown) {
+    console.error('Failed to notify teacher about appointment:', error instanceof Error ? error.message : String(error));
     return false;
   }
 }

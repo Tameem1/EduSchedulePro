@@ -484,6 +484,11 @@ export default function ManagerAppointments() {
 
   return (
     <div dir="rtl" className="container mx-auto p-4">
+      {/* Show Telegram Guide if manager doesn't have telegramUsername */}
+      {user && user.role === 'manager' && !user.telegramUsername && (
+        <TelegramGuide />
+      )}
+      
       <div className="flex justify-between items-center mb-4">
         <h1 className="text-2xl font-bold">إدارة المواعيد</h1>
         <div className="flex gap-2">
