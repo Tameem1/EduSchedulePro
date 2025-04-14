@@ -1,8 +1,10 @@
 [
   {
     "id": 2,
+    "name": "يمان",
     "created_at": "2020-03-30 16:58:58",
     "updated_at": "2024-06-02 16:27:56",
+    "group": "aasem",
     "image": "/default_student_image.png",
     "sort_num": 2,
     "secret_code": "423718",
@@ -10,14 +12,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 1,
-    "phone": null,
-    "username": "يمان",
-    "section": "aasem"
+    "phone": null
   },
   {
     "id": 3,
+    "name": "مهدي",
     "created_at": "2020-03-30 16:58:58",
     "updated_at": "2024-06-02 16:27:58",
+    "group": "aasem",
     "image": "/default_student_image.png",
     "sort_num": 11,
     "secret_code": "418243",
@@ -25,14 +27,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 1,
-    "phone": null,
-    "username": "مهدي",
-    "section": "aasem"
+    "phone": null
   },
   {
     "id": 4,
+    "name": "عدنان",
     "created_at": "2020-03-30 16:59:01",
     "updated_at": "2025-03-20 14:37:37",
+    "group": "aasem",
     "image": "/images/students/عدنان-aasem.jpg",
     "sort_num": 3,
     "secret_code": "999",
@@ -40,14 +42,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "عدنان",
-    "section": "aasem"
+    "phone": null
   },
   {
     "id": 5,
+    "name": "عرفان",
     "created_at": "2020-03-30 16:59:04",
     "updated_at": "2025-04-10 21:34:10",
+    "group": "aasem",
     "image": "/default_student_image.png",
     "sort_num": 17,
     "secret_code": "438962",
@@ -55,14 +57,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "عرفان",
-    "section": "aasem"
+    "phone": null
   },
   {
     "id": 7,
+    "name": "خالد",
     "created_at": "2020-03-30 17:20:46",
     "updated_at": "2022-10-28 18:49:22",
+    "group": "khaled",
     "image": "/images/students/خالد-khaled.jpg",
     "sort_num": null,
     "secret_code": "530985",
@@ -70,14 +72,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "خالد",
-    "section": "khaled"
+    "phone": null
   },
   {
     "id": 8,
+    "name": "جلال",
     "created_at": "2020-03-30 17:27:49",
     "updated_at": "2023-10-08 19:46:11",
+    "group": "khaled",
     "image": "/default_student_image.png",
     "sort_num": 13,
     "secret_code": "882530",
@@ -85,14 +87,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "جلال",
-    "section": "khaled"
+    "phone": null
   },
   {
     "id": 9,
+    "name": "كريم",
     "created_at": "2020-03-30 17:29:49",
     "updated_at": "2022-10-28 18:49:22",
+    "group": "khaled",
     "image": "/default_student_image.png",
     "sort_num": null,
     "secret_code": "141065",
@@ -100,14 +102,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "كريم",
-    "section": "khaled"
+    "phone": null
   },
   {
     "id": 10,
+    "name": "جواد",
     "created_at": "2020-03-30 17:30:33",
     "updated_at": "2023-10-12 18:03:52",
+    "group": "khaled",
     "image": "/images/students/جواد-khaled.jpg",
     "sort_num": 1,
     "secret_code": "373280",
@@ -115,14 +117,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "جواد",
-    "section": "khaled"
+    "phone": null
   },
   {
     "id": 11,
+    "name": "زهير",
     "created_at": "2020-03-30 17:32:22",
     "updated_at": "2025-01-04 10:42:41",
+    "group": "khaled",
     "image": "/default_student_image.png",
     "sort_num": null,
     "secret_code": "334679",
@@ -130,14 +132,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "زهير",
-    "section": "khaled"
+    "phone": null
   },
   {
     "id": 12,
+    "name": "عبادة",
     "created_at": "2020-03-30 17:42:25",
     "updated_at": "2025-01-07 17:48:42",
+    "group": "khaled",
     "image": "/default_student_image.png",
     "sort_num": null,
     "secret_code": "536567",
@@ -145,14 +147,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "عبادة",
-    "section": "khaled"
+    "phone": null
   },
   {
     "id": 13,
+    "name": "رفيق",
     "created_at": "2020-03-30 17:44:19",
     "updated_at": "2023-09-17 17:58:16",
+    "group": "khaled",
     "image": "/default_student_image.png",
     "sort_num": null,
     "secret_code": "204509",
@@ -160,14 +162,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "رفيق",
-    "section": "khaled"
+    "phone": null
   },
   {
     "id": 14,
+    "name": "عامر",
     "created_at": "2020-03-30 17:56:18",
     "updated_at": "2022-10-28 18:49:22",
+    "group": "khaled",
     "image": "/default_student_image.png",
     "sort_num": null,
     "secret_code": "834019",
@@ -175,14 +177,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "عامر",
-    "section": "khaled"
+    "phone": null
   },
   {
     "id": 15,
+    "name": "براء",
     "created_at": "2020-03-30 17:59:01",
     "updated_at": "2022-10-28 18:49:22",
+    "group": "khaled",
     "image": "/default_student_image.png",
     "sort_num": null,
     "secret_code": "179271",
@@ -190,14 +192,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "براء",
-    "section": "khaled"
+    "phone": null
   },
   {
     "id": 16,
+    "name": "حسن",
     "created_at": "2020-03-30 18:02:06",
     "updated_at": "2025-03-01 10:59:16",
+    "group": "omar",
     "image": "/images/students/حسن-omar.jpg",
     "sort_num": 17,
     "secret_code": "377303",
@@ -205,14 +207,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 1,
-    "phone": null,
-    "username": "حسن",
-    "section": "omar"
+    "phone": null
   },
   {
     "id": 17,
+    "name": "عبد الرحمن",
     "created_at": "2020-03-30 18:09:14",
     "updated_at": "2023-09-10 17:23:54",
+    "group": "khaled",
     "image": "/images/students/عبد الرحمن-khaled.jpg",
     "sort_num": 100,
     "secret_code": "858706",
@@ -220,14 +222,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "عبد الرحمن",
-    "section": "khaled"
+    "phone": null
   },
   {
     "id": 18,
+    "name": "عمر تيناوي",
     "created_at": "2020-03-30 18:11:33",
     "updated_at": "2022-11-28 17:30:24",
+    "group": "khaled",
     "image": "/default_student_image.png",
     "sort_num": 15,
     "secret_code": "093375",
@@ -235,14 +237,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "عمر تيناوي",
-    "section": "khaled"
+    "phone": null
   },
   {
     "id": 20,
+    "name": "كريم ز",
     "created_at": "2020-03-30 18:14:37",
     "updated_at": "2022-10-28 18:49:22",
+    "group": "khaled",
     "image": "/default_student_image.png",
     "sort_num": null,
     "secret_code": "495969",
@@ -250,14 +252,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "كريم ز",
-    "section": "khaled"
+    "phone": null
   },
   {
     "id": 21,
+    "name": "عمر ش",
     "created_at": "2020-03-30 18:15:21",
     "updated_at": "2023-09-17 17:22:46",
+    "group": "khaled",
     "image": "/default_student_image.png",
     "sort_num": 12,
     "secret_code": "653876",
@@ -265,14 +267,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "عمر ش",
-    "section": "khaled"
+    "phone": null
   },
   {
     "id": 22,
+    "name": "أحمد",
     "created_at": "2020-03-30 18:17:03",
     "updated_at": "2023-09-13 17:27:55",
+    "group": "khaled",
     "image": "/default_student_image.png",
     "sort_num": null,
     "secret_code": "315558",
@@ -280,14 +282,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "أحمد",
-    "section": "khaled"
+    "phone": null
   },
   {
     "id": 23,
+    "name": "ياسر ك",
     "created_at": "2020-03-30 18:19:21",
     "updated_at": "2022-11-06 19:24:47",
+    "group": "khaled",
     "image": "/default_student_image.png",
     "sort_num": 1,
     "secret_code": "976918",
@@ -295,14 +297,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "ياسر ك",
-    "section": "khaled"
+    "phone": null
   },
   {
     "id": 24,
+    "name": "محمد النحلة",
     "created_at": "2020-03-30 18:23:30",
     "updated_at": "2023-07-10 15:00:24",
+    "group": "khaled",
     "image": "/default_student_image.png",
     "sort_num": 12,
     "secret_code": "302022",
@@ -310,14 +312,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "محمد النحلة",
-    "section": "khaled"
+    "phone": null
   },
   {
     "id": 26,
+    "name": "محمد عيد",
     "created_at": "2020-03-30 18:35:38",
     "updated_at": "2024-03-18 22:20:38",
+    "group": "khaled",
     "image": "/images/students/محمد عيد-khaled.jpg",
     "sort_num": null,
     "secret_code": "525599",
@@ -325,14 +327,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "محمد عيد",
-    "section": "khaled"
+    "phone": null
   },
   {
     "id": 28,
+    "name": "محمد س",
     "created_at": "2020-03-30 18:42:29",
     "updated_at": "2022-10-28 18:49:22",
+    "group": "khaled",
     "image": "/default_student_image.png",
     "sort_num": null,
     "secret_code": "626756",
@@ -340,14 +342,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "محمد س",
-    "section": "khaled"
+    "phone": null
   },
   {
     "id": 30,
+    "name": "عمر شماع",
     "created_at": "2020-03-30 18:49:31",
     "updated_at": "2024-06-02 16:28:00",
+    "group": "aasem",
     "image": "/default_student_image.png",
     "sort_num": 19,
     "secret_code": "477886",
@@ -355,14 +357,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 1,
-    "phone": null,
-    "username": "عمر شماع",
-    "section": "aasem"
+    "phone": null
   },
   {
     "id": 31,
+    "name": "خالد",
     "created_at": "2020-03-30 18:51:20",
     "updated_at": "2024-06-02 16:28:00",
+    "group": "aasem",
     "image": "/images/students/Khalid Da-aasem.jpeg",
     "sort_num": 18,
     "secret_code": "316911",
@@ -370,14 +372,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 1,
-    "phone": null,
-    "username": "خالد",
-    "section": "aasem"
+    "phone": null
   },
   {
     "id": 32,
+    "name": "هيثم",
     "created_at": "2020-03-30 18:52:26",
     "updated_at": "2025-02-17 19:20:03",
+    "group": "aasem",
     "image": "/default_student_image.png",
     "sort_num": 21,
     "secret_code": "55555",
@@ -385,14 +387,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 1,
-    "phone": null,
-    "username": "هيثم",
-    "section": "aasem"
+    "phone": null
   },
   {
     "id": 33,
+    "name": "عبد الرحمن جودة",
     "created_at": "2020-03-30 18:53:47",
     "updated_at": "2024-06-02 16:28:01",
+    "group": "aasem",
     "image": "/images/students/Abd Alrhman Jo-aasem.jpeg",
     "sort_num": 20,
     "secret_code": "926777",
@@ -400,14 +402,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 1,
-    "phone": null,
-    "username": "عبد الرحمن جودة",
-    "section": "aasem"
+    "phone": null
   },
   {
     "id": 34,
+    "name": "هشام سيوفي",
     "created_at": "2020-03-30 18:55:06",
     "updated_at": "2024-07-14 16:37:08",
+    "group": "aasem",
     "image": "/default_student_image.png",
     "sort_num": 42,
     "secret_code": "199628",
@@ -415,14 +417,14 @@
     "idle": 1,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "هشام سيوفي",
-    "section": "aasem"
+    "phone": null
   },
   {
     "id": 35,
+    "name": "مكي",
     "created_at": "2020-03-30 18:55:50",
     "updated_at": "2024-06-02 16:28:04",
+    "group": "aasem",
     "image": "/images/students/MHD Ma-aasem.jpeg",
     "sort_num": 31,
     "secret_code": "105150",
@@ -430,14 +432,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 1,
-    "phone": null,
-    "username": "مكي",
-    "section": "aasem"
+    "phone": null
   },
   {
     "id": 36,
+    "name": "شعار",
     "created_at": "2020-03-30 19:24:25",
     "updated_at": "2025-02-27 18:18:49",
+    "group": "omar",
     "image": "/images/students/شعار-omar.jpg",
     "sort_num": 25,
     "secret_code": "437309",
@@ -445,14 +447,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 1,
-    "phone": null,
-    "username": "شعار",
-    "section": "omar"
+    "phone": null
   },
   {
     "id": 37,
+    "name": "بشير",
     "created_at": "2020-03-30 19:25:18",
     "updated_at": "2025-03-10 15:12:38",
+    "group": "omar",
     "image": "/images/students/بشير-omar.jpg",
     "sort_num": 21,
     "secret_code": "417307",
@@ -460,14 +462,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "بشير",
-    "section": "omar"
+    "phone": null
   },
   {
     "id": 39,
+    "name": "عمر عابدين",
     "created_at": "2020-03-30 19:27:41",
     "updated_at": "2025-03-22 12:07:26",
+    "group": "omar",
     "image": "/images/students/عابدين-omar.jpg",
     "sort_num": 27,
     "secret_code": "657332",
@@ -475,14 +477,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "عمر عابدين",
-    "section": "omar"
+    "phone": null
   },
   {
     "id": 40,
+    "name": "همام",
     "created_at": "2020-03-30 19:28:26",
     "updated_at": "2025-01-29 17:44:43",
+    "group": "omar",
     "image": "/images/students/همام-omar.jpg",
     "sort_num": 19,
     "secret_code": "547321",
@@ -490,14 +492,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "همام",
-    "section": "omar"
+    "phone": null
   },
   {
     "id": 41,
+    "name": "حسين",
     "created_at": "2020-03-30 19:29:27",
     "updated_at": "2025-03-08 12:07:30",
+    "group": "omar",
     "image": "/images/students/حسين-omar.jpg",
     "sort_num": 10,
     "secret_code": "637329",
@@ -505,14 +507,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "حسين",
-    "section": "omar"
+    "phone": null
   },
   {
     "id": 42,
+    "name": "نشواتي",
     "created_at": "2020-03-30 19:30:55",
     "updated_at": "2024-08-10 17:41:11",
+    "group": "omar",
     "image": "/images/students/نشواتي-omar.jpg",
     "sort_num": 3,
     "secret_code": "407306",
@@ -520,14 +522,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 1,
-    "phone": null,
-    "username": "نشواتي",
-    "section": "omar"
+    "phone": null
   },
   {
     "id": 43,
+    "name": "زنبركجي",
     "created_at": "2020-03-30 19:32:46",
     "updated_at": "2025-03-08 11:50:18",
+    "group": "omar",
     "image": "/images/students/زنبركجي-omar.jpg",
     "sort_num": 26,
     "secret_code": "357301",
@@ -535,14 +537,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "زنبركجي",
-    "section": "omar"
+    "phone": null
   },
   {
     "id": 44,
+    "name": "عاصم",
     "created_at": "2020-03-30 19:34:35",
     "updated_at": "2024-06-02 16:28:03",
+    "group": "aasem",
     "image": "/default_student_image.png",
     "sort_num": 28,
     "secret_code": "964677",
@@ -550,14 +552,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 1,
-    "phone": null,
-    "username": "عاصم",
-    "section": "aasem"
+    "phone": null
   },
   {
     "id": 46,
+    "name": "خالد ق",
     "created_at": "2020-03-30 19:36:48",
     "updated_at": "2024-06-03 16:12:32",
+    "group": "omar",
     "image": "/images/students/خالد ق-omar.jpg",
     "sort_num": 12,
     "secret_code": "627330",
@@ -565,14 +567,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 1,
-    "phone": null,
-    "username": "خالد ق",
-    "section": "omar"
+    "phone": null
   },
   {
     "id": 48,
+    "name": "بسام",
     "created_at": "2020-03-30 19:38:25",
     "updated_at": "2024-11-21 18:15:05",
+    "group": "omar",
     "image": "/images/students/بسام-omar.jpg",
     "sort_num": 15,
     "secret_code": "427308",
@@ -580,14 +582,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "بسام",
-    "section": "omar"
+    "phone": null
   },
   {
     "id": 49,
+    "name": "حسن",
     "created_at": "2020-03-30 19:40:15",
     "updated_at": "2024-08-15 17:14:55",
+    "group": "aasem",
     "image": "/default_student_image.png",
     "sort_num": 24,
     "secret_code": "982934",
@@ -595,14 +597,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "حسن",
-    "section": "aasem"
+    "phone": null
   },
   {
     "id": 50,
+    "name": "موفق",
     "created_at": "2020-03-30 19:40:55",
     "updated_at": "2023-07-26 15:28:02",
+    "group": "omar",
     "image": "/images/students/موفق-omar.jpg",
     "sort_num": 26,
     "secret_code": "527319",
@@ -610,14 +612,14 @@
     "idle": 1,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "موفق",
-    "section": "omar"
+    "phone": null
   },
   {
     "id": 51,
+    "name": "عمر جودة",
     "created_at": "2020-03-30 19:41:39",
     "updated_at": "2025-01-28 12:02:23",
+    "group": "omar",
     "image": "/images/students/عمر ج-omar.jpg",
     "sort_num": 14,
     "secret_code": "387304",
@@ -625,14 +627,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 1,
-    "phone": null,
-    "username": "عمر جودة",
-    "section": "omar"
+    "phone": null
   },
   {
     "id": 52,
+    "name": "عماد ج",
     "created_at": "2020-03-30 19:41:47",
     "updated_at": "2024-04-18 16:09:35",
+    "group": "aasem",
     "image": "/default_student_image.png",
     "sort_num": 25,
     "secret_code": "561666",
@@ -640,14 +642,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "عماد ج",
-    "section": "aasem"
+    "phone": null
   },
   {
     "id": 53,
+    "name": "فاروق",
     "created_at": "2020-03-30 19:43:50",
     "updated_at": "2025-01-30 17:25:05",
+    "group": "omar",
     "image": "/images/students/فاروق-omar.jpg",
     "sort_num": 1,
     "secret_code": "367302",
@@ -655,14 +657,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "فاروق",
-    "section": "omar"
+    "phone": null
   },
   {
     "id": 54,
+    "name": "عمر دالاتي",
     "created_at": "2020-03-30 19:44:08",
     "updated_at": "2024-08-06 15:41:59",
+    "group": "aasem",
     "image": "/images/students/Omar Da-aasem.jpeg",
     "sort_num": 27,
     "secret_code": "894515",
@@ -670,14 +672,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 1,
-    "phone": null,
-    "username": "عمر دالاتي",
-    "section": "aasem"
+    "phone": null
   },
   {
     "id": 55,
+    "name": "سامي",
     "created_at": "2020-03-30 19:45:22",
     "updated_at": "2024-11-14 18:52:59",
+    "group": "omar",
     "image": "/images/students/سامي-omar.jpg",
     "sort_num": 22,
     "secret_code": "647331",
@@ -685,14 +687,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 1,
-    "phone": null,
-    "username": "سامي",
-    "section": "omar"
+    "phone": null
   },
   {
     "id": 56,
+    "name": "امين",
     "created_at": "2020-03-30 19:46:08",
     "updated_at": "2024-08-13 11:00:34",
+    "group": "omar",
     "image": "/images/students/أمين-omar.jpg",
     "sort_num": 35,
     "secret_code": "617328",
@@ -700,14 +702,14 @@
     "idle": 1,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "امين",
-    "section": "omar"
+    "phone": null
   },
   {
     "id": 57,
+    "name": "عبد الرحمن خوام",
     "created_at": "2020-03-30 19:46:51",
     "updated_at": "2025-02-17 19:04:58",
+    "group": "aasem",
     "image": "/default_student_image.png",
     "sort_num": 32,
     "secret_code": "367218",
@@ -715,14 +717,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "عبد الرحمن خوام",
-    "section": "aasem"
+    "phone": null
   },
   {
     "id": 58,
+    "name": "زيد ش",
     "created_at": "2020-03-30 19:47:32",
     "updated_at": "2024-08-13 11:24:56",
+    "group": "omar",
     "image": "/images/students/زيد ش-omar.jpg",
     "sort_num": 40,
     "secret_code": "537320",
@@ -730,14 +732,14 @@
     "idle": 1,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "زيد ش",
-    "section": "omar"
+    "phone": null
   },
   {
     "id": 60,
+    "name": "عبادة",
     "created_at": "2020-03-30 19:49:49",
     "updated_at": "2025-03-08 12:38:31",
+    "group": "omar",
     "image": "/images/students/عبادة-omar.jpg",
     "sort_num": 4,
     "secret_code": "507317",
@@ -745,14 +747,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 1,
-    "phone": null,
-    "username": "عبادة",
-    "section": "omar"
+    "phone": null
   },
   {
     "id": 64,
+    "name": "فؤاد",
     "created_at": "2020-03-30 19:53:37",
     "updated_at": "2025-03-08 12:05:24",
+    "group": "omar",
     "image": "/images/students/فؤاد-omar.jpg",
     "sort_num": 8,
     "secret_code": "517318",
@@ -760,14 +762,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "فؤاد",
-    "section": "omar"
+    "phone": null
   },
   {
     "id": 66,
+    "name": "تميم",
     "created_at": "2020-03-30 19:58:24",
     "updated_at": "2024-11-23 13:39:27",
+    "group": "dubai-omar",
     "image": "/default_student_image.png",
     "sort_num": 25,
     "secret_code": "11111",
@@ -775,14 +777,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 1,
-    "phone": null,
-    "username": "تميم",
-    "section": "dubai-omar"
+    "phone": null
   },
   {
     "id": 67,
+    "name": "ذهبي",
     "created_at": "2020-03-30 19:58:52",
     "updated_at": "2024-01-12 20:45:07",
+    "group": "mmdoh",
     "image": "/images/students/ذهبي-mmdoh.jpg",
     "sort_num": 3,
     "secret_code": "189080",
@@ -790,14 +792,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "ذهبي",
-    "section": "mmdoh"
+    "phone": null
   },
   {
     "id": 68,
+    "name": "وليد",
     "created_at": "2020-03-30 20:00:39",
     "updated_at": "2023-09-17 18:53:11",
+    "group": "mmdoh",
     "image": "/images/students/وليد-mmdoh.jpg",
     "sort_num": 2,
     "secret_code": "275224",
@@ -805,14 +807,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "وليد",
-    "section": "mmdoh"
+    "phone": null
   },
   {
     "id": 70,
+    "name": "هشام",
     "created_at": "2020-03-30 20:01:51",
     "updated_at": "2023-08-28 23:00:18",
+    "group": "mmdoh",
     "image": "/default_student_image.png",
     "sort_num": 3,
     "secret_code": "017677",
@@ -820,14 +822,14 @@
     "idle": 1,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "هشام",
-    "section": "mmdoh"
+    "phone": null
   },
   {
     "id": 71,
+    "name": "بلال",
     "created_at": "2020-03-30 20:04:03",
     "updated_at": "2025-02-27 17:35:25",
+    "group": "aasem",
     "image": "/default_student_image.png",
     "sort_num": 26,
     "secret_code": "520931",
@@ -835,14 +837,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "بلال",
-    "section": "aasem"
+    "phone": null
   },
   {
     "id": 72,
+    "name": "أبي",
     "created_at": "2020-03-30 20:05:28",
     "updated_at": "2022-08-28 21:21:50",
+    "group": "mmdoh",
     "image": "/images/students/obai-mmdoh.jpg",
     "sort_num": 1,
     "secret_code": "880880",
@@ -850,14 +852,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "أبي",
-    "section": "mmdoh"
+    "phone": null
   },
   {
     "id": 74,
+    "name": "بلال",
     "created_at": "2020-03-30 20:06:26",
     "updated_at": "2023-09-18 18:19:35",
+    "group": "mmdoh",
     "image": "/images/students/بلال-mmdoh.jpg",
     "sort_num": 2,
     "secret_code": "073803",
@@ -865,14 +867,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "بلال",
-    "section": "mmdoh"
+    "phone": null
   },
   {
     "id": 75,
+    "name": "محمد ع",
     "created_at": "2020-03-30 20:06:51",
     "updated_at": "2025-03-04 12:33:30",
+    "group": "mmdoh",
     "image": "/images/students/محمد ع-mmdoh.jpg",
     "sort_num": 2,
     "secret_code": "666666",
@@ -880,14 +882,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "محمد ع",
-    "section": "mmdoh"
+    "phone": null
   },
   {
     "id": 76,
+    "name": "معاذ ش",
     "created_at": "2020-03-30 20:07:41",
     "updated_at": "2025-01-21 17:57:25",
+    "group": "mmdoh",
     "image": "/default_student_image.png",
     "sort_num": 2,
     "secret_code": "066322",
@@ -895,14 +897,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "معاذ ش",
-    "section": "mmdoh"
+    "phone": null
   },
   {
     "id": 77,
+    "name": "براء ح",
     "created_at": "2020-03-30 20:11:40",
     "updated_at": "2024-09-03 00:22:17",
+    "group": "mmdoh",
     "image": "/default_student_image.png",
     "sort_num": 3,
     "secret_code": "735548",
@@ -910,14 +912,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "براء ح",
-    "section": "mmdoh"
+    "phone": null
   },
   {
     "id": 78,
+    "name": "محمد خير",
     "created_at": "2020-03-30 20:12:21",
     "updated_at": "2024-08-06 15:08:21",
+    "group": "aasem",
     "image": "/default_student_image.png",
     "sort_num": 29,
     "secret_code": "077525",
@@ -925,14 +927,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 1,
-    "phone": null,
-    "username": "محمد خير",
-    "section": "aasem"
+    "phone": null
   },
   {
     "id": 79,
+    "name": "عمر ع",
     "created_at": "2020-03-30 20:12:40",
     "updated_at": "2022-04-16 02:07:51",
+    "group": "mmdoh",
     "image": "/images/students/عمر ع-mmdoh.jpg",
     "sort_num": 26,
     "secret_code": "434668",
@@ -940,14 +942,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "عمر ع",
-    "section": "mmdoh"
+    "phone": null
   },
   {
     "id": 80,
+    "name": "يوسف",
     "created_at": "2020-03-30 20:13:03",
     "updated_at": "2022-11-24 18:19:14",
+    "group": "mmdoh",
     "image": "/default_student_image.png",
     "sort_num": 3,
     "secret_code": "599749",
@@ -955,14 +957,14 @@
     "idle": 1,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "يوسف",
-    "section": "mmdoh"
+    "phone": null
   },
   {
     "id": 81,
+    "name": "MERO",
     "created_at": "2020-03-30 20:13:42",
     "updated_at": "2024-02-26 19:53:04",
+    "group": "mmdoh",
     "image": "/images/students/مروان-mmdoh.jpg",
     "sort_num": 2,
     "secret_code": "243696",
@@ -970,14 +972,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "MERO",
-    "section": "mmdoh"
+    "phone": null
   },
   {
     "id": 82,
+    "name": "ابي",
     "created_at": "2020-03-30 20:13:54",
     "updated_at": "2025-02-17 18:31:21",
+    "group": "aasem",
     "image": "/images/students/Obay Ma-aasem.jpeg",
     "sort_num": 6,
     "secret_code": "173641",
@@ -985,14 +987,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "ابي",
-    "section": "aasem"
+    "phone": null
   },
   {
     "id": 84,
+    "name": "سارية🏔️",
     "created_at": "2020-03-30 20:15:36",
     "updated_at": "2024-02-26 19:30:32",
+    "group": "mmdoh",
     "image": "/images/students/سارية-mmdoh.jpg",
     "sort_num": 2,
     "secret_code": "249056",
@@ -1000,14 +1002,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "سارية🏔️",
-    "section": "mmdoh"
+    "phone": null
   },
   {
     "id": 85,
+    "name": "هاشم",
     "created_at": "2020-03-30 20:16:29",
     "updated_at": "2022-08-21 11:20:57",
+    "group": "mmdoh",
     "image": "/default_student_image.png",
     "sort_num": 3,
     "secret_code": "333082",
@@ -1015,14 +1017,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "هاشم",
-    "section": "mmdoh"
+    "phone": null
   },
   {
     "id": 86,
+    "name": "عابدين",
     "created_at": "2020-03-30 20:16:59",
     "updated_at": "2022-11-24 18:19:06",
+    "group": "mmdoh",
     "image": "/default_student_image.png",
     "sort_num": 3,
     "secret_code": "134231",
@@ -1030,14 +1032,14 @@
     "idle": 1,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "عابدين",
-    "section": "mmdoh"
+    "phone": null
   },
   {
     "id": 87,
+    "name": "براء ش",
     "created_at": "2020-03-30 20:17:44",
     "updated_at": "2022-11-24 18:19:10",
+    "group": "mmdoh",
     "image": "/default_student_image.png",
     "sort_num": 3,
     "secret_code": "378890",
@@ -1045,14 +1047,14 @@
     "idle": 1,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "براء ش",
-    "section": "mmdoh"
+    "phone": null
   },
   {
     "id": 88,
+    "name": "غيث",
     "created_at": "2020-03-30 20:18:30",
     "updated_at": "2024-10-14 16:42:48",
+    "group": "aasem",
     "image": "/default_student_image.png",
     "sort_num": 13,
     "secret_code": "383461",
@@ -1060,14 +1062,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 1,
-    "phone": null,
-    "username": "غيث",
-    "section": "aasem"
+    "phone": null
   },
   {
     "id": 89,
+    "name": "دقر",
     "created_at": "2020-03-30 20:21:56",
     "updated_at": "2024-11-18 17:49:51",
+    "group": "aasem",
     "image": "/images/students/دقر-aasem.jpg",
     "sort_num": 10,
     "secret_code": "523296",
@@ -1075,14 +1077,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 1,
-    "phone": null,
-    "username": "دقر",
-    "section": "aasem"
+    "phone": null
   },
   {
     "id": 90,
+    "name": "هاشم سيوفي",
     "created_at": "2020-03-30 20:23:00",
     "updated_at": "2025-02-20 17:43:34",
+    "group": "aasem",
     "image": "/images/students/Hashem Sy-aasem.png",
     "sort_num": 16,
     "secret_code": "102355",
@@ -1090,14 +1092,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 1,
-    "phone": null,
-    "username": "هاشم سيوفي",
-    "section": "aasem"
+    "phone": null
   },
   {
     "id": 91,
+    "name": "سمهوري",
     "created_at": "2020-03-30 20:26:35",
     "updated_at": "2025-01-16 17:59:39",
+    "group": "aasem",
     "image": "/default_student_image.png",
     "sort_num": 15,
     "secret_code": "543134",
@@ -1105,14 +1107,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "سمهوري",
-    "section": "aasem"
+    "phone": null
   },
   {
     "id": 92,
+    "name": "زيد شماع",
     "created_at": "2020-03-30 20:38:32",
     "updated_at": "2025-01-13 16:37:33",
+    "group": "aasem",
     "image": "/default_student_image.png",
     "sort_num": 30,
     "secret_code": "941851",
@@ -1120,14 +1122,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "زيد شماع",
-    "section": "aasem"
+    "phone": null
   },
   {
     "id": 93,
+    "name": "زياد",
     "created_at": "2020-03-30 20:39:54",
     "updated_at": "2024-08-15 17:18:28",
+    "group": "aasem",
     "image": "/default_student_image.png",
     "sort_num": 22,
     "secret_code": "100502",
@@ -1135,14 +1137,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "زياد",
-    "section": "aasem"
+    "phone": null
   },
   {
     "id": 94,
+    "name": "اياد",
     "created_at": "2020-03-30 20:41:29",
     "updated_at": "2025-01-06 16:06:03",
+    "group": "aasem",
     "image": "/default_student_image.png",
     "sort_num": 9,
     "secret_code": "576704",
@@ -1150,14 +1152,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "اياد",
-    "section": "aasem"
+    "phone": null
   },
   {
     "id": 95,
+    "name": "رضوان",
     "created_at": "2020-03-30 20:44:35",
     "updated_at": "2024-01-25 16:16:19",
+    "group": "aasem",
     "image": "/default_student_image.png",
     "sort_num": 7,
     "secret_code": "974404",
@@ -1165,14 +1167,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "رضوان",
-    "section": "aasem"
+    "phone": null
   },
   {
     "id": 96,
+    "name": "حمزة قنواتي",
     "created_at": "2020-03-30 20:46:39",
     "updated_at": "2025-03-11 14:04:06",
+    "group": "aasem",
     "image": "/default_student_image.png",
     "sort_num": 5,
     "secret_code": "548901",
@@ -1180,14 +1182,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "حمزة قنواتي",
-    "section": "aasem"
+    "phone": null
   },
   {
     "id": 97,
+    "name": "أسامة",
     "created_at": "2020-03-30 20:51:13",
     "updated_at": "2023-10-19 22:56:03",
+    "group": "mmdoh",
     "image": "/images/students/أسامة-mmdoh.jpg",
     "sort_num": 1,
     "secret_code": "757456",
@@ -1195,14 +1197,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "أسامة",
-    "section": "mmdoh"
+    "phone": null
   },
   {
     "id": 98,
+    "name": "حمزة ش",
     "created_at": "2020-03-30 20:52:18",
     "updated_at": "2022-08-31 12:32:06",
+    "group": "mmdoh",
     "image": "/default_student_image.png",
     "sort_num": 1,
     "secret_code": "655191",
@@ -1210,14 +1212,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "حمزة ش",
-    "section": "mmdoh"
+    "phone": null
   },
   {
     "id": 99,
+    "name": "أنس",
     "created_at": "2020-03-30 20:57:42",
     "updated_at": "2023-09-09 22:13:56",
+    "group": "mmdoh",
     "image": "/default_student_image.png",
     "sort_num": 2,
     "secret_code": "877988",
@@ -1225,14 +1227,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "أنس",
-    "section": "mmdoh"
+    "phone": null
   },
   {
     "id": 100,
+    "name": "بدر🌕",
     "created_at": "2020-03-30 22:50:23",
     "updated_at": "2023-09-25 18:15:03",
+    "group": "mmdoh",
     "image": "/images/students/بدر-mmdoh.jpg",
     "sort_num": 2,
     "secret_code": "564565",
@@ -1240,14 +1242,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "بدر🌕",
-    "section": "mmdoh"
+    "phone": null
   },
   {
     "id": 101,
+    "name": "ممدوح",
     "created_at": "2020-03-30 22:52:37",
     "updated_at": "2022-11-24 18:18:56",
+    "group": "mmdoh",
     "image": "/default_student_image.png",
     "sort_num": 3,
     "secret_code": "043667",
@@ -1255,14 +1257,14 @@
     "idle": 1,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "ممدوح",
-    "section": "mmdoh"
+    "phone": null
   },
   {
     "id": 103,
+    "name": "محمد ق",
     "created_at": "2020-04-03 22:36:59",
     "updated_at": "2023-09-06 21:37:01",
+    "group": "mmdoh",
     "image": "/default_student_image.png",
     "sort_num": 3,
     "secret_code": "381239",
@@ -1270,14 +1272,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "محمد ق",
-    "section": "mmdoh"
+    "phone": null
   },
   {
     "id": 105,
+    "name": "عمر س",
     "created_at": "2020-04-03 22:37:56",
     "updated_at": "2022-11-24 18:18:47",
+    "group": "mmdoh",
     "image": "/default_student_image.png",
     "sort_num": 3,
     "secret_code": "629984",
@@ -1285,14 +1287,14 @@
     "idle": 1,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "عمر س",
-    "section": "mmdoh"
+    "phone": null
   },
   {
     "id": 106,
+    "name": "عمرو",
     "created_at": "2020-04-04 16:28:54",
     "updated_at": "2024-09-01 10:38:00",
+    "group": "khaled",
     "image": "/default_student_image.png",
     "sort_num": null,
     "secret_code": "218544",
@@ -1300,14 +1302,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "عمرو",
-    "section": "khaled"
+    "phone": null
   },
   {
     "id": 107,
+    "name": "جاد",
     "created_at": "2020-04-05 11:51:18",
     "updated_at": "2024-03-15 13:55:05",
+    "group": "aasem",
     "image": "/default_student_image.png",
     "sort_num": 35,
     "secret_code": "537786",
@@ -1315,14 +1317,14 @@
     "idle": 1,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "جاد",
-    "section": "aasem"
+    "phone": null
   },
   {
     "id": 108,
+    "name": "زيد قباني",
     "created_at": "2020-04-05 11:51:42",
     "updated_at": "2025-03-20 14:20:18",
+    "group": "aasem",
     "image": "/default_student_image.png",
     "sort_num": 14,
     "secret_code": "624894",
@@ -1330,14 +1332,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "زيد قباني",
-    "section": "aasem"
+    "phone": null
   },
   {
     "id": 109,
+    "name": "كريم",
     "created_at": "2020-04-14 08:05:49",
     "updated_at": "2024-08-13 11:20:56",
+    "group": "omar",
     "image": "/default_student_image.png",
     "sort_num": 41,
     "secret_code": "687339",
@@ -1345,14 +1347,14 @@
     "idle": 1,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "كريم",
-    "section": "omar"
+    "phone": null
   },
   {
     "id": 110,
+    "name": "بشر // معطل",
     "created_at": "2020-04-15 11:41:30",
     "updated_at": "2023-08-21 17:48:36",
+    "group": "aasem",
     "image": "/default_student_image.png",
     "sort_num": 34,
     "secret_code": "628589",
@@ -1360,14 +1362,14 @@
     "idle": 1,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "بشر // معطل",
-    "section": "aasem"
+    "phone": null
   },
   {
     "id": 111,
+    "name": "زيدان",
     "created_at": "2020-05-09 02:15:47",
     "updated_at": "2025-03-08 13:35:35",
+    "group": "mmdoh",
     "image": "/default_student_image.png",
     "sort_num": 2,
     "secret_code": "909461",
@@ -1375,14 +1377,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "زيدان",
-    "section": "mmdoh"
+    "phone": null
   },
   {
     "id": 116,
+    "name": "عبد عابدين",
     "created_at": "2020-06-14 09:40:40",
     "updated_at": "2025-03-01 10:48:24",
+    "group": "motaa",
     "image": "/images/students/عبد عابدين-motaa.jpg",
     "sort_num": 15,
     "secret_code": "654982",
@@ -1390,14 +1392,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "عبد عابدين",
-    "section": "motaa"
+    "phone": null
   },
   {
     "id": 117,
+    "name": "محمد رز",
     "created_at": "2020-06-14 09:42:14",
     "updated_at": "2025-03-01 10:42:31",
+    "group": "motaa",
     "image": "/images/students/محمد رز-motaa.jpg",
     "sort_num": 9,
     "secret_code": "518425",
@@ -1405,14 +1407,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "محمد رز",
-    "section": "motaa"
+    "phone": null
   },
   {
     "id": 118,
+    "name": "محمود",
     "created_at": "2020-06-14 09:42:32",
     "updated_at": "2024-11-11 19:48:33",
+    "group": "motaa",
     "image": "/images/students/محمود-motaa.jpg",
     "sort_num": 5,
     "secret_code": "985632",
@@ -1420,14 +1422,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "محمود",
-    "section": "motaa"
+    "phone": null
   },
   {
     "id": 119,
+    "name": "ابراهيم س",
     "created_at": "2020-06-14 09:42:46",
     "updated_at": "2025-03-08 13:33:26",
+    "group": "motaa",
     "image": "/images/students/إبراهيم س-motaa.jpg",
     "sort_num": 20,
     "secret_code": "325698",
@@ -1435,14 +1437,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 1,
-    "phone": null,
-    "username": "ابراهيم س",
-    "section": "motaa"
+    "phone": null
   },
   {
     "id": 120,
+    "name": "توفيق",
     "created_at": "2020-06-14 09:43:03",
     "updated_at": "2025-03-01 11:56:57",
+    "group": "motaa",
     "image": "/images/students/توفيق-motaa.jpg",
     "sort_num": 4,
     "secret_code": "365910",
@@ -1450,14 +1452,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "توفيق",
-    "section": "motaa"
+    "phone": null
   },
   {
     "id": 122,
+    "name": "مطاع",
     "created_at": "2020-06-14 09:43:34",
     "updated_at": "2025-03-10 15:25:45",
+    "group": "motaa",
     "image": "/images/students/مطاع-motaa.jpg",
     "sort_num": 12,
     "secret_code": "541230",
@@ -1465,14 +1467,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "مطاع",
-    "section": "motaa"
+    "phone": null
   },
   {
     "id": 123,
+    "name": "عمر مس",
     "created_at": "2020-06-14 09:43:48",
     "updated_at": "2025-03-08 13:11:24",
+    "group": "motaa",
     "image": "/images/students/عمر مس-motaa.jpg",
     "sort_num": 18,
     "secret_code": "528520",
@@ -1480,14 +1482,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 1,
-    "phone": null,
-    "username": "عمر مس",
-    "section": "motaa"
+    "phone": null
   },
   {
     "id": 124,
+    "name": "عبادة نج",
     "created_at": "2020-06-14 09:44:01",
     "updated_at": "2025-03-23 12:39:16",
+    "group": "motaa",
     "image": "/images/students/عبادة نج-motaa.jpg",
     "sort_num": 1,
     "secret_code": "569993",
@@ -1495,14 +1497,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "عبادة نج",
-    "section": "motaa"
+    "phone": null
   },
   {
     "id": 125,
+    "name": "عمر شع",
     "created_at": "2020-06-14 09:44:16",
     "updated_at": "2025-03-04 20:30:03",
+    "group": "motaa",
     "image": "/images/students/عمر شع-motaa.jpg",
     "sort_num": 25,
     "secret_code": "115587",
@@ -1510,14 +1512,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "عمر شع",
-    "section": "motaa"
+    "phone": null
   },
   {
     "id": 126,
+    "name": "عبد دالاتي",
     "created_at": "2020-06-14 09:44:28",
     "updated_at": "2025-02-22 15:51:01",
+    "group": "omar",
     "image": "/images/students/عبد دالاتي-motaa.jpg",
     "sort_num": 23,
     "secret_code": "677338",
@@ -1525,14 +1527,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "عبد دالاتي",
-    "section": "omar"
+    "phone": null
   },
   {
     "id": 128,
+    "name": "محمد نور",
     "created_at": "2020-06-14 09:45:32",
     "updated_at": "2025-03-18 01:20:54",
+    "group": "motaa",
     "image": "/images/students/محمد نور-motaa.jpg",
     "sort_num": 2,
     "secret_code": "960390",
@@ -1540,14 +1542,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "محمد نور",
-    "section": "motaa"
+    "phone": null
   },
   {
     "id": 130,
+    "name": "عبد حمامي",
     "created_at": "2020-06-14 09:47:14",
     "updated_at": "2025-03-10 13:59:11",
+    "group": "motaa",
     "image": "/images/students/عبد حمامي-motaa.jpg",
     "sort_num": 16,
     "secret_code": "481429",
@@ -1555,14 +1557,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 1,
-    "phone": null,
-    "username": "عبد حمامي",
-    "section": "motaa"
+    "phone": null
   },
   {
     "id": 131,
+    "name": "زيد قنو",
     "created_at": "2020-06-14 09:47:35",
     "updated_at": "2025-03-08 13:08:04",
+    "group": "motaa",
     "image": "/images/students/زيد قنو-motaa.jpg",
     "sort_num": 21,
     "secret_code": "803636",
@@ -1570,14 +1572,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 1,
-    "phone": null,
-    "username": "زيد قنو",
-    "section": "motaa"
+    "phone": null
   },
   {
     "id": 132,
+    "name": "عمر عيد",
     "created_at": "2020-06-14 09:47:54",
     "updated_at": "2025-03-01 11:55:49",
+    "group": "motaa",
     "image": "/images/students/عمر عيد-motaa.jpg",
     "sort_num": 31,
     "secret_code": "449971",
@@ -1585,14 +1587,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "عمر عيد",
-    "section": "motaa"
+    "phone": null
   },
   {
     "id": 134,
+    "name": "اويس",
     "created_at": "2020-06-14 09:48:31",
     "updated_at": "2025-03-11 03:19:07",
+    "group": "motaa",
     "image": "/images/students/أويس-motaa.jpg",
     "sort_num": 7,
     "secret_code": "398328",
@@ -1600,14 +1602,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "اويس",
-    "section": "motaa"
+    "phone": null
   },
   {
     "id": 135,
+    "name": "محمد شماع",
     "created_at": "2020-06-14 09:48:43",
     "updated_at": "2025-03-08 12:42:14",
+    "group": "motaa",
     "image": "/images/students/محمد شم-motaa.jpg",
     "sort_num": 23,
     "secret_code": "027435",
@@ -1615,14 +1617,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "محمد شماع",
-    "section": "motaa"
+    "phone": null
   },
   {
     "id": 136,
+    "name": "مأمون",
     "created_at": "2020-06-14 09:49:00",
     "updated_at": "2024-12-28 16:39:02",
+    "group": "motaa",
     "image": "/images/students/مأمون-motaa.jpg",
     "sort_num": 24,
     "secret_code": "384048",
@@ -1630,14 +1632,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "مأمون",
-    "section": "motaa"
+    "phone": null
   },
   {
     "id": 137,
+    "name": "زيد أيو",
     "created_at": "2020-06-21 13:17:19",
     "updated_at": "2025-03-08 11:49:14",
+    "group": "motaa",
     "image": "/images/students/زيد أيو-motaa.jpg",
     "sort_num": 17,
     "secret_code": "473625",
@@ -1645,14 +1647,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "زيد أيو",
-    "section": "motaa"
+    "phone": null
   },
   {
     "id": 138,
+    "name": "عبادة غو",
     "created_at": "2020-06-21 13:17:46",
     "updated_at": "2024-08-13 10:18:49",
+    "group": "motaa",
     "image": "/default_student_image.png",
     "sort_num": 152,
     "secret_code": "908353",
@@ -1660,14 +1662,14 @@
     "idle": 1,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "عبادة غو",
-    "section": "motaa"
+    "phone": null
   },
   {
     "id": 139,
+    "name": "عمرو غو",
     "created_at": "2020-06-21 13:18:43",
     "updated_at": "2024-08-13 10:18:44",
+    "group": "motaa",
     "image": "/default_student_image.png",
     "sort_num": 153,
     "secret_code": "348567",
@@ -1675,14 +1677,14 @@
     "idle": 1,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "عمرو غو",
-    "section": "motaa"
+    "phone": null
   },
   {
     "id": 142,
+    "name": "أويس",
     "created_at": "2020-09-17 07:51:47",
     "updated_at": "2022-12-12 17:03:58",
+    "group": "khaled",
     "image": "/default_student_image.png",
     "sort_num": 30,
     "secret_code": "828622",
@@ -1690,14 +1692,14 @@
     "idle": 1,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "أويس",
-    "section": "khaled"
+    "phone": null
   },
   {
     "id": 143,
+    "name": "علي",
     "created_at": "2020-09-17 07:52:15",
     "updated_at": "2023-03-29 11:42:40",
+    "group": "khaled",
     "image": "/default_student_image.png",
     "sort_num": 31,
     "secret_code": "828623",
@@ -1705,14 +1707,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "علي",
-    "section": "khaled"
+    "phone": null
   },
   {
     "id": 144,
+    "name": "غيث",
     "created_at": "2021-04-11 18:20:51",
     "updated_at": "2023-07-26 15:45:16",
+    "group": "omar",
     "image": "/images/students/غيث-omar.jpg",
     "sort_num": 35,
     "secret_code": "667333",
@@ -1720,14 +1722,14 @@
     "idle": 1,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "غيث",
-    "section": "omar"
+    "phone": null
   },
   {
     "id": 145,
+    "name": "يحيى",
     "created_at": "2021-04-11 18:21:22",
     "updated_at": "2024-11-11 17:09:12",
+    "group": "aasem",
     "image": "/images/students/يحيى-omar.jpg",
     "sort_num": 51,
     "secret_code": "447311",
@@ -1735,14 +1737,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "يحيى",
-    "section": "aasem"
+    "phone": null
   },
   {
     "id": 146,
+    "name": "معاذ م",
     "created_at": "2021-04-11 18:25:45",
     "updated_at": "2024-08-07 17:43:03",
+    "group": "mmdoh",
     "image": "/default_student_image.png",
     "sort_num": 3,
     "secret_code": "512003",
@@ -1750,14 +1752,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "معاذ م",
-    "section": "mmdoh"
+    "phone": null
   },
   {
     "id": 147,
+    "name": "فؤاد",
     "created_at": "2021-04-11 18:36:59",
     "updated_at": "2025-01-30 14:09:58",
+    "group": "motaa",
     "image": "/images/students/فؤاد-motaa.jpg",
     "sort_num": 14,
     "secret_code": "596816",
@@ -1765,14 +1767,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "فؤاد",
-    "section": "motaa"
+    "phone": null
   },
   {
     "id": 148,
+    "name": "امير",
     "created_at": "2021-04-11 19:18:56",
     "updated_at": "2024-08-13 10:18:44",
+    "group": "motaa",
     "image": "/images/students/أمير-motaa.jpg",
     "sort_num": 151,
     "secret_code": "296854",
@@ -1780,14 +1782,14 @@
     "idle": 1,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "امير",
-    "section": "motaa"
+    "phone": null
   },
   {
     "id": 150,
+    "name": "عبد الله",
     "created_at": "2021-04-13 14:12:13",
     "updated_at": "2022-11-24 18:19:01",
+    "group": "mmdoh",
     "image": "/default_student_image.png",
     "sort_num": 3,
     "secret_code": "456189",
@@ -1795,14 +1797,14 @@
     "idle": 1,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "عبد الله",
-    "section": "mmdoh"
+    "phone": null
   },
   {
     "id": 151,
+    "name": "عمر حسنين",
     "created_at": "2021-04-14 08:56:55",
     "updated_at": "2025-02-20 17:59:15",
+    "group": "aasem",
     "image": "/default_student_image.png",
     "sort_num": 33,
     "secret_code": "987876",
@@ -1810,14 +1812,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "عمر حسنين",
-    "section": "aasem"
+    "phone": null
   },
   {
     "id": 152,
+    "name": "حمزة س",
     "created_at": "2021-04-14 08:56:57",
     "updated_at": "2024-07-14 16:37:21",
+    "group": "aasem",
     "image": "/default_student_image.png",
     "sort_num": 41,
     "secret_code": "876765",
@@ -1825,14 +1827,14 @@
     "idle": 1,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "حمزة س",
-    "section": "aasem"
+    "phone": null
   },
   {
     "id": 153,
+    "name": "محمد خلي //  معطل",
     "created_at": "2021-04-14 08:56:59",
     "updated_at": "2023-08-21 17:48:14",
+    "group": "aasem",
     "image": "/default_student_image.png",
     "sort_num": 39,
     "secret_code": "765654",
@@ -1840,14 +1842,14 @@
     "idle": 1,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "محمد خلي //  معطل",
-    "section": "aasem"
+    "phone": null
   },
   {
     "id": 154,
+    "name": "ابراهيم",
     "created_at": "2021-04-14 08:57:00",
     "updated_at": "2025-01-16 17:50:18",
+    "group": "aasem",
     "image": "/default_student_image.png",
     "sort_num": 8,
     "secret_code": "654543",
@@ -1855,14 +1857,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "ابراهيم",
-    "section": "aasem"
+    "phone": null
   },
   {
     "id": 155,
+    "name": "طارق",
     "created_at": "2021-04-14 08:57:03",
     "updated_at": "2024-09-21 10:59:21",
+    "group": "aasem",
     "image": "/images/students/طارق-aasem.jpeg",
     "sort_num": 1,
     "secret_code": "543432",
@@ -1870,14 +1872,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 1,
-    "phone": null,
-    "username": "طارق",
-    "section": "aasem"
+    "phone": null
   },
   {
     "id": 156,
+    "name": "عمر مزيك",
     "created_at": "2021-04-14 08:57:07",
     "updated_at": "2025-03-15 04:20:12",
+    "group": "aasem",
     "image": "/default_student_image.png",
     "sort_num": 4,
     "secret_code": "432321",
@@ -1885,14 +1887,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 1,
-    "phone": null,
-    "username": "عمر مزيك",
-    "section": "aasem"
+    "phone": null
   },
   {
     "id": 157,
+    "name": "مؤمن",
     "created_at": "2021-04-14 08:57:11",
     "updated_at": "2024-06-08 10:06:18",
+    "group": "aasem",
     "image": "/default_student_image.png",
     "sort_num": 25,
     "secret_code": "321210",
@@ -1900,14 +1902,14 @@
     "idle": 1,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "مؤمن",
-    "section": "aasem"
+    "phone": null
   },
   {
     "id": 158,
+    "name": "عمر قب",
     "created_at": "2021-04-14 09:14:21",
     "updated_at": "2025-03-08 11:08:22",
+    "group": "motaa",
     "image": "/images/students/عمر قب-motaa.jpg",
     "sort_num": 19,
     "secret_code": "555432",
@@ -1915,14 +1917,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "عمر قب",
-    "section": "motaa"
+    "phone": null
   },
   {
     "id": 159,
+    "name": "سوار",
     "created_at": "2021-04-14 09:18:52",
     "updated_at": "2022-12-04 19:17:56",
+    "group": "obada",
     "image": "/default_student_image.png",
     "sort_num": 3,
     "secret_code": "779882",
@@ -1930,14 +1932,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "سوار",
-    "section": "obada"
+    "phone": null
   },
   {
     "id": 160,
+    "name": "غيث رمض",
     "created_at": "2021-04-14 09:18:53",
     "updated_at": "2023-09-18 17:37:18",
+    "group": "obada",
     "image": "/images/students/غيث رمض-obada.jpg",
     "sort_num": 3,
     "secret_code": "225268",
@@ -1945,14 +1947,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "غيث رمض",
-    "section": "obada"
+    "phone": null
   },
   {
     "id": 161,
+    "name": "همام",
     "created_at": "2021-04-14 09:18:54",
     "updated_at": "2022-10-07 20:15:28",
+    "group": "obada",
     "image": "/default_student_image.png",
     "sort_num": 3,
     "secret_code": "871590",
@@ -1960,14 +1962,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "همام",
-    "section": "obada"
+    "phone": null
   },
   {
     "id": 162,
+    "name": "مأمون",
     "created_at": "2021-04-14 09:18:55",
     "updated_at": "2022-10-07 20:15:25",
+    "group": "obada",
     "image": "/default_student_image.png",
     "sort_num": 3,
     "secret_code": "763747",
@@ -1975,14 +1977,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "مأمون",
-    "section": "obada"
+    "phone": null
   },
   {
     "id": 163,
+    "name": "عبادة الزين",
     "created_at": "2021-04-14 09:18:56",
     "updated_at": "2023-02-04 08:30:23",
+    "group": "obada",
     "image": "/default_student_image.png",
     "sort_num": 3,
     "secret_code": "263261",
@@ -1990,14 +1992,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "عبادة الزين",
-    "section": "obada"
+    "phone": null
   },
   {
     "id": 164,
+    "name": "عبادة خولي",
     "created_at": "2021-04-14 09:18:58",
     "updated_at": "2024-06-02 18:15:29",
+    "group": "obada",
     "image": "/images/students/عبادة خو-obada.jpg",
     "sort_num": 3,
     "secret_code": "543647",
@@ -2005,14 +2007,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "عبادة خولي",
-    "section": "obada"
+    "phone": null
   },
   {
     "id": 165,
+    "name": "عبادة سكر",
     "created_at": "2021-04-14 09:19:03",
     "updated_at": "2023-09-12 18:22:41",
+    "group": "obada",
     "image": "/default_student_image.png",
     "sort_num": 3,
     "secret_code": "767231",
@@ -2020,14 +2022,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "عبادة سكر",
-    "section": "obada"
+    "phone": null
   },
   {
     "id": 166,
+    "name": "عمر موات",
     "created_at": "2021-04-14 09:21:43",
     "updated_at": "2025-03-12 02:48:03",
+    "group": "obada",
     "image": "/images/students/عمر مو-obada.jpg",
     "sort_num": 2,
     "secret_code": "124581",
@@ -2035,14 +2037,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "عمر موات",
-    "section": "obada"
+    "phone": null
   },
   {
     "id": 167,
+    "name": "عرفان",
     "created_at": "2021-04-14 09:21:45",
     "updated_at": "2022-10-07 20:15:11",
+    "group": "obada",
     "image": "/default_student_image.png",
     "sort_num": 3,
     "secret_code": "106275",
@@ -2050,14 +2052,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "عرفان",
-    "section": "obada"
+    "phone": null
   },
   {
     "id": 169,
+    "name": "أسامة",
     "created_at": "2021-04-14 09:21:52",
     "updated_at": "2022-10-07 20:16:07",
+    "group": "obada",
     "image": "/default_student_image.png",
     "sort_num": 3,
     "secret_code": "736750",
@@ -2065,14 +2067,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "أسامة",
-    "section": "obada"
+    "phone": null
   },
   {
     "id": 170,
+    "name": "صبحي",
     "created_at": "2021-04-14 09:21:53",
     "updated_at": "2022-10-07 20:15:08",
+    "group": "obada",
     "image": "/default_student_image.png",
     "sort_num": 3,
     "secret_code": "517032",
@@ -2080,14 +2082,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "صبحي",
-    "section": "obada"
+    "phone": null
   },
   {
     "id": 171,
+    "name": "ياسر س",
     "created_at": "2021-04-14 09:21:53",
     "updated_at": "2022-11-06 19:23:59",
+    "group": "obada",
     "image": "/default_student_image.png",
     "sort_num": 3,
     "secret_code": "113645",
@@ -2095,14 +2097,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "ياسر س",
-    "section": "obada"
+    "phone": null
   },
   {
     "id": 172,
+    "name": "يزن",
     "created_at": "2021-04-14 09:21:54",
     "updated_at": "2024-03-21 21:04:19",
+    "group": "obada",
     "image": "/default_student_image.png",
     "sort_num": 3,
     "secret_code": "956116",
@@ -2110,14 +2112,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "يزن",
-    "section": "obada"
+    "phone": null
   },
   {
     "id": 173,
+    "name": "عبادة الحافي",
     "created_at": "2021-04-14 09:21:54",
     "updated_at": "2023-01-14 16:06:54",
+    "group": "obada",
     "image": "/default_student_image.png",
     "sort_num": 3,
     "secret_code": "679914",
@@ -2125,14 +2127,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "عبادة الحافي",
-    "section": "obada"
+    "phone": null
   },
   {
     "id": 174,
+    "name": "ربيع",
     "created_at": "2021-04-14 09:22:26",
     "updated_at": "2022-10-11 09:03:01",
+    "group": "obada",
     "image": "/default_student_image.png",
     "sort_num": 3,
     "secret_code": "686630",
@@ -2140,14 +2142,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "ربيع",
-    "section": "obada"
+    "phone": null
   },
   {
     "id": 175,
+    "name": "غيث سيروان",
     "created_at": "2021-04-14 09:22:45",
     "updated_at": "2023-02-02 19:39:10",
+    "group": "obada",
     "image": "/default_student_image.png",
     "sort_num": 3,
     "secret_code": "515468",
@@ -2155,14 +2157,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "غيث سيروان",
-    "section": "obada"
+    "phone": null
   },
   {
     "id": 176,
+    "name": "كريم",
     "created_at": "2021-04-14 09:24:31",
     "updated_at": "2024-11-24 04:27:05",
+    "group": "obada",
     "image": "/images/students/كريم-obada.jpg",
     "sort_num": 2,
     "secret_code": "241930",
@@ -2170,14 +2172,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 1,
-    "phone": null,
-    "username": "كريم",
-    "section": "obada"
+    "phone": null
   },
   {
     "id": 177,
+    "name": "أويس 💎",
     "created_at": "2021-04-15 08:42:59",
     "updated_at": "2025-03-08 11:51:44",
+    "group": "mmdoh",
     "image": "/images/students/أويس-mmdoh.jpg",
     "sort_num": 26,
     "secret_code": "171717",
@@ -2185,14 +2187,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "أويس 💎",
-    "section": "mmdoh"
+    "phone": null
   },
   {
     "id": 178,
+    "name": "عمر صم",
     "created_at": "2021-04-18 13:37:06",
     "updated_at": "2025-03-11 14:48:21",
+    "group": "motaa",
     "image": "/images/students/عمر صم-motaa.jpg",
     "sort_num": 6,
     "secret_code": "268354",
@@ -2200,14 +2202,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "عمر صم",
-    "section": "motaa"
+    "phone": null
   },
   {
     "id": 180,
+    "name": "عبدالرحمن سكر",
     "created_at": "2021-04-27 23:04:53",
     "updated_at": "2023-09-10 17:42:31",
+    "group": "khaled",
     "image": "/default_student_image.png",
     "sort_num": 32,
     "secret_code": "778899",
@@ -2215,14 +2217,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "عبدالرحمن سكر",
-    "section": "khaled"
+    "phone": null
   },
   {
     "id": 181,
+    "name": "اسامة ش",
     "created_at": "2021-06-10 10:36:50",
     "updated_at": "2025-03-29 14:14:31",
+    "group": "mahmoud",
     "image": "/images/students/أسامة ش-mahmoud.jpg",
     "sort_num": 9,
     "secret_code": "550606",
@@ -2230,14 +2232,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "اسامة ش",
-    "section": "mahmoud"
+    "phone": null
   },
   {
     "id": 182,
+    "name": "محمود س",
     "created_at": "2021-06-10 10:37:19",
     "updated_at": "2025-03-01 11:18:51",
+    "group": "mahmoud",
     "image": "/images/students/محمود س-mahmoud.jpg",
     "sort_num": 5,
     "secret_code": "551414",
@@ -2245,14 +2247,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 1,
-    "phone": null,
-    "username": "محمود س",
-    "section": "mahmoud"
+    "phone": null
   },
   {
     "id": 183,
+    "name": "يمان سل",
     "created_at": "2021-06-10 10:37:43",
     "updated_at": "2025-03-30 12:52:49",
+    "group": "bader",
     "image": "/images/students/يمان سل-mahmoud.jpg",
     "sort_num": 7,
     "secret_code": "550909",
@@ -2260,14 +2262,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "يمان سل",
-    "section": "bader"
+    "phone": null
   },
   {
     "id": 184,
+    "name": "ابراهيم س",
     "created_at": "2021-06-10 10:38:00",
     "updated_at": "2024-11-02 17:14:37",
+    "group": "mahmoud",
     "image": "/default_student_image.png",
     "sort_num": 40,
     "secret_code": "553030",
@@ -2275,14 +2277,14 @@
     "idle": 1,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "ابراهيم س",
-    "section": "mahmoud"
+    "phone": null
   },
   {
     "id": 185,
+    "name": "يمان سم",
     "created_at": "2021-06-10 10:39:06",
     "updated_at": "2025-02-24 17:13:46",
+    "group": "mahmoud",
     "image": "/images/students/يمان سم-mahmoud.jpg",
     "sort_num": 18,
     "secret_code": "551818",
@@ -2290,14 +2292,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "يمان سم",
-    "section": "mahmoud"
+    "phone": null
   },
   {
     "id": 186,
+    "name": "محمد الل",
     "created_at": "2021-06-10 10:39:56",
     "updated_at": "2024-12-14 12:38:32",
+    "group": "mahmoud",
     "image": "/images/students/محمد الل-mahmoud.jpg",
     "sort_num": 20,
     "secret_code": "552121",
@@ -2305,14 +2307,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "محمد الل",
-    "section": "mahmoud"
+    "phone": null
   },
   {
     "id": 187,
+    "name": "اواب شح",
     "created_at": "2021-06-10 10:40:17",
     "updated_at": "2024-11-02 11:23:38",
+    "group": "mahmoud",
     "image": "/images/students/أواب شح-mahmoud.jpg",
     "sort_num": 40,
     "secret_code": "551212",
@@ -2320,14 +2322,14 @@
     "idle": 1,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "اواب شح",
-    "section": "mahmoud"
+    "phone": null
   },
   {
     "id": 188,
+    "name": "انس الر",
     "created_at": "2021-06-10 10:40:32",
     "updated_at": "2025-03-08 10:48:23",
+    "group": "mahmoud",
     "image": "/images/students/أنس الر-mahmoud.jpg",
     "sort_num": 22,
     "secret_code": "550303",
@@ -2335,14 +2337,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "انس الر",
-    "section": "mahmoud"
+    "phone": null
   },
   {
     "id": 189,
+    "name": "عبد الكريم",
     "created_at": "2021-06-10 10:40:50",
     "updated_at": "2024-11-02 17:14:11",
+    "group": "mahmoud",
     "image": "/images/students/عبد الكريم-mahmoud.jpg",
     "sort_num": 40,
     "secret_code": "552626",
@@ -2350,14 +2352,14 @@
     "idle": 1,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "عبد الكريم",
-    "section": "mahmoud"
+    "phone": null
   },
   {
     "id": 190,
+    "name": "كريم ش",
     "created_at": "2021-06-10 10:41:04",
     "updated_at": "2025-03-08 10:43:20",
+    "group": "mahmoud",
     "image": "/images/students/كريم ش-mahmoud.jpg",
     "sort_num": 14,
     "secret_code": "551919",
@@ -2365,14 +2367,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "كريم ش",
-    "section": "mahmoud"
+    "phone": null
   },
   {
     "id": 191,
+    "name": "حمزة ش",
     "created_at": "2021-06-10 10:41:20",
     "updated_at": "2025-03-26 13:53:38",
+    "group": "mahmoud",
     "image": "/images/students/حمزة ش-mahmoud.jpg",
     "sort_num": 23,
     "secret_code": "550202",
@@ -2380,14 +2382,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "حمزة ش",
-    "section": "mahmoud"
+    "phone": null
   },
   {
     "id": 192,
+    "name": "بدر م",
     "created_at": "2021-06-10 10:41:43",
     "updated_at": "2025-03-16 01:47:51",
+    "group": "bader",
     "image": "/images/students/بدر م-mahmoud.jpg",
     "sort_num": 2,
     "secret_code": "551010",
@@ -2395,14 +2397,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "بدر م",
-    "section": "bader"
+    "phone": null
   },
   {
     "id": 193,
+    "name": "ياسين",
     "created_at": "2021-06-10 10:41:57",
     "updated_at": "2025-03-08 10:39:43",
+    "group": "mahmoud",
     "image": "/images/students/ياسين-mahmoud.jpg",
     "sort_num": 10,
     "secret_code": "552525",
@@ -2410,14 +2412,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "ياسين",
-    "section": "mahmoud"
+    "phone": null
   },
   {
     "id": 194,
+    "name": "محمد الع",
     "created_at": "2021-06-10 13:01:52",
     "updated_at": "2024-12-16 17:00:53",
+    "group": "dubai-omar",
     "image": "/images/students/محمد الع-mahmoud.jpg",
     "sort_num": 8,
     "secret_code": "551616",
@@ -2425,14 +2427,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "محمد الع",
-    "section": "dubai-omar"
+    "phone": null
   },
   {
     "id": 195,
+    "name": "مهند الع",
     "created_at": "2021-06-10 13:02:58",
     "updated_at": "2025-02-23 13:32:56",
+    "group": "dubai-omar",
     "image": "/images/students/مهند الع-mahmoud.jpg",
     "sort_num": 5,
     "secret_code": "552424",
@@ -2440,14 +2442,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "مهند الع",
-    "section": "dubai-omar"
+    "phone": null
   },
   {
     "id": 197,
+    "name": "خالد ص",
     "created_at": "2021-06-10 13:05:21",
     "updated_at": "2025-03-01 11:37:17",
+    "group": "mahmoud",
     "image": "/images/students/خالد ص-mahmoud.jpg",
     "sort_num": 1,
     "secret_code": "551717",
@@ -2455,14 +2457,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 1,
-    "phone": null,
-    "username": "خالد ص",
-    "section": "mahmoud"
+    "phone": null
   },
   {
     "id": 198,
+    "name": "كمال ع",
     "created_at": "2021-06-10 13:06:13",
     "updated_at": "2025-03-13 15:01:38",
+    "group": "mahmoud",
     "image": "/images/students/كمال ع-mahmoud.jpg",
     "sort_num": 11,
     "secret_code": "550707",
@@ -2470,14 +2472,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 1,
-    "phone": null,
-    "username": "كمال ع",
-    "section": "mahmoud"
+    "phone": null
   },
   {
     "id": 199,
+    "name": "ابراهيم بر",
     "created_at": "2021-06-10 13:07:03",
     "updated_at": "2025-03-08 12:14:08",
+    "group": "mahmoud",
     "image": "/images/students/ابراهيم بر-mahmoud.jpg",
     "sort_num": 8,
     "secret_code": "552323",
@@ -2485,14 +2487,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "ابراهيم بر",
-    "section": "mahmoud"
+    "phone": null
   },
   {
     "id": 200,
+    "name": "عامر ع",
     "created_at": "2021-06-10 13:07:56",
     "updated_at": "2025-03-08 11:10:40",
+    "group": "mahmoud",
     "image": "/images/students/عامر ع-mahmoud.jpg",
     "sort_num": 24,
     "secret_code": "123456",
@@ -2500,14 +2502,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "عامر ع",
-    "section": "mahmoud"
+    "phone": null
   },
   {
     "id": 201,
+    "name": "عبد الرحمن سق",
     "created_at": "2021-06-10 13:09:00",
     "updated_at": "2024-11-02 17:13:42",
+    "group": "mahmoud",
     "image": "/images/students/عبد الرحمن سق-mahmoud.jpg",
     "sort_num": 40,
     "secret_code": "551515",
@@ -2515,14 +2517,14 @@
     "idle": 1,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "عبد الرحمن سق",
-    "section": "mahmoud"
+    "phone": null
   },
   {
     "id": 202,
+    "name": "عبد الرحمن دق",
     "created_at": "2021-06-10 13:09:42",
     "updated_at": "2025-03-09 20:30:33",
+    "group": "mahmoud",
     "image": "/images/students/عبد الرحمن دق-mahmoud.jpg",
     "sort_num": 3,
     "secret_code": "552020",
@@ -2530,14 +2532,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "عبد الرحمن دق",
-    "section": "mahmoud"
+    "phone": null
   },
   {
     "id": 203,
+    "name": "هيثم سبي",
     "created_at": "2021-06-10 13:10:14",
     "updated_at": "2024-12-01 23:29:48",
+    "group": "mahmoud",
     "image": "/images/students/هيثم سبي-mahmoud.jpg",
     "sort_num": 4,
     "secret_code": "551111",
@@ -2545,14 +2547,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 1,
-    "phone": null,
-    "username": "هيثم سبي",
-    "section": "mahmoud"
+    "phone": null
   },
   {
     "id": 204,
+    "name": "كرم نش",
     "created_at": "2021-06-10 13:10:55",
     "updated_at": "2025-03-16 01:48:25",
+    "group": "mahmoud",
     "image": "/images/students/كرم نش-mahmoud.jpg",
     "sort_num": 17,
     "secret_code": "552222",
@@ -2560,14 +2562,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 1,
-    "phone": null,
-    "username": "كرم نش",
-    "section": "mahmoud"
+    "phone": null
   },
   {
     "id": 205,
+    "name": "زيد حم",
     "created_at": "2021-06-10 13:11:31",
     "updated_at": "2025-03-08 12:19:30",
+    "group": "mahmoud",
     "image": "/images/students/زيد حم-mahmoud.jpg",
     "sort_num": 21,
     "secret_code": "550101",
@@ -2575,14 +2577,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 1,
-    "phone": null,
-    "username": "زيد حم",
-    "section": "mahmoud"
+    "phone": null
   },
   {
     "id": 206,
+    "name": "زيد وت",
     "created_at": "2021-06-10 13:12:00",
     "updated_at": "2022-10-28 20:31:57",
+    "group": "other",
     "image": "/images/students/زيد وت-mahmoud.jpg",
     "sort_num": 35,
     "secret_code": "553535",
@@ -2590,14 +2592,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "زيد وت",
-    "section": "other"
+    "phone": null
   },
   {
     "id": 207,
+    "name": "زيد نائ",
     "created_at": "2021-06-10 13:13:00",
     "updated_at": "2025-03-08 10:43:00",
+    "group": "mahmoud",
     "image": "/images/students/زيد نائ-mahmoud.jpg",
     "sort_num": 16,
     "secret_code": "550505",
@@ -2605,14 +2607,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "زيد نائ",
-    "section": "mahmoud"
+    "phone": null
   },
   {
     "id": 208,
+    "name": "حذيفة",
     "created_at": "2021-06-10 15:46:58",
     "updated_at": "2025-03-13 15:16:36",
+    "group": "omar",
     "image": "/images/students/حذيفة-omar.jpg",
     "sort_num": 7,
     "secret_code": "457312",
@@ -2620,14 +2622,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "حذيفة",
-    "section": "omar"
+    "phone": null
   },
   {
     "id": 209,
+    "name": "نور",
     "created_at": "2021-06-10 15:48:08",
     "updated_at": "2025-01-28 14:21:54",
+    "group": "omar",
     "image": "/images/students/نور-omar.jpg",
     "sort_num": 24,
     "secret_code": "487315",
@@ -2635,14 +2637,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "نور",
-    "section": "omar"
+    "phone": null
   },
   {
     "id": 210,
+    "name": "حمزة",
     "created_at": "2021-06-10 15:48:42",
     "updated_at": "2025-03-30 13:51:40",
+    "group": "omar",
     "image": "/images/students/حمزة-omar.jpg",
     "sort_num": 13,
     "secret_code": "477314",
@@ -2650,14 +2652,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 1,
-    "phone": null,
-    "username": "حمزة",
-    "section": "omar"
+    "phone": null
   },
   {
     "id": 211,
+    "name": "أنس ب",
     "created_at": "2021-06-10 15:49:44",
     "updated_at": "2023-10-14 09:53:58",
+    "group": "omar",
     "image": "/images/students/أنس ب-omar.jpg",
     "sort_num": 35,
     "secret_code": "467313",
@@ -2665,14 +2667,14 @@
     "idle": 1,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "أنس ب",
-    "section": "omar"
+    "phone": null
   },
   {
     "id": 212,
+    "name": "اسامة",
     "created_at": "2021-06-10 15:53:43",
     "updated_at": "2025-03-01 14:01:09",
+    "group": "omar",
     "image": "/images/students/أسامة-omar.jpg",
     "sort_num": 11,
     "secret_code": "577324",
@@ -2680,14 +2682,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 1,
-    "phone": null,
-    "username": "اسامة",
-    "section": "omar"
+    "phone": null
   },
   {
     "id": 213,
+    "name": "خالد د",
     "created_at": "2021-06-10 15:54:19",
     "updated_at": "2025-01-26 12:38:43",
+    "group": "omar",
     "image": "/images/students/خالد د-omar.jpg",
     "sort_num": 33,
     "secret_code": "597326",
@@ -2695,14 +2697,14 @@
     "idle": 1,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "خالد د",
-    "section": "omar"
+    "phone": null
   },
   {
     "id": 214,
+    "name": "أنس حسنين",
     "created_at": "2021-06-10 15:55:09",
     "updated_at": "2023-07-26 15:45:33",
+    "group": "omar",
     "image": "/images/students/أنس حس-omar.jpg",
     "sort_num": 33,
     "secret_code": "497316",
@@ -2710,14 +2712,14 @@
     "idle": 1,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "أنس حسنين",
-    "section": "omar"
+    "phone": null
   },
   {
     "id": 215,
+    "name": "معتز",
     "created_at": "2021-06-10 15:55:33",
     "updated_at": "2025-03-08 11:55:40",
+    "group": "omar",
     "image": "/images/students/معتز-omar.jpg",
     "sort_num": 2,
     "secret_code": "567323",
@@ -2725,14 +2727,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 1,
-    "phone": null,
-    "username": "معتز",
-    "section": "omar"
+    "phone": null
   },
   {
     "id": 216,
+    "name": "وحيد",
     "created_at": "2021-06-10 15:55:54",
     "updated_at": "2025-03-13 15:31:26",
+    "group": "mahmoud",
     "image": "/images/students/وحيد-omar.jpg",
     "sort_num": 15,
     "secret_code": "587325",
@@ -2740,14 +2742,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "وحيد",
-    "section": "mahmoud"
+    "phone": null
   },
   {
     "id": 217,
+    "name": "انس ش",
     "created_at": "2021-06-12 12:10:25",
     "updated_at": "2025-02-27 18:08:17",
+    "group": "omar",
     "image": "/images/students/أنس ش-omar.jpg",
     "sort_num": 20,
     "secret_code": "607327",
@@ -2755,14 +2757,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "انس ش",
-    "section": "omar"
+    "phone": null
   },
   {
     "id": 220,
+    "name": "نائل",
     "created_at": "2021-06-27 15:50:39",
     "updated_at": "2024-08-15 17:31:02",
+    "group": "aasem",
     "image": "/default_student_image.png",
     "sort_num": 12,
     "secret_code": "012211",
@@ -2770,14 +2772,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "نائل",
-    "section": "aasem"
+    "phone": null
   },
   {
     "id": 221,
+    "name": "منير",
     "created_at": "2021-06-27 15:51:29",
     "updated_at": "2025-02-27 16:59:07",
+    "group": "aasem",
     "image": "/default_student_image.png",
     "sort_num": 23,
     "secret_code": "012212",
@@ -2785,14 +2787,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "منير",
-    "section": "aasem"
+    "phone": null
   },
   {
     "id": 222,
+    "name": "راتب",
     "created_at": "2021-07-02 14:50:52",
     "updated_at": "2022-10-29 06:41:22",
+    "group": "zuhair",
     "image": "/images/students/راتب-khaled.jpg",
     "sort_num": 1,
     "secret_code": "443088",
@@ -2800,14 +2802,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "راتب",
-    "section": "zuhair"
+    "phone": null
   },
   {
     "id": 230,
+    "name": "أنس مو",
     "created_at": "2021-07-16 16:33:04",
     "updated_at": "2024-08-13 11:00:46",
+    "group": "omar",
     "image": "/default_student_image.png",
     "sort_num": 38,
     "secret_code": "947344",
@@ -2815,14 +2817,14 @@
     "idle": 1,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "أنس مو",
-    "section": "omar"
+    "phone": null
   },
   {
     "id": 232,
+    "name": "عبدالغني",
     "created_at": "2021-08-01 11:03:34",
     "updated_at": "2024-11-02 11:23:38",
+    "group": "mahmoud",
     "image": "/default_student_image.png",
     "sort_num": 40,
     "secret_code": "553434",
@@ -2830,14 +2832,14 @@
     "idle": 1,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "عبدالغني",
-    "section": "mahmoud"
+    "phone": null
   },
   {
     "id": 234,
+    "name": "محمد يو",
     "created_at": "2021-09-18 13:22:17",
     "updated_at": "2023-10-14 09:54:38",
+    "group": "omar",
     "image": "/images/students/محمد يو-omar.jpg",
     "sort_num": 35,
     "secret_code": "397305",
@@ -2845,14 +2847,14 @@
     "idle": 1,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "محمد يو",
-    "section": "omar"
+    "phone": null
   },
   {
     "id": 237,
+    "name": "ياسر غب",
     "created_at": "2021-11-27 13:41:56",
     "updated_at": "2023-03-04 10:54:04",
+    "group": "yahia",
     "image": "/default_student_image.png",
     "sort_num": 1,
     "secret_code": "622311",
@@ -2860,14 +2862,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "ياسر غب",
-    "section": "yahia"
+    "phone": null
   },
   {
     "id": 239,
+    "name": "احمد ط",
     "created_at": "2021-12-09 18:41:26",
     "updated_at": "2025-03-22 13:57:39",
+    "group": "mahmoud",
     "image": "/default_student_image.png",
     "sort_num": 6,
     "secret_code": "552727",
@@ -2875,14 +2877,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "احمد ط",
-    "section": "mahmoud"
+    "phone": null
   },
   {
     "id": 240,
+    "name": "خالد طر",
     "created_at": "2021-12-11 15:10:42",
     "updated_at": "2025-03-01 11:21:50",
+    "group": "omar",
     "image": "/default_student_image.png",
     "sort_num": 18,
     "secret_code": "557322",
@@ -2890,14 +2892,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "خالد طر",
-    "section": "omar"
+    "phone": null
   },
   {
     "id": 241,
+    "name": "خالد حكيم",
     "created_at": "2021-12-21 08:40:23",
     "updated_at": "2025-03-08 11:40:02",
+    "group": "mahmoud",
     "image": "/default_student_image.png",
     "sort_num": 12,
     "secret_code": "192643",
@@ -2905,14 +2907,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "خالد حكيم",
-    "section": "mahmoud"
+    "phone": null
   },
   {
     "id": 242,
+    "name": "عمر الحكيم",
     "created_at": "2021-12-21 08:40:51",
     "updated_at": "2025-02-22 16:45:15",
+    "group": "motaa",
     "image": "/default_student_image.png",
     "sort_num": 10,
     "secret_code": "868291",
@@ -2920,14 +2922,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "عمر الحكيم",
-    "section": "motaa"
+    "phone": null
   },
   {
     "id": 243,
+    "name": "عبادة حا",
     "created_at": "2022-04-05 14:26:43",
     "updated_at": "2022-11-24 18:19:18",
+    "group": "mmdoh",
     "image": "/default_student_image.png",
     "sort_num": 25,
     "secret_code": "944753",
@@ -2935,14 +2937,14 @@
     "idle": 1,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "عبادة حا",
-    "section": "mmdoh"
+    "phone": null
   },
   {
     "id": 244,
+    "name": "طالب",
     "created_at": "2022-04-13 02:17:16",
     "updated_at": "2022-11-24 21:19:53",
+    "group": "mmdoh",
     "image": "/default_student_image.png",
     "sort_num": 11,
     "secret_code": "935518",
@@ -2950,14 +2952,14 @@
     "idle": 1,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "طالب",
-    "section": "mmdoh"
+    "phone": null
   },
   {
     "id": 245,
+    "name": "اويس",
     "created_at": "2022-06-09 14:17:24",
     "updated_at": "2025-02-22 12:34:07",
+    "group": "bader",
     "image": "/default_student_image.png",
     "sort_num": 3,
     "secret_code": "559867",
@@ -2965,14 +2967,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "اويس",
-    "section": "bader"
+    "phone": null
   },
   {
     "id": 246,
+    "name": "أحمد صبح // معطل",
     "created_at": "2022-06-09 15:37:26",
     "updated_at": "2023-08-21 17:47:21",
+    "group": "aasem",
     "image": "/default_student_image.png",
     "sort_num": 48,
     "secret_code": "123654",
@@ -2980,14 +2982,14 @@
     "idle": 1,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "أحمد صبح // معطل",
-    "section": "aasem"
+    "phone": null
   },
   {
     "id": 247,
+    "name": "زيد",
     "created_at": "2022-06-25 14:45:39",
     "updated_at": "2024-05-25 10:57:46",
+    "group": "obada",
     "image": "/default_student_image.png",
     "sort_num": 34,
     "secret_code": "987687",
@@ -2995,14 +2997,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "زيد",
-    "section": "obada"
+    "phone": null
   },
   {
     "id": 249,
+    "name": "كريم مش",
     "created_at": "2022-06-27 22:47:17",
     "updated_at": "2025-01-25 21:01:31",
+    "group": "motaa",
     "image": "/default_student_image.png",
     "sort_num": 32,
     "secret_code": "444563",
@@ -3010,14 +3012,14 @@
     "idle": 1,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "كريم مش",
-    "section": "motaa"
+    "phone": null
   },
   {
     "id": 250,
+    "name": "هشام مشنوق // معطل",
     "created_at": "2022-06-28 07:04:25",
     "updated_at": "2023-08-21 17:48:02",
+    "group": "aasem",
     "image": "/default_student_image.png",
     "sort_num": 40,
     "secret_code": "112349",
@@ -3025,14 +3027,14 @@
     "idle": 1,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "هشام مشنوق // معطل",
-    "section": "aasem"
+    "phone": null
   },
   {
     "id": 251,
+    "name": "قاسم // معطل",
     "created_at": "2022-06-28 07:19:53",
     "updated_at": "2023-08-21 17:47:48",
+    "group": "aasem",
     "image": "/default_student_image.png",
     "sort_num": 44,
     "secret_code": "113296",
@@ -3040,14 +3042,14 @@
     "idle": 1,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "قاسم // معطل",
-    "section": "aasem"
+    "phone": null
   },
   {
     "id": 252,
+    "name": "عبدالكريم",
     "created_at": "2022-07-02 14:06:30",
     "updated_at": "2025-03-06 14:42:07",
+    "group": "motaa",
     "image": "/default_student_image.png",
     "sort_num": 27,
     "secret_code": "445632",
@@ -3055,14 +3057,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "عبدالكريم",
-    "section": "motaa"
+    "phone": null
   },
   {
     "id": 264,
+    "name": "براء جباري",
     "created_at": "2022-07-20 16:58:45",
     "updated_at": "2024-01-27 14:35:45",
+    "group": "omar",
     "image": "/default_student_image.png",
     "sort_num": 36,
     "secret_code": "996654",
@@ -3070,14 +3072,14 @@
     "idle": 1,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "براء جباري",
-    "section": "omar"
+    "phone": null
   },
   {
     "id": 265,
+    "name": "خالد الص",
     "created_at": "2022-07-21 12:37:51",
     "updated_at": "2024-03-13 14:51:30",
+    "group": "aasem",
     "image": "/default_student_image.png",
     "sort_num": 46,
     "secret_code": "3347",
@@ -3085,14 +3087,14 @@
     "idle": 1,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "خالد الص",
-    "section": "aasem"
+    "phone": null
   },
   {
     "id": 266,
+    "name": "ربيع س",
     "created_at": "2022-07-21 13:17:54",
     "updated_at": "2024-08-15 19:30:06",
+    "group": "aasem",
     "image": "/default_student_image.png",
     "sort_num": 43,
     "secret_code": "635",
@@ -3100,14 +3102,14 @@
     "idle": 1,
     "seventh_rule_flag": 0,
     "on_ijaza": 1,
-    "phone": null,
-    "username": "ربيع س",
-    "section": "aasem"
+    "phone": null
   },
   {
     "id": 269,
+    "name": "إدريس",
     "created_at": "2022-07-27 16:30:09",
     "updated_at": "2024-01-27 14:34:42",
+    "group": "omar",
     "image": "/default_student_image.png",
     "sort_num": 41,
     "secret_code": "56465",
@@ -3115,14 +3117,14 @@
     "idle": 1,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "إدريس",
-    "section": "omar"
+    "phone": null
   },
   {
     "id": 271,
+    "name": "عبادة مولوي",
     "created_at": "2022-09-18 06:56:54",
     "updated_at": "2022-12-03 18:00:50",
+    "group": "awab",
     "image": "/default_student_image.png",
     "sort_num": 1,
     "secret_code": "111111",
@@ -3130,14 +3132,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "عبادة مولوي",
-    "section": "awab"
+    "phone": null
   },
   {
     "id": 272,
+    "name": "عبد القادر",
     "created_at": "2022-10-02 06:42:11",
     "updated_at": "2022-10-29 07:13:42",
+    "group": "kibar",
     "image": "/images/students/ا.عبد القادر-obada.png",
     "sort_num": 1,
     "secret_code": "168315",
@@ -3145,14 +3147,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "عبد القادر",
-    "section": "kibar"
+    "phone": null
   },
   {
     "id": 273,
+    "name": "عبد ح",
     "created_at": "2022-10-03 17:37:20",
     "updated_at": "2022-10-29 07:07:02",
+    "group": "yahia",
     "image": "/default_student_image.png",
     "sort_num": 4,
     "secret_code": "123456",
@@ -3160,14 +3162,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "عبد ح",
-    "section": "yahia"
+    "phone": null
   },
   {
     "id": 274,
+    "name": "عمرو",
     "created_at": "2022-10-03 17:37:57",
     "updated_at": "2022-10-29 07:21:37",
+    "group": "awab",
     "image": "/default_student_image.png",
     "sort_num": 2,
     "secret_code": "244839",
@@ -3175,14 +3177,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "عمرو",
-    "section": "awab"
+    "phone": null
   },
   {
     "id": 275,
+    "name": "زاهر",
     "created_at": "2022-10-03 17:38:22",
     "updated_at": "2022-10-29 07:07:06",
+    "group": "zuhair",
     "image": "/default_student_image.png",
     "sort_num": 3,
     "secret_code": "123456",
@@ -3190,14 +3192,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "زاهر",
-    "section": "zuhair"
+    "phone": null
   },
   {
     "id": 276,
+    "name": "Abd M",
     "created_at": "2022-10-03 17:44:50",
     "updated_at": "2022-10-28 20:31:57",
+    "group": "other",
     "image": "/default_student_image.png",
     "sort_num": 2,
     "secret_code": "123456",
@@ -3205,14 +3207,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "Abd M",
-    "section": "other"
+    "phone": null
   },
   {
     "id": 278,
+    "name": "زيد س",
     "created_at": "2022-10-28 15:21:38",
     "updated_at": "2022-10-28 15:21:38",
+    "group": "awab",
     "image": "/default_student_image.png",
     "sort_num": 2,
     "secret_code": "336353",
@@ -3220,14 +3222,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "زيد س",
-    "section": "awab"
+    "phone": null
   },
   {
     "id": 279,
+    "name": "عبدو عابدين",
     "created_at": "2022-10-28 15:21:38",
     "updated_at": "2023-11-04 14:53:00",
+    "group": "awab",
     "image": "/default_student_image.png",
     "sort_num": 3,
     "secret_code": "499389",
@@ -3235,14 +3237,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "عبدو عابدين",
-    "section": "awab"
+    "phone": null
   },
   {
     "id": 280,
+    "name": "أويس م",
     "created_at": "2022-10-28 15:21:38",
     "updated_at": "2022-10-28 15:21:38",
+    "group": "awab",
     "image": "/default_student_image.png",
     "sort_num": 4,
     "secret_code": "556777",
@@ -3250,14 +3252,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "أويس م",
-    "section": "awab"
+    "phone": null
   },
   {
     "id": 281,
+    "name": "أحمد ع",
     "created_at": "2022-10-28 15:21:38",
     "updated_at": "2022-10-28 15:21:38",
+    "group": "awab",
     "image": "/default_student_image.png",
     "sort_num": 5,
     "secret_code": "390316",
@@ -3265,14 +3267,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "أحمد ع",
-    "section": "awab"
+    "phone": null
   },
   {
     "id": 282,
+    "name": "ياسر غم",
     "created_at": "2022-10-28 15:21:38",
     "updated_at": "2022-11-06 19:27:19",
+    "group": "awab",
     "image": "/default_student_image.png",
     "sort_num": 7,
     "secret_code": "564298",
@@ -3280,14 +3282,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "ياسر غم",
-    "section": "awab"
+    "phone": null
   },
   {
     "id": 283,
+    "name": "بشر ص",
     "created_at": "2022-10-28 15:21:38",
     "updated_at": "2022-10-28 15:21:38",
+    "group": "awab",
     "image": "/default_student_image.png",
     "sort_num": 8,
     "secret_code": "798273",
@@ -3295,14 +3297,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "بشر ص",
-    "section": "awab"
+    "phone": null
   },
   {
     "id": 284,
+    "name": "معاذ",
     "created_at": "2022-10-28 15:21:38",
     "updated_at": "2022-10-28 15:21:38",
+    "group": "zuhair",
     "image": "/default_student_image.png",
     "sort_num": 3,
     "secret_code": "240437",
@@ -3310,14 +3312,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "معاذ",
-    "section": "zuhair"
+    "phone": null
   },
   {
     "id": 285,
+    "name": "زهير",
     "created_at": "2022-10-28 15:21:38",
     "updated_at": "2022-11-23 16:18:51",
+    "group": "zuhair",
     "image": "/default_student_image.png",
     "sort_num": 4,
     "secret_code": "789143",
@@ -3325,14 +3327,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "زهير",
-    "section": "zuhair"
+    "phone": null
   },
   {
     "id": 286,
+    "name": "ياسر خ",
     "created_at": "2022-10-28 15:21:38",
     "updated_at": "2024-03-13 23:57:23",
+    "group": "zuhair",
     "image": "/default_student_image.png",
     "sort_num": 5,
     "secret_code": "131955",
@@ -3340,14 +3342,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "ياسر خ",
-    "section": "zuhair"
+    "phone": null
   },
   {
     "id": 287,
+    "name": "أزهر",
     "created_at": "2022-10-28 15:21:38",
     "updated_at": "2023-03-24 02:35:32",
+    "group": "zuhair",
     "image": "/default_student_image.png",
     "sort_num": 6,
     "secret_code": "668892",
@@ -3355,14 +3357,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "أزهر",
-    "section": "zuhair"
+    "phone": null
   },
   {
     "id": 288,
+    "name": "حسام",
     "created_at": "2022-10-28 15:21:38",
     "updated_at": "2022-10-28 15:21:38",
+    "group": "zuhair",
     "image": "/default_student_image.png",
     "sort_num": 7,
     "secret_code": "485615",
@@ -3370,14 +3372,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "حسام",
-    "section": "zuhair"
+    "phone": null
   },
   {
     "id": 289,
+    "name": "أنس ع",
     "created_at": "2022-10-28 15:21:38",
     "updated_at": "2022-10-28 15:21:38",
+    "group": "zuhair",
     "image": "/default_student_image.png",
     "sort_num": 8,
     "secret_code": "835775",
@@ -3385,14 +3387,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "أنس ع",
-    "section": "zuhair"
+    "phone": null
   },
   {
     "id": 290,
+    "name": "أنس ح",
     "created_at": "2022-10-28 15:21:38",
     "updated_at": "2022-10-28 15:21:38",
+    "group": "zuhair",
     "image": "/default_student_image.png",
     "sort_num": 9,
     "secret_code": "692790",
@@ -3400,14 +3402,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "أنس ح",
-    "section": "zuhair"
+    "phone": null
   },
   {
     "id": 291,
+    "name": "محمد ف",
     "created_at": "2022-10-28 15:21:38",
     "updated_at": "2022-10-28 15:21:38",
+    "group": "zuhair",
     "image": "/default_student_image.png",
     "sort_num": 10,
     "secret_code": "870948",
@@ -3415,14 +3417,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "محمد ف",
-    "section": "zuhair"
+    "phone": null
   },
   {
     "id": 292,
+    "name": "رضوان",
     "created_at": "2022-10-28 15:21:38",
     "updated_at": "2022-10-28 15:21:38",
+    "group": "zuhair",
     "image": "/default_student_image.png",
     "sort_num": 11,
     "secret_code": "159005",
@@ -3430,14 +3432,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "رضوان",
-    "section": "zuhair"
+    "phone": null
   },
   {
     "id": 293,
+    "name": "أحمد ع",
     "created_at": "2022-10-28 15:21:38",
     "updated_at": "2022-10-28 15:21:38",
+    "group": "yahia",
     "image": "/default_student_image.png",
     "sort_num": 1,
     "secret_code": "978456",
@@ -3445,14 +3447,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "أحمد ع",
-    "section": "yahia"
+    "phone": null
   },
   {
     "id": 294,
+    "name": "داني 1",
     "created_at": "2022-10-28 15:21:38",
     "updated_at": "2024-09-25 19:41:51",
+    "group": "kibar",
     "image": "/default_student_image.png",
     "sort_num": 2,
     "secret_code": "746945",
@@ -3460,14 +3462,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "داني 1",
-    "section": "kibar"
+    "phone": null
   },
   {
     "id": 295,
+    "name": "طارق",
     "created_at": "2022-10-28 15:21:38",
     "updated_at": "2022-10-28 15:21:38",
+    "group": "kibar",
     "image": "/default_student_image.png",
     "sort_num": 3,
     "secret_code": "345344",
@@ -3475,14 +3477,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "طارق",
-    "section": "kibar"
+    "phone": null
   },
   {
     "id": 296,
+    "name": "عمر",
     "created_at": "2022-10-28 15:21:38",
     "updated_at": "2022-10-28 15:21:38",
+    "group": "kibar",
     "image": "/default_student_image.png",
     "sort_num": 4,
     "secret_code": "984456",
@@ -3490,14 +3492,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "عمر",
-    "section": "kibar"
+    "phone": null
   },
   {
     "id": 297,
+    "name": "بشر",
     "created_at": "2022-10-28 15:21:38",
     "updated_at": "2022-10-28 15:21:38",
+    "group": "kibar",
     "image": "/default_student_image.png",
     "sort_num": 5,
     "secret_code": "625485",
@@ -3505,14 +3507,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "بشر",
-    "section": "kibar"
+    "phone": null
   },
   {
     "id": 298,
+    "name": "أمير",
     "created_at": "2022-11-03 18:09:44",
     "updated_at": "2022-11-03 18:09:44",
+    "group": "awab",
     "image": "/default_student_image.png",
     "sort_num": 1,
     "secret_code": "654321",
@@ -3520,14 +3522,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "أمير",
-    "section": "awab"
+    "phone": null
   },
   {
     "id": 299,
+    "name": "أواب",
     "created_at": "2022-11-03 20:25:05",
     "updated_at": "2022-11-03 20:25:05",
+    "group": "awab",
     "image": "/default_student_image.png",
     "sort_num": 3,
     "secret_code": "801801",
@@ -3535,14 +3537,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "أواب",
-    "section": "awab"
+    "phone": null
   },
   {
     "id": 300,
+    "name": "كنان",
     "created_at": "2022-11-04 09:15:45",
     "updated_at": "2024-08-21 21:58:34",
+    "group": "other",
     "image": "/default_student_image.png",
     "sort_num": 1,
     "secret_code": "987654",
@@ -3550,14 +3552,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "كنان",
-    "section": "other"
+    "phone": null
   },
   {
     "id": 301,
+    "name": "أحمد قصار",
     "created_at": "2022-11-04 18:43:54",
     "updated_at": "2025-02-17 04:29:55",
+    "group": "awab",
     "image": "/default_student_image.png",
     "sort_num": 22,
     "secret_code": "255653",
@@ -3565,14 +3567,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "أحمد قصار",
-    "section": "awab"
+    "phone": null
   },
   {
     "id": 302,
+    "name": "ياسردياب",
     "created_at": "2022-11-05 09:56:22",
     "updated_at": "2022-11-05 09:56:22",
+    "group": "zuhair",
     "image": "/default_student_image.png",
     "sort_num": 22,
     "secret_code": "801864",
@@ -3580,14 +3582,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "ياسردياب",
-    "section": "zuhair"
+    "phone": null
   },
   {
     "id": 303,
+    "name": "ياسين",
     "created_at": "2022-11-23 04:14:41",
     "updated_at": "2022-12-17 16:26:56",
+    "group": "yahia",
     "image": "/default_student_image.png",
     "sort_num": 10,
     "secret_code": "851995",
@@ -3595,14 +3597,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "ياسين",
-    "section": "yahia"
+    "phone": null
   },
   {
     "id": 304,
+    "name": "يوسف",
     "created_at": "2022-11-23 16:06:52",
     "updated_at": "2024-12-15 16:08:03",
+    "group": "dubai-omar",
     "image": "/default_student_image.png",
     "sort_num": 9,
     "secret_code": "138574",
@@ -3610,14 +3612,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "يوسف",
-    "section": "dubai-omar"
+    "phone": null
   },
   {
     "id": 305,
+    "name": "زيد ح",
     "created_at": "2022-11-23 16:08:12",
     "updated_at": "2025-02-23 14:24:25",
+    "group": "dubai-omar",
     "image": "/default_student_image.png",
     "sort_num": 3,
     "secret_code": "238459",
@@ -3625,14 +3627,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "زيد ح",
-    "section": "dubai-omar"
+    "phone": null
   },
   {
     "id": 306,
+    "name": "زيد اد",
     "created_at": "2022-11-23 16:10:24",
     "updated_at": "2025-03-02 12:53:13",
+    "group": "dubai-omar",
     "image": "/default_student_image.png",
     "sort_num": 6,
     "secret_code": "239575",
@@ -3640,14 +3642,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "زيد اد",
-    "section": "dubai-omar"
+    "phone": null
   },
   {
     "id": 307,
+    "name": "قيس",
     "created_at": "2022-11-23 16:11:21",
     "updated_at": "2025-02-16 13:41:56",
+    "group": "dubai-omar",
     "image": "/default_student_image.png",
     "sort_num": 10,
     "secret_code": "49674",
@@ -3655,14 +3657,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "قيس",
-    "section": "dubai-omar"
+    "phone": null
   },
   {
     "id": 308,
+    "name": "أحمد عقاد",
     "created_at": "2022-11-23 16:12:00",
     "updated_at": "2025-02-16 14:20:24",
+    "group": "dubai-omar",
     "image": "/default_student_image.png",
     "sort_num": 11,
     "secret_code": "58689",
@@ -3670,14 +3672,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "أحمد عقاد",
-    "section": "dubai-omar"
+    "phone": null
   },
   {
     "id": 309,
+    "name": "مصطفى",
     "created_at": "2022-11-23 16:12:52",
     "updated_at": "2025-03-16 13:22:42",
+    "group": "dubai-omar",
     "image": "/default_student_image.png",
     "sort_num": 1,
     "secret_code": "205868",
@@ -3685,14 +3687,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "مصطفى",
-    "section": "dubai-omar"
+    "phone": null
   },
   {
     "id": 310,
+    "name": "رؤوف",
     "created_at": "2022-11-23 16:13:57",
     "updated_at": "2025-02-09 15:00:43",
+    "group": "dubai-omar",
     "image": "/default_student_image.png",
     "sort_num": 7,
     "secret_code": "298975",
@@ -3700,14 +3702,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "رؤوف",
-    "section": "dubai-omar"
+    "phone": null
   },
   {
     "id": 311,
+    "name": "مؤمن عناية",
     "created_at": "2022-11-24 02:47:08",
     "updated_at": "2023-03-24 13:39:52",
+    "group": "yahia",
     "image": "/default_student_image.png",
     "sort_num": 6,
     "secret_code": "415400",
@@ -3715,14 +3717,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "مؤمن عناية",
-    "section": "yahia"
+    "phone": null
   },
   {
     "id": 312,
+    "name": "غيث س",
     "created_at": "2022-11-27 10:45:23",
     "updated_at": "2022-11-27 10:45:23",
+    "group": "zuhair",
     "image": "/default_student_image.png",
     "sort_num": 2,
     "secret_code": "234567",
@@ -3730,14 +3732,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "غيث س",
-    "section": "zuhair"
+    "phone": null
   },
   {
     "id": 313,
+    "name": "عمر س",
     "created_at": "2022-12-03 17:36:42",
     "updated_at": "2024-06-06 17:29:31",
+    "group": "dubai-omar",
     "image": "/default_student_image.png",
     "sort_num": 20,
     "secret_code": "1001",
@@ -3745,14 +3747,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "عمر س",
-    "section": "dubai-omar"
+    "phone": null
   },
   {
     "id": 314,
+    "name": "عمر ن",
     "created_at": "2022-12-03 17:52:04",
     "updated_at": "2025-03-08 13:36:12",
+    "group": "dubai-omar",
     "image": "/default_student_image.png",
     "sort_num": 21,
     "secret_code": "1002",
@@ -3760,14 +3762,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "عمر ن",
-    "section": "dubai-omar"
+    "phone": null
   },
   {
     "id": 316,
+    "name": "عبادة قب",
     "created_at": "2022-12-03 18:07:59",
     "updated_at": "2023-12-02 17:41:33",
+    "group": "awab",
     "image": "/default_student_image.png",
     "sort_num": 2,
     "secret_code": "1122",
@@ -3775,14 +3777,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "عبادة قب",
-    "section": "awab"
+    "phone": null
   },
   {
     "id": 317,
+    "name": "بشر // معطل",
     "created_at": "2022-12-03 18:12:54",
     "updated_at": "2023-08-21 17:47:35",
+    "group": "aasem",
     "image": "/default_student_image.png",
     "sort_num": 45,
     "secret_code": "1004",
@@ -3790,14 +3792,14 @@
     "idle": 1,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "بشر // معطل",
-    "section": "aasem"
+    "phone": null
   },
   {
     "id": 318,
+    "name": "حسام",
     "created_at": "2023-01-15 07:42:10",
     "updated_at": "2023-12-21 15:59:17",
+    "group": "yahia",
     "image": "/default_student_image.png",
     "sort_num": 2,
     "secret_code": "825428",
@@ -3805,14 +3807,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "حسام",
-    "section": "yahia"
+    "phone": null
   },
   {
     "id": 319,
+    "name": "عمرو عقاد ش",
     "created_at": "2023-01-15 17:11:21",
     "updated_at": "2025-01-29 13:08:12",
+    "group": "yahia",
     "image": "/default_student_image.png",
     "sort_num": 3,
     "secret_code": "335330",
@@ -3820,14 +3822,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "عمرو عقاد ش",
-    "section": "yahia"
+    "phone": null
   },
   {
     "id": 320,
+    "name": "مامون",
     "created_at": "2023-01-29 09:23:22",
     "updated_at": "2025-02-23 14:06:14",
+    "group": "dubai-omar",
     "image": "/default_student_image.png",
     "sort_num": 2,
     "secret_code": "456438",
@@ -3835,14 +3837,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "مامون",
-    "section": "dubai-omar"
+    "phone": null
   },
   {
     "id": 321,
+    "name": "وسيم",
     "created_at": "2023-01-29 09:23:41",
     "updated_at": "2023-07-25 18:03:48",
+    "group": "awab",
     "image": "/default_student_image.png",
     "sort_num": 9,
     "secret_code": "784679",
@@ -3850,14 +3852,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "وسيم",
-    "section": "awab"
+    "phone": null
   },
   {
     "id": 322,
+    "name": "أسامة الكسم",
     "created_at": "2023-02-07 17:56:55",
     "updated_at": "2024-04-26 09:08:30",
+    "group": "yahia",
     "image": "/default_student_image.png",
     "sort_num": 6,
     "secret_code": "909065",
@@ -3865,14 +3867,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "أسامة الكسم",
-    "section": "yahia"
+    "phone": null
   },
   {
     "id": 323,
+    "name": "عبد جيرودية",
     "created_at": "2023-02-11 16:51:48",
     "updated_at": "2023-02-11 16:51:48",
+    "group": "yahia",
     "image": "/default_student_image.png",
     "sort_num": 3,
     "secret_code": "116585",
@@ -3880,14 +3882,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "عبد جيرودية",
-    "section": "yahia"
+    "phone": null
   },
   {
     "id": 324,
+    "name": "عبد الله سراج",
     "created_at": "2023-03-23 14:33:09",
     "updated_at": "2023-03-23 14:33:09",
+    "group": "khaled",
     "image": "/default_student_image.png",
     "sort_num": 16,
     "secret_code": "232669",
@@ -3895,14 +3897,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "عبد الله سراج",
-    "section": "khaled"
+    "phone": null
   },
   {
     "id": 325,
+    "name": "اسامة الدقر",
     "created_at": "2023-03-23 22:14:20",
     "updated_at": "2023-03-23 22:14:20",
+    "group": "yahia",
     "image": "/default_student_image.png",
     "sort_num": 15,
     "secret_code": "423920",
@@ -3910,14 +3912,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "اسامة الدقر",
-    "section": "yahia"
+    "phone": null
   },
   {
     "id": 326,
+    "name": "يحيى ت",
     "created_at": "2023-03-23 22:22:46",
     "updated_at": "2023-03-23 22:22:46",
+    "group": "awab",
     "image": "/default_student_image.png",
     "sort_num": 1,
     "secret_code": "202020",
@@ -3925,14 +3927,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "يحيى ت",
-    "section": "awab"
+    "phone": null
   },
   {
     "id": 327,
+    "name": "محمد حجازي",
     "created_at": "2023-03-24 02:25:43",
     "updated_at": "2023-03-24 02:25:43",
+    "group": "yahia",
     "image": "/default_student_image.png",
     "sort_num": 14,
     "secret_code": "236987",
@@ -3940,14 +3942,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "محمد حجازي",
-    "section": "yahia"
+    "phone": null
   },
   {
     "id": 329,
+    "name": "محمد جاجة",
     "created_at": "2023-03-24 16:51:03",
     "updated_at": "2023-04-02 03:35:21",
+    "group": "awab",
     "image": "/default_student_image.png",
     "sort_num": 10,
     "secret_code": "434393",
@@ -3955,14 +3957,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "محمد جاجة",
-    "section": "awab"
+    "phone": null
   },
   {
     "id": 330,
+    "name": "حمزة سراج",
     "created_at": "2023-03-25 11:03:02",
     "updated_at": "2023-03-25 11:03:02",
+    "group": "zuhair",
     "image": "/default_student_image.png",
     "sort_num": 12,
     "secret_code": "694411",
@@ -3970,14 +3972,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "حمزة سراج",
-    "section": "zuhair"
+    "phone": null
   },
   {
     "id": 331,
+    "name": "أحمد ر",
     "created_at": "2023-03-25 20:10:11",
     "updated_at": "2025-03-08 13:19:03",
+    "group": "dubai-omar",
     "image": "/default_student_image.png",
     "sort_num": 23,
     "secret_code": "47658",
@@ -3985,14 +3987,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "أحمد ر",
-    "section": "dubai-omar"
+    "phone": null
   },
   {
     "id": 332,
+    "name": "محمد ق",
     "created_at": "2023-03-25 20:10:48",
     "updated_at": "2024-11-09 17:09:09",
+    "group": "dubai-omar",
     "image": "/default_student_image.png",
     "sort_num": 24,
     "secret_code": "58609",
@@ -4000,14 +4002,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "محمد ق",
-    "section": "dubai-omar"
+    "phone": null
   },
   {
     "id": 334,
+    "name": "عبادة ح",
     "created_at": "2023-03-25 20:11:47",
     "updated_at": "2025-01-04 10:52:37",
+    "group": "dubai-omar",
     "image": "/default_student_image.png",
     "sort_num": 26,
     "secret_code": "43890",
@@ -4015,14 +4017,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "عبادة ح",
-    "section": "dubai-omar"
+    "phone": null
   },
   {
     "id": 335,
+    "name": "مظهر",
     "created_at": "2023-03-25 20:12:14",
     "updated_at": "2025-01-18 17:40:10",
+    "group": "dubai-omar",
     "image": "/default_student_image.png",
     "sort_num": 27,
     "secret_code": "53707",
@@ -4030,14 +4032,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "مظهر",
-    "section": "dubai-omar"
+    "phone": null
   },
   {
     "id": 336,
+    "name": "عبد الرحمن شرف",
     "created_at": "2023-03-26 08:18:30",
     "updated_at": "2023-03-26 08:18:30",
+    "group": "yahia",
     "image": "/default_student_image.png",
     "sort_num": 5,
     "secret_code": "28249",
@@ -4045,14 +4047,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "عبد الرحمن شرف",
-    "section": "yahia"
+    "phone": null
   },
   {
     "id": 337,
+    "name": "صالح",
     "created_at": "2023-03-26 13:05:51",
     "updated_at": "2023-03-26 13:05:51",
+    "group": "yahia",
     "image": "/default_student_image.png",
     "sort_num": 2,
     "secret_code": "2323",
@@ -4060,14 +4062,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "صالح",
-    "section": "yahia"
+    "phone": null
   },
   {
     "id": 338,
+    "name": "عمار ف",
     "created_at": "2023-03-26 14:37:42",
     "updated_at": "2023-06-07 19:00:15",
+    "group": "zuhair",
     "image": "/default_student_image.png",
     "sort_num": 20,
     "secret_code": "9898",
@@ -4075,14 +4077,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "عمار ف",
-    "section": "zuhair"
+    "phone": null
   },
   {
     "id": 339,
+    "name": "عبد الرحمن حافظ",
     "created_at": "2023-03-27 12:16:00",
     "updated_at": "2023-03-27 12:16:00",
+    "group": "yahia",
     "image": "/default_student_image.png",
     "sort_num": 3,
     "secret_code": "963236",
@@ -4090,14 +4092,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "عبد الرحمن حافظ",
-    "section": "yahia"
+    "phone": null
   },
   {
     "id": 340,
+    "name": "علاء",
     "created_at": "2023-03-27 14:25:51",
     "updated_at": "2023-03-27 14:25:51",
+    "group": "zuhair",
     "image": "/default_student_image.png",
     "sort_num": 22,
     "secret_code": "9009",
@@ -4105,14 +4107,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "علاء",
-    "section": "zuhair"
+    "phone": null
   },
   {
     "id": 341,
+    "name": "يحيى",
     "created_at": "2023-03-29 07:13:49",
     "updated_at": "2023-03-29 07:13:49",
+    "group": "yahia",
     "image": "/default_student_image.png",
     "sort_num": 6,
     "secret_code": "336659",
@@ -4120,14 +4122,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "يحيى",
-    "section": "yahia"
+    "phone": null
   },
   {
     "id": 343,
+    "name": "سعيد",
     "created_at": "2023-03-29 10:19:35",
     "updated_at": "2023-03-29 10:19:35",
+    "group": "yahia",
     "image": "/default_student_image.png",
     "sort_num": 6,
     "secret_code": "775586",
@@ -4135,14 +4137,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "سعيد",
-    "section": "yahia"
+    "phone": null
   },
   {
     "id": 344,
+    "name": "غيث",
     "created_at": "2023-04-05 07:04:30",
     "updated_at": "2023-04-05 07:04:30",
+    "group": "yahia",
     "image": "/default_student_image.png",
     "sort_num": 7,
     "secret_code": "486684",
@@ -4150,14 +4152,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "غيث",
-    "section": "yahia"
+    "phone": null
   },
   {
     "id": 345,
+    "name": "زيد ص",
     "created_at": "2023-05-21 05:03:57",
     "updated_at": "2024-11-17 12:13:06",
+    "group": "dubai-omar",
     "image": "/default_student_image.png",
     "sort_num": 11,
     "secret_code": "456380",
@@ -4165,14 +4167,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "زيد ص",
-    "section": "dubai-omar"
+    "phone": null
   },
   {
     "id": 346,
+    "name": "مجد",
     "created_at": "2023-06-06 13:13:56",
     "updated_at": "2025-03-08 11:59:20",
+    "group": "bader",
     "image": "/default_student_image.png",
     "sort_num": 1,
     "secret_code": "559812",
@@ -4180,14 +4182,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 1,
-    "phone": null,
-    "username": "مجد",
-    "section": "bader"
+    "phone": null
   },
   {
     "id": 347,
+    "name": "كريم ف",
     "created_at": "2023-06-06 13:14:20",
     "updated_at": "2025-02-24 04:34:31",
+    "group": "bader",
     "image": "/default_student_image.png",
     "sort_num": 13,
     "secret_code": "552178",
@@ -4195,14 +4197,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "كريم ف",
-    "section": "bader"
+    "phone": null
   },
   {
     "id": 348,
+    "name": "كريم د",
     "created_at": "2023-06-06 13:14:51",
     "updated_at": "2025-02-15 13:33:25",
+    "group": "mahmoud",
     "image": "/default_student_image.png",
     "sort_num": 19,
     "secret_code": "59713",
@@ -4210,14 +4212,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "كريم د",
-    "section": "mahmoud"
+    "phone": null
   },
   {
     "id": 349,
+    "name": "عبادة ر",
     "created_at": "2023-06-06 13:15:14",
     "updated_at": "2025-03-04 17:28:03",
+    "group": "mahmoud",
     "image": "/default_student_image.png",
     "sort_num": 25,
     "secret_code": "598384",
@@ -4225,14 +4227,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "عبادة ر",
-    "section": "mahmoud"
+    "phone": null
   },
   {
     "id": 350,
+    "name": "حمزة م",
     "created_at": "2023-06-06 13:15:42",
     "updated_at": "2025-03-30 12:59:01",
+    "group": "bader",
     "image": "/default_student_image.png",
     "sort_num": 6,
     "secret_code": "59841",
@@ -4240,14 +4242,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "حمزة م",
-    "section": "bader"
+    "phone": null
   },
   {
     "id": 351,
+    "name": "ملاذ",
     "created_at": "2023-06-06 13:16:05",
     "updated_at": "2025-03-08 12:15:00",
+    "group": "bader",
     "image": "/default_student_image.png",
     "sort_num": 11,
     "secret_code": "57946",
@@ -4255,14 +4257,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "ملاذ",
-    "section": "bader"
+    "phone": null
   },
   {
     "id": 352,
+    "name": "احمد ق",
     "created_at": "2023-06-06 13:16:22",
     "updated_at": "2025-02-22 13:08:17",
+    "group": "mahmoud",
     "image": "/default_student_image.png",
     "sort_num": 2,
     "secret_code": "58461",
@@ -4270,14 +4272,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "احمد ق",
-    "section": "mahmoud"
+    "phone": null
   },
   {
     "id": 353,
+    "name": "براء ق",
     "created_at": "2023-06-06 13:16:42",
     "updated_at": "2025-03-11 14:49:06",
+    "group": "bader",
     "image": "/default_student_image.png",
     "sort_num": 10,
     "secret_code": "57933",
@@ -4285,14 +4287,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "براء ق",
-    "section": "bader"
+    "phone": null
   },
   {
     "id": 354,
+    "name": "عبدالحليم",
     "created_at": "2023-06-06 13:17:05",
     "updated_at": "2025-03-09 13:36:02",
+    "group": "bader",
     "image": "/default_student_image.png",
     "sort_num": 4,
     "secret_code": "577991",
@@ -4300,14 +4302,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "عبدالحليم",
-    "section": "bader"
+    "phone": null
   },
   {
     "id": 355,
+    "name": "مصعب",
     "created_at": "2023-06-06 13:17:45",
     "updated_at": "2025-03-15 13:23:55",
+    "group": "bader",
     "image": "/default_student_image.png",
     "sort_num": 5,
     "secret_code": "58266",
@@ -4315,14 +4317,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "مصعب",
-    "section": "bader"
+    "phone": null
   },
   {
     "id": 356,
+    "name": "عمرو ق",
     "created_at": "2023-06-06 13:18:07",
     "updated_at": "2025-03-01 11:17:46",
+    "group": "bader",
     "image": "/default_student_image.png",
     "sort_num": 9,
     "secret_code": "554455",
@@ -4330,14 +4332,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "عمرو ق",
-    "section": "bader"
+    "phone": null
   },
   {
     "id": 357,
+    "name": "عمر سب",
     "created_at": "2023-06-06 13:18:49",
     "updated_at": "2025-02-22 16:28:09",
+    "group": "mahmoud",
     "image": "/default_student_image.png",
     "sort_num": 13,
     "secret_code": "569741",
@@ -4345,14 +4347,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "عمر سب",
-    "section": "mahmoud"
+    "phone": null
   },
   {
     "id": 358,
+    "name": "عمر سي",
     "created_at": "2023-06-06 13:19:14",
     "updated_at": "2024-11-02 17:14:23",
+    "group": "mahmoud",
     "image": "/default_student_image.png",
     "sort_num": 40,
     "secret_code": "597843",
@@ -4360,14 +4362,14 @@
     "idle": 1,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "عمر سي",
-    "section": "mahmoud"
+    "phone": null
   },
   {
     "id": 359,
+    "name": "غياث س",
     "created_at": "2023-06-15 14:39:30",
     "updated_at": "2025-03-09 14:42:46",
+    "group": "bader",
     "image": "/default_student_image.png",
     "sort_num": 12,
     "secret_code": "514789",
@@ -4375,14 +4377,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "غياث س",
-    "section": "bader"
+    "phone": null
   },
   {
     "id": 360,
+    "name": "بشر م",
     "created_at": "2023-06-15 14:39:59",
     "updated_at": "2025-01-25 20:50:43",
+    "group": "mahmoud",
     "image": "/default_student_image.png",
     "sort_num": 40,
     "secret_code": "553694",
@@ -4390,14 +4392,14 @@
     "idle": 1,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "بشر م",
-    "section": "mahmoud"
+    "phone": null
   },
   {
     "id": 361,
+    "name": "عمر ه",
     "created_at": "2023-06-18 16:09:59",
     "updated_at": "2025-03-09 15:29:27",
+    "group": "bader",
     "image": "/default_student_image.png",
     "sort_num": 8,
     "secret_code": "513972",
@@ -4405,14 +4407,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "عمر ه",
-    "section": "bader"
+    "phone": null
   },
   {
     "id": 362,
+    "name": "كنان",
     "created_at": "2023-06-24 13:48:05",
     "updated_at": "2025-01-25 21:01:28",
+    "group": "motaa",
     "image": "/default_student_image.png",
     "sort_num": 154,
     "secret_code": "308102",
@@ -4420,14 +4422,14 @@
     "idle": 1,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "كنان",
-    "section": "motaa"
+    "phone": null
   },
   {
     "id": 363,
+    "name": "بلال حباب",
     "created_at": "2023-06-25 15:15:47",
     "updated_at": "2024-03-15 13:54:48",
+    "group": "aasem",
     "image": "/default_student_image.png",
     "sort_num": 16,
     "secret_code": "443623",
@@ -4435,14 +4437,14 @@
     "idle": 1,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "بلال حباب",
-    "section": "aasem"
+    "phone": null
   },
   {
     "id": 364,
+    "name": "عثمان",
     "created_at": "2023-06-25 15:59:39",
     "updated_at": "2025-03-03 09:08:56",
+    "group": "mahmoud",
     "image": "/default_student_image.png",
     "sort_num": 40,
     "secret_code": "551849",
@@ -4450,14 +4452,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "عثمان",
-    "section": "mahmoud"
+    "phone": null
   },
   {
     "id": 365,
+    "name": "طه نو",
     "created_at": "2023-06-26 16:10:23",
     "updated_at": "2024-08-13 10:22:30",
+    "group": "motaa",
     "image": "/default_student_image.png",
     "sort_num": 33,
     "secret_code": "648658",
@@ -4465,14 +4467,14 @@
     "idle": 1,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "طه نو",
-    "section": "motaa"
+    "phone": null
   },
   {
     "id": 366,
+    "name": "نور ق",
     "created_at": "2023-07-02 14:02:54",
     "updated_at": "2024-03-13 14:52:55",
+    "group": "aasem",
     "image": "/default_student_image.png",
     "sort_num": 42,
     "secret_code": "963365",
@@ -4480,14 +4482,14 @@
     "idle": 1,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "نور ق",
-    "section": "aasem"
+    "phone": null
   },
   {
     "id": 367,
+    "name": "محمد خط",
     "created_at": "2023-07-08 16:07:34",
     "updated_at": "2025-01-27 09:53:01",
+    "group": "omar",
     "image": "/default_student_image.png",
     "sort_num": 34,
     "secret_code": "326159",
@@ -4495,14 +4497,14 @@
     "idle": 1,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "محمد خط",
-    "section": "omar"
+    "phone": null
   },
   {
     "id": 369,
+    "name": "هيثم ز",
     "created_at": "2023-07-09 15:11:31",
     "updated_at": "2024-11-02 11:23:38",
+    "group": "mahmoud",
     "image": "/default_student_image.png",
     "sort_num": 40,
     "secret_code": "553333",
@@ -4510,14 +4512,14 @@
     "idle": 1,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "هيثم ز",
-    "section": "mahmoud"
+    "phone": null
   },
   {
     "id": 370,
+    "name": "هشام مش",
     "created_at": "2023-07-09 17:48:16",
     "updated_at": "2024-08-08 16:29:36",
+    "group": "aasem",
     "image": "/default_student_image.png",
     "sort_num": 47,
     "secret_code": "2003",
@@ -4525,14 +4527,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "هشام مش",
-    "section": "aasem"
+    "phone": null
   },
   {
     "id": 371,
+    "name": "بشر حا",
     "created_at": "2023-07-11 14:13:51",
     "updated_at": "2025-04-05 18:35:12",
+    "group": "dubai-omar",
     "image": "/default_student_image.png",
     "sort_num": 49,
     "secret_code": "123456",
@@ -4540,14 +4542,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "بشر حا",
-    "section": "dubai-omar"
+    "phone": null
   },
   {
     "id": 372,
+    "name": "يمان أ",
     "created_at": "2023-07-13 18:24:38",
     "updated_at": "2024-11-02 11:23:38",
+    "group": "mahmoud",
     "image": "/default_student_image.png",
     "sort_num": 40,
     "secret_code": "559991",
@@ -4555,14 +4557,14 @@
     "idle": 1,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "يمان أ",
-    "section": "mahmoud"
+    "phone": null
   },
   {
     "id": 373,
+    "name": "عبد الرحمن ح",
     "created_at": "2023-07-22 15:21:44",
     "updated_at": "2024-07-13 16:16:20",
+    "group": "omar",
     "image": "/default_student_image.png",
     "sort_num": 6,
     "secret_code": "332145",
@@ -4570,14 +4572,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "عبد الرحمن ح",
-    "section": "omar"
+    "phone": null
   },
   {
     "id": 374,
+    "name": "رياض",
     "created_at": "2023-07-24 16:50:04",
     "updated_at": "2023-08-12 10:53:29",
+    "group": "omar",
     "image": "/default_student_image.png",
     "sort_num": 40,
     "secret_code": "58493",
@@ -4585,14 +4587,14 @@
     "idle": 1,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "رياض",
-    "section": "omar"
+    "phone": null
   },
   {
     "id": 375,
+    "name": "كريم قب",
     "created_at": "2023-07-29 14:46:54",
     "updated_at": "2024-08-13 10:20:04",
+    "group": "motaa",
     "image": "/default_student_image.png",
     "sort_num": 100,
     "secret_code": "357895",
@@ -4600,14 +4602,14 @@
     "idle": 1,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "كريم قب",
-    "section": "motaa"
+    "phone": null
   },
   {
     "id": 376,
+    "name": "فرزت",
     "created_at": "2023-07-31 17:09:30",
     "updated_at": "2023-07-31 17:09:30",
+    "group": "zuhair",
     "image": "/default_student_image.png",
     "sort_num": 30,
     "secret_code": "373442",
@@ -4615,14 +4617,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "فرزت",
-    "section": "zuhair"
+    "phone": null
   },
   {
     "id": 377,
+    "name": "محمد مك",
     "created_at": "2023-07-31 17:10:17",
     "updated_at": "2024-08-13 10:21:33",
+    "group": "motaa",
     "image": "/default_student_image.png",
     "sort_num": 101,
     "secret_code": "951846",
@@ -4630,14 +4632,14 @@
     "idle": 1,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "محمد مك",
-    "section": "motaa"
+    "phone": null
   },
   {
     "id": 379,
+    "name": "ادم فقير",
     "created_at": "2023-08-02 15:50:57",
     "updated_at": "2024-08-13 10:22:28",
+    "group": "motaa",
     "image": "/default_student_image.png",
     "sort_num": 102,
     "secret_code": "101111",
@@ -4645,14 +4647,14 @@
     "idle": 1,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "ادم فقير",
-    "section": "motaa"
+    "phone": null
   },
   {
     "id": 380,
+    "name": "احمد خطيب",
     "created_at": "2023-08-02 15:51:40",
     "updated_at": "2025-01-29 12:55:46",
+    "group": "omar",
     "image": "/default_student_image.png",
     "sort_num": 16,
     "secret_code": "101222",
@@ -4660,14 +4662,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "احمد خطيب",
-    "section": "omar"
+    "phone": null
   },
   {
     "id": 381,
+    "name": "هشام س",
     "created_at": "2023-08-03 13:47:32",
     "updated_at": "2024-11-02 11:23:38",
+    "group": "mahmoud",
     "image": "/default_student_image.png",
     "sort_num": 40,
     "secret_code": "554896",
@@ -4675,14 +4677,14 @@
     "idle": 1,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "هشام س",
-    "section": "mahmoud"
+    "phone": null
   },
   {
     "id": 382,
+    "name": "يحيى ق",
     "created_at": "2023-08-03 16:45:49",
     "updated_at": "2024-08-26 18:17:57",
+    "group": "dubai-omar",
     "image": "/default_student_image.png",
     "sort_num": 12,
     "secret_code": "76321",
@@ -4690,14 +4692,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "يحيى ق",
-    "section": "dubai-omar"
+    "phone": null
   },
   {
     "id": 383,
+    "name": "ضياء ظب",
     "created_at": "2023-08-10 15:33:29",
     "updated_at": "2024-03-13 14:50:55",
+    "group": "aasem",
     "image": "/default_student_image.png",
     "sort_num": 50,
     "secret_code": "1289",
@@ -4705,14 +4707,14 @@
     "idle": 1,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "ضياء ظب",
-    "section": "aasem"
+    "phone": null
   },
   {
     "id": 384,
+    "name": "تميم",
     "created_at": "2023-09-02 08:20:02",
     "updated_at": "2023-09-02 08:20:02",
+    "group": "mmdoh",
     "image": "/default_student_image.png",
     "sort_num": 3,
     "secret_code": "229588",
@@ -4720,14 +4722,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "تميم",
-    "section": "mmdoh"
+    "phone": null
   },
   {
     "id": 385,
+    "name": "محمد الزين",
     "created_at": "2023-09-25 03:24:03",
     "updated_at": "2023-09-25 03:24:03",
+    "group": "yahia",
     "image": "/default_student_image.png",
     "sort_num": 4,
     "secret_code": "353575",
@@ -4735,14 +4737,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "محمد الزين",
-    "section": "yahia"
+    "phone": null
   },
   {
     "id": 386,
+    "name": "جاد عقاد",
     "created_at": "2023-10-14 12:37:14",
     "updated_at": "2025-04-06 08:05:48",
+    "group": "jaddubai",
     "image": "/default_student_image.png",
     "sort_num": 1,
     "secret_code": "657389",
@@ -4750,14 +4752,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "جاد عقاد",
-    "section": "jaddubai"
+    "phone": null
   },
   {
     "id": 387,
+    "name": "عمر كسم",
     "created_at": "2023-10-14 12:38:01",
     "updated_at": "2025-04-06 08:00:28",
+    "group": "jaddubai",
     "image": "/default_student_image.png",
     "sort_num": 2,
     "secret_code": "57498",
@@ -4765,14 +4767,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "عمر كسم",
-    "section": "jaddubai"
+    "phone": null
   },
   {
     "id": 388,
+    "name": "وسيم",
     "created_at": "2023-10-14 12:38:25",
     "updated_at": "2023-11-05 08:03:34",
+    "group": "jaddubai",
     "image": "/default_student_image.png",
     "sort_num": 3,
     "secret_code": "65380",
@@ -4780,14 +4782,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "وسيم",
-    "section": "jaddubai"
+    "phone": null
   },
   {
     "id": 389,
+    "name": "زيد أ",
     "created_at": "2023-10-14 12:39:45",
     "updated_at": "2025-04-06 08:06:04",
+    "group": "jaddubai",
     "image": "/default_student_image.png",
     "sort_num": 3,
     "secret_code": "436096",
@@ -4795,14 +4797,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "زيد أ",
-    "section": "jaddubai"
+    "phone": null
   },
   {
     "id": 390,
+    "name": "فراس",
     "created_at": "2023-10-14 12:53:47",
     "updated_at": "2023-10-14 12:53:47",
+    "group": "yahia",
     "image": "/default_student_image.png",
     "sort_num": 10,
     "secret_code": "986542",
@@ -4810,14 +4812,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "فراس",
-    "section": "yahia"
+    "phone": null
   },
   {
     "id": 391,
+    "name": "خالد قبيطري",
     "created_at": "2023-10-22 05:54:28",
     "updated_at": "2023-10-22 05:54:28",
+    "group": "yahia",
     "image": "/default_student_image.png",
     "sort_num": 10,
     "secret_code": "774565",
@@ -4825,14 +4827,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "خالد قبيطري",
-    "section": "yahia"
+    "phone": null
   },
   {
     "id": 392,
+    "name": "سامر",
     "created_at": "2023-11-19 06:04:53",
     "updated_at": "2025-01-12 07:01:44",
+    "group": "jaddubai",
     "image": "/default_student_image.png",
     "sort_num": 5,
     "secret_code": "98320",
@@ -4840,14 +4842,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "سامر",
-    "section": "jaddubai"
+    "phone": null
   },
   {
     "id": 393,
+    "name": "اسامة ق",
     "created_at": "2024-01-14 17:42:14",
     "updated_at": "2025-02-22 14:42:26",
+    "group": "bader",
     "image": "/default_student_image.png",
     "sort_num": 40,
     "secret_code": "123456",
@@ -4855,14 +4857,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "اسامة ق",
-    "section": "bader"
+    "phone": null
   },
   {
     "id": 394,
+    "name": "احمد ق",
     "created_at": "2024-01-25 15:37:09",
     "updated_at": "2025-03-02 12:47:51",
+    "group": "dubai-omar",
     "image": "/default_student_image.png",
     "sort_num": 30,
     "secret_code": "234875",
@@ -4870,14 +4872,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "احمد ق",
-    "section": "dubai-omar"
+    "phone": null
   },
   {
     "id": 395,
+    "name": "غيث سبيعي 2",
     "created_at": "2024-02-16 14:48:48",
     "updated_at": "2024-02-16 14:48:48",
+    "group": "zuhair",
     "image": "/default_student_image.png",
     "sort_num": 25,
     "secret_code": "852654",
@@ -4885,14 +4887,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "غيث سبيعي 2",
-    "section": "zuhair"
+    "phone": null
   },
   {
     "id": 396,
+    "name": "ممدوح",
     "created_at": "2024-03-12 03:43:52",
     "updated_at": "2025-02-22 18:39:06",
+    "group": "dubai-omar",
     "image": "/default_student_image.png",
     "sort_num": 28,
     "secret_code": "76598",
@@ -4900,14 +4902,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "ممدوح",
-    "section": "dubai-omar"
+    "phone": null
   },
   {
     "id": 397,
+    "name": "نصر",
     "created_at": "2024-03-24 08:46:44",
     "updated_at": "2025-02-23 07:02:45",
+    "group": "jaddubai",
     "image": "/default_student_image.png",
     "sort_num": 0,
     "secret_code": "111222",
@@ -4915,14 +4917,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "نصر",
-    "section": "jaddubai"
+    "phone": null
   },
   {
     "id": 398,
+    "name": "بدر طرابيشي",
     "created_at": "2024-04-01 10:33:44",
     "updated_at": "2024-04-01 10:33:44",
+    "group": "yahia",
     "image": "/default_student_image.png",
     "sort_num": 6,
     "secret_code": "985432",
@@ -4930,14 +4932,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "بدر طرابيشي",
-    "section": "yahia"
+    "phone": null
   },
   {
     "id": 399,
+    "name": "عبد ورع",
     "created_at": "2024-04-04 22:31:10",
     "updated_at": "2024-08-13 10:18:44",
+    "group": "motaa",
     "image": "/default_student_image.png",
     "sort_num": 45,
     "secret_code": "98765",
@@ -4945,14 +4947,14 @@
     "idle": 1,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "عبد ورع",
-    "section": "motaa"
+    "phone": null
   },
   {
     "id": 400,
+    "name": "كنان ح",
     "created_at": "2024-06-02 16:12:21",
     "updated_at": "2024-12-28 11:29:22",
+    "group": "mahmoud",
     "image": "/default_student_image.png",
     "sort_num": 7,
     "secret_code": "555515",
@@ -4960,14 +4962,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "كنان ح",
-    "section": "mahmoud"
+    "phone": null
   },
   {
     "id": 401,
+    "name": "زيد اك",
     "created_at": "2024-06-02 16:13:50",
     "updated_at": "2025-03-15 21:53:11",
+    "group": "mahmoud",
     "image": "/default_student_image.png",
     "sort_num": 26,
     "secret_code": "554514",
@@ -4975,14 +4977,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "زيد اك",
-    "section": "mahmoud"
+    "phone": null
   },
   {
     "id": 402,
+    "name": "مروان س",
     "created_at": "2024-06-23 17:02:57",
     "updated_at": "2024-06-23 17:02:57",
+    "group": "awab",
     "image": "/default_student_image.png",
     "sort_num": 10,
     "secret_code": "653575",
@@ -4990,14 +4992,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "مروان س",
-    "section": "awab"
+    "phone": null
   },
   {
     "id": 403,
+    "name": "جود",
     "created_at": "2024-06-25 14:52:30",
     "updated_at": "2024-08-13 10:19:47",
+    "group": "motaa",
     "image": "/default_student_image.png",
     "sort_num": 150,
     "secret_code": "546798",
@@ -5005,14 +5007,14 @@
     "idle": 1,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "جود",
-    "section": "motaa"
+    "phone": null
   },
   {
     "id": 404,
+    "name": "مالك ح",
     "created_at": "2024-06-27 14:48:38",
     "updated_at": "2024-07-14 16:36:02",
+    "group": "aasem",
     "image": "/default_student_image.png",
     "sort_num": 50,
     "secret_code": "571135",
@@ -5020,14 +5022,14 @@
     "idle": 1,
     "seventh_rule_flag": 0,
     "on_ijaza": 1,
-    "phone": null,
-    "username": "مالك ح",
-    "section": "aasem"
+    "phone": null
   },
   {
     "id": 405,
+    "name": "زيد ادل",
     "created_at": "2024-06-29 17:42:04",
     "updated_at": "2024-08-19 14:51:09",
+    "group": "dubai-omar",
     "image": "/default_student_image.png",
     "sort_num": 13,
     "secret_code": "74309",
@@ -5035,14 +5037,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "زيد ادل",
-    "section": "dubai-omar"
+    "phone": null
   },
   {
     "id": 406,
+    "name": "يوسف",
     "created_at": "2024-07-02 16:29:36",
     "updated_at": "2024-07-18 14:32:51",
+    "group": "aasem",
     "image": "/default_student_image.png",
     "sort_num": 55,
     "secret_code": "123456",
@@ -5050,14 +5052,14 @@
     "idle": 1,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "يوسف",
-    "section": "aasem"
+    "phone": null
   },
   {
     "id": 407,
+    "name": "كريم خ",
     "created_at": "2024-07-04 14:07:36",
     "updated_at": "2024-11-02 11:23:38",
+    "group": "mahmoud",
     "image": "/default_student_image.png",
     "sort_num": 40,
     "secret_code": "559787",
@@ -5065,14 +5067,14 @@
     "idle": 1,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "كريم خ",
-    "section": "mahmoud"
+    "phone": null
   },
   {
     "id": 408,
+    "name": "سعيد",
     "created_at": "2024-07-04 18:38:18",
     "updated_at": "2024-07-14 16:35:37",
+    "group": "aasem",
     "image": "/default_student_image.png",
     "sort_num": 40,
     "secret_code": "808525",
@@ -5080,14 +5082,14 @@
     "idle": 1,
     "seventh_rule_flag": 0,
     "on_ijaza": 1,
-    "phone": null,
-    "username": "سعيد",
-    "section": "aasem"
+    "phone": null
   },
   {
     "id": 409,
+    "name": "يوسف",
     "created_at": "2024-07-04 18:39:54",
     "updated_at": "2024-07-14 16:35:46",
+    "group": "aasem",
     "image": "/default_student_image.png",
     "sort_num": 41,
     "secret_code": "63634",
@@ -5095,14 +5097,14 @@
     "idle": 1,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "يوسف",
-    "section": "aasem"
+    "phone": null
   },
   {
     "id": 410,
+    "name": "اواب قواص",
     "created_at": "2024-07-27 18:23:57",
     "updated_at": "2024-08-13 10:18:45",
+    "group": "motaa",
     "image": "/default_student_image.png",
     "sort_num": 40,
     "secret_code": "254586",
@@ -5110,14 +5112,14 @@
     "idle": 1,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "اواب قواص",
-    "section": "motaa"
+    "phone": null
   },
   {
     "id": 411,
+    "name": "محمد قني",
     "created_at": "2024-08-03 11:42:48",
     "updated_at": "2024-08-03 11:42:48",
+    "group": "awab",
     "image": "/default_student_image.png",
     "sort_num": 20,
     "secret_code": "389134",
@@ -5125,14 +5127,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "محمد قني",
-    "section": "awab"
+    "phone": null
   },
   {
     "id": 412,
+    "name": "طارق قني",
     "created_at": "2024-08-05 15:32:41",
     "updated_at": "2025-01-25 21:01:29",
+    "group": "motaa",
     "image": "/default_student_image.png",
     "sort_num": 40,
     "secret_code": "929263",
@@ -5140,14 +5142,14 @@
     "idle": 1,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "طارق قني",
-    "section": "motaa"
+    "phone": null
   },
   {
     "id": 413,
+    "name": "خالد سلطان",
     "created_at": "2024-08-14 18:55:18",
     "updated_at": "2024-09-17 10:20:36",
+    "group": "zuhair",
     "image": "/default_student_image.png",
     "sort_num": 10,
     "secret_code": "741145",
@@ -5155,14 +5157,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "خالد سلطان",
-    "section": "zuhair"
+    "phone": null
   },
   {
     "id": 414,
+    "name": "معاذ",
     "created_at": "2024-08-25 06:06:05",
     "updated_at": "2025-04-06 07:53:33",
+    "group": "jaddubai",
     "image": "/default_student_image.png",
     "sort_num": 8,
     "secret_code": "430587",
@@ -5170,14 +5172,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "معاذ",
-    "section": "jaddubai"
+    "phone": null
   },
   {
     "id": 415,
+    "name": "فواز ح",
     "created_at": "2024-09-01 10:36:37",
     "updated_at": "2025-03-02 12:43:20",
+    "group": "dubai-omar",
     "image": "/default_student_image.png",
     "sort_num": 17,
     "secret_code": "94598",
@@ -5185,14 +5187,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "فواز ح",
-    "section": "dubai-omar"
+    "phone": null
   },
   {
     "id": 416,
+    "name": "نور",
     "created_at": "2024-10-20 06:17:47",
     "updated_at": "2025-01-12 07:04:07",
+    "group": "jaddubai",
     "image": "/default_student_image.png",
     "sort_num": 11,
     "secret_code": "2410",
@@ -5200,14 +5202,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "نور",
-    "section": "jaddubai"
+    "phone": null
   },
   {
     "id": 417,
+    "name": "عمرو عقاد س",
     "created_at": "2025-01-29 13:09:02",
     "updated_at": "2025-01-29 13:09:02",
+    "group": "yahia",
     "image": "/default_student_image.png",
     "sort_num": 15,
     "secret_code": "336974",
@@ -5215,14 +5217,14 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "عمرو عقاد س",
-    "section": "yahia"
+    "phone": null
   },
   {
     "id": 418,
+    "name": "جواد ح",
     "created_at": "2025-02-16 06:25:02",
     "updated_at": "2025-03-02 07:51:17",
+    "group": "jaddubai",
     "image": "/default_student_image.png",
     "sort_num": 12,
     "secret_code": "2323",
@@ -5230,8 +5232,6 @@
     "idle": 0,
     "seventh_rule_flag": 0,
     "on_ijaza": 0,
-    "phone": null,
-    "username": "جواد ح",
-    "section": "jaddubai"
+    "phone": null
   }
 ]
