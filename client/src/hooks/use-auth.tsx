@@ -14,7 +14,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useLocation } from "wouter";
 
 type AuthContextType = {
-  user: SelectUser | null;
+  user: SelectUser | null; // Will never be undefined due to initialData: null
   isLoading: boolean;
   error: Error | null;
   loginMutation: UseMutationResult<SelectUser, Error, LoginData>;
@@ -22,7 +22,7 @@ type AuthContextType = {
   registerMutation: UseMutationResult<SelectUser, Error, InsertUser>;
 };
 
-type LoginData = Pick<InsertUser, "username" | "password">;
+type LoginData = Pick<InsertUser, "username" | "password"> & { section: string };
 
 export const AuthContext = createContext<AuthContextType | null>(null);
 
@@ -55,11 +55,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
       const userData = await res.json();
       console.log("[Auth Debug] User data fetched:", userData);
-      return userData;
+      return userData as SelectUser; // Ensure correct type casting
     },
     retry: false,
     refetchOnWindowFocus: true,
     refetchOnMount: true,
+    initialData: null, // Explicitly set initial data to null
   });
 
   const loginMutation = useMutation({

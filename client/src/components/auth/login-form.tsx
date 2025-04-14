@@ -39,6 +39,7 @@ export function LoginForm() {
   const [sections, setSections] = useState<string[]>([]);
   const [students, setStudents] = useState<any[]>([]);
   const [isLoadingStudents, setIsLoadingStudents] = useState(false);
+  const [isLoadingSections, setIsLoadingSections] = useState(true);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -53,10 +54,12 @@ export function LoginForm() {
   useEffect(() => {
     const fetchSections = async () => {
       try {
+        console.log("[Login Debug] Fetching sections");
         const response = await axios.get("/api/sections");
         setSections(response.data);
+        console.log("[Login Debug] Fetched sections:", response.data);
       } catch (error) {
-        console.error("Failed to fetch sections:", error);
+        console.error("[Login Error] Failed to fetch sections:", error);
       }
     };
 
@@ -65,15 +68,24 @@ export function LoginForm() {
 
   // Fetch students when section changes
   const handleSectionChange = async (section: string) => {
+    console.log("[Login Debug] Section selected:", section);
+    
+    // Set the section value in the form
     form.setValue("section", section);
-    form.setValue("username", ""); // Reset username when section changes
+    // Reset username when section changes
+    form.setValue("username", ""); 
+    
+    // Trigger validation for the section field
+    await form.trigger("section");
     
     setIsLoadingStudents(true);
     try {
+      console.log(`[Login Debug] Fetching students for section: ${section}`);
       const response = await axios.get(`/api/section/${section}/students`);
       setStudents(response.data);
+      console.log(`[Login Debug] Fetched ${response.data.length} students for section ${section}`);
     } catch (error) {
-      console.error("Failed to fetch students for section:", error);
+      console.error("[Login Error] Failed to fetch students for section:", error);
       setStudents([]);
     } finally {
       setIsLoadingStudents(false);
@@ -81,9 +93,16 @@ export function LoginForm() {
   };
 
   function onSubmit(values: z.infer<typeof formSchema>) {
+    console.log("[Auth Debug] Login form submitted with values:", {
+      username: values.username,
+      section: values.section,
+      passwordLength: values.password.length,
+    });
+    
     loginMutation.mutate({
       username: values.username,
       password: values.password,
+      section: values.section,
     });
   }
 
@@ -98,7 +117,7 @@ export function LoginForm() {
               <FormLabel>القسم</FormLabel>
               <Select
                 onValueChange={handleSectionChange}
-                defaultValue={field.value}
+                value={field.value}
               >
                 <FormControl>
                   <SelectTrigger>
@@ -106,11 +125,17 @@ export function LoginForm() {
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  {sections.map((section) => (
-                    <SelectItem key={section} value={section}>
-                      {section}
+                  {sections.length > 0 ? (
+                    sections.map((section) => (
+                      <SelectItem key={section} value={section}>
+                        {section}
+                      </SelectItem>
+                    ))
+                  ) : (
+                    <SelectItem value="loading" disabled>
+                      جاري تحميل الأقسام...
                     </SelectItem>
-                  ))}
+                  )}
                 </SelectContent>
               </Select>
               <FormMessage />
@@ -124,15 +149,26 @@ export function LoginForm() {
           render={({ field }) => (
             <FormItem>
               <FormLabel>اسم المستخدم</FormLabel>
-              {students.length > 0 ? (
+              {isLoadingStudents ? (
+                <FormControl>
+                  <Input
+                    dir="rtl"
+                    placeholder="جاري التحميل..."
+                    disabled={true}
+                  />
+                </FormControl>
+              ) : students.length > 0 ? (
                 <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                  disabled={!form.getValues().section || isLoadingStudents}
+                  onValueChange={(value) => {
+                    console.log("[Login Debug] Username selected:", value);
+                    field.onChange(value);
+                  }}
+                  value={field.value}
+                  disabled={!form.getValues().section}
                 >
                   <FormControl>
                     <SelectTrigger>
-                      <SelectValue placeholder={isLoadingStudents ? "جاري التحميل..." : "اختر اسم المستخدم"} />
+                      <SelectValue placeholder="اختر اسم المستخدم" />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
@@ -150,10 +186,14 @@ export function LoginForm() {
                       dir="rtl"
                       placeholder="ادخل اسم المستخدم"
                       {...field}
-                      disabled={!form.getValues().section || isLoadingStudents}
+                      disabled={!form.getValues().section}
+                      onChange={(e) => {
+                        console.log("[Login Debug] Username input:", e.target.value);
+                        field.onChange(e);
+                      }}
                     />
                   </FormControl>
-                  {!isLoadingStudents && form.getValues().section && (
+                  {form.getValues().section && (
                     <p className="text-xs text-muted-foreground mt-1">
                       لا يوجد طلاب مسجلين في هذا القسم. يمكنك إدخال اسم المستخدم يدويًا.
                     </p>
