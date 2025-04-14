@@ -116,6 +116,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Endpoint to get all sections
   app.get("/api/sections", async (req, res) => {
     try {
+      // Get all defined sections from the Section constant
+      const predefinedSections = Object.values(Section);
+      
       // Get all users with non-null sections
       const allUsers = await db
         .select()
@@ -123,8 +126,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         .where(eq(users.role, "student"))
         .execute();
         
-      // Extract unique sections
-      const sectionsSet = new Set<string>();
+      // Extract unique sections from database
+      const sectionsSet = new Set<string>(predefinedSections);
       allUsers.forEach(user => {
         if (user.section) {
           sectionsSet.add(user.section);
