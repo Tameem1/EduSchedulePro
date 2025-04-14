@@ -6,6 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useAuth } from "@/hooks/use-auth";
 import axios from "axios";
+import { Loader2 } from "lucide-react";
 
 import {
   Form,
@@ -34,9 +35,9 @@ const formSchema = z.object({
 export function LoginForm() {
   const { loginMutation } = useAuth();
   const [sections, setSections] = useState<string[]>([]);
-  const [sectionUsers, setSectionUsers] = useState<any[]>([]);
-  const [isLoadingUsers, setIsLoadingUsers] = useState(false);
+  const [usersInSection, setUsersInSection] = useState<Array<{id: number, username: string}>>([]);
   const [isLoadingSections, setIsLoadingSections] = useState(true);
+  const [isLoadingUsers, setIsLoadingUsers] = useState(false);
   const [loginError, setLoginError] = useState<string | null>(null);
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -48,17 +49,18 @@ export function LoginForm() {
     },
   });
 
-  // Fetch sections when component mounts
+  // Fetch available sections on component mount
   useEffect(() => {
     const fetchSections = async () => {
       setIsLoadingSections(true);
       try {
-        console.log("[Login Debug] Fetching sections");
+        console.log("[Login] Fetching available sections");
         const response = await axios.get("/api/sections");
         setSections(response.data);
-        console.log("[Login Debug] Fetched sections:", response.data);
+        console.log("[Login] Fetched sections:", response.data);
       } catch (error) {
         console.error("[Login Error] Failed to fetch sections:", error);
+        setSections([]);
       } finally {
         setIsLoadingSections(false);
       }
@@ -67,54 +69,54 @@ export function LoginForm() {
     fetchSections();
   }, []);
 
-  // Fetch users when section changes
-  const handleSectionChange = async (section: string) => {
-    console.log("[Login Debug] Section selected:", section);
-    
-    // Set the section value in the form
-    form.setValue("section", section);
-    // Reset username when section changes
+  // When section changes, fetch users for that section
+  const handleSectionChange = async (sectionValue: string) => {
+    // Reset form fields
+    form.setValue("section", sectionValue);
     form.setValue("username", "");
+    setUsersInSection([]);
     
-    // Trigger validation for the section field
+    // Validate section field
     await form.trigger("section");
+    
+    if (!sectionValue) return;
     
     setIsLoadingUsers(true);
     try {
-      console.log(`[Login Debug] Fetching users for section: ${section}`);
-      const response = await axios.get(`/api/section/${section}/students`);
-      setSectionUsers(response.data);
-      console.log(`[Login Debug] Fetched ${response.data.length} users for section ${section}`);
+      console.log(`[Login] Fetching users for section: ${sectionValue}`);
+      const response = await axios.get(`/api/section/${sectionValue}/students`);
+      setUsersInSection(response.data);
+      console.log(`[Login] Fetched ${response.data.length} users for section ${sectionValue}`);
     } catch (error) {
       console.error("[Login Error] Failed to fetch users for section:", error);
-      setSectionUsers([]);
+      setUsersInSection([]);
     } finally {
       setIsLoadingUsers(false);
     }
   };
 
-  // Reset login error when form values change
+  // Clear error when form values change
   useEffect(() => {
     if (loginError) {
       setLoginError(null);
     }
   }, [form.watch("section"), form.watch("username"), form.watch("password"), loginError]);
 
-  // Handle login mutation errors
+  // Handle login error display
   useEffect(() => {
     if (loginMutation.isError) {
       setLoginError(loginMutation.error?.message || "فشل تسجيل الدخول. يرجى التحقق من القسم واسم المستخدم وكلمة المرور.");
     }
   }, [loginMutation.isError, loginMutation.error]);
 
+  // Form submission handler
   function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log("[Auth Debug] Login form submitted with values:", {
-      username: values.username,
+    console.log("[Login] Form submitted:", {
       section: values.section,
+      username: values.username,
       passwordLength: values.password.length,
     });
     
-    // Clear any previous errors
     setLoginError(null);
     
     loginMutation.mutate({
@@ -127,27 +129,29 @@ export function LoginForm() {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+        {/* Section Dropdown */}
         <FormField
           control={form.control}
           name="section"
           render={({ field }) => (
             <FormItem>
               <FormLabel>القسم</FormLabel>
-              {isLoadingSections ? (
-                <FormControl>
-                  <Input
-                    dir="rtl"
-                    placeholder="جاري تحميل الأقسام..."
-                    disabled={true}
-                  />
-                </FormControl>
-              ) : (
-                <Select onValueChange={handleSectionChange} value={field.value}>
-                  <FormControl>
-                    <SelectTrigger>
+              <FormControl>
+                <Select 
+                  disabled={isLoadingSections} 
+                  onValueChange={handleSectionChange} 
+                  value={field.value}
+                >
+                  <SelectTrigger className="w-full">
+                    {isLoadingSections ? (
+                      <div className="flex items-center justify-between w-full">
+                        <span>جاري تحميل الأقسام...</span>
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                      </div>
+                    ) : (
                       <SelectValue placeholder="اختر القسم" />
-                    </SelectTrigger>
-                  </FormControl>
+                    )}
+                  </SelectTrigger>
                   <SelectContent>
                     {sections.length > 0 ? (
                       sections.map((section) => (
@@ -156,80 +160,66 @@ export function LoginForm() {
                         </SelectItem>
                       ))
                     ) : (
-                      <SelectItem value="loading" disabled>
+                      <SelectItem value="empty" disabled>
                         لم يتم العثور على أقسام
                       </SelectItem>
                     )}
                   </SelectContent>
                 </Select>
-              )}
+              </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
 
+        {/* Username Dropdown - Only enabled when section is selected */}
         <FormField
           control={form.control}
           name="username"
           render={({ field }) => (
             <FormItem>
               <FormLabel>اسم المستخدم</FormLabel>
-              {isLoadingUsers ? (
-                <FormControl>
-                  <Input
-                    dir="rtl"
-                    placeholder="جاري التحميل..."
-                    disabled={true}
-                  />
-                </FormControl>
-              ) : sectionUsers.length > 0 ? (
+              <FormControl>
                 <Select
-                  onValueChange={(value) => {
-                    console.log("[Login Debug] Username selected:", value);
-                    field.onChange(value);
-                  }}
+                  disabled={!form.getValues().section || isLoadingUsers}
+                  onValueChange={field.onChange}
                   value={field.value}
-                  disabled={!form.getValues().section}
                 >
-                  <FormControl>
-                    <SelectTrigger>
+                  <SelectTrigger className="w-full">
+                    {isLoadingUsers ? (
+                      <div className="flex items-center justify-between w-full">
+                        <span>جاري تحميل المستخدمين...</span>
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                      </div>
+                    ) : (
                       <SelectValue placeholder="اختر اسم المستخدم" />
-                    </SelectTrigger>
-                  </FormControl>
+                    )}
+                  </SelectTrigger>
                   <SelectContent>
-                    {sectionUsers.map((user) => (
-                      <SelectItem key={user.id} value={user.username}>
-                        {user.username}
+                    {usersInSection.length > 0 ? (
+                      usersInSection.map((user) => (
+                        <SelectItem key={user.id} value={user.username}>
+                          {user.username}
+                        </SelectItem>
+                      ))
+                    ) : form.getValues().section ? (
+                      <SelectItem value="empty" disabled>
+                        لا يوجد مستخدمين في هذا القسم
                       </SelectItem>
-                    ))}
+                    ) : (
+                      <SelectItem value="select-section" disabled>
+                        الرجاء اختيار القسم أولاً
+                      </SelectItem>
+                    )}
                   </SelectContent>
                 </Select>
-              ) : (
-                <>
-                  <FormControl>
-                    <Input
-                      dir="rtl"
-                      placeholder="ادخل اسم المستخدم"
-                      {...field}
-                      disabled={!form.getValues().section}
-                      onChange={(e) => {
-                        console.log("[Login Debug] Username input:", e.target.value);
-                        field.onChange(e);
-                      }}
-                    />
-                  </FormControl>
-                  {form.getValues().section && (
-                    <p className="text-xs text-muted-foreground mt-1">
-                      لا يوجد مستخدمين مسجلين في هذا القسم. يمكنك إدخال اسم المستخدم يدويًا.
-                    </p>
-                  )}
-                </>
-              )}
+              </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
 
+        {/* Password Input */}
         <FormField
           control={form.control}
           name="password"
@@ -240,7 +230,7 @@ export function LoginForm() {
                 <Input
                   dir="rtl"
                   type="password"
-                  placeholder="كلمة المرور"
+                  placeholder="أدخل كلمة المرور"
                   {...field}
                 />
               </FormControl>
@@ -249,12 +239,14 @@ export function LoginForm() {
           )}
         />
 
+        {/* Error Display */}
         {loginError && (
           <div className="bg-red-50 border border-red-200 text-red-800 rounded-md p-3 text-sm text-right">
             {loginError}
           </div>
         )}
 
+        {/* Submit Button */}
         <Button
           type="submit"
           className="w-full"
@@ -267,7 +259,14 @@ export function LoginForm() {
             !form.getValues().password
           }
         >
-          {loginMutation.isPending ? "جاري الدخول..." : "تسجيل الدخول"}
+          {loginMutation.isPending ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              جاري الدخول...
+            </>
+          ) : (
+            "تسجيل الدخول"
+          )}
         </Button>
       </form>
     </Form>
