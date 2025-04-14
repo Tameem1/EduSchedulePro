@@ -297,3 +297,65 @@ export async function notifyTeacherAboutAppointment(appointmentId: number, teach
     return false;
   }
 }
+
+export async function notifyManagerAboutAppointment(appointmentId: number): Promise<boolean> {
+  try {
+    // Get appointment details
+    const appointment = await db.select().from(appointments).where(eq(appointments.id, appointmentId)).limit(1);
+    if (!appointment.length) {
+      console.error(`Appointment ${appointmentId} not found`);
+      return false;
+    }
+
+    // Get student details
+    const student = await db.select().from(users).where(eq(users.id, appointment[0].studentId)).limit(1);
+    const studentName = student.length ? student[0].username : `طالب ${appointment[0].studentId}`;
+
+    // Get teacher details if assigned
+    let teacherName = "لم يتم التعيين";
+    if (appointment[0].teacherId) {
+      const teacher = await db.select().from(users).where(eq(users.id, appointment[0].teacherId)).limit(1);
+      if (teacher.length) {
+        teacherName = teacher[0].username;
+      }
+    }
+
+    // Get all managers with telegram username
+    const managers = await db.select().from(users).where(eq(users.role, 'manager')).execute();
+    
+    if (!managers.length) {
+      console.error('No managers found in the system');
+      return false;
+    }
+
+    // Format time in GMT+3
+    const appointmentTime = formatGMT3Time(new Date(appointment[0].startTime), "HH:mm", {timeZone: 'Africa/Cairo'});
+    
+    // Create manager dashboard URL
+    const callbackUrl = `https://appointment-manager.replit.app/manager/appointments`;
+
+    // Prepare message text
+    const message = `تم حجز موعد جديد!\n\nالطالب: ${studentName}\nالمعلم: ${teacherName}\nالوقت: ${appointmentTime}\nالمهمة: ${appointment[0].teacherAssignment || 'لم يتم تحديد'}\n\nالرجاء الاطلاع على لوحة التحكم للمزيد من التفاصيل.`;
+    
+    // Send notifications to all managers with telegram username
+    let anyNotificationSent = false;
+    for (const manager of managers) {
+      if (manager.telegramUsername) {
+        const sent = await sendTelegramNotification(
+          manager.telegramUsername,
+          message,
+          callbackUrl
+        );
+        if (sent) {
+          anyNotificationSent = true;
+          console.log(`Notification sent to manager ${manager.username}`);
+        }
+      }
+    }
+    
+    return anyNotificationSent;
+  } catch (error) {
+    console.error('Failed to notify managers about appointment:', error);
+    return false;
+  }
+}

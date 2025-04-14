@@ -15,6 +15,7 @@ import { users, availabilities, Section } from "@shared/schema";
 import {
   sendTelegramNotification,
   notifyTeacherAboutAppointment,
+  notifyManagerAboutAppointment,
 } from "./telegram";
 import { startOfDay, endOfDay, format } from "date-fns"; // Added format import
 import { addHours } from "date-fns";
