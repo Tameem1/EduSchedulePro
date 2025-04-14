@@ -11,7 +11,7 @@ import {
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, sql } from "drizzle-orm";
-import { users, availabilities, Group } from "@shared/schema";
+import { users, availabilities, Section } from "@shared/schema";
 import {
   sendTelegramNotification,
   notifyTeacherAboutAppointment,
@@ -140,23 +140,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Endpoint to get students by group
+  // Endpoint to get students by section
   app.get("/api/section/:section/students", async (req, res) => {
     try {
       const { section } = req.params;
       
-      // Get all students and filter by group
+      // Get all students and filter by section
       const students = await db
         .select()
         .from(users)
         .where(eq(users.role, "student"))
         .execute()
-        .then(allStudents => allStudents.filter(student => student.group === section));
+        .then(allStudents => allStudents.filter(student => student.section === section));
         
       res.json(students);
     } catch (error) {
-      console.error("Error fetching students by group:", error);
-      res.status(500).json({ error: "Failed to fetch students by group" });
+      console.error("Error fetching students by section:", error);
+      res.status(500).json({ error: "Failed to fetch students by section" });
     }
   });
 
@@ -794,7 +794,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         const stats = studentStats.get(response.studentId) || {
           studentId: response.studentId,
           studentName: response.studentName,
-          group: student?.group || 'غير محدد', // Add group information
+          section: student?.section || 'غير محدد', // Add section information
           question1YesCount: 0,
           question2YesCount: 0,
           question3Responses: [],
@@ -821,7 +821,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         const stats = studentStats.get(assignment.studentId) || {
           studentId: assignment.studentId,
           studentName: assignment.studentName,
-          group: student?.group || 'غير محدد', // Add group information
+          section: student?.section || 'غير محدد', // Add section information
           question1YesCount: 0,
           question2YesCount: 0,
           question3Responses: [],
