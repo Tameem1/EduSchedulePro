@@ -67,11 +67,13 @@ export default function ManagerAppointments() {
   ] = React.useState(false);
   const [newIndependentAssignmentData, setNewIndependentAssignmentData] =
     React.useState({
+      section: "",
       studentId: "",
       completionTime: "",
       assignment: "",
       notes: "",
     });
+  const [filteredStudentsForIndependentAssignment, setFilteredStudentsForIndependentAssignment] = React.useState<User[]>([]);
 
   const connectWebSocket = React.useCallback(() => {
     if (socketRef.current?.readyState === WebSocket.OPEN) return;
@@ -198,6 +200,18 @@ export default function ManagerAppointments() {
     },
     enabled: !!user,
   });
+  
+  const { data: sections, isLoading: isLoadingSections } = useQuery<string[]>({
+    queryKey: ["/api/sections"],
+    queryFn: async () => {
+      const res = await apiRequest("GET", "/api/sections");
+      if (!res.ok) {
+        throw new Error("Failed to fetch sections");
+      }
+      return res.json();
+    },
+    enabled: !!user,
+  });
 
   const { data: independentAssignments, isLoading: isLoadingIndependentAssignments } = useQuery<IndependentAssignment[]>({
     queryKey: ["/api/independent-assignments"],
@@ -212,7 +226,7 @@ export default function ManagerAppointments() {
       const todayStart = startOfDay(now);
       const todayEnd = endOfDay(now);
 
-      return assignments.filter((assignment) => {
+      return assignments.filter((assignment: IndependentAssignment) => {
         const assignmentDate = new Date(assignment.completionTime);
         return assignmentDate >= todayStart && assignmentDate <= todayEnd;
       });
@@ -220,8 +234,46 @@ export default function ManagerAppointments() {
     enabled: !!user,
   });
 
+  // Function to fetch students for a specific section
+  const fetchStudentsBySection = async (section: string, forForm: 'appointment' | 'independent') => {
+    try {
+      if (!section) {
+        if (forForm === 'appointment') {
+          setFilteredStudentsForAppointment([]);
+        } else {
+          setFilteredStudentsForIndependentAssignment([]);
+        }
+        return;
+      }
+      
+      const res = await apiRequest("GET", `/api/section/${section}/students`);
+      if (!res.ok) {
+        throw new Error(`Failed to fetch students for section ${section}`);
+      }
+      
+      const sectionStudents = await res.json();
+      console.log(`Fetched ${sectionStudents.length} students for section ${section}`);
+      
+      if (forForm === 'appointment') {
+        setFilteredStudentsForAppointment(sectionStudents);
+        setNewAppointmentData(prev => ({ ...prev, studentId: "" }));
+      } else {
+        setFilteredStudentsForIndependentAssignment(sectionStudents);
+        setNewIndependentAssignmentData(prev => ({ ...prev, studentId: "" }));
+      }
+    } catch (error) {
+      console.error("Error fetching students by section:", error);
+      toast({
+        title: "خطأ في جلب بيانات الطلاب",
+        description: "حدث خطأ أثناء محاولة جلب بيانات الطلاب للقسم المختار",
+        variant: "destructive",
+      });
+    }
+  };
+
   const createAppointmentMutation = useMutation({
     mutationFn: async (data: {
+      section: string;
       studentId: string;
       startTime: string;
       teacherAssignment: string;
@@ -255,10 +307,12 @@ export default function ManagerAppointments() {
       });
       setIsAddAppointmentDialogOpen(false);
       setNewAppointmentData({
+        section: "",
         studentId: "",
         startTime: "",
         teacherAssignment: "",
       });
+      setFilteredStudentsForAppointment([]);
       queryClient.invalidateQueries({ queryKey: ["/api/appointments"] });
     },
     onError: (error: any) => {
@@ -318,6 +372,7 @@ export default function ManagerAppointments() {
 
   const createIndependentAssignmentMutation = useMutation({
     mutationFn: async (data: {
+      section: string;
       studentId: string;
       completionTime: string;
       assignment: string;
@@ -362,11 +417,13 @@ export default function ManagerAppointments() {
       });
       setIsAddIndependentAssignmentDialogOpen(false);
       setNewIndependentAssignmentData({
+        section: "",
         studentId: "",
         completionTime: "",
         assignment: "",
         notes: "",
       });
+      setFilteredStudentsForIndependentAssignment([]);
       queryClient.invalidateQueries({
         queryKey: ["/api/independent-assignments"],
       });
@@ -542,6 +599,32 @@ export default function ManagerAppointments() {
           </DialogHeader>
           <div className="space-y-4">
             <div>
+              <Label>اختر الفصل</Label>
+              <Select
+                value={newAppointmentData.section}
+                onValueChange={(value) => {
+                  setNewAppointmentData((prev) => ({
+                    ...prev,
+                    section: value,
+                    studentId: "", // Reset student selection when section changes
+                  }));
+                  fetchStudentsBySection(value, 'appointment');
+                }}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="اختر الفصل" />
+                </SelectTrigger>
+                <SelectContent>
+                  {sections?.map((section) => (
+                    <SelectItem key={section} value={section}>
+                      {section}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div>
               <Label>اختر الطالب</Label>
               <Select
                 value={newAppointmentData.studentId}
@@ -551,12 +634,13 @@ export default function ManagerAppointments() {
                     studentId: value,
                   }))
                 }
+                disabled={!newAppointmentData.section || filteredStudentsForAppointment.length === 0}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="اختر الطالب" />
+                  <SelectValue placeholder={!newAppointmentData.section ? "اختر الفصل أولاً" : "اختر الطالب"} />
                 </SelectTrigger>
                 <SelectContent>
-                  {students?.map((student) => (
+                  {filteredStudentsForAppointment.map((student) => (
                     <SelectItem key={student.id} value={String(student.id)}>
                       {student.username}
                     </SelectItem>
@@ -699,6 +783,32 @@ export default function ManagerAppointments() {
           </DialogHeader>
           <div className="space-y-4">
             <div>
+              <Label>اختر الفصل</Label>
+              <Select
+                value={newIndependentAssignmentData.section}
+                onValueChange={(value) => {
+                  setNewIndependentAssignmentData((prev) => ({
+                    ...prev,
+                    section: value,
+                    studentId: "", // Reset student selection when section changes
+                  }));
+                  fetchStudentsBySection(value, 'independent');
+                }}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="اختر الفصل" />
+                </SelectTrigger>
+                <SelectContent>
+                  {sections?.map((section) => (
+                    <SelectItem key={section} value={section}>
+                      {section}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div>
               <Label>اختر الطالب</Label>
               <Select
                 value={newIndependentAssignmentData.studentId}
@@ -708,12 +818,13 @@ export default function ManagerAppointments() {
                     studentId: value,
                   }))
                 }
+                disabled={!newIndependentAssignmentData.section || filteredStudentsForIndependentAssignment.length === 0}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="اختر الطالب" />
+                  <SelectValue placeholder={!newIndependentAssignmentData.section ? "اختر الفصل أولاً" : "اختر الطالب"} />
                 </SelectTrigger>
                 <SelectContent>
-                  {students?.map((student) => (
+                  {filteredStudentsForIndependentAssignment.map((student) => (
                     <SelectItem key={student.id} value={String(student.id)}>
                       {student.username}
                     </SelectItem>
