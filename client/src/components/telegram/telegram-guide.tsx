@@ -97,16 +97,14 @@ export function TelegramGuide() {
                   web.telegram.org
                 </a>
               </li>
-              <li>
-                ابحث عن روبوت المدرسة على تيليجرام (يمكنك الحصول على المعرف من
-                إدارة المدرسة)
-              </li>
+              <li>ابحث عن الروبوت على تيليجرام @Abo01_bot</li>
               <li>
                 اضغط على زر "ابدأ" أو أرسل الرسالة /start ثم أرسل /register
                 للحصول على معرف تيليجرام الخاص بك
               </li>
               <li>
-                أدخل معرف التيليجرام الخاص بك في الحقل أدناه (بدون علامة @)
+                أدخل معرف التيليجرام الخاص بك في الحقل أدناه (رقم مكون من ٩
+                منازل)
               </li>
             </ol>
           </div>
@@ -119,7 +117,7 @@ export function TelegramGuide() {
               <div className="flex gap-2">
                 <Input
                   id="telegramUsername"
-                  placeholder="username"
+                  placeholder="معرف التيليجرام"
                   value={telegramUsername}
                   onChange={(e) => setTelegramUsername(e.target.value)}
                   className="flex-1"
@@ -133,9 +131,6 @@ export function TelegramGuide() {
                   {updateUserMutation.isPending ? "جاري الحفظ..." : "حفظ"}
                 </Button>
               </div>
-              <p className="text-xs text-muted-foreground">
-                أدخل اسم المستخدم الخاص بك في تيليجرام (بدون علامة @)
-              </p>
             </div>
           </form>
 

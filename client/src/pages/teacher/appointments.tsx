@@ -55,6 +55,8 @@ function getStatusColor(status: AppointmentStatusType) {
 export default function TeacherAppointments() {
   const { user } = useAuth();
   const { toast } = useToast();
+  const [selectedSection, setSelectedSection] = React.useState("");
+  const [filteredStudents, setFilteredStudents] = React.useState<User[]>([]);
   const [selectedStudent, setSelectedStudent] = React.useState("");
   const [startTime, setStartTime] = React.useState("");
   const [teacherAssignment, setTeacherAssignment] = React.useState(""); 
@@ -113,6 +115,18 @@ export default function TeacherAppointments() {
   }, [connectWebSocket]);
 
   // Data fetching
+  const { data: sections, isLoading: loadingSections } = useQuery<string[]>({
+    queryKey: ["/api/sections"],
+    queryFn: async () => {
+      const res = await apiRequest("GET", "/api/sections");
+      if (!res.ok) {
+        throw new Error("Failed to fetch sections");
+      }
+      return res.json();
+    },
+    enabled: !!user,
+  });
+
   const { data: students, isLoading: loadingStudents } = useQuery<User[]>({
     queryKey: ["/api/users/students"],
     queryFn: async () => {
@@ -124,6 +138,34 @@ export default function TeacherAppointments() {
     },
     enabled: !!user,
   });
+  
+  // Function to fetch students for the selected section
+  const fetchStudentsBySection = async (section: string) => {
+    try {
+      if (!section) {
+        setFilteredStudents([]);
+        setSelectedStudent("");
+        return;
+      }
+      
+      const res = await apiRequest("GET", `/api/section/${section}/students`);
+      if (!res.ok) {
+        throw new Error(`Failed to fetch students for section ${section}`);
+      }
+      
+      const sectionStudents = await res.json();
+      console.log(`Fetched ${sectionStudents.length} students for section ${section}`);
+      setFilteredStudents(sectionStudents);
+      setSelectedStudent("");
+    } catch (error) {
+      console.error("Error fetching students by section:", error);
+      toast({
+        title: "خطأ في جلب بيانات الطلاب",
+        description: "حدث خطأ أثناء محاولة جلب بيانات الطلاب للقسم المختار",
+        variant: "destructive",
+      });
+    }
+  };
 
   const { data: appointments, isLoading: loadingAppointments, error: appointmentsError } = useQuery<Appointment[]>({
     queryKey: ["/api/teachers", user?.id, "appointments"],
@@ -158,9 +200,11 @@ export default function TeacherAppointments() {
         description: "تم إنشاء الموعد بنجاح وإرساله للمدير للموافقة",
       });
       setIsDialogOpen(false);
+      setSelectedSection("");
       setSelectedStudent("");
       setStartTime("");
       setTeacherAssignment(""); 
+      setFilteredStudents([]);
       queryClient.invalidateQueries({
         queryKey: ["/api/teachers", user?.id, "appointments"],
       });
@@ -240,7 +284,7 @@ export default function TeacherAppointments() {
     );
   }
 
-  if (loadingAppointments || loadingStudents) {
+  if (loadingAppointments || loadingStudents || loadingSections) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <Loader2 className="h-8 w-8 animate-spin" />
@@ -289,16 +333,40 @@ export default function TeacherAppointments() {
               </DialogHeader>
               <div className="space-y-4 mt-2">
                 <div>
+                  <Label>اختر الفصل</Label>
+                  <Select
+                    value={selectedSection}
+                    onValueChange={(val) => {
+                      setSelectedSection(val);
+                      setSelectedStudent("");
+                      fetchStudentsBySection(val);
+                    }}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="اختر الفصل" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {sections?.map((section) => (
+                        <SelectItem key={section} value={section}>
+                          {section}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div>
                   <Label>اختر الطالب</Label>
                   <Select
                     value={selectedStudent}
                     onValueChange={(val) => setSelectedStudent(val)}
+                    disabled={!selectedSection || filteredStudents.length === 0}
                   >
                     <SelectTrigger>
-                      <SelectValue placeholder="اختر الطالب" />
+                      <SelectValue placeholder={!selectedSection ? "اختر الفصل أولاً" : "اختر الطالب"} />
                     </SelectTrigger>
                     <SelectContent>
-                      {students?.map((student) => (
+                      {filteredStudents.map((student) => (
                         <SelectItem key={student.id} value={String(student.id)}>
                           {student.username}
                         </SelectItem>
