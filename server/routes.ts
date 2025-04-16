@@ -160,7 +160,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         'awab': ['awab'],
         'zuhair': ['zuhair', 'jaddubai'],
         'yahia': ['yahia'],
-        'omar': ['omar', 'dubai-omar'],
+        'omar': ['omar'],
+        'dubai-omar': ['dubai-omar'],
         'motaa': ['motaa'],
         'mahmoud': ['mahmoud'],
         'kibar': ['kibar']
