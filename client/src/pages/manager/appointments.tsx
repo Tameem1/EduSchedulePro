@@ -12,7 +12,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2 } from "lucide-react";
+import { Loader2, Search } from "lucide-react";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import type {
   User,
@@ -49,6 +49,7 @@ export default function ManagerAppointments() {
   const [isAssignDialogOpen, setIsAssignDialogOpen] = React.useState(false);
   const [isAddAppointmentDialogOpen, setIsAddAppointmentDialogOpen] =
     React.useState(false);
+  const [teacherSearchQuery, setTeacherSearchQuery] = React.useState<string>("");
   const [newAppointmentData, setNewAppointmentData] = React.useState({
     section: "",
     studentId: "",
@@ -454,6 +455,16 @@ export default function ManagerAppointments() {
     return foundUser?.username || `${role} ${userId}`;
   };
 
+  // Filter teachers based on search query
+  const getFilteredTeachers = React.useMemo(() => {
+    if (!teachers) return [];
+    if (!teacherSearchQuery.trim()) return teachers;
+    
+    return teachers.filter(teacher => 
+      teacher.username?.toLowerCase().includes(teacherSearchQuery.toLowerCase())
+    );
+  }, [teachers, teacherSearchQuery]);
+
   const getStatusColor = (status: AppointmentStatusType) => {
     return (
       {
@@ -717,48 +728,78 @@ export default function ManagerAppointments() {
                     {getUserName(selectedAppointment.studentId, "student")}
                   </p>
                 </div>
-                <div className="space-y-2">
-                  {teachers?.map((teacher) => {
-                    const isAvailable = availabilities?.some((avail) => {
-                      const appointmentTime = new Date(
-                        selectedAppointment.startTime,
-                      );
-                      const availStartTime = new Date(avail.startTime);
-                      const availEndTime = new Date(avail.endTime);
-                      return (
-                        avail.teacherId === teacher.id &&
-                        appointmentTime >= availStartTime &&
-                        appointmentTime <= availEndTime
-                      );
-                    });
-
-                    return (
-                      <div
-                        key={teacher.id}
-                        className={`p-3 border rounded-lg cursor-pointer hover:bg-muted ${
-                          isAvailable ? "border-green-500" : "border-gray-300"
-                        }`}
-                        onClick={() =>
-                          assignTeacherMutation.mutate({
-                            appointmentId: selectedAppointment.id,
-                            teacherId: teacher.id,
-                            teacherAssignment:
-                              selectedAppointment.teacherAssignment || "",
-                          })
-                        }
-                      >
-                        <div className="flex items-center justify-between">
-                          <span>{teacher.username}</span>
-                          {isAvailable ? (
-                            <Badge variant="default">متوفر</Badge>
-                          ) : (
-                            <Badge variant="secondary">غير متوفر</Badge>
-                          )}
-                        </div>
-                      </div>
-                    );
-                  })}
+                
+                {/* Search input for teachers */}
+                <div className="mb-4">
+                  <Label htmlFor="teacher-search">بحث عن معلم</Label>
+                  <div className="flex items-center relative">
+                    <Input
+                      id="teacher-search"
+                      value={teacherSearchQuery}
+                      onChange={(e) => setTeacherSearchQuery(e.target.value)}
+                      placeholder="اكتب اسم المعلم للبحث"
+                      className="pr-8"
+                    />
+                    <Search className="absolute left-2 h-4 w-4 text-muted-foreground" />
+                  </div>
+                  {teachers && getFilteredTeachers.length < teachers.length && (
+                    <p className="text-xs text-muted-foreground mt-1">
+                      تم عرض {getFilteredTeachers.length} من أصل {teachers.length} معلم
+                    </p>
+                  )}
                 </div>
+                
+                <div className="space-y-2 mb-4">
+                  {getFilteredTeachers.length > 0 ? (
+                    <>
+                      {getFilteredTeachers.map((teacher) => {
+                        const isAvailable = availabilities?.some((avail) => {
+                          const appointmentTime = new Date(
+                            selectedAppointment.startTime,
+                          );
+                          const availStartTime = new Date(avail.startTime);
+                          const availEndTime = new Date(avail.endTime);
+                          return (
+                            avail.teacherId === teacher.id &&
+                            appointmentTime >= availStartTime &&
+                            appointmentTime <= availEndTime
+                          );
+                        });
+
+                        return (
+                          <div
+                            key={teacher.id}
+                            className={`p-3 border rounded-lg cursor-pointer hover:bg-muted ${
+                              isAvailable ? "border-green-500" : "border-gray-300"
+                            }`}
+                            onClick={() =>
+                              assignTeacherMutation.mutate({
+                                appointmentId: selectedAppointment.id,
+                                teacherId: teacher.id,
+                                teacherAssignment:
+                                  selectedAppointment.teacherAssignment || "",
+                              })
+                            }
+                          >
+                            <div className="flex items-center justify-between">
+                              <span>{teacher.username}</span>
+                              {isAvailable ? (
+                                <Badge variant="default">متوفر</Badge>
+                              ) : (
+                                <Badge variant="secondary">غير متوفر</Badge>
+                              )}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </>
+                  ) : (
+                    <div className="p-2 text-muted-foreground text-center">
+                      لا يوجد معلمين مطابقين للبحث
+                    </div>
+                  )}
+                </div>
+                
                 <div className="space-y-2">
                   <Label htmlFor="assignment">المهمة المطلوبة</Label>
                   <Input
