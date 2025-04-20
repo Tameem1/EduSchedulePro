@@ -11,9 +11,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Input } from "@/components/ui/input"; // Added import statement
+import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Search } from "lucide-react";
 import axios from "axios";
 
 interface Teacher {
@@ -38,6 +38,7 @@ export default function AssignTeacher() {
   const { toast } = useToast();
   const [selectedTeacher, setSelectedTeacher] = React.useState<string>("");
   const [assignment, setAssignment] = React.useState<string>("");
+  const [searchQuery, setSearchQuery] = React.useState<string>("");
 
   const { data: appointment, isLoading: appointmentLoading } = useQuery({
     queryKey: ["appointment", id],
@@ -54,6 +55,16 @@ export default function AssignTeacher() {
       return response.data as Teacher[];
     },
   });
+  
+  // Filter teachers based on search query
+  const filteredTeachers = React.useMemo(() => {
+    if (!teachers) return [];
+    if (!searchQuery.trim()) return teachers;
+    
+    return teachers.filter(teacher => 
+      teacher.name.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+  }, [teachers, searchQuery]);
 
   const assignTeacherMutation = useMutation({
     mutationFn: async (teacherId: string) => {
@@ -139,6 +150,17 @@ export default function AssignTeacher() {
               </div>
             </div>
             <div>
+              <Label htmlFor="teacher-search">بحث عن معلم</Label>
+              <div className="flex items-center relative mb-2">
+                <Input
+                  id="teacher-search"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="اكتب اسم المعلم للبحث"
+                  className="pr-8"
+                />
+                <Search className="absolute left-2 h-4 w-4 text-muted-foreground" />
+              </div>
               <Label htmlFor="teacher">اختر المعلم</Label>
               <Select
                 value={selectedTeacher}
@@ -148,13 +170,24 @@ export default function AssignTeacher() {
                   <SelectValue placeholder="اختر المعلم" />
                 </SelectTrigger>
                 <SelectContent>
-                  {teachers?.map((teacher) => (
-                    <SelectItem key={teacher.id} value={teacher.id.toString()}>
-                      {teacher.name}
-                    </SelectItem>
-                  ))}
+                  {filteredTeachers.length > 0 ? (
+                    filteredTeachers.map((teacher) => (
+                      <SelectItem key={teacher.id} value={teacher.id.toString()}>
+                        {teacher.name}
+                      </SelectItem>
+                    ))
+                  ) : (
+                    <div className="p-2 text-muted-foreground text-center text-sm">
+                      لا يوجد معلمين مطابقين للبحث
+                    </div>
+                  )}
                 </SelectContent>
               </Select>
+              {teachers && filteredTeachers.length < teachers.length && (
+                <p className="text-xs text-muted-foreground mt-1">
+                  تم عرض {filteredTeachers.length} من أصل {teachers.length} معلم
+                </p>
+              )}
             </div>
             <div>
               <Label htmlFor="assignment">المهمة المطلوبة</Label>
