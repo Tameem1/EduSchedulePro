@@ -64,7 +64,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     console.log("[Auth Debug] AuthProvider mounted");
     
-    // Function to validate stored user with server
+    // Function to validate stored user with server and auto-login
     const validateUserAndRedirect = async () => {
       // Check for user data in localStorage on mount
       const storedUser = localStorage.getItem('authUser');
@@ -73,17 +73,66 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           const parsedUser = JSON.parse(storedUser);
           console.log("[Auth Debug] Found user in localStorage:", parsedUser.username);
           
-          // Set the user in the query cache and trigger validation against server
-          queryClient.setQueryData(["/api/user"], parsedUser);
-          
-          // Trigger a refetch to validate the user with the server
-          refetchUser().catch(error => {
-            console.error("[Auth Debug] Failed to validate user with server:", error);
-            // If validation fails, clear localStorage
+          if (!parsedUser.username || !parsedUser.section) {
+            console.error("[Auth Debug] Invalid stored user data");
             localStorage.removeItem('authUser');
-            queryClient.setQueryData(["/api/user"], null);
             return;
-          });
+          }
+
+          console.log("[Auth Debug] Attempting auto-login with stored credentials");
+          
+          // Attempt server-side authentication using stored data
+          try {
+            // Set the user in the query cache temporarily
+            queryClient.setQueryData(["/api/user"], parsedUser);
+            
+            // Try to perform an API request that requires auth to verify user is really logged in
+            const res = await fetch('/api/user', {
+              credentials: 'include',
+            });
+            
+            if (res.status === 401) {
+              console.log("[Auth Debug] Session expired, attempting to re-login");
+              // If not authenticated, we need to log in
+              const loginRes = await fetch('/api/login', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                  username: parsedUser.username,
+                  password: parsedUser.password,
+                  section: parsedUser.section,
+                }),
+                credentials: 'include',
+              });
+              
+              if (!loginRes.ok) {
+                console.error("[Auth Debug] Auto-login failed, clearing stored credentials");
+                localStorage.removeItem('authUser');
+                queryClient.setQueryData(["/api/user"], null);
+                return;
+              }
+              
+              const userData = await loginRes.json();
+              console.log("[Auth Debug] Auto-login successful");
+              queryClient.setQueryData(["/api/user"], userData);
+            } else if (res.ok) {
+              // We are already authenticated
+              console.log("[Auth Debug] User is already authenticated with server");
+              const userData = await res.json();
+              queryClient.setQueryData(["/api/user"], userData);
+            } else {
+              // Some other error
+              console.error("[Auth Debug] Error validating user with server");
+              localStorage.removeItem('authUser');
+              queryClient.setQueryData(["/api/user"], null);
+              return;
+            }
+          } catch (error) {
+            console.error("[Auth Debug] Network error during auto-login:", error);
+            return;
+          }
           
           // Auto redirect to appropriate dashboard based on role
           const currentPath = window.location.pathname;
