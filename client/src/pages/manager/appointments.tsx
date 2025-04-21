@@ -554,6 +554,7 @@ export default function ManagerAppointments() {
                     </Badge>
                   </TableCell>
                   <TableCell>
+                    {/* Show assign button for pending or rejected appointments */}
                     {(appointment.status === AppointmentStatus.PENDING ||
                       appointment.status === AppointmentStatus.REJECTED) && (
                       <Button
@@ -565,6 +566,22 @@ export default function ManagerAppointments() {
                         }}
                       >
                         تعيين معلم
+                      </Button>
+                    )}
+                    
+                    {/* Show change teacher button for already assigned appointments */}
+                    {appointment.teacherId && 
+                     (appointment.status === AppointmentStatus.REQUESTED || 
+                      appointment.status === AppointmentStatus.ASSIGNED) && (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => {
+                          setSelectedAppointment(appointment);
+                          setIsAssignDialogOpen(true);
+                        }}
+                      >
+                        تغيير المعلم
                       </Button>
                     )}
                   </TableCell>
@@ -717,7 +734,14 @@ export default function ManagerAppointments() {
       <Dialog open={isAssignDialogOpen} onOpenChange={setIsAssignDialogOpen}>
         <DialogContent className="max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>تعيين معلم للموعد</DialogTitle>
+            <DialogTitle>
+              {selectedAppointment && selectedAppointment.teacherId && 
+                (selectedAppointment.status === AppointmentStatus.REQUESTED || 
+                 selectedAppointment.status === AppointmentStatus.ASSIGNED) 
+                 ? "تغيير المعلم المعين للموعد" 
+                 : "تعيين معلم للموعد"
+              }
+            </DialogTitle>
           </DialogHeader>
           <div className="py-4">
             {selectedAppointment && (
@@ -731,6 +755,16 @@ export default function ManagerAppointments() {
                     الطالب:{" "}
                     {getUserName(selectedAppointment.studentId, "student")}
                   </p>
+                  {selectedAppointment.teacherId && 
+                   (selectedAppointment.status === AppointmentStatus.REQUESTED || 
+                    selectedAppointment.status === AppointmentStatus.ASSIGNED) && (
+                    <p>
+                      المعلم الحالي:{" "}
+                      <span className="font-medium text-primary">
+                        {getUserName(selectedAppointment.teacherId, "teacher")}
+                      </span>
+                    </p>
+                  )}
                 </div>
                 
                 {/* Search input for teachers */}
@@ -769,12 +803,16 @@ export default function ManagerAppointments() {
                             appointmentTime <= availEndTime
                           );
                         });
+                        
+                        const isCurrentTeacher = teacher.id === selectedAppointment.teacherId;
 
                         return (
                           <div
                             key={teacher.id}
                             className={`p-3 border rounded-lg cursor-pointer hover:bg-muted ${
-                              isAvailable ? "border-green-500" : "border-gray-300"
+                              isCurrentTeacher 
+                                ? "border-primary bg-primary/10" 
+                                : isAvailable ? "border-green-500" : "border-gray-300"
                             }`}
                             onClick={() =>
                               assignTeacherMutation.mutate({
@@ -786,7 +824,14 @@ export default function ManagerAppointments() {
                             }
                           >
                             <div className="flex items-center justify-between">
-                              <span>{teacher.username}</span>
+                              <div className="flex items-center gap-2">
+                                <span>{teacher.username}</span>
+                                {isCurrentTeacher && (
+                                  <Badge variant="outline" className="border-primary text-primary">
+                                    المعلم الحالي
+                                  </Badge>
+                                )}
+                              </div>
                               {isAvailable ? (
                                 <Badge variant="default">متوفر</Badge>
                               ) : (
