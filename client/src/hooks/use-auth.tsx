@@ -57,9 +57,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       console.log("[Auth Debug] User data fetched:", userData);
       return userData as SelectUser; // Ensure correct type casting
     },
-    retry: false,
+    retry: 1, // Retry once in case of network glitches
     refetchOnWindowFocus: true,
     refetchOnMount: true,
+    refetchOnReconnect: true,
+    staleTime: 1000 * 60 * 60, // Consider data fresh for 1 hour
     initialData: null, // Explicitly set initial data to null
   });
 

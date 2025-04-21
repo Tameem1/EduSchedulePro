@@ -35,10 +35,11 @@ export function setupAuth(app: Express) {
     saveUninitialized: false,
     store: storage.sessionStore,
     cookie: {
-      secure: false, // Set to false to work in development
-      maxAge: 24 * 60 * 60 * 1000, // 24 hours
+      secure: process.env.NODE_ENV === 'production', // Only use secure in production
+      maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days for persistent login
       httpOnly: true,
       sameSite: 'lax', // Added for better security
+      path: '/',
     },
     name: 'session_id', // Added custom name
   };
@@ -132,9 +133,20 @@ export function setupAuth(app: Express) {
       if (!user) {
         return res.status(401).json({ error: info?.message || "Authentication failed" });
       }
+      
+      // Log login attempt with session ID
+      console.log(`[Auth Debug] Login attempt for user ${user.username} - Creating session`);
+      
       req.login(user, (loginErr) => {
         if (loginErr) return next(loginErr);
-        res.status(200).json(user);
+        
+        // Ensure the session is saved before responding
+        req.session.save((err) => {
+          if (err) return next(err);
+          
+          console.log(`[Auth Debug] Login successful - Session ID: ${req.sessionID}`);
+          res.status(200).json(user);
+        });
       });
     })(req, res, next);
   });
