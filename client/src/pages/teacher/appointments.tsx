@@ -314,17 +314,17 @@ export default function TeacherAppointments() {
       )}
       
       {/* Top actions: availability, plus button */}
-      <div className="flex justify-between items-center mb-4">
-        <h1 className="text-2xl font-bold">مواعيد المعلم</h1>
-        <div className="flex items-center gap-2">
-          <Link href="/teacher/availability">
-            <Button variant="outline">إدارة التوفر</Button>
+      <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6">
+        <h1 className="text-xl md:text-2xl font-bold text-center sm:text-right">مواعيد المعلم</h1>
+        <div className="flex flex-col sm:flex-row items-center gap-2 w-full sm:w-auto">
+          <Link href="/teacher/availability" className="w-full sm:w-auto">
+            <Button variant="outline" className="w-full sm:w-auto">إدارة التوفر</Button>
           </Link>
 
           {/* Button+Dialog to add new appointment */}
           <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
             <DialogTrigger asChild>
-              <Button>إضافة موعد لطالب</Button>
+              <Button className="w-full sm:w-auto">إضافة موعد لطالب</Button>
             </DialogTrigger>
 
             <DialogContent>
@@ -421,7 +421,7 @@ export default function TeacherAppointments() {
               {appointments.map((appointment) => (
                 <div
                   key={appointment.id}
-                  className="p-4 border rounded-lg flex items-center justify-between"
+                  className="p-4 border rounded-lg flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
                 >
                   {/* Appointment info */}
                   <div>
@@ -444,7 +444,7 @@ export default function TeacherAppointments() {
                   </div>
 
                   {/* Action buttons */}
-                  <div className="flex items-center gap-2">
+                  <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
                     {appointment.status === AppointmentStatus.REQUESTED && (
                       <>
                         <Button
@@ -483,8 +483,9 @@ export default function TeacherAppointments() {
                     {appointment.status !== AppointmentStatus.REJECTED && (
                       <Link
                         href={`/teacher/questionnaire-submission/${appointment.id}`}
+                        className="w-full sm:w-auto"
                       >
-                        <Button variant="outline" size="sm">
+                        <Button variant="outline" size="sm" className="w-full sm:w-auto">
                           املأ الاستبيان
                         </Button>
                       </Link>

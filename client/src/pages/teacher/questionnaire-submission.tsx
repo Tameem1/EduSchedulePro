@@ -260,7 +260,7 @@ const TeacherQuestionnaireSubmission = () => {
     <div className="container mx-auto p-4">
       <Button
         variant="outline"
-        className="flex items-center gap-2"
+        className="flex items-center gap-2 w-full sm:w-auto mb-4"
         onClick={() => setLocation("/teacher/appointments")}
       >
         ← العودة إلى المواعيد
@@ -274,19 +274,19 @@ const TeacherQuestionnaireSubmission = () => {
         </CardHeader>
         <CardContent>
           <div className="bg-muted/50 p-4 rounded-md mb-6">
-            <p>
-              <span className="font-semibold">الوقت: </span>
-              {formatGMT3Time(new Date(appointment.startTime))} &nbsp;—&nbsp;
-              {format(new Date(appointment.startTime), "MMM d, yyyy")}
-            </p>
-            <p>
-              <span className="font-semibold">الطالب: </span>
-              {studentName}
-            </p>
+            <div className="mb-2">
+              <span className="font-semibold block sm:inline">الوقت: </span>
+              <span className="block sm:inline">{formatGMT3Time(new Date(appointment.startTime))} &nbsp;—&nbsp;
+              {format(new Date(appointment.startTime), "MMM d, yyyy")}</span>
+            </div>
+            <div className="mb-2">
+              <span className="font-semibold block sm:inline">الطالب: </span>
+              <span className="block sm:inline">{studentName}</span>
+            </div>
 
             <div className="mt-4 p-3 bg-primary/10 rounded-lg border border-primary/20">
               <h3 className="font-semibold mb-2">المهمة المطلوبة:</h3>
-              <p className="text-muted-foreground">
+              <p className="text-muted-foreground break-words">
                 {appointment.teacherAssignment}
               </p>
             </div>

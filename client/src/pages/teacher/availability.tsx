@@ -217,11 +217,11 @@ export default function TeacherAvailability() {
   };
 
   return (
-    <div className="container mx-auto p-8">
-      <div className="flex justify-between items-center mb-8">
-        <h1 className="text-2xl font-bold">إدارة توفر اليوم</h1>
+    <div className="container mx-auto p-4 md:p-8">
+      <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6 md:mb-8">
+        <h1 className="text-xl md:text-2xl font-bold text-center sm:text-right">إدارة توفر اليوم</h1>
         <Link href="/teacher/appointments">
-          <Button>عرض المواعيد</Button>
+          <Button className="w-full sm:w-auto">عرض المواعيد</Button>
         </Link>
       </div>
 
@@ -253,7 +253,7 @@ export default function TeacherAvailability() {
                 key={range.id}
                 className="flex items-center space-x-2 p-4 border rounded-md bg-muted/30"
               >
-                <div className="grid grid-cols-2 gap-4 flex-1">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 flex-1">
                   <div>
                     <label className="text-xs text-muted-foreground mb-1 block">
                       وقت البدء
@@ -267,7 +267,7 @@ export default function TeacherAvailability() {
                       <SelectTrigger>
                         <SelectValue placeholder="حدد وقت البدء" />
                       </SelectTrigger>
-                      <SelectContent>
+                      <SelectContent className="max-h-60 overflow-y-auto">
                         {timeOptions.map((option) => (
                           <SelectItem key={option.value} value={option.value}>
                             {option.label}
@@ -289,7 +289,7 @@ export default function TeacherAvailability() {
                       <SelectTrigger>
                         <SelectValue placeholder="حدد وقت الانتهاء" />
                       </SelectTrigger>
-                      <SelectContent>
+                      <SelectContent className="max-h-60 overflow-y-auto">
                         {timeOptions.map((option) => {
                           const isDisabled = range.start
                             ? !isAfter(
@@ -367,7 +367,7 @@ export default function TeacherAvailability() {
                     key={availability.id}
                     className="p-4 border rounded-md hover:bg-gray-50 transition-colors"
                   >
-                    <div className="flex justify-between items-center">
+                    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
                       <div>
                         <p className="font-medium">
                           {format(new Date(availability.startTime), "h:mm a")} -{" "}
@@ -380,8 +380,8 @@ export default function TeacherAvailability() {
                           )}
                         </p>
                       </div>
-                      <div className="flex items-center space-x-2">
-                        <div className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded flex items-center ml-2">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <div className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded flex items-center">
                           <span className="w-2 h-2 bg-green-500 rounded-full ml-1"></span>
                           متوفر
                         </div>
