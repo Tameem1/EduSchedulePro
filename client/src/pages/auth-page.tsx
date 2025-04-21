@@ -34,6 +34,7 @@ export default function AuthPage() {
     defaultValues: {
       username: "",
       password: "",
+      section: "aasem", // Default section
     },
   });
 

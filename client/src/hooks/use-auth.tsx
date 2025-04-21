@@ -30,12 +30,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const { toast } = useToast();
   const [, setLocation] = useLocation();
 
-  // Add debug logging for auth state changes
-  useEffect(() => {
-    console.log("[Auth Debug] AuthProvider mounted");
-    return () => console.log("[Auth Debug] AuthProvider unmounted");
-  }, []);
-
+  // Define the useQuery hook first so we can use refetchUser in useEffect
   const {
     data: user,
     error,
@@ -65,6 +60,59 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     initialData: null, // Explicitly set initial data to null
   });
 
+  // Add effect to handle localStorage persistence
+  useEffect(() => {
+    console.log("[Auth Debug] AuthProvider mounted");
+    
+    // Function to validate stored user with server
+    const validateUserAndRedirect = async () => {
+      // Check for user data in localStorage on mount
+      const storedUser = localStorage.getItem('authUser');
+      if (storedUser && !user) {
+        try {
+          const parsedUser = JSON.parse(storedUser);
+          console.log("[Auth Debug] Found user in localStorage:", parsedUser.username);
+          
+          // Set the user in the query cache and trigger validation against server
+          queryClient.setQueryData(["/api/user"], parsedUser);
+          
+          // Trigger a refetch to validate the user with the server
+          refetchUser().catch(error => {
+            console.error("[Auth Debug] Failed to validate user with server:", error);
+            // If validation fails, clear localStorage
+            localStorage.removeItem('authUser');
+            queryClient.setQueryData(["/api/user"], null);
+            return;
+          });
+          
+          // Auto redirect to appropriate dashboard based on role
+          const currentPath = window.location.pathname;
+          if (currentPath === '/' || currentPath === '/auth') {
+            console.log("[Auth Debug] Auto-redirecting to dashboard based on stored user role");
+            switch (parsedUser.role) {
+              case "teacher":
+                setLocation("/teacher/appointments");
+                break;
+              case "student":
+                setLocation("/student/book-appointment");
+                break;
+              case "manager":
+                setLocation("/manager/appointments");
+                break;
+            }
+          }
+        } catch (error) {
+          console.error("[Auth Debug] Error parsing stored user data:", error);
+          localStorage.removeItem('authUser');
+        }
+      }
+    };
+    
+    validateUserAndRedirect();
+    
+    return () => console.log("[Auth Debug] AuthProvider unmounted");
+  }, [refetchUser, user, setLocation]);
+
   const loginMutation = useMutation({
     mutationFn: async (credentials: LoginData) => {
       console.log("[Auth Debug] Attempting login");
@@ -77,7 +125,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     },
     onSuccess: (user: SelectUser) => {
       console.log("[Auth Debug] Login successful:", user);
+      
+      // Store user info in localStorage for persistence
+      localStorage.setItem('authUser', JSON.stringify(user));
+      console.log("[Auth Debug] User data saved to localStorage");
+      
       queryClient.setQueryData(["/api/user"], user);
+      
       // Redirect based on user role
       switch (user.role) {
         case "teacher":
@@ -115,6 +169,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     },
     onSuccess: (user: SelectUser) => {
       console.log("[Auth Debug] Registration successful:", user);
+      
+      // Store user info in localStorage for persistence
+      localStorage.setItem('authUser', JSON.stringify(user));
+      console.log("[Auth Debug] User data saved to localStorage after registration");
+      
       queryClient.setQueryData(["/api/user"], user);
       // Redirect based on user role after registration
       switch (user.role) {
@@ -151,6 +210,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     },
     onSuccess: () => {
       console.log("[Auth Debug] Logout successful");
+      
+      // Clear localStorage auth data
+      localStorage.removeItem('authUser');
+      console.log("[Auth Debug] User data removed from localStorage");
+      
       queryClient.setQueryData(["/api/user"], null);
       queryClient.clear();
       setLocation("/auth");
