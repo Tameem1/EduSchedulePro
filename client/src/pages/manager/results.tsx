@@ -313,11 +313,11 @@ export default function ManagerResults() {
   }
 
   return (
-    <div dir="rtl" className="container mx-auto p-8">
-      <div className="flex justify-between items-center mb-8">
-        <h1 className="text-2xl font-bold">نتائج الجلسات</h1>
-        <Link href="/manager/appointments">
-          <Button variant="outline">العودة إلى المواعيد</Button>
+    <div dir="rtl" className="container mx-auto px-4 py-6 sm:p-8">
+      <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6 sm:mb-8">
+        <h1 className="text-xl md:text-2xl font-bold text-center sm:text-right">نتائج الجلسات</h1>
+        <Link href="/manager/appointments" className="w-full sm:w-auto">
+          <Button variant="outline" className="w-full sm:w-auto">العودة إلى المواعيد</Button>
         </Link>
       </div>
 
@@ -332,12 +332,13 @@ export default function ManagerResults() {
               <CardTitle>إحصائيات الطلاب</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="flex items-center justify-end gap-4 mb-4">
+              <div className="flex flex-col sm:flex-row items-center justify-start sm:justify-end gap-4 mb-6">
                 <Select
                   value={selectedSection}
                   onValueChange={(value) => setSelectedSection(value)}
+                  className="w-full sm:w-auto"
                 >
-                  <SelectTrigger className="w-[200px]">
+                  <SelectTrigger className="w-full sm:w-[200px]">
                     <SelectValue placeholder="اختر القسم" />
                   </SelectTrigger>
                   <SelectContent>
@@ -349,18 +350,22 @@ export default function ManagerResults() {
                     <SelectItem value="aasem">عاصم</SelectItem>
                   </SelectContent>
                 </Select>
-                <DatePicker
-                  selected={dateRange}
-                  onSelect={(range) => {
-                    if (range) {
-                      setDateRange(range);
-                    }
-                  }}
-                  locale={arSA}
-                />
+                <div className="w-full sm:w-auto">
+                  <DatePicker
+                    selected={dateRange}
+                    onSelect={(range) => {
+                      if (range) {
+                        setDateRange(range);
+                      }
+                    }}
+                    locale={arSA}
+                    className="w-full"
+                  />
+                </div>
                 <Button
                   onClick={handleFilter}
                   disabled={!dateRange.from || !dateRange.to}
+                  className="w-full sm:w-auto"
                 >
                   تصفية
                 </Button>

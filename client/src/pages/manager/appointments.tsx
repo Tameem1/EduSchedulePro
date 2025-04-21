@@ -500,17 +500,21 @@ export default function ManagerAppointments() {
         <TelegramGuide />
       )}
       
-      <div className="flex justify-between items-center mb-4">
-        <h1 className="text-2xl font-bold">إدارة المواعيد</h1>
-        <div className="flex gap-2">
-          <Button onClick={() => setIsAddAppointmentDialogOpen(true)}>
+      <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6">
+        <h1 className="text-xl md:text-2xl font-bold text-center sm:text-right">إدارة المواعيد</h1>
+        <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+          <Button 
+            className="w-full sm:w-auto"
+            onClick={() => setIsAddAppointmentDialogOpen(true)}>
             إضافة موعد
           </Button>
-          <Button onClick={() => setIsAddIndependentAssignmentDialogOpen(true)}>
+          <Button 
+            className="w-full sm:w-auto"
+            onClick={() => setIsAddIndependentAssignmentDialogOpen(true)}>
             إضافة مهمة مستقلة
           </Button>
-          <Link href="/manager/results">
-            <Button variant="outline">عرض النتائج</Button>
+          <Link href="/manager/results" className="w-full sm:w-auto">
+            <Button variant="outline" className="w-full sm:w-auto">عرض النتائج</Button>
           </Link>
         </div>
       </div>

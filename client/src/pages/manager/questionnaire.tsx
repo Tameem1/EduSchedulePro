@@ -161,8 +161,8 @@ export default function ManagerQuestionnaire() {
   return (
     <div className="container mx-auto p-4" dir="rtl">
       <div className="mb-4">
-        <Link href="/manager/appointments">
-          <Button variant="outline" className="flex items-center gap-2">
+        <Link href="/manager/appointments" className="w-full sm:w-auto">
+          <Button variant="outline" className="flex items-center gap-2 w-full sm:w-auto">
             <ArrowLeft className="h-4 w-4" />
             العودة إلى المواعيد
           </Button>
@@ -198,8 +198,8 @@ export default function ManagerQuestionnaire() {
               </Select>
             </div>
 
-            <div className="flex items-center justify-between">
-              <Label>هل تمت متابعة الطالب؟</Label>
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-4">
+              <Label className="mb-1 sm:mb-0">هل تمت متابعة الطالب؟</Label>
               <Switch
                 checked={formData.question1}
                 onCheckedChange={(checked) =>
@@ -208,8 +208,8 @@ export default function ManagerQuestionnaire() {
               />
             </div>
 
-            <div className="flex items-center justify-between">
-              <Label>هل استجاب الطالب للمتابعة؟</Label>
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-4">
+              <Label className="mb-1 sm:mb-0">هل استجاب الطالب للمتابعة؟</Label>
               <Switch
                 checked={formData.question2}
                 onCheckedChange={(checked) =>
