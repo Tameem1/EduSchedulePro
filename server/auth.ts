@@ -49,9 +49,8 @@ export function setupAuth(app: Express) {
       secure: false, // Must be false for Replit non-HTTPS environments
       maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
       httpOnly: true,
-      sameSite: 'none', // Allow cross-site cookies in Replit's environment
-      path: '/',
-      domain: process.env.REPL_SLUG ? `${process.env.REPL_SLUG}.replit.dev` : undefined, // Set domain for Replit
+      sameSite: 'lax' as 'lax', // 'lax' allows cookies to be sent with top-level navigation
+      path: '/'
     },
     name: 'session_id',
   };
@@ -171,6 +170,7 @@ export function setupAuth(app: Express) {
             httpOnly: true,
             path: '/',
             secure: false,
+            sameSite: 'lax' as 'lax', // 'lax' allows cookies to be sent with top-level navigation
           };
           
           res.cookie('user_session', user.id.toString(), cookieOptions);
