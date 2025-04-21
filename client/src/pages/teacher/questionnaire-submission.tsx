@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useParams, useLocation } from "wouter";
+import { useParams, useLocation, Link } from "wouter";
 import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
 import { useMutation, useQuery } from "@tanstack/react-query";
@@ -189,7 +189,8 @@ const TeacherQuestionnaireSubmission = () => {
 
   // Loading states and authorization checks
   if (!user) {
-    return <Redirect to="/auth" />;
+    setLocation("/auth");
+    return null;
   }
 
   if (user.role !== "teacher") {
@@ -298,8 +299,8 @@ const TeacherQuestionnaireSubmission = () => {
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="flex items-center justify-between">
-              <label className="text-sm font-medium">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-4">
+              <label className="text-sm font-medium mb-1 sm:mb-0">
                 هل تمت متابعة الطالب؟
               </label>
               <Switch
@@ -310,8 +311,8 @@ const TeacherQuestionnaireSubmission = () => {
               />
             </div>
 
-            <div className="flex items-center justify-between">
-              <label className="text-sm font-medium">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-4">
+              <label className="text-sm font-medium mb-1 sm:mb-0">
                 هل استجاب الطالب للمتابعة؟
               </label>
               <Switch

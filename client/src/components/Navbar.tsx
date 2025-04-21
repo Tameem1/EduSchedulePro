@@ -26,8 +26,8 @@ export function Navbar() {
 
   return (
     <div className="bg-background border-b py-2 px-4 mb-4">
-      <div className="container mx-auto flex justify-between items-center">
-        <div className="font-semibold">
+      <div className="container mx-auto flex flex-col sm:flex-row justify-between items-center gap-2">
+        <div className="font-semibold text-center sm:text-right w-full sm:w-auto mb-2 sm:mb-0">
           {`لوحة تحكم ${roleInArabic}`}
         </div>
         <Button 
@@ -35,6 +35,7 @@ export function Navbar() {
           size="sm" 
           onClick={handleLogout}
           disabled={logoutMutation.isPending}
+          className="w-full sm:w-auto"
         >
           {logoutMutation.isPending ? "جاري تسجيل الخروج..." : "تسجيل الخروج"}
         </Button>
