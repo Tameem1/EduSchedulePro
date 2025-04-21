@@ -2,6 +2,7 @@ import passport from "passport";
 import { Strategy as LocalStrategy } from "passport-local";
 import { Express } from "express";
 import session from "express-session";
+import cookieParser from "cookie-parser";
 import { scrypt, randomBytes, timingSafeEqual } from "crypto";
 import { promisify } from "util";
 import { storage } from "./storage";
@@ -10,6 +11,15 @@ import { User as SelectUser } from "@shared/schema";
 declare global {
   namespace Express {
     interface User extends SelectUser {}
+  }
+}
+
+// Extend the session type definition
+declare module 'express-session' {
+  interface SessionData {
+    persistentLogin?: boolean;
+    userId?: number;
+    lastLogin?: string;
   }
 }
 
@@ -29,23 +39,28 @@ async function comparePasswords(supplied: string, stored: string) {
 }
 
 export function setupAuth(app: Express) {
-  // Set up session middleware
+  // Set up session middleware with specific settings for Replit environment
   const sessionSettings: session.SessionOptions = {
     secret: process.env.SESSION_SECRET || 'dev-secret-key',
-    resave: true, // Changed to true to ensure session is saved on each request
-    saveUninitialized: false,
+    resave: true, 
+    saveUninitialized: true, // Changed to true to ensure session is created for all visitors
     store: storage.sessionStore,
     cookie: {
-      secure: false, // Set to false for both dev and prod in Replit environment
+      secure: false, // Must be false for Replit non-HTTPS environments
       maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
       httpOnly: true,
-      sameSite: 'lax',
+      sameSite: 'none', // Allow cross-site cookies in Replit's environment
       path: '/',
+      domain: process.env.REPL_SLUG ? `${process.env.REPL_SLUG}.replit.dev` : undefined, // Set domain for Replit
     },
     name: 'session_id',
   };
 
   app.set("trust proxy", 1);
+  
+  // Add cookie parser middleware before session
+  app.use(cookieParser());
+  
   app.use(session(sessionSettings));
   app.use(passport.initialize());
   app.use(passport.session());
@@ -141,11 +156,27 @@ export function setupAuth(app: Express) {
       req.login(user, (loginErr) => {
         if (loginErr) return next(loginErr);
         
+        // Explicitly set a persistent property in the session
+        req.session.persistentLogin = true;
+        req.session.userId = user.id;
+        req.session.lastLogin = new Date().toISOString();
+        
         // Ensure the session is saved before responding
         req.session.save((err) => {
           if (err) return next(err);
           
+          // Set a manual cookie as well to ensure persistence
+          const cookieOptions = {
+            maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+            httpOnly: true,
+            path: '/',
+            secure: false,
+          };
+          
+          res.cookie('user_session', user.id.toString(), cookieOptions);
+          
           console.log(`[Auth Debug] Login successful - Session ID: ${req.sessionID}`);
+          console.log(`[Auth Debug] Setting persistent cookies and session data`);
           res.status(200).json(user);
         });
       });
@@ -159,15 +190,62 @@ export function setupAuth(app: Express) {
       if (err) return next(err);
       req.session.destroy((err) => {
         if (err) return next(err);
+        
+        // Clear all auth-related cookies
         res.clearCookie('session_id');
+        res.clearCookie('user_session');
+        
+        console.log(`[Auth Debug] Session and cookies cleared successfully`);
         res.sendStatus(200);
       });
     });
   });
 
-  app.get("/api/user", (req, res) => {
+  app.get("/api/user", async (req, res) => {
     console.log(`[Auth Debug] User request - isAuthenticated: ${req.isAuthenticated()}`);
-    if (!req.isAuthenticated()) return res.sendStatus(401);
-    res.json(req.user);
+    
+    // Check normal authentication
+    if (req.isAuthenticated()) {
+      console.log(`[Auth Debug] User authenticated via session`);
+      return res.json(req.user);
+    }
+    
+    // If not authenticated by session, try the fallback cookie
+    const userIdFromCookie = req.cookies.user_session;
+    if (userIdFromCookie) {
+      try {
+        console.log(`[Auth Debug] Attempting to authenticate via cookie: ${userIdFromCookie}`);
+        
+        // Get the user from storage
+        const userId = parseInt(userIdFromCookie, 10);
+        if (isNaN(userId)) {
+          return res.sendStatus(401);
+        }
+        
+        const user = await storage.getUser(userId);
+        if (!user) {
+          console.log(`[Auth Debug] No user found for ID: ${userId}`);
+          return res.sendStatus(401);
+        }
+        
+        // Log the user in
+        req.login(user, (err) => {
+          if (err) {
+            console.error(`[Auth Debug] Error logging in user from cookie: ${err.message}`);
+            return res.sendStatus(401);
+          }
+          
+          console.log(`[Auth Debug] User authenticated via cookie: ${user.username}`);
+          return res.json(user);
+        });
+      } catch (error) {
+        console.error(`[Auth Debug] Error retrieving user from cookie: ${error.message}`);
+        return res.sendStatus(401);
+      }
+    } else {
+      // No authentication found
+      console.log(`[Auth Debug] No authentication found`);
+      return res.sendStatus(401);
+    }
   });
 }
