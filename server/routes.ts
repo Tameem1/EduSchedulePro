@@ -52,11 +52,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
     clients.set(clientId, ws);
 
     // Send initial connection confirmation
-    ws.send(JSON.stringify({
-      type: "connection",
-      status: "connected",
-      clientId
-    }));
+    ws.send(
+      JSON.stringify({
+        type: "connection",
+        status: "connected",
+        clientId,
+      }),
+    );
 
     ws.on("error", (error) => {
       console.error(`WebSocket error for client ${clientId}:`, error);
@@ -106,7 +108,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
           clients.delete(clientId);
         }
       } catch (error: unknown) {
-        console.error(`Error broadcasting message to client ${clientId}:`, error instanceof Error ? error.message : String(error));
+        console.error(
+          `Error broadcasting message to client ${clientId}:`,
+          error instanceof Error ? error.message : String(error),
+        );
         clients.delete(clientId);
       }
     });
@@ -130,7 +135,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Extract unique sections from database
       const sectionsSet = new Set<string>(predefinedSections);
-      allUsers.forEach(user => {
+      allUsers.forEach((user) => {
         if (user.section) {
           sectionsSet.add(user.section);
         }
@@ -152,20 +157,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Create a mapping for section names between schema and database
       const sectionMapping: Record<string, string[]> = {
-        'aasem': ['aasem'],
-        'khaled': ['khaled'], // Fixed: removed 'bader' from khaled's section mapping
-        'mmdoh': ['mmdoh'],
-        'obada': ['obada'],
-        'other': ['other'],
-        'awab': ['awab'],
-        'zuhair': ['zuhair', 'jaddubai'],
-        'yahia': ['yahia'],
-        'omar': ['omar'],
-        'dubai-omar': ['dubai-omar'],
-        'motaa': ['motaa'],
-        'mahmoud': ['mahmoud'],
-        'kibar': ['kibar'],
-        'bader': ['bader'] // Added separate mapping for bader
+        aasem: ["aasem"],
+        khaled: ["khaled"], // Fixed: removed 'bader' from khaled's section mapping
+        mmdoh: ["mmdoh"],
+        obada: ["obada"],
+        other: ["other"],
+        awab: ["awab"],
+        zuhair: ["zuhair"],
+        yahia: ["yahia"],
+        omar: ["omar"],
+        "dubai-omar": ["dubai-omar"],
+        motaa: ["motaa"],
+        mahmoud: ["mahmoud"],
+        kibar: ["kibar"],
+        bader: ["bader"], // Added separate mapping for bader
       };
 
       // Get all users in the section
@@ -173,7 +178,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Fetch all students that match any of the sections in dbSections
       let sectionUsers = [];
-      
+
       if (dbSections.length === 1) {
         // If there's only one section, use simple equals
         sectionUsers = await db
@@ -188,13 +193,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
           .from(users)
           .where(eq(users.role, "student"))
           .execute();
-          
-        sectionUsers = allUsers.filter(user => 
-          user.section && dbSections.includes(user.section)
+
+        sectionUsers = allUsers.filter(
+          (user) => user.section && dbSections.includes(user.section),
         );
       }
 
-      console.log(`Found ${sectionUsers.length} users for section ${section} (mapped to ${dbSections.join(', ')})`);
+      console.log(
+        `Found ${sectionUsers.length} users for section ${section} (mapped to ${dbSections.join(", ")})`,
+      );
       res.json(sectionUsers);
     } catch (error) {
       console.error("Error fetching students by section:", error);
@@ -249,13 +256,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Users can only update their own data
       if (req.user.id !== userId) {
-        return res.status(403).json({ error: "You can only update your own profile" });
+        return res
+          .status(403)
+          .json({ error: "You can only update your own profile" });
       }
 
       const { telegramUsername } = req.body;
 
       // Update user with provided data
-      const updatedUser = await storage.updateUser(userId, { telegramUsername });
+      const updatedUser = await storage.updateUser(userId, {
+        telegramUsername,
+      });
 
       res.json(updatedUser);
     } catch (error) {
@@ -463,15 +474,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Send notification to managers
       let managerNotificationSent = false;
       try {
-        managerNotificationSent = await notifyManagerAboutAppointment(appointment.id);
-        console.log(`Manager notification ${managerNotificationSent ? 'sent' : 'failed'} for appointment ${appointment.id}`);
+        managerNotificationSent = await notifyManagerAboutAppointment(
+          appointment.id,
+        );
+        console.log(
+          `Manager notification ${managerNotificationSent ? "sent" : "failed"} for appointment ${appointment.id}`,
+        );
       } catch (notificationError) {
-        console.error('Error sending manager notification:', notificationError);
+        console.error("Error sending manager notification:", notificationError);
       }
 
       res.json({
         ...appointment,
-        managerNotificationSent
+        managerNotificationSent,
       });
     } catch (error) {
       console.error("Error creating appointment:", error);
@@ -809,7 +824,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(assignment);
     } catch (error) {
       console.error("Error creating independent assignment:", error);
-      res.status(400).json({ error: "Failed to create independent assignment" });
+      res
+        .status(400)
+        .json({ error: "Failed to create independent assignment" });
     }
   });
 
@@ -823,13 +840,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(assignments);
     } catch (error) {
       console.error("Error fetching independent assignments:", error);
-      res.status(500).json({ error: "Failed to fetch independent assignments" });
+      res
+        .status(500)
+        .json({ error: "Failed to fetch independent assignments" });
     }
   });
 
   // Modify the statistics endpoint to include group information
   app.get("/api/statistics", async (req, res) => {
-    if (!req.isAuthenticated() || req.user.role !== 'manager') {
+    if (!req.isAuthenticated() || req.user.role !== "manager") {
       return res.sendStatus(403);
     }
 
@@ -837,59 +856,66 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Get all questionnaire responses
       const responses = await storage.getAllQuestionnaireResponses();
       const assignments = await storage.getIndependentAssignments();
-      const students = await db.select().from(users).where(eq(users.role, "student"));
+      const students = await db
+        .select()
+        .from(users)
+        .where(eq(users.role, "student"));
 
       // Create a map to store statistics by student
       const studentStats = new Map();
 
       // Process questionnaire responses
-      responses.forEach(response => {
-        const student = students.find(s => s.id === response.studentId);
+      responses.forEach((response) => {
+        const student = students.find((s) => s.id === response.studentId);
         const stats = studentStats.get(response.studentId) || {
           studentId: response.studentId,
           studentName: response.studentName,
-          section: student?.section || 'غير محدد', // Add section information
+          section: student?.section || "غير محدد", // Add section information
           question1YesCount: 0,
           question2YesCount: 0,
           question3Responses: [],
           assignmentResponses: [],
-          createdAt: response.createdAt
+          createdAt: response.createdAt,
         };
 
-        if (response.question1?.toLowerCase().includes('نعم')) {
+        if (response.question1?.toLowerCase().includes("نعم")) {
           stats.question1YesCount++;
         }
-        if (response.question2?.toLowerCase().includes('نعم')) {
+        if (response.question2?.toLowerCase().includes("نعم")) {
           stats.question2YesCount++;
         }
         if (response.question3) {
-          stats.question3Responses.push(`${format(new Date(response.createdAt), 'MM/dd')} - ${response.question3}`);
+          stats.question3Responses.push(
+            `${format(new Date(response.createdAt), "MM/dd")} - ${response.question3}`,
+          );
         }
 
         studentStats.set(response.studentId, stats);
       });
 
       // Process independent assignments
-      assignments.forEach(assignment => {
-        const student = students.find(s => s.id === assignment.studentId);
+      assignments.forEach((assignment) => {
+        const student = students.find((s) => s.id === assignment.studentId);
         const stats = studentStats.get(assignment.studentId) || {
           studentId: assignment.studentId,
           studentName: assignment.studentName,
-          section: student?.section || 'غير محدد', // Add section information
+          section: student?.section || "غير محدد", // Add section information
           question1YesCount: 0,
           question2YesCount: 0,
           question3Responses: [],
           assignmentResponses: [],
-          createdAt: assignment.submittedAt
+          createdAt: assignment.submittedAt,
         };
 
         if (assignment.assignment) {
-          const assignmentText = `${format(new Date(assignment.submittedAt), 'MM/dd')} - مهمة: ${assignment.assignment}`;
+          const assignmentText = `${format(new Date(assignment.submittedAt), "MM/dd")} - مهمة: ${assignment.assignment}`;
           stats.assignmentResponses.push(assignmentText);
 
           // If this is a more recent activity, update the createdAt timestamp
           const assignmentDate = new Date(assignment.submittedAt);
-          const currentDate = stats.createdAt ? new Date(stats.createdAt) : new Date(0);
+          const currentDate = stats.createdAt
+            ? new Date(stats.createdAt)
+            : new Date(0);
 
           if (assignmentDate > currentDate) {
             stats.createdAt = assignment.submittedAt;
@@ -900,18 +926,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
 
       // Convert map to array and format the response
-      const statistics = Array.from(studentStats.entries()).map(([studentId, stats]) => {
-        // Include independent assignments in allResponses
-        const allResponses = [...stats.question3Responses, ...stats.assignmentResponses]
-          .sort((a,b)=> new Date(a.split(' - ')[0]).getTime() - new Date(b.split(' - ')[0]).getTime())
-          .join(' | ');
+      const statistics = Array.from(studentStats.entries()).map(
+        ([studentId, stats]) => {
+          // Include independent assignments in allResponses
+          const allResponses = [
+            ...stats.question3Responses,
+            ...stats.assignmentResponses,
+          ]
+            .sort(
+              (a, b) =>
+                new Date(a.split(" - ")[0]).getTime() -
+                new Date(b.split(" - ")[0]).getTime(),
+            )
+            .join(" | ");
 
-        return {
-          studentId,
-          ...stats,
-          allResponses
-        };
-      });
+          return {
+            studentId,
+            ...stats,
+            allResponses,
+          };
+        },
+      );
 
       console.log("Sending statistics:", statistics);
       res.json(statistics);
