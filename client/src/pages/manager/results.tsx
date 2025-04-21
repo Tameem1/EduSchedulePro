@@ -333,23 +333,27 @@ export default function ManagerResults() {
             </CardHeader>
             <CardContent>
               <div className="flex flex-col sm:flex-row items-center justify-start sm:justify-end gap-4 mb-6">
-                <Select
-                  value={selectedSection}
-                  onValueChange={(value) => setSelectedSection(value)}
-                  className="w-full sm:w-auto"
-                >
-                  <SelectTrigger className="w-full sm:w-[200px]">
-                    <SelectValue placeholder="اختر القسم" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">الكل</SelectItem>
-                    <SelectItem value="bader">بدر</SelectItem>
-                    <SelectItem value="mahmoud">محمود</SelectItem>
-                    <SelectItem value="motaa">مطاع</SelectItem>
-                    <SelectItem value="omar">عمر</SelectItem>
-                    <SelectItem value="aasem">عاصم</SelectItem>
-                  </SelectContent>
-                </Select>
+                <div className="w-full sm:w-auto">
+                  <div className="w-full">
+                    <Select
+                      value={selectedSection}
+                      onValueChange={(value) => setSelectedSection(value)}
+                    >
+                      <SelectTrigger className="w-full sm:w-[200px]">
+                        <SelectValue placeholder="اختر القسم" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">الكل</SelectItem>
+                        <SelectItem value="bader">بدر</SelectItem>
+                        <SelectItem value="mahmoud">محمود</SelectItem>
+                        <SelectItem value="motaa">مطاع</SelectItem>
+                        <SelectItem value="omar">عمر</SelectItem>
+                        <SelectItem value="aasem">عاصم</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+                
                 <div className="w-full sm:w-auto">
                   <DatePicker
                     selected={dateRange}
@@ -362,52 +366,59 @@ export default function ManagerResults() {
                     className="w-full"
                   />
                 </div>
-                <Button
-                  onClick={handleFilter}
-                  disabled={!dateRange.from || !dateRange.to}
-                  className="w-full sm:w-auto"
-                >
-                  تصفية
-                </Button>
+                
+                <div className="w-full sm:w-auto">
+                  <Button
+                    onClick={handleFilter}
+                    disabled={!dateRange.from || !dateRange.to}
+                    className="w-full"
+                  >
+                    تصفية
+                  </Button>
+                </div>
               </div>
 
               {filteredStatistics && filteredStatistics.length > 0 ? (
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>اسم الطالب</TableHead>
-                      <TableHead>القسم</TableHead>
-                      <TableHead>عدد مرات المتابعة</TableHead>
-                      <TableHead>عدد مرات الاستجابة</TableHead>
-                      <TableHead>الإنتاج</TableHead>
-                      <TableHead>تاريخ آخر نشاط</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {filteredStatistics.map((stat: any) => (
-                      <TableRow key={stat.studentId}>
-                        <TableCell className="font-medium">
-                          {stat.studentName}
-                        </TableCell>
-                        <TableCell>{stat.section}</TableCell>
-                        <TableCell>{stat.question1YesCount}</TableCell>
-                        <TableCell>{stat.question2YesCount}</TableCell>
-                        <TableCell>
-                          <div className="max-w-md overflow-x-auto whitespace-nowrap">
-                            {stat.allResponses}
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          {stat.createdAt
-                            ? format(new Date(stat.createdAt), "yyyy/MM/dd", {
-                                locale: arSA,
-                              })
-                            : "-"}
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
+                <div className="overflow-x-auto -mx-4 sm:mx-0">
+                  <div className="inline-block min-w-full align-middle p-4 sm:p-0">
+                    <Table className="min-w-full">
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead className="whitespace-nowrap">اسم الطالب</TableHead>
+                          <TableHead className="whitespace-nowrap">القسم</TableHead>
+                          <TableHead className="whitespace-nowrap">عدد مرات المتابعة</TableHead>
+                          <TableHead className="whitespace-nowrap">عدد مرات الاستجابة</TableHead>
+                          <TableHead className="whitespace-nowrap">الإنتاج</TableHead>
+                          <TableHead className="whitespace-nowrap">تاريخ آخر نشاط</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {filteredStatistics.map((stat: any) => (
+                          <TableRow key={stat.studentId}>
+                            <TableCell className="font-medium whitespace-nowrap">
+                              {stat.studentName}
+                            </TableCell>
+                            <TableCell className="whitespace-nowrap">{stat.section}</TableCell>
+                            <TableCell className="whitespace-nowrap text-center">{stat.question1YesCount}</TableCell>
+                            <TableCell className="whitespace-nowrap text-center">{stat.question2YesCount}</TableCell>
+                            <TableCell>
+                              <div className="max-w-[150px] sm:max-w-md overflow-x-auto whitespace-nowrap">
+                                {stat.allResponses}
+                              </div>
+                            </TableCell>
+                            <TableCell className="whitespace-nowrap">
+                              {stat.createdAt
+                                ? format(new Date(stat.createdAt), "yyyy/MM/dd", {
+                                    locale: arSA,
+                                  })
+                                : "-"}
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </div>
+                </div>
               ) : (
                 <div className="text-center py-8">
                   <p className="text-muted-foreground">
