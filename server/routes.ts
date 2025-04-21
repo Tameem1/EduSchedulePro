@@ -153,7 +153,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Create a mapping for section names between schema and database
       const sectionMapping: Record<string, string[]> = {
         'aasem': ['aasem'],
-        'khaled': ['khaled', 'bader'],
+        'khaled': ['khaled'], // Fixed: removed 'bader' from khaled's section mapping
         'mmdoh': ['mmdoh'],
         'obada': ['obada'],
         'other': ['other'],
@@ -164,7 +164,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         'dubai-omar': ['dubai-omar'],
         'motaa': ['motaa'],
         'mahmoud': ['mahmoud'],
-        'kibar': ['kibar']
+        'kibar': ['kibar'],
+        'bader': ['bader'] // Added separate mapping for bader
       };
 
       // Get all users in the section
