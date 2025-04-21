@@ -14,8 +14,11 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Redirect } from "wouter";
-import { insertUserSchema, UserRole, type UserRoleType } from "@shared/schema";
+import { Redirect, useLocation } from "wouter";
+import { insertUserSchema, UserRole, type UserRoleType, Section } from "@shared/schema";
+import { useQuery } from "@tanstack/react-query";
+import { getQueryFn } from "@/lib/queryClient";
+import { useEffect } from "react";
 
 const loginSchema = insertUserSchema.pick({
   username: true,
@@ -28,6 +31,13 @@ const registerSchema = insertUserSchema.extend({
 
 export default function AuthPage() {
   const { user, loginMutation, registerMutation } = useAuth();
+  const [, setLocation] = useLocation();
+  
+  // Fetch available sections
+  const { data: sections } = useQuery<string[], Error>({
+    queryKey: ["/api/sections"],
+    queryFn: getQueryFn({ on401: "throw" })
+  });
 
   const loginForm = useForm({
     resolver: zodResolver(loginSchema),
@@ -45,6 +55,7 @@ export default function AuthPage() {
       password: "",
       role: UserRole.STUDENT as UserRoleType,
       telegramUsername: "", // Changed to telegramUsername
+      section: "aasem", // Default section
     },
   });
 
@@ -74,6 +85,11 @@ export default function AuthPage() {
                 </TabsList>
 
                 <TabsContent value="login">
+                  <div className="bg-green-50 p-3 mb-4 rounded-md border border-green-200">
+                    <p className="text-sm text-green-800">
+                      ستبقى مسجل الدخول حتى بعد إغلاق المتصفح
+                    </p>
+                  </div>
                   <form
                     onSubmit={loginForm.handleSubmit((data) =>
                       loginMutation.mutate(data),
@@ -90,6 +106,24 @@ export default function AuthPage() {
                           type="password"
                           {...loginForm.register("password")}
                         />
+                      </div>
+                      <div>
+                        <Label htmlFor="section">القسم</Label>
+                        <Select
+                          onValueChange={(value) => loginForm.setValue("section", value)}
+                          defaultValue={loginForm.getValues("section")}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="اختر القسم" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {sections?.map((section) => (
+                              <SelectItem key={section} value={section}>
+                                {section}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
                       </div>
                       <Button
                         type="submit"
@@ -149,6 +183,24 @@ export default function AuthPage() {
                             <SelectItem value={UserRole.MANAGER}>
                               مدير
                             </SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div>
+                        <Label htmlFor="section">القسم</Label>
+                        <Select
+                          onValueChange={(value) => registerForm.setValue("section", value)}
+                          defaultValue={registerForm.getValues("section")}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="اختر القسم" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {sections?.map((section) => (
+                              <SelectItem key={section} value={section}>
+                                {section}
+                              </SelectItem>
+                            ))}
                           </SelectContent>
                         </Select>
                       </div>

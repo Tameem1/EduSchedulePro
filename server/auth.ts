@@ -239,7 +239,7 @@ export function setupAuth(app: Express) {
           return res.json(user);
         });
       } catch (error) {
-        console.error(`[Auth Debug] Error retrieving user from cookie: ${error.message}`);
+        console.error(`[Auth Debug] Error retrieving user from cookie:`, error instanceof Error ? error.message : String(error));
         return res.sendStatus(401);
       }
     } else {
