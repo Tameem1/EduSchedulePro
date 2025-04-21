@@ -29,19 +29,20 @@ async function comparePasswords(supplied: string, stored: string) {
 }
 
 export function setupAuth(app: Express) {
+  // Set up session middleware
   const sessionSettings: session.SessionOptions = {
-    secret: process.env.SESSION_SECRET || 'dev-secret-key',  // Added fallback
-    resave: false,
+    secret: process.env.SESSION_SECRET || 'dev-secret-key',
+    resave: true, // Changed to true to ensure session is saved on each request
     saveUninitialized: false,
     store: storage.sessionStore,
     cookie: {
-      secure: process.env.NODE_ENV === 'production', // Only use secure in production
-      maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days for persistent login
+      secure: false, // Set to false for both dev and prod in Replit environment
+      maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
       httpOnly: true,
-      sameSite: 'lax', // Added for better security
+      sameSite: 'lax',
       path: '/',
     },
-    name: 'session_id', // Added custom name
+    name: 'session_id',
   };
 
   app.set("trust proxy", 1);

@@ -17,10 +17,8 @@ import {
   independentAssignments,
 } from "@shared/schema";
 import session from "express-session";
-import createMemoryStore from "memorystore";
 import { pool, db } from "./db";
-
-const MemoryStore = createMemoryStore(session);
+import connectPgSimple from "connect-pg-simple";
 
 // Helper function to handle database retries
 async function withRetry<T>(operation: () => Promise<T>, maxRetries = 3): Promise<T> {
@@ -45,9 +43,15 @@ async function withRetry<T>(operation: () => Promise<T>, maxRetries = 3): Promis
   throw lastError;
 }
 
+// Initialize PostgreSQL session store
+const PgStore = connectPgSimple(session);
+
 export const storage = {
-  sessionStore: new MemoryStore({
-    checkPeriod: 86400000,
+  sessionStore: new PgStore({
+    pool,
+    tableName: 'session', // Use a custom session table name
+    createTableIfMissing: true, // Create the session table if it doesn't exist
+    pruneSessionInterval: 60 * 60, // Prune expired sessions every hour
   }),
 
   async getUser(id: number) {
