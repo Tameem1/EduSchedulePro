@@ -86,6 +86,8 @@ export default function ManagerTeachersAvailability() {
           id: avail.id,
           start: format(start, "h:mm a"),
           end: format(end, "h:mm a"),
+          // Format as a single string for display (from - to)
+          timeRange: `${format(start, "h:mm a")} - ${format(end, "h:mm a")}`,
           startDate: start,
           endDate: end
         };
@@ -168,7 +170,7 @@ export default function ManagerTeachersAvailability() {
                           <div className="flex flex-col gap-1">
                             {item.availabilityRanges.map((range) => (
                               <span key={range.id} className="text-sm">
-                                {range.start} - {range.end}
+                                <span dir="ltr" className="inline-block">{range.timeRange}</span>
                               </span>
                             ))}
                           </div>
