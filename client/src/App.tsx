@@ -14,6 +14,7 @@ import ManagerAppointments from "@/pages/manager/appointments";
 import ManagerResults from "@/pages/manager/results";
 import AssignTeacher from "@/pages/manager/assign-teacher";
 import ManagerQuestionnaire from "@/pages/manager/questionnaire";
+import ManagerTeachersAvailability from "@/pages/manager/teachers-availability";
 import StudentAppointments from "@/pages/student/appointments";
 import { ProtectedRoute } from "./lib/protected-route";
 import { Navbar } from "@/components/Navbar";

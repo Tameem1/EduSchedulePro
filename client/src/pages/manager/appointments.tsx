@@ -516,6 +516,9 @@ export default function ManagerAppointments() {
           <Link href="/manager/results" className="w-full sm:w-auto">
             <Button variant="outline" className="w-full sm:w-auto">عرض النتائج</Button>
           </Link>
+          <Link href="/manager/teachers-availability" className="w-full sm:w-auto">
+            <Button variant="outline" className="w-full sm:w-auto">توفر المعلمين</Button>
+          </Link>
         </div>
       </div>
 

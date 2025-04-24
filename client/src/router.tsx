@@ -1,133 +1,90 @@
 import * as React from "react";
-import { useAuth } from "@/hooks/use-auth";
+import { Switch, Route } from "wouter";
 import { UserRole } from "@shared/schema";
-import { Route, Switch, Redirect } from "wouter";
-import AuthPage from "./pages/auth-page";
-import BookAppointment from "./pages/student/book-appointment";
-import StudentAppointments from "./pages/student/appointments";
-import TeacherAvailability from "./pages/teacher/availability";
-import TeacherAppointments from "./pages/teacher/appointments";
-import TeacherQuestionnaireSubmission from "./pages/teacher/questionnaire-submission";
-import ManagerAppointments from "./pages/manager/appointments";
-import AssignTeacher from "./pages/manager/assign-teacher";
-import ManagerQuestionnaire from "./pages/manager/questionnaire";
-import ManagerTeachersAvailability from "./pages/manager/teachers-availability";
-import Dashboard from "./pages/dashboard";
-
-function ProtectedRoute({
-  element: Element,
-  allowedRoles,
-}: {
-  element: React.ReactNode;
-  allowedRoles: string[];
-}) {
-  const { user, isLoading } = useAuth();
-
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
-
-  if (!user || !allowedRoles.includes(user.role)) {
-    return <Redirect to="/auth" />;
-  }
-
-  return Element;
-}
+import { ProtectedRoute } from "./lib/protected-route";
+import { Navbar } from "@/components/Navbar";
+import NotFound from "@/pages/not-found";
+import AuthPage from "@/pages/auth";
+import BookAppointment from "@/pages/student/book-appointment";
+import StudentAppointments from "@/pages/student/appointments";
+import TeacherAvailability from "@/pages/teacher/availability";
+import TeacherAppointments from "@/pages/teacher/appointments";
+import TeacherQuestionnaireSubmission from "@/pages/teacher/questionnaire-submission";
+import ManagerAppointments from "@/pages/manager/appointments";
+import AssignTeacher from "@/pages/manager/assign-teacher";
+import ManagerQuestionnaire from "@/pages/manager/questionnaire";
+import ManagerTeachersAvailability from "@/pages/manager/teachers-availability";
 
 export default function Router() {
   return (
-    <Switch>
-      <Route path="/" element={<Dashboard />} />
-      <Route path="/auth" element={<AuthPage />} />
+    <>
+      <Navbar />
+      <Switch>
+        <Route path="/auth" component={AuthPage} />
 
-      {/* Student routes */}
-      <Route 
-        path="/student/book-appointment" 
-        element={
-          <ProtectedRoute 
-            element={<BookAppointment />} 
-            allowedRoles={[UserRole.STUDENT]} 
-          />
-        } 
-      />
-      <Route 
-        path="/student/appointments" 
-        element={
-          <ProtectedRoute 
-            element={<StudentAppointments />} 
-            allowedRoles={[UserRole.STUDENT]} 
-          />
-        } 
-      />
+        {/* Student routes */}
+        <ProtectedRoute
+          path="/student/book-appointment"
+          role="student"
+          component={BookAppointment}
+        />
+        <ProtectedRoute
+          path="/student/appointments"
+          role="student"
+          component={StudentAppointments}
+        />
 
-      {/* Teacher routes */}
-      <Route 
-        path="/teacher/availability" 
-        element={
-          <ProtectedRoute 
-            element={<TeacherAvailability />} 
-            allowedRoles={[UserRole.TEACHER]} 
-          />
-        } 
-      />
-      <Route 
-        path="/teacher/appointments" 
-        element={
-          <ProtectedRoute 
-            element={<TeacherAppointments />} 
-            allowedRoles={[UserRole.TEACHER]} 
-          />
-        } 
-      />
-      <Route 
-        path="/teacher/questionnaire-submission/:appointmentId?" 
-        element={
-          <ProtectedRoute 
-            element={<TeacherQuestionnaireSubmission />} 
-            allowedRoles={[UserRole.TEACHER]} 
-          />
-        } 
-      />
+        {/* Teacher routes */}
+        <ProtectedRoute
+          path="/teacher/availability"
+          role="teacher"
+          component={TeacherAvailability}
+        />
+        <ProtectedRoute
+          path="/teacher/appointments"
+          role="teacher"
+          component={TeacherAppointments}
+        />
+        <ProtectedRoute
+          path="/teacher/questionnaire-submission/:appointmentId?"
+          role="teacher"
+          component={TeacherQuestionnaireSubmission}
+        />
 
-      {/* Manager routes */}
-      <Route 
-        path="/manager/appointments" 
-        element={
-          <ProtectedRoute 
-            element={<ManagerAppointments />} 
-            allowedRoles={[UserRole.MANAGER]} 
-          />
-        } 
-      />
-      <Route 
-        path="/manager/assign-teacher/:id" 
-        element={
-          <ProtectedRoute 
-            element={<AssignTeacher />} 
-            allowedRoles={[UserRole.MANAGER]} 
-          />
-        } 
-      />
-      <Route 
-        path="/manager/questionnaire" 
-        element={
-          <ProtectedRoute 
-            element={<ManagerQuestionnaire />} 
-            allowedRoles={[UserRole.MANAGER]} 
-          />
-        } 
-      />
-      <Route 
-        path="/manager/teachers-availability" 
-        element={
-          <ProtectedRoute 
-            element={<ManagerTeachersAvailability />} 
-            allowedRoles={[UserRole.MANAGER]} 
-          />
-        } 
-      />
+        {/* Manager routes */}
+        <ProtectedRoute
+          path="/manager/appointments"
+          role="manager"
+          component={ManagerAppointments}
+        />
+        <ProtectedRoute
+          path="/manager/assign-teacher/:id"
+          role="manager"
+          component={AssignTeacher}
+        />
+        <ProtectedRoute
+          path="/manager/questionnaire"
+          role="manager"
+          component={ManagerQuestionnaire}
+        />
+        <ProtectedRoute
+          path="/manager/teachers-availability"
+          role="manager"
+          component={ManagerTeachersAvailability}
+        />
 
-      <Route>404 - Not Found</Route>
-    </Switch>
+        {/* Redirect root to appropriate dashboard */}
+        <ProtectedRoute
+          path="/"
+          role="student"
+          component={() => {
+            window.location.href = "/student/book-appointment";
+            return null;
+          }}
+        />
+
+        <Route component={NotFound} />
+      </Switch>
+    </>
   );
 }
