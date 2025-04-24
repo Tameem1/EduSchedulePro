@@ -81,6 +81,11 @@ function Router() {
           role="manager"
           component={ManagerQuestionnaire}
         />
+        <ProtectedRoute
+          path="/manager/teachers-availability"
+          role="manager"
+          component={ManagerTeachersAvailability}
+        />
         {/* Redirect root to appropriate dashboard */}
         <ProtectedRoute
           path="/"
