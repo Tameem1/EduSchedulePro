@@ -11,6 +11,7 @@ import TeacherQuestionnaireSubmission from "./pages/teacher/questionnaire-submis
 import ManagerAppointments from "./pages/manager/appointments";
 import AssignTeacher from "./pages/manager/assign-teacher";
 import ManagerQuestionnaire from "./pages/manager/questionnaire";
+import ManagerTeachersAvailability from "./pages/manager/teachers-availability";
 import Dashboard from "./pages/dashboard";
 
 function ProtectedRoute({
@@ -112,6 +113,15 @@ export default function Router() {
         element={
           <ProtectedRoute 
             element={<ManagerQuestionnaire />} 
+            allowedRoles={[UserRole.MANAGER]} 
+          />
+        } 
+      />
+      <Route 
+        path="/manager/teachers-availability" 
+        element={
+          <ProtectedRoute 
+            element={<ManagerTeachersAvailability />} 
             allowedRoles={[UserRole.MANAGER]} 
           />
         } 
