@@ -455,15 +455,52 @@ export default function ManagerAppointments() {
     return foundUser?.username || `${role} ${userId}`;
   };
 
-  // Filter teachers based on search query
+  // Filter teachers based on search query and prioritize available teachers
   const getFilteredTeachers = React.useMemo(() => {
     if (!teachers) return [];
-    if (!teacherSearchQuery.trim()) return teachers;
+    if (!selectedAppointment) return teachers;
     
-    return teachers.filter(teacher => 
-      teacher.username?.toLowerCase().includes(teacherSearchQuery.toLowerCase())
-    );
-  }, [teachers, teacherSearchQuery]);
+    // First, filter based on search query if it exists
+    let filteredTeachers = teacherSearchQuery.trim() 
+      ? teachers.filter(teacher => 
+          teacher.username?.toLowerCase().includes(teacherSearchQuery.toLowerCase())
+        )
+      : [...teachers];
+    
+    // Now sort by availability - available teachers first
+    return filteredTeachers.sort((a, b) => {
+      // Check if teachers are available at the appointment time
+      const aIsAvailable = availabilities?.some(avail => {
+        const appointmentTime = new Date(selectedAppointment.startTime);
+        const availStartTime = new Date(avail.startTime);
+        const availEndTime = new Date(avail.endTime);
+        return (
+          avail.teacherId === a.id &&
+          appointmentTime >= availStartTime &&
+          appointmentTime <= availEndTime
+        );
+      }) || false;
+      
+      const bIsAvailable = availabilities?.some(avail => {
+        const appointmentTime = new Date(selectedAppointment.startTime);
+        const availStartTime = new Date(avail.startTime);
+        const availEndTime = new Date(avail.endTime);
+        return (
+          avail.teacherId === b.id &&
+          appointmentTime >= availStartTime &&
+          appointmentTime <= availEndTime
+        );
+      }) || false;
+      
+      // Sort by availability first (available teachers come first)
+      if (aIsAvailable !== bIsAvailable) {
+        return aIsAvailable ? -1 : 1;
+      }
+      
+      // For teachers with same availability status, sort alphabetically by username
+      return (a.username || "").localeCompare(b.username || "");
+    });
+  }, [teachers, teacherSearchQuery, selectedAppointment, availabilities]);
 
   const getStatusColor = (status: AppointmentStatusType) => {
     return (
