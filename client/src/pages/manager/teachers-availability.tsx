@@ -153,7 +153,16 @@ export default function ManagerTeachersAvailability() {
               </TableHeader>
               <TableBody>
                 {teacherAvailabilityData.length > 0 ? (
-                  teacherAvailabilityData.map((item) => (
+                  // Sort teachers with availability to appear first
+                  [...teacherAvailabilityData]
+                    .sort((a, b) => {
+                      // Sort teachers with availability first (true values first)
+                      if (a.hasAvailability === b.hasAvailability) {
+                        return 0; // Keep original order if both have same availability status
+                      }
+                      return a.hasAvailability ? -1 : 1; // Available teachers (-1) come before unavailable ones (1)
+                    })
+                    .map((item) => (
                     <TableRow key={item.teacher.id}>
                       <TableCell className="font-medium">{item.teacher.username}</TableCell>
                       <TableCell>
