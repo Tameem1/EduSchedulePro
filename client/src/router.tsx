@@ -80,14 +80,12 @@ export default function Router() {
         />
 
         {/* Redirect root to appropriate dashboard */}
-        <ProtectedRoute
-          path="/"
-          role="student"
-          component={() => {
-            window.location.href = "/student/book-appointment";
+        <Route path="/">
+          {() => {
+            window.location.href = "/teacher/appointments";
             return null;
           }}
-        />
+        </Route>
 
         <Route component={NotFound} />
       </Switch>
