@@ -152,15 +152,17 @@ export default function TeacherCreatedAppointments() {
           المواعيد التي أنشأتها
         </h1>
         <div className="flex flex-col sm:flex-row items-center gap-2 w-full sm:w-auto">
-          <Link href="/teacher/appointments" className="w-full sm:w-auto">
-            <Button 
-              variant="outline" 
-              className="w-full sm:w-auto flex items-center gap-1"
-            >
-              <ArrowLeft className="h-4 w-4 ml-1" />
-              العودة إلى المواعيد
-            </Button>
-          </Link>
+          <Button 
+            variant="outline" 
+            className="w-full sm:w-auto flex items-center gap-1"
+            onClick={() => {
+              console.log("Navigating back to appointments");
+              window.location.href = "/teacher/appointments";
+            }}
+          >
+            <ArrowLeft className="h-4 w-4 ml-1" />
+            العودة إلى المواعيد
+          </Button>
         </div>
       </div>
 
@@ -226,11 +228,16 @@ export default function TeacherCreatedAppointments() {
                           
                           <div className="flex items-center gap-2">
                             {appointment.status !== AppointmentStatus.REJECTED && (
-                              <Link href={`/teacher/questionnaire-submission/${appointment.id}`}>
-                                <Button variant="outline" size="sm">
-                                  استعراض الاستبيان
-                                </Button>
-                              </Link>
+                              <Button 
+                                variant="outline" 
+                                size="sm"
+                                onClick={() => {
+                                  console.log("Navigating to questionnaire submission");
+                                  window.location.href = `/teacher/questionnaire-submission/${appointment.id}`;
+                                }}
+                              >
+                                استعراض الاستبيان
+                              </Button>
                             )}
                           </div>
                         </div>
@@ -258,9 +265,16 @@ export default function TeacherCreatedAppointments() {
             <CalendarIcon className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
             <p className="text-muted-foreground">لم تقم بإنشاء أي مواعيد بعد</p>
             <p className="mt-2">يمكنك إنشاء مواعيد جديدة من صفحة المواعيد</p>
-            <Link href="/teacher/appointments" className="mt-4 inline-block">
-              <Button variant="outline">العودة إلى المواعيد</Button>
-            </Link>
+            <Button 
+              variant="outline" 
+              className="mt-4"
+              onClick={() => {
+                console.log("Navigating back to appointments");
+                window.location.href = "/teacher/appointments";
+              }}
+            >
+              العودة إلى المواعيد
+            </Button>
           </CardContent>
         </Card>
       )}
