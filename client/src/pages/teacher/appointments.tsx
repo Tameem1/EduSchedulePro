@@ -325,9 +325,9 @@ export default function TeacherAppointments() {
             variant="outline" 
             className="w-full sm:w-auto"
             onClick={() => {
-              console.log("Navigating to simplified route /created");
-              // Try a simpler route first for testing
-              window.location.href = "/created";
+              console.log("Navigating to direct server route /created-test");
+              // Try a direct server route
+              window.location.href = "/created-test";
             }}
           >
             المواعيد التي أنشأتها (صفحة بسيطة)

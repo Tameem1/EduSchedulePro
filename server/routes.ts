@@ -24,6 +24,91 @@ import { addHours } from "date-fns";
 const clients = new Map<string, WebSocket>();
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Special direct route for created-appointments
+  app.get('/created-test', (req, res) => {
+    console.log("Direct route /created-test accessed!");
+    res.send(`
+      <!DOCTYPE html>
+      <html lang="ar" dir="rtl">
+      <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>المواعيد التي أنشأتها</title>
+        <style>
+          body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            direction: rtl;
+          }
+          
+          .container {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+          }
+          
+          h1 {
+            text-align: center;
+            margin-bottom: 30px;
+          }
+          
+          .card {
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+          }
+          
+          .message {
+            text-align: center;
+            color: #666;
+            font-size: 18px;
+          }
+          
+          .back-button {
+            display: block;
+            width: 200px;
+            margin: 20px auto;
+            padding: 10px 15px;
+            background-color: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+            text-align: center;
+          }
+          
+          .back-button:hover {
+            background-color: #1d4ed8;
+          }
+        </style>
+      </head>
+      <body>
+        <div class="container">
+          <h1>المواعيد التي أنشأتها</h1>
+          
+          <div class="card">
+            <p class="message">صفحة المواعيد التي أنشأتها</p>
+            <p class="message">هذه الصفحة قيد التطوير</p>
+          </div>
+          
+          <button class="back-button" onclick="window.location.href='/teacher/appointments'">العودة إلى المواعيد</button>
+        </div>
+
+        <script>
+          console.log("Static created-test page loaded successfully!");
+        </script>
+      </body>
+      </html>
+    `);
+  });
   const httpServer = createServer(app);
 
   // Create WebSocket server before setting up auth
