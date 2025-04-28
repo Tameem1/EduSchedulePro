@@ -11,6 +11,7 @@ import TeacherAvailability from "@/pages/teacher/availability";
 import TeacherAppointments from "@/pages/teacher/appointments";
 import TeacherCreatedAppointments from "@/pages/teacher/created-appointments";
 import TeacherCreated from "@/pages/teacher/created";
+import TeacherCreateAppointments from "@/pages/teacher/create-appointments";
 import TeacherQuestionnaireSubmission from "@/pages/teacher/questionnaire-submission";
 import ManagerAppointments from "@/pages/manager/appointments";
 import AssignTeacher from "@/pages/manager/assign-teacher";
@@ -49,6 +50,9 @@ export default function Router() {
         />
         <Route path="/teacher/created-appointments">
           <TeacherCreatedAppointments />
+        </Route>
+        <Route path="/teacher/create-appointments">
+          <TeacherCreateAppointments />
         </Route>
         <Route path="/teacher/created">
           <TeacherCreated />
