@@ -297,20 +297,20 @@ export default function AppointmentDetails() {
                 <p>لم يتم العثور على استبيان مكتمل لهذا الموعد</p>
                 <Button 
                   className="mt-4"
-                  onClick={() => setLocation(`/teacher/questionnaire/${appointmentId}`)}
+                  onClick={() => setLocation(`/teacher/questionnaire-submission/${appointmentId}`)}
                 >
                   إكمال الاستبيان
                 </Button>
               </div>
             )}
           </CardContent>
-        </CardFooter>
+        </Card>
       )}
 
       {appointment.status === AppointmentStatus.ASSIGNED && (
         <div className="flex justify-center mt-6">
           <Button 
-            onClick={() => setLocation(`/teacher/questionnaire/${appointmentId}`)}
+            onClick={() => setLocation(`/teacher/questionnaire-submission/${appointmentId}`)}
           >
             إدخال نتائج المتابعة
           </Button>

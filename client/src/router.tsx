@@ -9,6 +9,7 @@ import BookAppointment from "@/pages/student/book-appointment";
 import StudentAppointments from "@/pages/student/appointments";
 import TeacherAvailability from "@/pages/teacher/availability";
 import TeacherAppointments from "@/pages/teacher/appointments";
+import TeacherAppointmentDetails from "@/pages/teacher/appointment-details";
 import TeacherQuestionnaireSubmission from "@/pages/teacher/questionnaire-submission";
 import ManagerAppointments from "@/pages/manager/appointments";
 import AssignTeacher from "@/pages/manager/assign-teacher";
@@ -44,6 +45,11 @@ export default function Router() {
           path="/teacher/appointments"
           role="teacher"
           component={TeacherAppointments}
+        />
+        <ProtectedRoute
+          path="/teacher/appointment/:id"
+          role="teacher"
+          component={TeacherAppointmentDetails}
         />
         <ProtectedRoute
           path="/teacher/questionnaire-submission/:appointmentId?"

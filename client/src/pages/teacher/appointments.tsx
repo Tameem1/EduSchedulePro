@@ -480,6 +480,16 @@ export default function TeacherAppointments() {
                       </>
                     )}
 
+                    {/* View Details button */}
+                    <Link
+                      href={`/teacher/appointment/${appointment.id}`}
+                      className="w-full sm:w-auto"
+                    >
+                      <Button variant="secondary" size="sm" className="w-full sm:w-auto">
+                        عرض التفاصيل
+                      </Button>
+                    </Link>
+
                     {appointment.status !== AppointmentStatus.REJECTED && (
                       <Link
                         href={`/teacher/questionnaire-submission/${appointment.id}`}
