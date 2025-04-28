@@ -8,9 +8,10 @@ import {
   insertAvailabilitySchema,
   insertQuestionnaireSchema,
   AppointmentStatus,
+  AppointmentStatusArabic,
 } from "@shared/schema";
 import { db } from "./db";
-import { eq, sql, inArray } from "drizzle-orm";
+import { eq, sql, inArray, desc } from "drizzle-orm";
 import { users, availabilities, Section } from "@shared/schema";
 import {
   sendTelegramNotification,
@@ -91,9 +92,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Setup auth before our custom routes
   setupAuth(app);
   
-  // Special direct route for created-appointments (AFTER auth setup)
-  app.get('/created-test', async (req: any, res) => {
-    console.log("Direct route /created-test accessed!");
+  // Full-featured route for teacher-created appointments (AFTER auth setup)
+  app.get('/teacher/created-appointments', async (req: any, res) => {
+    console.log("Teacher created appointments page accessed!");
     
     if (!req.isAuthenticated()) {
       return res.redirect('/auth');
@@ -119,17 +120,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         studentNames[student.id] = student.username;
       });
       
-      // Helper function to get status in Arabic
+      // Helper function to get status in Arabic using shared constants
       const getStatusInArabic = (status: string) => {
-        const statusMap: Record<string, string> = {
-          'pending': 'قيد الانتظار',
-          'requested': 'تم الطلب',
-          'assigned': 'تم التعيين',
-          'responded': 'تمت الاستجابة',
-          'done': 'تم الانتهاء',
-          'rejected': 'مرفوض'
-        };
-        return statusMap[status] || status;
+        return AppointmentStatusArabic[status as keyof typeof AppointmentStatusArabic] || status;
       };
       
       // Helper function to format date nicely

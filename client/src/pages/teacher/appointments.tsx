@@ -325,8 +325,8 @@ export default function TeacherAppointments() {
             variant="secondary" 
             className="w-full sm:w-auto flex items-center gap-1"
             onClick={() => {
-              console.log("Navigating to direct server route /created-test");
-              window.location.href = "/created-test";
+              console.log("Navigating to teacher created appointments page");
+              window.location.href = "/teacher/created-appointments";
             }}
           >
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" className="h-4 w-4 ml-1">
