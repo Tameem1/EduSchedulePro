@@ -109,8 +109,12 @@ export default function Router() {
         {/* Redirect root to appropriate dashboard */}
         <Route path="/">
           {() => {
-            window.location.href = "/teacher/appointments";
-            return null;
+            // Use a side effect to redirect
+            React.useEffect(() => {
+              window.location.href = "/teacher/appointments";
+            }, []);
+            // Return an empty div to satisfy TypeScript
+            return <div />;
           }}
         </Route>
 
