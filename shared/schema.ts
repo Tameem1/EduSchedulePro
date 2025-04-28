@@ -74,7 +74,8 @@ export const appointments = pgTable("appointments", {
   teacherId: integer("teacher_id").references(() => users.id),
   startTime: timestamp("start_time", { mode: 'string' }).notNull(),
   status: appointmentStatusEnum("status").notNull().default('pending'),
-  teacherAssignment: text("teacherAssignment")
+  teacherAssignment: text("teacherAssignment"),
+  createdByTeacherId: integer("created_by_teacher_id").references(() => users.id)
 });
 
 // Questionnaire responses for appointments
@@ -102,7 +103,8 @@ export const independentAssignments = pgTable("independent_assignments", {
 export const usersRelations = relations(users, ({ many }) => ({
   teacherAvailabilities: many(availabilities),
   teacherAppointments: many(appointments, { relationName: "teacherAppointments" }),
-  studentAppointments: many(appointments, { relationName: "studentAppointments" })
+  studentAppointments: many(appointments, { relationName: "studentAppointments" }),
+  createdAppointments: many(appointments, { relationName: "createdAppointments" })
 }));
 
 export const appointmentsRelations = relations(appointments, ({ one, many }) => ({
@@ -115,6 +117,11 @@ export const appointmentsRelations = relations(appointments, ({ one, many }) => 
     fields: [appointments.teacherId],
     references: [users.id],
     relationName: "teacherAppointments"
+  }),
+  createdByTeacher: one(users, {
+    fields: [appointments.createdByTeacherId],
+    references: [users.id],
+    relationName: "createdAppointments"
   }),
   questionnaireResponse: many(questionnaireResponses)
 }));
@@ -153,6 +160,7 @@ export const insertAppointmentSchema = createInsertSchema(appointments).extend({
   // Ensure we use the exact time string provided without any transformation
   startTime: z.string().transform(str => str),
   teacherAssignment: z.string().optional(),
+  createdByTeacherId: z.number().optional(),
 }).omit({ teacherId: true });
 export const insertQuestionnaireSchema = createInsertSchema(questionnaireResponses)
   .extend({
