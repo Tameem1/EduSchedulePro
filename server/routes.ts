@@ -25,89 +25,267 @@ const clients = new Map<string, WebSocket>();
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Special direct route for created-appointments
-  app.get('/created-test', (req, res) => {
+  app.get('/created-test', async (req, res) => {
     console.log("Direct route /created-test accessed!");
-    res.send(`
-      <!DOCTYPE html>
-      <html lang="ar" dir="rtl">
-      <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>المواعيد التي أنشأتها</title>
-        <style>
-          body {
-            font-family: Arial, sans-serif;
-            background-color: #f5f5f5;
-            color: #333;
-            margin: 0;
-            padding: 0;
-            direction: rtl;
-          }
+    
+    if (!req.isAuthenticated()) {
+      return res.redirect('/auth');
+    }
+    
+    if (req.user.role !== 'teacher') {
+      return res.redirect('/auth');
+    }
+    
+    const teacherId = req.user.id;
+    
+    try {
+      // Get appointments created by this teacher
+      const createdAppointments = await storage.getAppointmentsCreatedByTeacher(teacherId);
+      console.log(`Found ${createdAppointments.length} appointments created by teacher ${teacherId}`);
+      
+      // Get all students for display purposes
+      const allStudents = await db.select().from(users).where(eq(users.role, 'student')).execute();
+      
+      // Create a map of student IDs to names for easier lookup
+      const studentNames = {};
+      allStudents.forEach(student => {
+        studentNames[student.id] = student.username;
+      });
+      
+      // Helper function to get status in Arabic
+      const getStatusInArabic = (status) => {
+        const statusMap = {
+          'pending': 'قيد الانتظار',
+          'requested': 'تم الطلب',
+          'assigned': 'تم التعيين',
+          'responded': 'تمت الاستجابة',
+          'done': 'تم الانتهاء',
+          'rejected': 'مرفوض'
+        };
+        return statusMap[status] || status;
+      };
+      
+      // Helper function to format date nicely
+      const formatDate = (dateString) => {
+        const date = new Date(dateString);
+        const day = date.getDate();
+        const month = date.getMonth() + 1;
+        const year = date.getFullYear();
+        const hours = date.getHours();
+        const minutes = date.getMinutes();
+        return `${day}/${month}/${year} ${hours}:${minutes < 10 ? '0' + minutes : minutes}`;
+      };
+      
+      // Generate HTML for each appointment
+      let appointmentsHtml = '';
+      
+      if (createdAppointments.length > 0) {
+        createdAppointments.forEach(appointment => {
+          const studentName = studentNames[appointment.studentId] || 'طالب غير معروف';
           
-          .container {
-            max-width: 800px;
-            margin: 40px auto;
-            padding: 20px;
-            background-color: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-          }
-          
-          h1 {
-            text-align: center;
-            margin-bottom: 30px;
-          }
-          
-          .card {
-            border: 1px solid #e0e0e0;
-            border-radius: 8px;
-            padding: 20px;
-            margin-bottom: 20px;
-          }
-          
-          .message {
-            text-align: center;
-            color: #666;
-            font-size: 18px;
-          }
-          
-          .back-button {
-            display: block;
-            width: 200px;
-            margin: 20px auto;
-            padding: 10px 15px;
-            background-color: #2563eb;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            font-size: 16px;
-            cursor: pointer;
-            text-align: center;
-          }
-          
-          .back-button:hover {
-            background-color: #1d4ed8;
-          }
-        </style>
-      </head>
-      <body>
-        <div class="container">
-          <h1>المواعيد التي أنشأتها</h1>
-          
-          <div class="card">
-            <p class="message">صفحة المواعيد التي أنشأتها</p>
-            <p class="message">هذه الصفحة قيد التطوير</p>
+          appointmentsHtml += `
+            <div class="appointment-card">
+              <div class="appointment-header">
+                <span class="appointment-date">${formatDate(appointment.startTime)}</span>
+                <span class="appointment-status status-${appointment.status}">${getStatusInArabic(appointment.status)}</span>
+              </div>
+              <div class="appointment-details">
+                <p><strong>الطالب:</strong> ${studentName}</p>
+                <p><strong>التعيين:</strong> ${appointment.teacherAssignment || 'لا يوجد'}</p>
+                <p><strong>ملاحظات:</strong> ${appointment.notes || 'لا يوجد'}</p>
+              </div>
+            </div>
+          `;
+        });
+      } else {
+        appointmentsHtml = '<p class="no-appointments">لم تقم بإنشاء أي مواعيد بعد</p>';
+      }
+      
+      res.send(`
+        <!DOCTYPE html>
+        <html lang="ar" dir="rtl">
+        <head>
+          <meta charset="UTF-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <title>المواعيد التي أنشأتها</title>
+          <style>
+            body {
+              font-family: Arial, sans-serif;
+              background-color: #f5f5f5;
+              color: #333;
+              margin: 0;
+              padding: 0;
+              direction: rtl;
+            }
+            
+            .container {
+              max-width: 800px;
+              margin: 40px auto;
+              padding: 20px;
+              background-color: white;
+              border-radius: 8px;
+              box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            }
+            
+            h1 {
+              text-align: center;
+              margin-bottom: 30px;
+            }
+            
+            .appointment-card {
+              border: 1px solid #e0e0e0;
+              border-radius: 8px;
+              padding: 16px;
+              margin-bottom: 16px;
+              background-color: white;
+            }
+            
+            .appointment-header {
+              display: flex;
+              justify-content: space-between;
+              margin-bottom: 10px;
+              align-items: center;
+            }
+            
+            .appointment-date {
+              font-weight: bold;
+            }
+            
+            .appointment-status {
+              padding: 4px 8px;
+              border-radius: 4px;
+              font-size: 14px;
+              color: white;
+            }
+            
+            .status-pending {
+              background-color: #6B7280;
+            }
+            
+            .status-requested {
+              background-color: #3B82F6;
+            }
+            
+            .status-assigned {
+              background-color: #10B981;
+            }
+            
+            .status-responded {
+              background-color: #F59E0B;
+            }
+            
+            .status-done {
+              background-color: #059669;
+            }
+            
+            .status-rejected {
+              background-color: #EF4444;
+            }
+            
+            .appointment-details {
+              margin-top: 10px;
+            }
+            
+            .no-appointments {
+              text-align: center;
+              color: #6B7280;
+              font-size: 16px;
+              padding: 20px;
+            }
+            
+            .back-button {
+              display: block;
+              width: 200px;
+              margin: 20px auto;
+              padding: 10px 15px;
+              background-color: #2563eb;
+              color: white;
+              border: none;
+              border-radius: 4px;
+              font-size: 16px;
+              cursor: pointer;
+              text-align: center;
+              text-decoration: none;
+            }
+            
+            .back-button:hover {
+              background-color: #1d4ed8;
+            }
+          </style>
+        </head>
+        <body>
+          <div class="container">
+            <h1>المواعيد التي أنشأتها</h1>
+            
+            ${appointmentsHtml}
+            
+            <button class="back-button" onclick="window.location.href='/teacher/appointments'">العودة إلى المواعيد</button>
           </div>
-          
-          <button class="back-button" onclick="window.location.href='/teacher/appointments'">العودة إلى المواعيد</button>
-        </div>
 
-        <script>
-          console.log("Static created-test page loaded successfully!");
-        </script>
-      </body>
-      </html>
-    `);
+          <script>
+            console.log("Created appointments page loaded successfully!");
+          </script>
+        </body>
+        </html>
+      `);
+    } catch (error) {
+      console.error("Error rendering created appointments page:", error);
+      res.status(500).send(`
+        <!DOCTYPE html>
+        <html lang="ar" dir="rtl">
+        <head>
+          <meta charset="UTF-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <title>خطأ</title>
+          <style>
+            body {
+              font-family: Arial, sans-serif;
+              background-color: #f5f5f5;
+              color: #333;
+              margin: 0;
+              padding: 0;
+              direction: rtl;
+            }
+            
+            .container {
+              max-width: 800px;
+              margin: 40px auto;
+              padding: 20px;
+              background-color: white;
+              border-radius: 8px;
+              box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+              text-align: center;
+            }
+            
+            h1 {
+              color: #EF4444;
+            }
+            
+            .back-button {
+              display: block;
+              width: 200px;
+              margin: 20px auto;
+              padding: 10px 15px;
+              background-color: #2563eb;
+              color: white;
+              border: none;
+              border-radius: 4px;
+              font-size: 16px;
+              cursor: pointer;
+              text-align: center;
+            }
+          </style>
+        </head>
+        <body>
+          <div class="container">
+            <h1>حدث خطأ</h1>
+            <p>حدث خطأ أثناء محاولة تحميل المواعيد التي أنشأتها. الرجاء المحاولة مرة أخرى لاحقًا.</p>
+            <button class="back-button" onclick="window.location.href='/teacher/appointments'">العودة إلى المواعيد</button>
+          </div>
+        </body>
+        </html>
+      `);
+    }
   });
   const httpServer = createServer(app);
 
