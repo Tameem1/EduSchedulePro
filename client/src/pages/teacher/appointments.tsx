@@ -313,12 +313,16 @@ export default function TeacherAppointments() {
         <TelegramGuide />
       )}
       
-      {/* Top actions: availability, plus button */}
+      {/* Top actions: availability, created appointments, plus button */}
       <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6">
         <h1 className="text-xl md:text-2xl font-bold text-center sm:text-right">مواعيد المعلم</h1>
         <div className="flex flex-col sm:flex-row items-center gap-2 w-full sm:w-auto">
           <Link href="/teacher/availability" className="w-full sm:w-auto">
             <Button variant="outline" className="w-full sm:w-auto">إدارة التوفر</Button>
+          </Link>
+          
+          <Link href="/teacher/created-appointments" className="w-full sm:w-auto">
+            <Button variant="outline" className="w-full sm:w-auto">المواعيد التي أنشأتها</Button>
           </Link>
 
           {/* Button+Dialog to add new appointment */}

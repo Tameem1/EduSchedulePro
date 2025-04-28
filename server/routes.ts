@@ -458,13 +458,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
         teacherAssignment,
       });
 
-      const parsedData = insertAppointmentSchema.parse({
+      // Create the appointment data
+      const appointmentData: any = {
         startTime: adjustedStartTime.toISOString(),
         // If `studentId` is provided in the request, use that; otherwise default to the user's ID (e.g. student booking themselves)
         studentId: studentId || req.user.id,
         status: "pending",
         teacherAssignment,
-      });
+      };
+      
+      // If a teacher is creating the appointment, record their ID
+      if (req.user.role === "teacher") {
+        appointmentData.createdByTeacherId = req.user.id;
+        console.log(`Setting createdByTeacherId to ${req.user.id} for teacher-created appointment`);
+      }
+      
+      const parsedData = insertAppointmentSchema.parse(appointmentData);
 
       const appointment = await storage.createAppointment(parsedData);
 
@@ -780,6 +789,30 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error fetching questionnaire responses:", error);
       res.status(500).json({ error: "Failed to fetch responses" });
+    }
+  });
+
+  // Get appointments created by a teacher
+  app.get("/api/teachers/:id/created-appointments", async (req, res) => {
+    if (!req.isAuthenticated()) {
+      return res.sendStatus(401);
+    }
+
+    // Only allow teachers to access their own created appointments or managers to view any teacher's appointments
+    if (req.user.role !== "manager" && (req.user.role !== "teacher" || req.user.id !== parseInt(req.params.id))) {
+      return res.sendStatus(403);
+    }
+
+    try {
+      const teacherId = parseInt(req.params.id);
+      const appointments = await storage.getAppointmentsCreatedByTeacher(teacherId);
+      
+      console.log(`Fetched ${appointments.length} appointments created by teacher ${teacherId}`);
+      
+      res.json(appointments);
+    } catch (error) {
+      console.error("Error fetching appointments created by teacher:", error);
+      res.status(500).json({ error: "Failed to fetch created appointments" });
     }
   });
 
