@@ -321,8 +321,11 @@ export default function TeacherAppointments() {
             <Button variant="outline" className="w-full sm:w-auto">إدارة التوفر</Button>
           </Link>
           
-          <Link href={"/teacher/created-appointments"} className="w-full sm:w-auto">
+          <Link href="/teacher/created-appointments" className="w-full sm:w-auto">
             <Button variant="outline" className="w-full sm:w-auto">المواعيد التي أنشأتها</Button>
+          </Link>
+          <Link href="/teacher/created" className="w-full sm:w-auto">
+            <Button variant="outline" className="w-full sm:w-auto">صفحة اختبار</Button>
           </Link>
 
           {/* Button+Dialog to add new appointment */}
