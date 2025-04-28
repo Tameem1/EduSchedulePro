@@ -165,11 +165,12 @@ export default function TeacherCreatedAppointments() {
         <div className="flex flex-col sm:flex-row items-center gap-2 w-full sm:w-auto">
           <Button 
             variant="outline" 
-            className="w-full sm:w-auto flex items-center gap-1"
+            className="w-full sm:w-auto flex items-center gap-1 hover:bg-blue-50"
             onClick={() => {
               console.log("Navigating back to appointments");
               window.location.href = "/teacher/appointments";
             }}
+            style={{ borderColor: "hsl(203, 90%, 50%)", color: "hsl(203, 90%, 50%)" }}
           >
             <ArrowLeft className="h-4 w-4 ml-1" />
             العودة إلى المواعيد
@@ -178,10 +179,10 @@ export default function TeacherCreatedAppointments() {
       </div>
 
       {createdAppointments && createdAppointments.length > 0 ? (
-        <Card className="border border-border">
+        <Card className="border-t-4" style={{ borderTopColor: "hsl(203, 90%, 50%)" }}>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <CalendarIcon className="h-5 w-5" />
+              <CalendarIcon className="h-5 w-5" style={{ color: "hsl(203, 90%, 50%)" }} />
               المواعيد التي قمت بإنشائها
             </CardTitle>
             <CardDescription>
@@ -195,7 +196,10 @@ export default function TeacherCreatedAppointments() {
                 createdAppointments.map((appointment) => (
                   <div
                     key={appointment.id}
-                    className="p-4 border rounded-lg hover:border-primary transition-colors duration-200"
+                    className="p-4 border rounded-lg transition-colors duration-200"
+                    style={{ borderColor: "#e2e8f0" }}
+                    onMouseOver={(e) => e.currentTarget.style.borderColor = "hsl(203, 90%, 50%)"}
+                    onMouseOut={(e) => e.currentTarget.style.borderColor = "#e2e8f0"}
                   >
                     <div className="flex flex-col sm:flex-row justify-between gap-4">
                       <div>
@@ -242,6 +246,8 @@ export default function TeacherCreatedAppointments() {
                               console.log("Navigating to questionnaire submission");
                               window.location.href = `/teacher/questionnaire-submission/${appointment.id}`;
                             }}
+                            style={{ borderColor: "hsl(203, 90%, 50%)", color: "hsl(203, 90%, 50%)" }}
+                            className="hover:bg-blue-50"
                           >
                             استعراض الاستبيان
                           </Button>
@@ -266,11 +272,12 @@ export default function TeacherCreatedAppointments() {
             <p className="mt-2">يمكنك إنشاء مواعيد جديدة من صفحة المواعيد</p>
             <Button 
               variant="outline" 
-              className="mt-4"
+              className="mt-4 hover:bg-blue-50"
               onClick={() => {
                 console.log("Navigating back to appointments");
                 window.location.href = "/teacher/appointments";
               }}
+              style={{ borderColor: "hsl(203, 90%, 50%)", color: "hsl(203, 90%, 50%)" }}
             >
               العودة إلى المواعيد
             </Button>
