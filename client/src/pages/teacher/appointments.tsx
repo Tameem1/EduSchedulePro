@@ -321,9 +321,16 @@ export default function TeacherAppointments() {
             <Button variant="outline" className="w-full sm:w-auto">إدارة التوفر</Button>
           </Link>
           
-          <Link href="/teacher/created-appointments" className="w-full sm:w-auto">
-            <Button variant="outline" className="w-full sm:w-auto">المواعيد التي أنشأتها</Button>
-          </Link>
+          <Button 
+            variant="outline" 
+            className="w-full sm:w-auto"
+            onClick={() => {
+              console.log("Navigating to created-appointments");
+              window.location.href = "/teacher/created-appointments";
+            }}
+          >
+            المواعيد التي أنشأتها
+          </Button>
 
           {/* Button+Dialog to add new appointment */}
           <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
