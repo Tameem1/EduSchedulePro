@@ -5,7 +5,7 @@ import { users, appointments } from "@shared/schema";
 import { Telegraf } from "telegraf";
 import { format } from "date-fns";
 import { format as formatGMT3Time } from "date-fns-tz";
-
+//import 'dotenv/config';
 // Check if bot token is provided
 const botToken = process.env.TELEGRAM_BOT_TOKEN;
 
