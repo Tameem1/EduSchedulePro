@@ -24,8 +24,75 @@ import { addHours } from "date-fns";
 const clients = new Map<string, WebSocket>();
 
 export async function registerRoutes(app: Express): Promise<Server> {
-  // Special direct route for created-appointments
-  app.get('/created-test', async (req, res) => {
+  const httpServer = createServer(app);
+
+  // Create WebSocket server before setting up auth
+  const wss = new WebSocketServer({
+    server: httpServer,
+    path: "/ws",
+    verifyClient: (info, cb) => {
+      const cookies = info.req.headers.cookie;
+      if (!cookies) {
+        console.log("WebSocket connection rejected: No cookies found");
+        cb(false, 401, "Unauthorized");
+        return;
+      }
+
+      // Pass the connection and let the session middleware handle auth
+      console.log("WebSocket connection attempt with cookies:", cookies);
+      cb(true);
+    },
+  });
+  
+  // Set up WebSocket connection handling
+  wss.on("connection", (ws, req) => {
+    const clientId = Math.random().toString(36).substring(7);
+    console.log(`WebSocket client connected with ID: ${clientId}`);
+
+    clients.set(clientId, ws);
+
+    // Send initial connection confirmation
+    ws.send(
+      JSON.stringify({
+        type: "connection",
+        status: "connected",
+        clientId,
+      }),
+    );
+
+    ws.on("error", (error) => {
+      console.error(`WebSocket error for client ${clientId}:`, error);
+    });
+
+    ws.on("close", (code, reason) => {
+      console.log(`WebSocket client ${clientId} disconnected`, {
+        code,
+        reason: reason.toString(),
+      });
+      clients.delete(clientId);
+    });
+
+    // Heartbeat to keep connection alive
+    const interval = setInterval(() => {
+      if (ws.readyState === WebSocket.OPEN) {
+        ws.ping();
+      }
+    }, 30000);
+
+    ws.on("pong", () => {
+      // Client responded to ping, connection is alive
+    });
+
+    ws.on("close", () => {
+      clearInterval(interval);
+    });
+  });
+  
+  // Setup auth before our custom routes
+  setupAuth(app);
+  
+  // Special direct route for created-appointments (AFTER auth setup)
+  app.get('/created-test', async (req: any, res) => {
     console.log("Direct route /created-test accessed!");
     
     if (!req.isAuthenticated()) {
@@ -47,14 +114,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const allStudents = await db.select().from(users).where(eq(users.role, 'student')).execute();
       
       // Create a map of student IDs to names for easier lookup
-      const studentNames = {};
+      const studentNames: Record<number, string> = {};
       allStudents.forEach(student => {
         studentNames[student.id] = student.username;
       });
       
       // Helper function to get status in Arabic
-      const getStatusInArabic = (status) => {
-        const statusMap = {
+      const getStatusInArabic = (status: string) => {
+        const statusMap: Record<string, string> = {
           'pending': 'قيد الانتظار',
           'requested': 'تم الطلب',
           'assigned': 'تم التعيين',
@@ -66,7 +133,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       };
       
       // Helper function to format date nicely
-      const formatDate = (dateString) => {
+      const formatDate = (dateString: string) => {
         const date = new Date(dateString);
         const day = date.getDate();
         const month = date.getMonth() + 1;
@@ -92,7 +159,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
               <div class="appointment-details">
                 <p><strong>الطالب:</strong> ${studentName}</p>
                 <p><strong>التعيين:</strong> ${appointment.teacherAssignment || 'لا يوجد'}</p>
-                <p><strong>ملاحظات:</strong> ${appointment.notes || 'لا يوجد'}</p>
               </div>
             </div>
           `;
@@ -287,69 +353,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
       `);
     }
   });
-  const httpServer = createServer(app);
-
-  // Create WebSocket server before setting up auth
-  const wss = new WebSocketServer({
-    server: httpServer,
-    path: "/ws",
-    verifyClient: (info, cb) => {
-      const cookies = info.req.headers.cookie;
-      if (!cookies) {
-        console.log("WebSocket connection rejected: No cookies found");
-        cb(false, 401, "Unauthorized");
-        return;
-      }
-
-      // Pass the connection and let the session middleware handle auth
-      console.log("WebSocket connection attempt with cookies:", cookies);
-      cb(true);
-    },
-  });
-
-  // Set up WebSocket connection handling
-  wss.on("connection", (ws, req) => {
-    const clientId = Math.random().toString(36).substring(7);
-    console.log(`WebSocket client connected with ID: ${clientId}`);
-
-    clients.set(clientId, ws);
-
-    // Send initial connection confirmation
-    ws.send(
-      JSON.stringify({
-        type: "connection",
-        status: "connected",
-        clientId,
-      }),
-    );
-
-    ws.on("error", (error) => {
-      console.error(`WebSocket error for client ${clientId}:`, error);
-    });
-
-    ws.on("close", (code, reason) => {
-      console.log(`WebSocket client ${clientId} disconnected`, {
-        code,
-        reason: reason.toString(),
-      });
-      clients.delete(clientId);
-    });
-
-    // Heartbeat to keep connection alive
-    const interval = setInterval(() => {
-      if (ws.readyState === WebSocket.OPEN) {
-        ws.ping();
-      }
-    }, 30000);
-
-    ws.on("pong", () => {
-      // Client responded to ping, connection is alive
-    });
-
-    ws.on("close", () => {
-      clearInterval(interval);
-    });
-  });
 
   // Helper function to broadcast updates with error handling and retries
   const broadcastUpdate = (type: string, data: any) => {
@@ -379,9 +382,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
     });
   };
-
-  // Setup auth after WebSocket server
-  setupAuth(app);
 
   // Endpoint to get all sections
   app.get("/api/sections", async (req, res) => {
