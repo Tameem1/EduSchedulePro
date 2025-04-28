@@ -9,7 +9,7 @@ import BookAppointment from "@/pages/student/book-appointment";
 import StudentAppointments from "@/pages/student/appointments";
 import TeacherAvailability from "@/pages/teacher/availability";
 import TeacherAppointments from "@/pages/teacher/appointments";
-import TeacherCreatedAppointments from "@/pages/teacher/created-appointments";
+import TeacherCreatedAppts from "@/pages/teacher/created-appts";
 import TeacherQuestionnaireSubmission from "@/pages/teacher/questionnaire-submission";
 import ManagerAppointments from "@/pages/manager/appointments";
 import AssignTeacher from "@/pages/manager/assign-teacher";
@@ -49,7 +49,7 @@ export default function Router() {
         <ProtectedRoute
           path="/teacher/created-appointments"
           role="teacher"
-          component={TeacherCreatedAppointments}
+          component={TeacherCreatedAppts}
         />
         <ProtectedRoute
           path="/teacher/questionnaire-submission/:appointmentId?"
