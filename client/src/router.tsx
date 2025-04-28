@@ -68,8 +68,12 @@ export default function Router() {
           component={TeacherAppointments}
         />
         
-        {/* Direct route for created appointments */}
-        <Route path="/teacher/created-appointments" component={TempCreatedAppointmentsRoute} />
+        {/* Protected route for created appointments */}
+        <ProtectedRoute
+          path="/teacher/created-appointments"
+          role="teacher"
+          component={TempCreatedAppointments}
+        />
         
         {/* Simple test route */}
         <Route path="/created" component={Created} />
