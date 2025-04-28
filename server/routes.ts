@@ -144,7 +144,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           const studentName = studentNames[appointment.studentId] || 'طالب غير معروف';
           
           appointmentsHtml += `
-            <div class="appointment-card">
+            <div class="appointment-card" data-status="${appointment.status}">
               <div class="appointment-header">
                 <span class="appointment-date">
                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-left: 6px; position: relative; top: 2px;">
@@ -212,6 +212,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           <meta charset="UTF-8">
           <meta name="viewport" content="width=device-width, initial-scale=1.0">
           <title>المواعيد التي أنشأتها</title>
+          <link rel="icon" type="image/png" href="/generated-icon.png">
           <style>
             @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700&display=swap');
             
@@ -528,6 +529,64 @@ export async function registerRoutes(app: Express): Promise<Server> {
               color: var(--primary);
             }
             
+            /* Filter styles */
+            .filter-container {
+              margin-bottom: 1.5rem;
+              background-color: var(--primary-light);
+              padding: 1rem;
+              border-radius: var(--radius);
+              display: flex;
+              flex-direction: column;
+              gap: 0.75rem;
+            }
+            
+            .filter-label {
+              font-weight: 500;
+              color: var(--text);
+              font-size: 0.9rem;
+            }
+            
+            .filter-buttons {
+              display: flex;
+              flex-wrap: wrap;
+              gap: 0.5rem;
+            }
+            
+            .filter-button {
+              background: transparent;
+              border: 1px solid var(--border);
+              padding: 0.4rem 0.8rem;
+              border-radius: var(--radius);
+              font-size: 0.8rem;
+              cursor: pointer;
+              transition: all 0.2s;
+            }
+            
+            .filter-button:hover {
+              background-color: var(--primary-light);
+              border-color: var(--primary);
+            }
+            
+            .filter-button.active {
+              background-color: var(--primary);
+              color: white;
+              border-color: var(--primary);
+            }
+            
+            .counter-badge {
+              display: inline-flex;
+              align-items: center;
+              justify-content: center;
+              background-color: var(--primary-light);
+              color: var(--primary);
+              font-size: 0.8rem;
+              font-weight: 500;
+              border-radius: 9999px;
+              padding: 0.25rem 0.6rem;
+              margin-right: 0.5rem;
+              vertical-align: middle;
+            }
+            
             /* Responsive adjustments for small screens */
             @media (max-width: 480px) {
               .page-title {
@@ -537,6 +596,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
               .appointment-card {
                 padding: 1rem;
               }
+              
+              .filter-buttons {
+                gap: 0.3rem;
+              }
+              
+              .filter-button {
+                padding: 0.35rem 0.7rem;
+                font-size: 0.75rem;
+              }
             }
           </style>
         </head>
@@ -545,7 +613,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
             <a href="#" class="navbar-brand">نظام المواعيد</a>
             <div class="navbar-nav">
               <a href="/teacher/appointments" class="nav-link">المواعيد</a>
-              <a href="/created-test" class="nav-link active">المواعيد التي أنشأتها</a>
+              <a href="/teacher/created-appointments" class="nav-link active">المواعيد التي أنشأتها</a>
               <a href="/teacher/availability" class="nav-link">إدارة التوفر</a>
             </div>
           </nav>
@@ -559,10 +627,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
             </a>
           
             <div class="page-header">
-              <h1 class="page-title">المواعيد التي أنشأتها</h1>
+              <h1 class="page-title">المواعيد التي أنشأتها <span id="appointment-counter" class="counter-badge">0/0</span></h1>
               <div class="button-group">
                 <button class="button button-outline" onclick="window.location.href='/teacher/appointments'">جميع المواعيد</button>
                 <button class="button button-primary" onclick="window.location.reload()">تحديث</button>
+              </div>
+            </div>
+            
+            <div class="filter-container">
+              <span class="filter-label">تصفية حسب الحالة:</span>
+              <div class="filter-buttons">
+                <button class="filter-button active" data-filter="all">الكل</button>
+                <button class="filter-button" data-filter="pending">قيد الانتظار</button>
+                <button class="filter-button" data-filter="requested">تم الطلب</button>
+                <button class="filter-button" data-filter="assigned">تم التعيين</button>
+                <button class="filter-button" data-filter="responded">تمت الاستجابة</button>
+                <button class="filter-button" data-filter="done">مكتمل</button>
+                <button class="filter-button" data-filter="rejected">مرفوض</button>
               </div>
             </div>
             
@@ -593,6 +674,59 @@ export async function registerRoutes(app: Express): Promise<Server> {
                   }
                 });
               }
+              
+              // Add filter functionality to appointments
+              const appointmentCards = document.querySelectorAll('.appointment-card');
+              const filterButtons = document.querySelectorAll('[data-filter]');
+              
+              if (filterButtons.length > 0) {
+                filterButtons.forEach(button => {
+                  button.addEventListener('click', function() {
+                    const filterValue = this.getAttribute('data-filter');
+                    
+                    // Remove active class from all buttons
+                    filterButtons.forEach(btn => btn.classList.remove('active'));
+                    
+                    // Add active class to clicked button
+                    this.classList.add('active');
+                    
+                    // Show all appointments if 'all' is selected
+                    if (filterValue === 'all') {
+                      appointmentCards.forEach(card => {
+                        card.style.display = 'block';
+                      });
+                      return;
+                    }
+                    
+                    // Filter appointments by status
+                    appointmentCards.forEach(card => {
+                      const status = card.getAttribute('data-status');
+                      if (status === filterValue) {
+                        card.style.display = 'block';
+                      } else {
+                        card.style.display = 'none';
+                      }
+                    });
+                    
+                    // Update counter
+                    updateCounter();
+                  });
+                });
+              }
+              
+              // Helper function to update appointment counter
+              function updateCounter() {
+                const visibleCards = document.querySelectorAll('.appointment-card[style="display: block;"]').length;
+                const totalCards = appointmentCards.length;
+                
+                const counterElement = document.getElementById('appointment-counter');
+                if (counterElement) {
+                  counterElement.textContent = `${visibleCards} / ${totalCards}`;
+                }
+              }
+              
+              // Initialize counter
+              updateCounter();
             });
           </script>
         </body>
@@ -742,7 +876,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
             <a href="#" class="navbar-brand">نظام المواعيد</a>
             <div class="navbar-nav">
               <a href="/teacher/appointments" class="nav-link">المواعيد</a>
-              <a href="/created-test" class="nav-link">المواعيد التي أنشأتها</a>
+              <a href="/teacher/created-appointments" class="nav-link">المواعيد التي أنشأتها</a>
               <a href="/teacher/availability" class="nav-link">إدارة التوفر</a>
             </div>
           </nav>
