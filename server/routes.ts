@@ -629,45 +629,56 @@ export async function registerRoutes(app: Express): Promise<Server> {
           </style>
         </head>
         <body>
-          <nav class="navbar">
-            <a href="#" class="navbar-brand">نظام المواعيد</a>
-            <div class="navbar-nav">
-              <a href="/teacher/appointments" class="nav-link">المواعيد</a>
-              <a href="/teacher/created-appointments" class="nav-link active">المواعيد التي أنشأتها</a>
-              <a href="/teacher/availability" class="nav-link">إدارة التوفر</a>
+          <!-- Main app navbar - matching React app styling -->
+          <div class="bg-background border-b py-2 px-4 mb-4">
+            <div class="container mx-auto flex flex-col sm:flex-row justify-between items-center gap-2">
+              <div class="font-semibold text-center sm:text-right w-full sm:w-auto mb-2 sm:mb-0">
+                لوحة تحكم المعلم
+              </div>
+              <button 
+                class="button button-outline w-full sm:w-auto"
+                onclick="window.location.href='/auth/logout'"
+              >
+                تسجيل الخروج
+              </button>
             </div>
-          </nav>
+          </div>
           
           <div class="container">
-            <a href="/teacher/appointments" class="button-back">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <!-- Back navigation with icon -->
+            <a href="/teacher/appointments" class="inline-flex items-center text-primary hover:text-primary-hover mb-6 group transition-colors">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-1 transform rotate-180 transition-transform group-hover:-translate-x-1">
                 <path d="m9 18 6-6-6-6"></path>
               </svg>
-              العودة إلى المواعيد
+              <span>العودة إلى المواعيد</span>
             </a>
           
-            <div class="page-header">
-              <h1 class="page-title">المواعيد التي أنشأتها <span id="appointment-counter" class="counter-badge">0/0</span></h1>
-              <div class="button-group">
-                <button class="button button-outline" onclick="window.location.href='/teacher/appointments'">جميع المواعيد</button>
-                <button class="button button-primary" onclick="window.location.reload()">تحديث</button>
+            <!-- Top actions: matches React app styling -->
+            <div class="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6">
+              <h1 class="text-xl md:text-2xl font-bold text-center sm:text-right">المواعيد التي أنشأتها <span id="appointment-counter" class="counter-badge">0/0</span></h1>
+              <div class="flex flex-col sm:flex-row items-center gap-2 w-full sm:w-auto">
+                <a href="/teacher/availability" class="button button-outline w-full sm:w-auto">إدارة التوفر</a>
+                <a href="/teacher/appointments" class="button button-outline w-full sm:w-auto">مواعيد المعلم</a>
+                <button class="button button-primary w-full sm:w-auto" onclick="window.location.reload()">تحديث</button>
               </div>
             </div>
             
-            <div class="filter-container">
-              <span class="filter-label">تصفية حسب الحالة:</span>
-              <div class="filter-buttons">
-                <button class="filter-button active" data-filter="all">الكل</button>
-                <button class="filter-button" data-filter="pending">قيد الانتظار</button>
-                <button class="filter-button" data-filter="requested">تم الطلب</button>
-                <button class="filter-button" data-filter="assigned">تم التعيين</button>
-                <button class="filter-button" data-filter="responded">تمت الاستجابة</button>
-                <button class="filter-button" data-filter="done">مكتمل</button>
-                <button class="filter-button" data-filter="rejected">مرفوض</button>
+            <!-- Filter container with modern styling -->
+            <div class="bg-card rounded-md p-4 mb-6 shadow-sm">
+              <h2 class="text-base font-medium mb-3">تصفية حسب الحالة:</h2>
+              <div class="flex flex-wrap gap-2 items-center">
+                <button class="px-3 py-1 rounded-full border border-primary bg-primary text-white text-sm filter-button active" data-filter="all">الكل</button>
+                <button class="px-3 py-1 rounded-full border border-primary text-primary hover:bg-primary-light text-sm filter-button" data-filter="pending">قيد الانتظار</button>
+                <button class="px-3 py-1 rounded-full border border-primary text-primary hover:bg-primary-light text-sm filter-button" data-filter="requested">تم الطلب</button>
+                <button class="px-3 py-1 rounded-full border border-primary text-primary hover:bg-primary-light text-sm filter-button" data-filter="assigned">تم التعيين</button>
+                <button class="px-3 py-1 rounded-full border border-primary text-primary hover:bg-primary-light text-sm filter-button" data-filter="responded">تمت الاستجابة</button>
+                <button class="px-3 py-1 rounded-full border border-primary text-primary hover:bg-primary-light text-sm filter-button" data-filter="done">مكتمل</button>
+                <button class="px-3 py-1 rounded-full border border-primary text-primary hover:bg-primary-light text-sm filter-button" data-filter="rejected">مرفوض</button>
               </div>
             </div>
             
-            <div class="card">
+            <!-- Appointments grid -->
+            <div class="grid grid-cols-1 gap-4">
               ${appointmentsHtml}
             </div>
           </div>
@@ -675,52 +686,36 @@ export async function registerRoutes(app: Express): Promise<Server> {
           <script>
             console.log("Created appointments page loaded successfully!");
             
-            // Add back button animation
             document.addEventListener('DOMContentLoaded', function() {
-              const backButton = document.querySelector('.button-back');
-              if (backButton) {
-                backButton.addEventListener('mouseover', function() {
-                  const arrow = backButton.querySelector('svg');
-                  if (arrow) {
-                    arrow.style.transform = 'translateX(-3px)';
-                    arrow.style.transition = 'transform 0.2s ease';
-                  }
-                });
-                
-                backButton.addEventListener('mouseout', function() {
-                  const arrow = backButton.querySelector('svg');
-                  if (arrow) {
-                    arrow.style.transform = 'translateX(0)';
-                  }
-                });
-              }
-              
               // Add filter functionality to appointments
-              const appointmentCards = document.querySelectorAll('.appointment-card');
-              const filterButtons = document.querySelectorAll('[data-filter]');
+              var appointmentCards = document.querySelectorAll('.appointment-card');
+              var filterButtons = document.querySelectorAll('[data-filter]');
               
               if (filterButtons.length > 0) {
-                filterButtons.forEach(button => {
+                filterButtons.forEach(function(button) {
                   button.addEventListener('click', function() {
-                    const filterValue = this.getAttribute('data-filter');
+                    var filterValue = this.getAttribute('data-filter');
                     
                     // Remove active class from all buttons
-                    filterButtons.forEach(btn => btn.classList.remove('active'));
+                    filterButtons.forEach(function(btn) {
+                      btn.classList.remove('active');
+                    });
                     
                     // Add active class to clicked button
                     this.classList.add('active');
                     
                     // Show all appointments if 'all' is selected
                     if (filterValue === 'all') {
-                      appointmentCards.forEach(card => {
+                      appointmentCards.forEach(function(card) {
                         card.style.display = 'block';
                       });
+                      updateCounter();
                       return;
                     }
                     
                     // Filter appointments by status
-                    appointmentCards.forEach(card => {
-                      const status = card.getAttribute('data-status');
+                    appointmentCards.forEach(function(card) {
+                      var status = card.getAttribute('data-status');
                       if (status === filterValue) {
                         card.style.display = 'block';
                       } else {
@@ -736,12 +731,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
               
               // Helper function to update appointment counter
               function updateCounter() {
-                const visibleCards = document.querySelectorAll('.appointment-card[style="display: block;"]').length;
-                const totalCards = appointmentCards.length;
+                var visibleCards = document.querySelectorAll('.appointment-card[style="display: block;"]').length;
+                var totalCards = appointmentCards.length;
                 
-                const counterElement = document.getElementById('appointment-counter');
+                var counterElement = document.getElementById('appointment-counter');
                 if (counterElement) {
-                  counterElement.textContent = `${visibleCards} / ${totalCards}`;
+                  counterElement.textContent = visibleCards + ' / ' + totalCards;
                 }
               }
               
@@ -892,14 +887,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
           </style>
         </head>
         <body>
-          <nav class="navbar">
-            <a href="#" class="navbar-brand">نظام المواعيد</a>
-            <div class="navbar-nav">
-              <a href="/teacher/appointments" class="nav-link">المواعيد</a>
-              <a href="/teacher/created-appointments" class="nav-link">المواعيد التي أنشأتها</a>
-              <a href="/teacher/availability" class="nav-link">إدارة التوفر</a>
+          <!-- Main app navbar - matching React app styling -->
+          <div class="bg-background border-b py-2 px-4 mb-4">
+            <div class="container mx-auto flex flex-col sm:flex-row justify-between items-center gap-2">
+              <div class="font-semibold text-center sm:text-right w-full sm:w-auto mb-2 sm:mb-0">
+                لوحة تحكم المعلم
+              </div>
+              <button 
+                class="button button-outline w-full sm:w-auto"
+                onclick="window.location.href='/auth/logout'"
+              >
+                تسجيل الخروج
+              </button>
             </div>
-          </nav>
+          </div>
           
           <div class="container">
             <div class="error-icon">
