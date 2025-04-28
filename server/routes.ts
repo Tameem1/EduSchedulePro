@@ -1397,19 +1397,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(400).json({ error: "Invalid questionnaire data" });
     }
   });
-
+  
+  // Get questionnaire response for a specific appointment
   app.get("/api/appointments/:id/questionnaire", async (req, res) => {
     if (!req.isAuthenticated()) {
       return res.sendStatus(401);
     }
-
+    
     try {
       const appointmentId = parseInt(req.params.id);
+      if (isNaN(appointmentId)) {
+        return res.status(400).json({ error: "Invalid appointment ID" });
+      }
+      
       const response = await storage.getQuestionnaireResponse(appointmentId);
-      res.json(response);
+      res.json(response || null);
     } catch (error) {
-      console.error("Error fetching questionnaire:", error);
-      res.status(500).json({ error: "Failed to fetch questionnaire" });
+      console.error("Error fetching questionnaire response:", error);
+      res.status(500).json({ error: "Failed to fetch questionnaire response" });
     }
   });
 

@@ -1,7 +1,6 @@
 import * as React from "react";
 import { useAuth } from "@/hooks/use-auth";
 import { useQuery } from "@tanstack/react-query";
-import { Link } from "wouter";
 import { format, parseISO } from "date-fns";
 import { apiRequest } from "@/lib/queryClient";
 import { formatGMT3Time } from "@/lib/date-utils";
@@ -10,7 +9,8 @@ import {
   AppointmentStatus, 
   AppointmentStatusArabic, 
   type Appointment,
-  type User
+  type User,
+  type QuestionnaireResponse
 } from "@shared/schema";
 
 // UI Components
@@ -25,7 +25,6 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 // Helper function to determine status color
 function getStatusColor(status: string) {
@@ -41,12 +40,10 @@ function getStatusColor(status: string) {
 
 export default function TeacherCreatedAppointments() {
   const { user } = useAuth();
-  const [activeTab, setActiveTab] = React.useState("all");
-
+  
   // Debug log to track component mounting
   React.useEffect(() => {
-    console.log("TeacherCreatedAppointments component mounted");
-    console.log("Current user:", user);
+    console.log("Created appointments page loaded successfully!");
     
     return () => {
       console.log("TeacherCreatedAppointments component unmounted");
@@ -85,6 +82,18 @@ export default function TeacherCreatedAppointments() {
     },
     enabled: !!user,
   });
+  
+  // Function to get questionnaire response for an appointment
+  const getQuestionnaireResponse = async (appointmentId: number) => {
+    try {
+      const res = await apiRequest("GET", `/api/appointments/${appointmentId}/questionnaire`);
+      if (!res.ok) return null;
+      return await res.json();
+    } catch (error) {
+      console.error("Error fetching questionnaire response:", error);
+      return null;
+    }
+  };
 
   // Helper to get student name
   function getStudentName(id: number) {
@@ -93,28 +102,30 @@ export default function TeacherCreatedAppointments() {
     return student ? student.username : `طالب #${id}`;
   }
 
-  // Filter appointments based on active tab
-  const filteredAppointments = React.useMemo(() => {
-    if (!createdAppointments) return [];
+  // Track questionnaire responses
+  const [questionnaireResponses, setQuestionnaireResponses] = React.useState<Record<number, QuestionnaireResponse | null>>({});
+  
+  // Fetch questionnaire responses for completed appointments
+  React.useEffect(() => {
+    if (!createdAppointments) return;
     
-    if (activeTab === "all") {
-      return createdAppointments;
-    }
-    
-    // Filter by status based on the active tab
-    const statusMap: Record<string, string> = {
-      "pending": AppointmentStatus.PENDING,
-      "requested": AppointmentStatus.REQUESTED,
-      "assigned": AppointmentStatus.ASSIGNED,
-      "responded": AppointmentStatus.RESPONDED,
-      "done": AppointmentStatus.DONE,
-      "rejected": AppointmentStatus.REJECTED,
+    const fetchQuestionnaireResponses = async () => {
+      const doneAppointments = createdAppointments.filter(
+        appointment => appointment.status === AppointmentStatus.DONE
+      );
+      
+      const responses: Record<number, QuestionnaireResponse | null> = {};
+      
+      for (const appointment of doneAppointments) {
+        const response = await getQuestionnaireResponse(appointment.id);
+        responses[appointment.id] = response;
+      }
+      
+      setQuestionnaireResponses(responses);
     };
     
-    return createdAppointments.filter(
-      appointment => appointment.status === statusMap[activeTab]
-    );
-  }, [createdAppointments, activeTab]);
+    fetchQuestionnaireResponses();
+  }, [createdAppointments]);
 
   if (isLoading) {
     return (
@@ -167,7 +178,7 @@ export default function TeacherCreatedAppointments() {
       </div>
 
       {createdAppointments && createdAppointments.length > 0 ? (
-        <Card className="border-t-4 border-t-primary">
+        <Card className="border border-border">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <CalendarIcon className="h-5 w-5" />
@@ -179,85 +190,73 @@ export default function TeacherCreatedAppointments() {
           </CardHeader>
           
           <CardContent>
-            <Tabs defaultValue="all" value={activeTab} onValueChange={setActiveTab} className="w-full">
-              <TabsList className="grid grid-cols-3 md:grid-cols-7 mb-4">
-                <TabsTrigger value="all">الكل ({createdAppointments.length})</TabsTrigger>
-                <TabsTrigger value="pending">معلق ({createdAppointments.filter(a => a.status === AppointmentStatus.PENDING).length})</TabsTrigger>
-                <TabsTrigger value="requested">مطلوب ({createdAppointments.filter(a => a.status === AppointmentStatus.REQUESTED).length})</TabsTrigger>
-                <TabsTrigger value="assigned">معين ({createdAppointments.filter(a => a.status === AppointmentStatus.ASSIGNED).length})</TabsTrigger>
-                <TabsTrigger value="responded">تمت الاستجابة ({createdAppointments.filter(a => a.status === AppointmentStatus.RESPONDED).length})</TabsTrigger>
-                <TabsTrigger value="done">منجز ({createdAppointments.filter(a => a.status === AppointmentStatus.DONE).length})</TabsTrigger>
-                <TabsTrigger value="rejected">مرفوض ({createdAppointments.filter(a => a.status === AppointmentStatus.REJECTED).length})</TabsTrigger>
-              </TabsList>
-              
-              <TabsContent value={activeTab} className="mt-0">
-                <div className="space-y-4">
-                  {filteredAppointments.length > 0 ? (
-                    filteredAppointments.map((appointment) => (
-                      <div
-                        key={appointment.id}
-                        className="p-4 border rounded-lg hover:border-primary transition-colors duration-200"
-                      >
-                        <div className="flex flex-col sm:flex-row justify-between gap-4">
-                          <div>
-                            <div className="flex flex-col md:flex-row md:items-center md:gap-2">
-                              <p className="font-medium text-lg">
-                                {formatGMT3Time(new Date(appointment.startTime))}
-                              </p>
-                              <p className="text-sm text-muted-foreground">
-                                {format(parseISO(appointment.startTime), "EEEE, d MMMM yyyy")}
-                              </p>
-                            </div>
-                            
-                            <p className="text-sm mt-2">
-                              <span className="font-medium">الطالب:</span> {getStudentName(appointment.studentId)}
-                            </p>
-                            
-                            {appointment.teacherAssignment && (
-                              <p className="text-sm mt-1">
-                                <span className="font-medium">المهمة:</span> {appointment.teacherAssignment}
-                              </p>
-                            )}
-                            
-                            <div className="mt-3">
-                              <Badge className={`text-white ${getStatusColor(appointment.status)}`}>
-                                {AppointmentStatusArabic[appointment.status]}
-                              </Badge>
-                            </div>
-                          </div>
-                          
-                          <div className="flex items-center gap-2">
-                            {appointment.status !== AppointmentStatus.REJECTED && (
-                              <Button 
-                                variant="outline" 
-                                size="sm"
-                                onClick={() => {
-                                  console.log("Navigating to questionnaire submission");
-                                  window.location.href = `/teacher/questionnaire-submission/${appointment.id}`;
-                                }}
-                              >
-                                استعراض الاستبيان
-                              </Button>
-                            )}
-                          </div>
+            <div className="space-y-4">
+              {createdAppointments.length > 0 ? (
+                createdAppointments.map((appointment) => (
+                  <div
+                    key={appointment.id}
+                    className="p-4 border rounded-lg hover:border-primary transition-colors duration-200"
+                  >
+                    <div className="flex flex-col sm:flex-row justify-between gap-4">
+                      <div>
+                        <div className="flex flex-col md:flex-row md:items-center md:gap-2">
+                          <p className="font-medium text-lg">
+                            {formatGMT3Time(new Date(appointment.startTime))}
+                          </p>
+                          <p className="text-sm text-muted-foreground">
+                            {format(parseISO(appointment.startTime), "EEEE, d MMMM yyyy")}
+                          </p>
+                        </div>
+                        
+                        <p className="text-sm mt-2">
+                          <span className="font-medium">الطالب:</span> {getStudentName(appointment.studentId)}
+                        </p>
+                        
+                        {appointment.teacherAssignment && (
+                          <p className="text-sm mt-1">
+                            <span className="font-medium">المهمة:</span> {appointment.teacherAssignment}
+                          </p>
+                        )}
+                        
+                        {/* Display questionnaire response question3 for completed appointments */}
+                        {appointment.status === AppointmentStatus.DONE && 
+                         questionnaireResponses[appointment.id]?.question3 && (
+                          <p className="text-sm mt-1">
+                            <span className="font-medium">ماذا سيفعل الطالب:</span> {questionnaireResponses[appointment.id]?.question3}
+                          </p>
+                        )}
+                        
+                        <div className="mt-3">
+                          <Badge className={`text-white ${getStatusColor(appointment.status)}`}>
+                            {AppointmentStatusArabic[appointment.status]}
+                          </Badge>
                         </div>
                       </div>
-                    ))
-                  ) : (
-                    <div className="text-center py-6 text-muted-foreground">
-                      لا توجد مواعيد بهذه الحالة
+                      
+                      <div className="flex items-center gap-2">
+                        {appointment.status !== AppointmentStatus.REJECTED && (
+                          <Button 
+                            variant="outline" 
+                            size="sm"
+                            onClick={() => {
+                              console.log("Navigating to questionnaire submission");
+                              window.location.href = `/teacher/questionnaire-submission/${appointment.id}`;
+                            }}
+                          >
+                            استعراض الاستبيان
+                          </Button>
+                        )}
+                      </div>
                     </div>
-                  )}
+                  </div>
+                ))
+              ) : (
+                <div className="text-center py-6 text-muted-foreground">
+                  لا توجد مواعيد
                 </div>
-              </TabsContent>
-            </Tabs>
+              )}
+            </div>
           </CardContent>
-          
-          <CardFooter className="flex justify-between border-t pt-4">
-            <p className="text-sm text-muted-foreground">
-              إجمالي المواعيد: {createdAppointments.length}
-            </p>
-          </CardFooter>
         </Card>
       ) : (
         <Card>
