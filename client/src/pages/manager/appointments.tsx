@@ -467,37 +467,61 @@ export default function ManagerAppointments() {
         )
       : [...teachers];
     
-    // Now sort by availability - available teachers first
+    // Now sort with complex prioritization:
+    // 1. Teachers available at the exact appointment time (top priority)
+    // 2. Teachers who have added any availability today (second priority)
+    // 3. All other teachers (lowest priority)
     return filteredTeachers.sort((a, b) => {
-      // Check if teachers are available at the appointment time
-      const aIsAvailable = availabilities?.some(avail => {
-        const appointmentTime = new Date(selectedAppointment.startTime);
-        const availStartTime = new Date(avail.startTime);
-        const availEndTime = new Date(avail.endTime);
+      const appointmentTime = new Date(selectedAppointment.startTime);
+      const today = new Date(appointmentTime);
+      today.setHours(0, 0, 0, 0);
+      const tomorrow = new Date(today);
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      
+      // Find availabilities for teacher A for today
+      const aAvailabilities = availabilities?.filter(avail => {
+        const availDate = new Date(avail.startTime);
         return (
           avail.teacherId === a.id &&
-          appointmentTime >= availStartTime &&
-          appointmentTime <= availEndTime
+          availDate >= today && 
+          availDate < tomorrow
         );
-      }) || false;
+      }) || [];
       
-      const bIsAvailable = availabilities?.some(avail => {
-        const appointmentTime = new Date(selectedAppointment.startTime);
-        const availStartTime = new Date(avail.startTime);
-        const availEndTime = new Date(avail.endTime);
+      // Find availabilities for teacher B for today
+      const bAvailabilities = availabilities?.filter(avail => {
+        const availDate = new Date(avail.startTime);
         return (
           avail.teacherId === b.id &&
-          appointmentTime >= availStartTime &&
-          appointmentTime <= availEndTime
+          availDate >= today && 
+          availDate < tomorrow
         );
-      }) || false;
+      }) || [];
       
-      // Sort by availability first (available teachers come first)
-      if (aIsAvailable !== bIsAvailable) {
-        return aIsAvailable ? -1 : 1;
+      // Check if available at the exact appointment time
+      const aIsAvailableForAppointment = aAvailabilities.some(avail => {
+        const availStartTime = new Date(avail.startTime);
+        const availEndTime = new Date(avail.endTime);
+        return appointmentTime >= availStartTime && appointmentTime <= availEndTime;
+      });
+      
+      const bIsAvailableForAppointment = bAvailabilities.some(avail => {
+        const availStartTime = new Date(avail.startTime);
+        const availEndTime = new Date(avail.endTime);
+        return appointmentTime >= availStartTime && appointmentTime <= availEndTime;
+      });
+      
+      // Sort by availability for this exact appointment time (highest priority)
+      if (aIsAvailableForAppointment !== bIsAvailableForAppointment) {
+        return aIsAvailableForAppointment ? -1 : 1;
       }
       
-      // For teachers with same availability status, sort alphabetically by username
+      // If both have same appointment time availability status, sort by having any availability today
+      if (aAvailabilities.length > 0 !== bAvailabilities.length > 0) {
+        return aAvailabilities.length > 0 ? -1 : 1;
+      }
+      
+      // For teachers with same availability statuses, sort alphabetically by username
       return (a.username || "").localeCompare(b.username || "");
     });
   }, [teachers, teacherSearchQuery, selectedAppointment, availabilities]);
@@ -831,17 +855,41 @@ export default function ManagerAppointments() {
                   {getFilteredTeachers.length > 0 ? (
                     <>
                       {getFilteredTeachers.map((teacher) => {
-                        const isAvailable = availabilities?.some((avail) => {
-                          const appointmentTime = new Date(
-                            selectedAppointment.startTime,
-                          );
-                          const availStartTime = new Date(avail.startTime);
-                          const availEndTime = new Date(avail.endTime);
+                        const appointmentTime = new Date(
+                          selectedAppointment.startTime,
+                        );
+                        const today = new Date(appointmentTime);
+                        today.setHours(0, 0, 0, 0);
+                        const tomorrow = new Date(today);
+                        tomorrow.setDate(tomorrow.getDate() + 1);
+
+                        // Get all availabilities for this teacher today
+                        const teacherAvailabilities = availabilities?.filter(avail => {
+                          const availDate = new Date(avail.startTime);
                           return (
                             avail.teacherId === teacher.id &&
-                            appointmentTime >= availStartTime &&
-                            appointmentTime <= availEndTime
+                            availDate >= today && 
+                            availDate < tomorrow
                           );
+                        }) || [];
+
+                        // Sort availabilities by start time
+                        teacherAvailabilities.sort((a, b) => {
+                          return new Date(a.startTime).getTime() - new Date(b.startTime).getTime();
+                        });
+
+                        // Format availabilities for display
+                        const availabilitySlots = teacherAvailabilities.map(avail => {
+                          const start = format(new Date(avail.startTime), "h:mm a");
+                          const end = format(new Date(avail.endTime), "h:mm a");
+                          return `${start} - ${end}`;
+                        });
+
+                        // Check if available at appointment time
+                        const isAvailableForAppointment = teacherAvailabilities.some(avail => {
+                          const availStartTime = new Date(avail.startTime);
+                          const availEndTime = new Date(avail.endTime);
+                          return appointmentTime >= availStartTime && appointmentTime <= availEndTime;
                         });
                         
                         const isCurrentTeacher = teacher.id === selectedAppointment.teacherId;
@@ -852,7 +900,11 @@ export default function ManagerAppointments() {
                             className={`p-3 border rounded-lg cursor-pointer hover:bg-muted ${
                               isCurrentTeacher 
                                 ? "border-primary bg-primary/10" 
-                                : isAvailable ? "border-green-500" : "border-gray-300"
+                                : isAvailableForAppointment 
+                                  ? "border-green-500" 
+                                  : teacherAvailabilities.length > 0
+                                    ? "border-yellow-500"
+                                    : "border-gray-300"
                             }`}
                             onClick={() =>
                               assignTeacherMutation.mutate({
@@ -863,19 +915,40 @@ export default function ManagerAppointments() {
                               })
                             }
                           >
-                            <div className="flex items-center justify-between">
-                              <div className="flex items-center gap-2">
-                                <span>{teacher.username}</span>
-                                {isCurrentTeacher && (
-                                  <Badge variant="outline" className="border-primary text-primary">
-                                    المعلم الحالي
-                                  </Badge>
+                            <div className="flex flex-col gap-2">
+                              <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-2">
+                                  <span>{teacher.username}</span>
+                                  {isCurrentTeacher && (
+                                    <Badge variant="outline" className="border-primary text-primary">
+                                      المعلم الحالي
+                                    </Badge>
+                                  )}
+                                </div>
+                                {isAvailableForAppointment ? (
+                                  <Badge variant="default">متوفر لهذا الموعد</Badge>
+                                ) : teacherAvailabilities.length > 0 ? (
+                                  <Badge variant="secondary" className="bg-yellow-100 text-yellow-800 hover:bg-yellow-200">متوفر اليوم</Badge>
+                                ) : (
+                                  <Badge variant="secondary">غير متوفر</Badge>
                                 )}
                               </div>
-                              {isAvailable ? (
-                                <Badge variant="default">متوفر</Badge>
-                              ) : (
-                                <Badge variant="secondary">غير متوفر</Badge>
+                              
+                              {teacherAvailabilities.length > 0 && (
+                                <div className="text-sm text-muted-foreground mt-1">
+                                  <p>أوقات التوفر اليوم:</p>
+                                  <div className="flex flex-wrap gap-1 mt-1">
+                                    {availabilitySlots.map((slot, index) => (
+                                      <Badge 
+                                        key={index} 
+                                        variant="outline" 
+                                        className={isAvailableForAppointment && index === 0 ? "border-green-500 text-green-700" : ""}
+                                      >
+                                        {slot}
+                                      </Badge>
+                                    ))}
+                                  </div>
+                                </div>
                               )}
                             </div>
                           </div>
