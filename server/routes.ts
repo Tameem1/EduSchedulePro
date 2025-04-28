@@ -114,10 +114,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Get all students for display purposes
       const allStudents = await db.select().from(users).where(eq(users.role, 'student')).execute();
       
+      // Get all teachers for display purposes
+      const allTeachers = await db.select().from(users).where(eq(users.role, 'teacher')).execute();
+      
       // Create a map of student IDs to names for easier lookup
       const studentNames: Record<number, string> = {};
       allStudents.forEach(student => {
         studentNames[student.id] = student.username;
+      });
+      
+      // Create a map of teacher IDs to names for easier lookup
+      const teacherNames: Record<number, string> = {};
+      allTeachers.forEach(teacher => {
+        teacherNames[teacher.id] = teacher.username;
       });
       
       // Helper function to get status in Arabic using shared constants
@@ -142,6 +151,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (createdAppointments.length > 0) {
         createdAppointments.forEach(appointment => {
           const studentName = studentNames[appointment.studentId] || 'طالب غير معروف';
+          const assignedTeacherName = appointment.teacherId ? teacherNames[appointment.teacherId] || 'معلم غير معروف' : null;
           
           appointmentsHtml += `
             <div class="appointment-card" data-status="${appointment.status}">
@@ -167,6 +177,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
                     الطالب:
                   </span>
                   ${studentName}
+                </p>
+                <p>
+                  <span class="detail-label">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-left: 6px; position: relative; top: 2px;">
+                      <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path>
+                      <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                    المعلم المعين:
+                  </span>
+                  ${assignedTeacherName || 'لم يتم التعيين بعد'}
                 </p>
                 <p>
                   <span class="detail-label">
