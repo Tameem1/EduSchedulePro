@@ -9,9 +9,6 @@ import BookAppointment from "@/pages/student/book-appointment";
 import StudentAppointments from "@/pages/student/appointments";
 import TeacherAvailability from "@/pages/teacher/availability";
 import TeacherAppointments from "@/pages/teacher/appointments";
-import TeacherCreatedAppointments from "@/pages/teacher/created-appointments";
-import TeacherCreated from "@/pages/teacher/created";
-import TeacherCreateAppointments from "@/pages/teacher/create-appointments";
 import TeacherQuestionnaireSubmission from "@/pages/teacher/questionnaire-submission";
 import ManagerAppointments from "@/pages/manager/appointments";
 import AssignTeacher from "@/pages/manager/assign-teacher";
@@ -48,15 +45,6 @@ export default function Router() {
           role="teacher"
           component={TeacherAppointments}
         />
-        <Route path="/teacher/created-appointments">
-          <TeacherCreatedAppointments />
-        </Route>
-        <Route path="/teacher/create-appointments">
-          <TeacherCreateAppointments />
-        </Route>
-        <Route path="/teacher/created">
-          <TeacherCreated />
-        </Route>
         <ProtectedRoute
           path="/teacher/questionnaire-submission/:appointmentId?"
           role="teacher"
@@ -91,7 +79,7 @@ export default function Router() {
           role="student"
           component={() => {
             window.location.href = "/student/book-appointment";
-            return <div>Redirecting...</div>;
+            return null;
           }}
         />
 

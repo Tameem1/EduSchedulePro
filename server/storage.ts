@@ -185,24 +185,6 @@ export const storage = {
         .orderBy(desc(appointments.startTime));
     });
   },
-  
-  async getAppointmentsCreatedByTeacher(teacherUsername: string) {
-    return await withRetry(async () => {
-      console.log("Searching for appointments with teacherAssignment=", teacherUsername);
-      return await db
-        .select({
-          id: appointments.id,
-          studentId: appointments.studentId,
-          teacherId: appointments.teacherId,
-          startTime: appointments.startTime,
-          status: appointments.status,
-          teacherAssignment: appointments.teacherAssignment,
-        })
-        .from(appointments)
-        .where(sql`${appointments.teacherAssignment} = ${teacherUsername}`)
-        .orderBy(desc(appointments.startTime));
-    });
-  },
 
   async updateAppointment(appointmentId: number, data: any) {
     return await withRetry(async () => {
