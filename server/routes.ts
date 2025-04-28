@@ -153,18 +153,63 @@ export async function registerRoutes(app: Express): Promise<Server> {
           appointmentsHtml += `
             <div class="appointment-card">
               <div class="appointment-header">
-                <span class="appointment-date">${formatDate(appointment.startTime)}</span>
+                <span class="appointment-date">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-left: 6px; position: relative; top: 2px;">
+                    <rect width="18" height="18" x="3" y="4" rx="2" ry="2"></rect>
+                    <line x1="16" x2="16" y1="2" y2="6"></line>
+                    <line x1="8" x2="8" y1="2" y2="6"></line>
+                    <line x1="3" x2="21" y1="10" y2="10"></line>
+                  </svg>
+                  ${formatDate(appointment.startTime)}
+                </span>
                 <span class="appointment-status status-${appointment.status}">${getStatusInArabic(appointment.status)}</span>
               </div>
               <div class="appointment-details">
-                <p><strong>الطالب:</strong> ${studentName}</p>
-                <p><strong>التعيين:</strong> ${appointment.teacherAssignment || 'لا يوجد'}</p>
+                <p>
+                  <span class="detail-label">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-left: 6px; position: relative; top: 2px;">
+                      <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path>
+                      <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                    الطالب:
+                  </span>
+                  ${studentName}
+                </p>
+                <p>
+                  <span class="detail-label">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-left: 6px; position: relative; top: 2px;">
+                      <path d="m16 6 4 14"></path>
+                      <path d="M12 6v14"></path>
+                      <path d="M8 8v12"></path>
+                      <path d="M4 4v16"></path>
+                    </svg>
+                    التعيين:
+                  </span>
+                  ${appointment.teacherAssignment || 'لا يوجد'}
+                </p>
               </div>
             </div>
           `;
         });
       } else {
-        appointmentsHtml = '<p class="no-appointments">لم تقم بإنشاء أي مواعيد بعد</p>';
+        appointmentsHtml = `
+          <div class="no-appointments">
+            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 1rem; opacity: 0.5;">
+              <rect width="18" height="18" x="3" y="4" rx="2" ry="2"></rect>
+              <line x1="16" x2="16" y1="2" y2="6"></line>
+              <line x1="8" x2="8" y1="2" y2="6"></line>
+              <line x1="3" x2="21" y1="10" y2="10"></line>
+              <path d="M8 14h.01"></path>
+              <path d="M12 14h.01"></path>
+              <path d="M16 14h.01"></path>
+              <path d="M8 18h.01"></path>
+              <path d="M12 18h.01"></path>
+              <path d="M16 18h.01"></path>
+            </svg>
+            <p>لم تقم بإنشاء أي مواعيد بعد</p>
+            <button class="button button-outline" onclick="window.location.href='/teacher/appointments'">الذهاب لإنشاء موعد جديد</button>
+          </div>
+        `;
       }
       
       res.send(`
@@ -175,121 +220,387 @@ export async function registerRoutes(app: Express): Promise<Server> {
           <meta name="viewport" content="width=device-width, initial-scale=1.0">
           <title>المواعيد التي أنشأتها</title>
           <style>
+            @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700&display=swap');
+            
+            :root {
+              --primary: #2563eb;
+              --primary-hover: #1d4ed8;
+              --primary-light: #e6f0ff;
+              --background: #f5f7fb;
+              --card-bg: #ffffff;
+              --text: #1e293b;
+              --text-muted: #64748b;
+              --border: #e2e8f0;
+              --radius: 0.5rem;
+              --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+              --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+              
+              --status-pending: #6B7280;
+              --status-requested: #3B82F6;
+              --status-assigned: #10B981;
+              --status-responded: #F59E0B;
+              --status-done: #059669;
+              --status-rejected: #EF4444;
+            }
+            
+            * {
+              box-sizing: border-box;
+            }
+            
             body {
-              font-family: Arial, sans-serif;
-              background-color: #f5f5f5;
-              color: #333;
+              font-family: 'Tajawal', Arial, sans-serif;
+              background-color: var(--background);
+              color: var(--text);
               margin: 0;
               padding: 0;
               direction: rtl;
+              min-height: 100vh;
             }
             
+            /* Navigation bar */
+            .navbar {
+              display: flex;
+              align-items: center;
+              justify-content: space-between;
+              background-color: var(--card-bg);
+              padding: 1rem 1.5rem;
+              box-shadow: var(--shadow);
+              position: sticky;
+              top: 0;
+              z-index: 10;
+            }
+            
+            .navbar-brand {
+              font-size: 1.5rem;
+              font-weight: 700;
+              color: var(--primary);
+              text-decoration: none;
+            }
+            
+            .navbar-nav {
+              display: flex;
+              gap: 1rem;
+            }
+            
+            .nav-link {
+              color: var(--text);
+              text-decoration: none;
+              padding: 0.5rem 0.75rem;
+              border-radius: var(--radius);
+              transition: background-color 0.2s;
+            }
+            
+            .nav-link:hover {
+              background-color: var(--primary-light);
+            }
+            
+            .nav-link.active {
+              color: var(--primary);
+              font-weight: 500;
+            }
+            
+            @media (max-width: 640px) {
+              .navbar {
+                flex-direction: column;
+                align-items: flex-start;
+                padding: 1rem;
+              }
+              
+              .navbar-brand {
+                margin-bottom: 0.5rem;
+              }
+              
+              .navbar-nav {
+                margin-top: 0.5rem;
+                flex-wrap: wrap;
+                width: 100%;
+              }
+              
+              .nav-link {
+                flex-grow: 1;
+                text-align: center;
+              }
+            }
+            
+            /* Main container */
             .container {
-              max-width: 800px;
-              margin: 40px auto;
-              padding: 20px;
-              background-color: white;
-              border-radius: 8px;
-              box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+              max-width: 1000px;
+              margin: 2rem auto;
+              padding: 0 1rem;
             }
             
-            h1 {
-              text-align: center;
-              margin-bottom: 30px;
+            @media (max-width: 640px) {
+              .container {
+                margin: 1rem auto;
+              }
+            }
+            
+            /* Page header */
+            .page-header {
+              display: flex;
+              flex-direction: column;
+              margin-bottom: 2rem;
+            }
+            
+            @media (min-width: 768px) {
+              .page-header {
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+              }
+            }
+            
+            .page-title {
+              font-size: 1.75rem;
+              font-weight: 700;
+              margin: 0 0 1rem 0;
+              color: var(--text);
+            }
+            
+            @media (min-width: 768px) {
+              .page-title {
+                margin: 0;
+              }
+            }
+            
+            .button-group {
+              display: flex;
+              gap: 0.75rem;
+              flex-wrap: wrap;
+            }
+            
+            @media (max-width: 640px) {
+              .button-group {
+                width: 100%;
+              }
+              
+              .button-group .button {
+                flex: 1;
+              }
+            }
+            
+            /* Cards and appointments */
+            .card {
+              background-color: var(--card-bg);
+              border-radius: var(--radius);
+              box-shadow: var(--shadow);
+              margin-bottom: 1.5rem;
+              overflow: hidden;
             }
             
             .appointment-card {
-              border: 1px solid #e0e0e0;
-              border-radius: 8px;
-              padding: 16px;
-              margin-bottom: 16px;
-              background-color: white;
+              background-color: var(--card-bg);
+              border: 1px solid var(--border);
+              border-radius: var(--radius);
+              padding: 1.25rem;
+              margin-bottom: 1rem;
+              transition: transform 0.2s, box-shadow 0.2s;
+            }
+            
+            .appointment-card:hover {
+              transform: translateY(-2px);
+              box-shadow: var(--shadow-md);
             }
             
             .appointment-header {
               display: flex;
               justify-content: space-between;
-              margin-bottom: 10px;
+              margin-bottom: 1rem;
               align-items: center;
+              flex-wrap: wrap;
+              gap: 0.5rem;
+            }
+            
+            @media (max-width: 480px) {
+              .appointment-header {
+                flex-direction: column;
+                align-items: flex-start;
+              }
             }
             
             .appointment-date {
-              font-weight: bold;
+              font-weight: 700;
+              font-size: 1rem;
+              color: var(--text);
             }
             
             .appointment-status {
-              padding: 4px 8px;
-              border-radius: 4px;
-              font-size: 14px;
+              padding: 0.35rem 0.75rem;
+              border-radius: 9999px;
+              font-size: 0.875rem;
+              font-weight: 500;
               color: white;
+              white-space: nowrap;
             }
             
             .status-pending {
-              background-color: #6B7280;
+              background-color: var(--status-pending);
             }
             
             .status-requested {
-              background-color: #3B82F6;
+              background-color: var(--status-requested);
             }
             
             .status-assigned {
-              background-color: #10B981;
+              background-color: var(--status-assigned);
             }
             
             .status-responded {
-              background-color: #F59E0B;
+              background-color: var(--status-responded);
             }
             
             .status-done {
-              background-color: #059669;
+              background-color: var(--status-done);
             }
             
             .status-rejected {
-              background-color: #EF4444;
+              background-color: var(--status-rejected);
             }
             
             .appointment-details {
-              margin-top: 10px;
+              margin-top: 0.75rem;
+              display: grid;
+              gap: 0.5rem;
+            }
+            
+            .appointment-details p {
+              margin: 0;
+              line-height: 1.5;
+            }
+            
+            .detail-label {
+              font-weight: 700;
+              color: var(--text);
+              margin-left: 0.25rem;
             }
             
             .no-appointments {
               text-align: center;
-              color: #6B7280;
-              font-size: 16px;
-              padding: 20px;
+              color: var(--text-muted);
+              font-size: 1rem;
+              padding: 3rem 1.5rem;
             }
             
-            .back-button {
-              display: block;
-              width: 200px;
-              margin: 20px auto;
-              padding: 10px 15px;
-              background-color: #2563eb;
-              color: white;
-              border: none;
-              border-radius: 4px;
-              font-size: 16px;
+            /* Buttons */
+            .button {
+              display: inline-flex;
+              align-items: center;
+              justify-content: center;
+              padding: 0.5rem 1rem;
+              border-radius: var(--radius);
+              font-weight: 500;
+              font-size: 0.875rem;
               cursor: pointer;
-              text-align: center;
+              transition: background-color 0.2s, transform 0.1s;
               text-decoration: none;
+              border: none;
+              white-space: nowrap;
             }
             
-            .back-button:hover {
-              background-color: #1d4ed8;
+            .button:active {
+              transform: scale(0.98);
+            }
+            
+            .button-primary {
+              background-color: var(--primary);
+              color: white;
+            }
+            
+            .button-primary:hover {
+              background-color: var(--primary-hover);
+            }
+            
+            .button-outline {
+              background-color: transparent;
+              color: var(--primary);
+              border: 1px solid var(--border);
+            }
+            
+            .button-outline:hover {
+              background-color: var(--primary-light);
+            }
+            
+            .button-back {
+              display: inline-flex;
+              align-items: center;
+              gap: 0.5rem;
+              font-size: 0.875rem;
+              color: var(--text-muted);
+              text-decoration: none;
+              margin-bottom: 1.5rem;
+              transition: color 0.2s;
+            }
+            
+            .button-back:hover {
+              color: var(--primary);
+            }
+            
+            /* Responsive adjustments for small screens */
+            @media (max-width: 480px) {
+              .page-title {
+                font-size: 1.5rem;
+              }
+              
+              .appointment-card {
+                padding: 1rem;
+              }
             }
           </style>
         </head>
         <body>
+          <nav class="navbar">
+            <a href="#" class="navbar-brand">نظام المواعيد</a>
+            <div class="navbar-nav">
+              <a href="/teacher/appointments" class="nav-link">المواعيد</a>
+              <a href="/created-test" class="nav-link active">المواعيد التي أنشأتها</a>
+              <a href="/teacher/availability" class="nav-link">إدارة التوفر</a>
+            </div>
+          </nav>
+          
           <div class="container">
-            <h1>المواعيد التي أنشأتها</h1>
+            <a href="/teacher/appointments" class="button-back">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="m9 18 6-6-6-6"></path>
+              </svg>
+              العودة إلى المواعيد
+            </a>
+          
+            <div class="page-header">
+              <h1 class="page-title">المواعيد التي أنشأتها</h1>
+              <div class="button-group">
+                <button class="button button-outline" onclick="window.location.href='/teacher/appointments'">جميع المواعيد</button>
+                <button class="button button-primary" onclick="window.location.reload()">تحديث</button>
+              </div>
+            </div>
             
-            ${appointmentsHtml}
-            
-            <button class="back-button" onclick="window.location.href='/teacher/appointments'">العودة إلى المواعيد</button>
+            <div class="card">
+              ${appointmentsHtml}
+            </div>
           </div>
 
           <script>
             console.log("Created appointments page loaded successfully!");
+            
+            // Add back button animation
+            document.addEventListener('DOMContentLoaded', function() {
+              const backButton = document.querySelector('.button-back');
+              if (backButton) {
+                backButton.addEventListener('mouseover', function() {
+                  const arrow = backButton.querySelector('svg');
+                  if (arrow) {
+                    arrow.style.transform = 'translateX(-3px)';
+                    arrow.style.transition = 'transform 0.2s ease';
+                  }
+                });
+                
+                backButton.addEventListener('mouseout', function() {
+                  const arrow = backButton.querySelector('svg');
+                  if (arrow) {
+                    arrow.style.transform = 'translateX(0)';
+                  }
+                });
+              }
+            });
           </script>
         </body>
         </html>
@@ -304,49 +615,156 @@ export async function registerRoutes(app: Express): Promise<Server> {
           <meta name="viewport" content="width=device-width, initial-scale=1.0">
           <title>خطأ</title>
           <style>
+            @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700&display=swap');
+            
+            :root {
+              --primary: #2563eb;
+              --primary-hover: #1d4ed8;
+              --primary-light: #e6f0ff;
+              --background: #f5f7fb;
+              --card-bg: #ffffff;
+              --text: #1e293b;
+              --text-muted: #64748b;
+              --error: #EF4444;
+              --border: #e2e8f0;
+              --radius: 0.5rem;
+              --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+            }
+            
+            * {
+              box-sizing: border-box;
+            }
+            
             body {
-              font-family: Arial, sans-serif;
-              background-color: #f5f5f5;
-              color: #333;
+              font-family: 'Tajawal', Arial, sans-serif;
+              background-color: var(--background);
+              color: var(--text);
               margin: 0;
               padding: 0;
               direction: rtl;
+              min-height: 100vh;
+            }
+            
+            /* Navigation bar */
+            .navbar {
+              display: flex;
+              align-items: center;
+              justify-content: space-between;
+              background-color: var(--card-bg);
+              padding: 1rem 1.5rem;
+              box-shadow: var(--shadow);
+              position: sticky;
+              top: 0;
+              z-index: 10;
+            }
+            
+            .navbar-brand {
+              font-size: 1.5rem;
+              font-weight: 700;
+              color: var(--primary);
+              text-decoration: none;
+            }
+            
+            .navbar-nav {
+              display: flex;
+              gap: 1rem;
+            }
+            
+            @media (max-width: 640px) {
+              .navbar {
+                flex-direction: column;
+                align-items: flex-start;
+                padding: 1rem;
+              }
+              
+              .navbar-brand {
+                margin-bottom: 0.5rem;
+              }
+              
+              .navbar-nav {
+                margin-top: 0.5rem;
+                flex-wrap: wrap;
+              }
             }
             
             .container {
               max-width: 800px;
-              margin: 40px auto;
-              padding: 20px;
-              background-color: white;
-              border-radius: 8px;
-              box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+              margin: 3rem auto;
+              padding: 2rem;
+              background-color: var(--card-bg);
+              border-radius: var(--radius);
+              box-shadow: var(--shadow);
               text-align: center;
+            }
+            
+            @media (max-width: 640px) {
+              .container {
+                margin: 1.5rem auto;
+                padding: 1.5rem;
+              }
+            }
+            
+            .error-icon {
+              color: var(--error);
+              font-size: 3rem;
+              margin-bottom: 1.5rem;
             }
             
             h1 {
-              color: #EF4444;
+              color: var(--error);
+              font-size: 1.75rem;
+              margin-top: 0;
+              margin-bottom: 1rem;
             }
             
-            .back-button {
-              display: block;
-              width: 200px;
-              margin: 20px auto;
-              padding: 10px 15px;
-              background-color: #2563eb;
+            p {
+              color: var(--text-muted);
+              margin-bottom: 2rem;
+              line-height: 1.6;
+            }
+            
+            .button {
+              display: inline-flex;
+              align-items: center;
+              justify-content: center;
+              padding: 0.75rem 1.5rem;
+              background-color: var(--primary);
               color: white;
               border: none;
-              border-radius: 4px;
-              font-size: 16px;
+              border-radius: var(--radius);
+              font-size: 1rem;
+              font-weight: 500;
               cursor: pointer;
-              text-align: center;
+              text-decoration: none;
+              transition: background-color 0.2s;
+            }
+            
+            .button:hover {
+              background-color: var(--primary-hover);
             }
           </style>
         </head>
         <body>
+          <nav class="navbar">
+            <a href="#" class="navbar-brand">نظام المواعيد</a>
+            <div class="navbar-nav">
+              <a href="/teacher/appointments" class="nav-link">المواعيد</a>
+              <a href="/created-test" class="nav-link">المواعيد التي أنشأتها</a>
+              <a href="/teacher/availability" class="nav-link">إدارة التوفر</a>
+            </div>
+          </nav>
+          
           <div class="container">
+            <div class="error-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="72" height="72" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="8" x2="12" y2="12"></line>
+                <line x1="12" y1="16" x2="12.01" y2="16"></line>
+              </svg>
+            </div>
             <h1>حدث خطأ</h1>
             <p>حدث خطأ أثناء محاولة تحميل المواعيد التي أنشأتها. الرجاء المحاولة مرة أخرى لاحقًا.</p>
-            <button class="back-button" onclick="window.location.href='/teacher/appointments'">العودة إلى المواعيد</button>
+            <button class="button" onclick="window.location.href='/teacher/appointments'">العودة إلى المواعيد</button>
           </div>
         </body>
         </html>

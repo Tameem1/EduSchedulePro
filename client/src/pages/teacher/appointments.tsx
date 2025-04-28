@@ -322,15 +322,26 @@ export default function TeacherAppointments() {
           </Link>
           
           <Button 
-            variant="outline" 
-            className="w-full sm:w-auto"
+            variant="secondary" 
+            className="w-full sm:w-auto flex items-center gap-1"
             onClick={() => {
               console.log("Navigating to direct server route /created-test");
-              // Try a direct server route
               window.location.href = "/created-test";
             }}
           >
-            المواعيد التي أنشأتها (صفحة بسيطة)
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" className="h-4 w-4 ml-1">
+              <rect width="18" height="18" x="3" y="4" rx="2" ry="2"></rect>
+              <line x1="16" x2="16" y1="2" y2="6"></line>
+              <line x1="8" x2="8" y1="2" y2="6"></line>
+              <line x1="3" x2="21" y1="10" y2="10"></line>
+              <path d="M8 14h.01"></path>
+              <path d="M12 14h.01"></path>
+              <path d="M16 14h.01"></path>
+              <path d="M8 18h.01"></path>
+              <path d="M12 18h.01"></path>
+              <path d="M16 18h.01"></path>
+            </svg>
+            المواعيد التي أنشأتها
           </Button>
 
           {/* Button+Dialog to add new appointment */}
