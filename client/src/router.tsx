@@ -16,6 +16,7 @@ import ManagerAppointments from "@/pages/manager/appointments";
 import AssignTeacher from "@/pages/manager/assign-teacher";
 import ManagerQuestionnaire from "@/pages/manager/questionnaire";
 import ManagerTeachersAvailability from "@/pages/manager/teachers-availability";
+import Created from "@/pages/created";
 
 const TempCreatedAppointmentsRoute = () => {
   console.log("Direct route component for /teacher/created-appointments activated");
@@ -69,6 +70,9 @@ export default function Router() {
         
         {/* Direct route for created appointments */}
         <Route path="/teacher/created-appointments" component={TempCreatedAppointmentsRoute} />
+        
+        {/* Simple test route */}
+        <Route path="/created" component={Created} />
         
         <ProtectedRoute
           path="/teacher/questionnaire-submission/:appointmentId?"

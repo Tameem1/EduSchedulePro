@@ -325,12 +325,12 @@ export default function TeacherAppointments() {
             variant="outline" 
             className="w-full sm:w-auto"
             onClick={() => {
-              console.log("Navigating to created-appointments");
-              // Use direct assignment to navigate
-              window.location.href = "/teacher/created-appointments";
+              console.log("Navigating to simplified route /created");
+              // Try a simpler route first for testing
+              window.location.href = "/created";
             }}
           >
-            المواعيد التي أنشأتها
+            المواعيد التي أنشأتها (صفحة بسيطة)
           </Button>
 
           {/* Button+Dialog to add new appointment */}
