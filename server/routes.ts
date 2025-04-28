@@ -767,6 +767,42 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ error: "Failed to fetch appointments" });
     }
   });
+  
+  // Get appointments created by a teacher
+  app.get("/api/teachers/:username/created-appointments", async (req, res) => {
+    if (!req.isAuthenticated() || req.user.role !== "teacher") {
+      return res.sendStatus(403);
+    }
+
+    try {
+      const teacherUsername = req.params.username;
+      console.log("Fetching appointments created by teacher:", teacherUsername);
+      
+      // Make sure the logged-in teacher can only see their own created appointments
+      if (req.user.username !== teacherUsername) {
+        return res.sendStatus(403);
+      }
+      
+      const appointments = await storage.getAppointmentsCreatedByTeacher(teacherUsername);
+      console.log(`Found ${appointments.length} appointments created by teacher ${teacherUsername}`);
+      
+      // Include student information in the response
+      const appointmentsWithStudents = await Promise.all(
+        appointments.map(async (appointment) => {
+          const student = await storage.getUser(appointment.studentId);
+          return {
+            ...appointment,
+            student,
+          };
+        })
+      );
+      
+      res.json(appointmentsWithStudents);
+    } catch (error) {
+      console.error("Error fetching teacher created appointments:", error);
+      res.status(500).json({ error: "Failed to fetch created appointments" });
+    }
+  });
 
   // Get all questionnaire responses
   app.get("/api/questionnaire-responses", async (req, res) => {

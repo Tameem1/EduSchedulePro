@@ -14,6 +14,14 @@ export interface IStorage {
   deleteAvailability(id: number): Promise<void>;
   createAppointment(appointment: Omit<Appointment, "id">): Promise<Appointment>;
   getAppointmentsByStudent(studentId: number): Promise<Appointment[]>;
+  getAppointmentsByTeacher(teacherId: number): Promise<Appointment[]>;
+  getAppointmentsCreatedByTeacher(teacherUsername: string): Promise<Appointment[]>;
+  getAppointmentById(appointmentId: number): Promise<Appointment | undefined>;
+  updateAppointment(appointmentId: number, data: any): Promise<Appointment>;
+  getAllAppointments(): Promise<Appointment[]>;
   createQuestionnaireResponse(response: Omit<QuestionnaireResponse, "id">): Promise<QuestionnaireResponse>;
   getQuestionnaireResponse(appointmentId: number): Promise<QuestionnaireResponse | undefined>;
+  getAllQuestionnaireResponses(): Promise<QuestionnaireResponse[]>;
+  createIndependentAssignment(data: any): Promise<any>;
+  getIndependentAssignments(): Promise<any[]>;
 }
