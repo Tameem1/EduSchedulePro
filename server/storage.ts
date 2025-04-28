@@ -147,6 +147,7 @@ export const storage = {
 
       console.log("Creating appointment with data:", data);
 
+      // If createdByTeacherId exists in data, it will be included automatically
       const newAppointment = await db
         .insert(appointments)
         .values({
@@ -179,9 +180,28 @@ export const storage = {
           startTime: appointments.startTime,
           status: appointments.status,
           teacherAssignment: appointments.teacherAssignment,
+          createdByTeacherId: appointments.createdByTeacherId
         })
         .from(appointments)
         .where(eq(appointments.teacherId, teacherId))
+        .orderBy(desc(appointments.startTime));
+    });
+  },
+  
+  async getAppointmentsCreatedByTeacher(teacherId: number) {
+    return await withRetry(async () => {
+      return await db
+        .select({
+          id: appointments.id,
+          studentId: appointments.studentId,
+          teacherId: appointments.teacherId,
+          startTime: appointments.startTime,
+          status: appointments.status,
+          teacherAssignment: appointments.teacherAssignment,
+          createdByTeacherId: appointments.createdByTeacherId
+        })
+        .from(appointments)
+        .where(eq(appointments.createdByTeacherId, teacherId))
         .orderBy(desc(appointments.startTime));
     });
   },
@@ -315,6 +335,7 @@ export const storage = {
             startTime: appointments.startTime,
             status: appointments.status,
             teacherAssignment: appointments.teacherAssignment,
+            createdByTeacherId: appointments.createdByTeacherId,
           })
           .from(appointments)
           .where(eq(appointments.id, appointmentId));
