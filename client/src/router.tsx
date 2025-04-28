@@ -11,6 +11,7 @@ import StudentAppointments from "@/pages/student/appointments";
 import TeacherAvailability from "@/pages/teacher/availability";
 import TeacherAppointments from "@/pages/teacher/appointments";
 import TempCreatedAppointments from "@/pages/teacher/temp-created-appointments";
+import TeacherCreatedAppointments from "@/pages/teacher/created-appointments";
 import TeacherQuestionnaireSubmission from "@/pages/teacher/questionnaire-submission";
 import ManagerAppointments from "@/pages/manager/appointments";
 import AssignTeacher from "@/pages/manager/assign-teacher";
@@ -72,14 +73,15 @@ export default function Router() {
         <ProtectedRoute
           path="/teacher/created-appointments"
           role="teacher"
-          component={TempCreatedAppointments}
+          component={TeacherCreatedAppointments}
         />
         
         {/* Simple test route */}
         <Route path="/created" component={Created} />
         
+        {/* Ensure component returns a valid element */}
         <ProtectedRoute
-          path="/teacher/questionnaire-submission/:appointmentId?"
+          path="/teacher/questionnaire-submission/:appointmentId"
           role="teacher"
           component={TeacherQuestionnaireSubmission}
         />
