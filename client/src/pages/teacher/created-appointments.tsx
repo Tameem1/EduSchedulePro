@@ -269,12 +269,11 @@ export default function TeacherCreatedAppointments() {
             <p className="mt-2">يمكنك إنشاء مواعيد جديدة من صفحة المواعيد</p>
             <Button 
               variant="outline" 
-              className="mt-4 hover:bg-blue-50"
+              className="mt-4"
               onClick={() => {
                 console.log("Navigating back to appointments");
                 window.location.href = "/teacher/appointments";
               }}
-              style={{ borderColor: "hsl(203, 90%, 50%)", color: "hsl(203, 90%, 50%)" }}
             >
               العودة إلى المواعيد
             </Button>
