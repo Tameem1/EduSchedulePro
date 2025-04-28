@@ -39,6 +39,16 @@ export default function TeacherCreatedAppointments() {
   const [wsConnected, setWsConnected] = React.useState(false);
   const reconnectTimeoutRef = React.useRef<NodeJS.Timeout>();
 
+  // Debug log to track component mounting
+  React.useEffect(() => {
+    console.log("TeacherCreatedAppointments component mounted");
+    console.log("Current user:", user);
+    
+    return () => {
+      console.log("TeacherCreatedAppointments component unmounted");
+    };
+  }, [user]);
+
   // WebSocket connection setup for real-time updates
   const connectWebSocket = React.useCallback(() => {
     if (socketRef.current?.readyState === WebSocket.OPEN) return;
@@ -59,6 +69,7 @@ export default function TeacherCreatedAppointments() {
         const data = JSON.parse(event.data);
         if (data.type === 'appointmentUpdate') {
           // Refresh the data when we get an update
+          console.log("Appointment update received, refreshing data");
           refetch();
         }
       } catch (error) {
