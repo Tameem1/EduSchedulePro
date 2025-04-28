@@ -1,6 +1,7 @@
 import * as React from "react";
-import { Switch, Route } from "wouter";
+import { Switch, Route, Redirect } from "wouter";
 import { UserRole } from "@shared/schema";
+import { useAuth } from "@/hooks/use-auth";
 import { ProtectedRoute } from "./lib/protected-route";
 import { Navbar } from "@/components/Navbar";
 import NotFound from "@/pages/not-found";
@@ -9,14 +10,33 @@ import BookAppointment from "@/pages/student/book-appointment";
 import StudentAppointments from "@/pages/student/appointments";
 import TeacherAvailability from "@/pages/teacher/availability";
 import TeacherAppointments from "@/pages/teacher/appointments";
-import TeacherCreatedAppts from "@/pages/teacher/created-appts";
+import TempCreatedAppointments from "@/pages/teacher/temp-created-appointments";
 import TeacherQuestionnaireSubmission from "@/pages/teacher/questionnaire-submission";
 import ManagerAppointments from "@/pages/manager/appointments";
 import AssignTeacher from "@/pages/manager/assign-teacher";
 import ManagerQuestionnaire from "@/pages/manager/questionnaire";
 import ManagerTeachersAvailability from "@/pages/manager/teachers-availability";
 
+const TempCreatedAppointmentsRoute = () => {
+  console.log("Direct route component for /teacher/created-appointments activated");
+  const { user } = useAuth();
+  
+  if (!user || user.role !== "teacher") {
+    console.log("User not authenticated as teacher, redirecting to /auth");
+    return <Redirect to="/auth" />;
+  }
+  
+  console.log("Rendering TempCreatedAppointments component directly");
+  return <TempCreatedAppointments />;
+};
+
 export default function Router() {
+  console.log("Router component initialized");
+  
+  React.useEffect(() => {
+    console.log("Current path:", window.location.pathname);
+  }, []);
+
   return (
     <>
       <Navbar />
@@ -46,11 +66,10 @@ export default function Router() {
           role="teacher"
           component={TeacherAppointments}
         />
-        <ProtectedRoute
-          path="/teacher/created-appointments"
-          role="teacher"
-          component={TeacherCreatedAppts}
-        />
+        
+        {/* Direct route for created appointments */}
+        <Route path="/teacher/created-appointments" component={TempCreatedAppointmentsRoute} />
+        
         <ProtectedRoute
           path="/teacher/questionnaire-submission/:appointmentId?"
           role="teacher"

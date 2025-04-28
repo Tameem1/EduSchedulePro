@@ -1,3 +1,4 @@
+import * as React from "react";
 import { useAuth } from "@/hooks/use-auth";
 import { Loader2 } from "lucide-react";
 import { Redirect, Route } from "wouter";
@@ -12,7 +13,18 @@ export function ProtectedRoute({
   role: UserRoleType;
   component: () => React.JSX.Element;
 }) {
+  console.log(`ProtectedRoute initialized for path: ${path}, role: ${role}`);
   const { user, isLoading } = useAuth();
+  
+  React.useEffect(() => {
+    console.log(`ProtectedRoute for ${path} mounted`);
+    console.log(`Path match check: ${window.location.pathname} === ${path}`);
+    console.log(`User authenticated: ${!!user}, User role: ${user?.role}, Expected role: ${role}`);
+    
+    return () => {
+      console.log(`ProtectedRoute for ${path} unmounted`);
+    };
+  }, [path, role, user]);
 
   if (isLoading) {
     return (

@@ -3,18 +3,18 @@ import { useAuth } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 
-export default function TeacherCreatedAppts() {
-  console.log("*** TeacherCreatedAppts component function executing ***");
+export default function TempCreatedAppointments() {
+  console.log("*** TempCreatedAppointments component function executing ***");
   const { user } = useAuth();
 
   // Debug log to track component mounting
   React.useEffect(() => {
-    console.log("*** TeacherCreatedAppts component mounted ***");
+    console.log("*** TempCreatedAppointments component mounted ***");
     console.log("Current path:", window.location.pathname);
     console.log("Current user:", user);
     
     return () => {
-      console.log("TeacherCreatedAppts component unmounted");
+      console.log("TempCreatedAppointments component unmounted");
     };
   }, [user]);
 
@@ -22,7 +22,7 @@ export default function TeacherCreatedAppts() {
     <div className="container mx-auto p-4">
       <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6">
         <h1 className="text-xl md:text-2xl font-bold text-center sm:text-right">
-          المواعيد التي أنشأتها
+          المواعيد التي أنشأتها (مؤقت)
         </h1>
         <div className="flex flex-col sm:flex-row items-center gap-2 w-full sm:w-auto">
           <Button 
@@ -40,7 +40,7 @@ export default function TeacherCreatedAppts() {
 
       <Card>
         <CardContent className="p-6 text-center">
-          <p className="text-muted-foreground">صفحة المواعيد التي أنشأتها</p>
+          <p className="text-muted-foreground">صفحة المواعيد التي أنشأتها (مؤقت)</p>
           <p className="mt-2">هذه الصفحة قيد التطوير</p>
         </CardContent>
       </Card>

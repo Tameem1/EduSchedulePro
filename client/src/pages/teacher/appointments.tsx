@@ -326,6 +326,7 @@ export default function TeacherAppointments() {
             className="w-full sm:w-auto"
             onClick={() => {
               console.log("Navigating to created-appointments");
+              // Use direct assignment to navigate
               window.location.href = "/teacher/created-appointments";
             }}
           >
