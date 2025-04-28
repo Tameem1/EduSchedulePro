@@ -171,7 +171,25 @@ export const storage = {
 
   async getAppointmentsByTeacher(teacherId: number) {
     return await withRetry(async () => {
-      return await db
+      console.log(`Fetching appointments for teacher: ${teacherId}`);
+      
+      // Get all appointments where:
+      // 1. teacherId matches the provided teacherId 
+      // OR
+      // 2. the teacherAssignment matches the username of the teacher
+      const teacher = await db
+        .select()
+        .from(users)
+        .where(eq(users.id, teacherId))
+        .limit(1);
+
+      const teacherName = teacher.length ? teacher[0].username : null;
+      console.log(`Teacher username: ${teacherName}`);
+
+      // Build query to fetch:
+      // 1. Directly assigned appointments (teacherId = teacher's ID)
+      // 2. Appointments assigned by name (teacherAssignment = teacher's username)
+      let query = db
         .select({
           id: appointments.id,
           studentId: appointments.studentId,
@@ -180,9 +198,24 @@ export const storage = {
           status: appointments.status,
           teacherAssignment: appointments.teacherAssignment,
         })
-        .from(appointments)
-        .where(eq(appointments.teacherId, teacherId))
-        .orderBy(desc(appointments.startTime));
+        .from(appointments);
+
+      if (teacherName) {
+        console.log(`Searching for appointments with teacherId=${teacherId} OR teacherAssignment=${teacherName}`);
+        query = query.where(
+          or(
+            eq(appointments.teacherId, teacherId),
+            eq(appointments.teacherAssignment, teacherName)
+          )
+        );
+      } else {
+        query = query.where(eq(appointments.teacherId, teacherId));
+      }
+
+      const results = await query.orderBy(desc(appointments.startTime));
+      console.log(`Found ${results.length} appointments for teacher ${teacherId}`);
+      
+      return results;
     });
   },
 
