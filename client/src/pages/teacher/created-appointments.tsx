@@ -172,17 +172,9 @@ export default function TeacherCreatedAppointments() {
   React.useEffect(() => {
     if (!user?.id) return;
     
-    console.log("Connecting to WebSocket:", `${window.location.protocol === "https:" ? "wss:" : "ws:"}//${window.location.host}/ws`);
-    
-    const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
-    const wsUrl = `${protocol}//${window.location.host}/ws`;
-    const socket = new WebSocket(wsUrl);
-    
-    socket.addEventListener("open", () => {
-      console.log("WebSocket connected");
-    });
-    
-    socket.addEventListener("message", (event) => {
+    // Define the message handler function inside the effect
+    // to avoid dependency issues with fetchQuestionnaireForAppointment
+    const handleWebSocketMessage = async (event: MessageEvent) => {
       try {
         const data = JSON.parse(event.data);
         console.log("WebSocket message received:", data);
@@ -199,9 +191,19 @@ export default function TeacherCreatedAppointments() {
           // For DONE appointments or if status is changed to DONE, refresh questionnaire data
           const appointment = data.data?.appointment;
           if (appointment) {
-            // Always fetch the questionnaire for the specific appointment
-            // This ensures we have the latest data when status changes or questionnaire is submitted
-            fetchQuestionnaireForAppointment(appointment.id);
+            try {
+              console.log(`Fetching questionnaire for appointment ID: ${appointment.id}`);
+              const response = await getQuestionnaireResponse(appointment.id);
+              
+              setQuestionnaireResponses(prev => ({
+                ...prev,
+                [appointment.id]: response
+              }));
+              
+              console.log(`Updated questionnaire response for appointment ${appointment.id}:`, response);
+            } catch (error) {
+              console.error(`Error fetching questionnaire for appointment ${appointment.id}:`, error);
+            }
           }
         }
         
@@ -211,13 +213,42 @@ export default function TeacherCreatedAppointments() {
           
           const appointmentId = data.data?.appointmentId;
           if (appointmentId) {
-            fetchQuestionnaireForAppointment(appointmentId);
+            try {
+              console.log(`Fetching questionnaire for appointment ID: ${appointmentId}`);
+              const response = await getQuestionnaireResponse(appointmentId);
+              
+              setQuestionnaireResponses(prev => ({
+                ...prev,
+                [appointmentId]: response
+              }));
+              
+              console.log(`Updated questionnaire response for appointment ${appointmentId}:`, response);
+              
+              // Also refresh the appointments list to ensure we have latest status
+              queryClient.invalidateQueries({ 
+                queryKey: ["/api/teachers", user.id, "created-appointments"] 
+              });
+            } catch (error) {
+              console.error(`Error fetching questionnaire for appointment ${appointmentId}:`, error);
+            }
           }
         }
       } catch (error) {
         console.error("Error processing WebSocket message:", error);
       }
+    };
+    
+    console.log("Connecting to WebSocket:", `${window.location.protocol === "https:" ? "wss:" : "ws:"}//${window.location.host}/ws`);
+    
+    const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
+    const wsUrl = `${protocol}//${window.location.host}/ws`;
+    const socket = new WebSocket(wsUrl);
+    
+    socket.addEventListener("open", () => {
+      console.log("WebSocket connected");
     });
+    
+    socket.addEventListener("message", handleWebSocketMessage);
     
     socket.addEventListener("close", () => {
       console.log("WebSocket disconnected");
@@ -231,7 +262,7 @@ export default function TeacherCreatedAppointments() {
     return () => {
       socket.close();
     };
-  }, [user?.id, queryClient, fetchQuestionnaireForAppointment]);
+  }, [user?.id, queryClient, getQuestionnaireResponse]);
   
   // Filter appointments for today only
   const todayAppointments = React.useMemo(() => {
