@@ -713,7 +713,11 @@ export default function ManagerAppointments() {
                     {getUserName(appointment.studentId, "student")}
                   </TableCell>
                   <TableCell>
-                    {getUserName(appointment.teacherId, "teacher")}
+                    {appointment.teacherId ? (
+                      getUserName(appointment.teacherId, "teacher")
+                    ) : (
+                      <span className="text-muted-foreground italic">غير معين</span>
+                    )}
                   </TableCell>
                   <TableCell>
                     <Badge
