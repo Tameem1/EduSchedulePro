@@ -1,4 +1,4 @@
-import { Switch, Route } from "wouter";
+import { Switch, Route, Redirect } from "wouter";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
@@ -7,9 +7,10 @@ import NotFound from "@/pages/not-found";
 import AuthPage from "@/pages/auth";
 import BookAppointment from "@/pages/student/book-appointment";
 import TeacherAvailability from "@/pages/teacher/availability";
-import TeacherQuestionnaireSubmission from "@/pages/teacher/questionnaire-submission"; // <-- new import
+import TeacherQuestionnaireSubmission from "@/pages/teacher/questionnaire-submission";
 import AcceptAppointment from "@/pages/teacher/accept-appointment";
-import TeacherAppointments from "@/pages/teacher/appointments"; // <-- listing page
+import TeacherAppointments from "@/pages/teacher/appointments";
+import TeacherCreatedAppointments from "@/pages/teacher/created-appointments";
 import ManagerAppointments from "@/pages/manager/appointments";
 import ManagerResults from "@/pages/manager/results";
 import AssignTeacher from "@/pages/manager/assign-teacher";
@@ -59,6 +60,11 @@ function Router() {
           role="teacher"
           component={AcceptAppointment}
         />
+        <ProtectedRoute
+          path="/teacher/created-appointments"
+          role="teacher"
+          component={TeacherCreatedAppointments}
+        />
 
         {/* Manager routes */}
         <ProtectedRoute
@@ -86,12 +92,13 @@ function Router() {
           role="manager"
           component={ManagerTeachersAvailability}
         />
+        
         {/* Redirect root to appropriate dashboard */}
         <ProtectedRoute
           path="/"
-          role="student"
+          role="teacher"
           component={() => {
-            window.location.href = "/student/book-appointment";
+            window.location.href = "/teacher/appointments";
             return null;
           }}
         />
