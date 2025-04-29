@@ -439,11 +439,31 @@ export default function ManagerAppointments() {
       }
       return res.json();
     },
-    onSuccess: () => {
+    onSuccess: (data, variables) => {
       toast({
         title: "تم إزالة المعلم",
         description: "تم إزالة المعلم من الموعد بنجاح",
       });
+      
+      // Forcefully update the local data cache with the updated appointment
+      // This ensures the UI updates immediately without waiting for a refetch
+      queryClient.setQueryData(["/api/appointments"], (oldData: Appointment[] | undefined) => {
+        if (!oldData) return undefined;
+        
+        return oldData.map(appointment => {
+          if (appointment.id === variables) {
+            // Return the appointment with teacherId set to null
+            return {
+              ...appointment,
+              teacherId: null,
+              status: AppointmentStatus.PENDING
+            };
+          }
+          return appointment;
+        });
+      });
+      
+      // Also invalidate the query to ensure we get fresh data from the server
       queryClient.invalidateQueries({ queryKey: ["/api/appointments"] });
       setIsAssignDialogOpen(false);
       setSelectedAppointment(null);
