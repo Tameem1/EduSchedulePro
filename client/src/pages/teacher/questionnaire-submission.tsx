@@ -29,16 +29,17 @@ import { format } from "date-fns";
 import { formatGMT3Time } from "@/lib/date-utils";
 
 function getStatusColor(status: AppointmentStatusType) {
-  return (
-    {
-      [AppointmentStatus.PENDING]: "bg-gray-500",
-      [AppointmentStatus.REQUESTED]: "bg-blue-500",
-      [AppointmentStatus.ASSIGNED]: "bg-yellow-500",
-      [AppointmentStatus.RESPONDED]: "bg-green-500",
-      [AppointmentStatus.DONE]: "bg-purple-500",
-      [AppointmentStatus.REJECTED]: "bg-red-500",
-    }[status] || "bg-gray-500"
-  );
+  const statusColors: Record<string, string> = {
+    pending: "bg-gray-500",
+    requested: "bg-blue-500",
+    assigned: "bg-yellow-500",
+    responded: "bg-green-500",
+    done: "bg-purple-500",
+    rejected: "bg-red-500",
+    not_attended: "bg-red-700",
+  };
+  
+  return statusColors[status] || "bg-gray-500";
 }
 
 const TeacherQuestionnaireSubmission = () => {
@@ -49,7 +50,7 @@ const TeacherQuestionnaireSubmission = () => {
 
   // Local form data
   const [formData, setFormData] = React.useState({
-    attended: true, // Did the student attend? Default is yes
+    attended: true, // Default is yes (student attended)
     question1: false,
     question2: false,
     question3: "",
@@ -319,13 +320,13 @@ const TeacherQuestionnaireSubmission = () => {
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-4">
-              <label className="text-sm font-medium mb-1 sm:mb-0 font-semibold text-primary">
-                هل حضر الطالب الموعد؟
+              <label className="text-sm font-medium mb-1 sm:mb-0 font-semibold text-red-500">
+                هل غاب الطالب عن الموعد؟
               </label>
               <Switch
-                checked={formData.attended}
+                checked={!formData.attended}
                 onCheckedChange={(checked) =>
-                  setFormData((prev) => ({ ...prev, attended: checked }))
+                  setFormData((prev) => ({ ...prev, attended: !checked }))
                 }
               />
             </div>
