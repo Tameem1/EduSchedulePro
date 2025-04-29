@@ -119,7 +119,7 @@ const TeacherQuestionnaireSubmission = () => {
           await apiRequest(
             "PATCH",
             `/api/appointments/${appointmentId}`,
-            { status: AppointmentStatus.NOT_ATTENDED }
+            { status: "not_attended" } // Use string literal to avoid LSP issues
           );
         } catch (error) {
           console.error("Failed to update appointment status to not attended", error);

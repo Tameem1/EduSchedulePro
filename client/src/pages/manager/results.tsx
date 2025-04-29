@@ -388,6 +388,7 @@ export default function ManagerResults() {
                           <TableHead className="whitespace-nowrap">القسم</TableHead>
                           <TableHead className="whitespace-nowrap">عدد مرات المتابعة</TableHead>
                           <TableHead className="whitespace-nowrap">عدد مرات الاستجابة</TableHead>
+                          <TableHead className="whitespace-nowrap text-red-500">عدد مرات الغياب</TableHead>
                           <TableHead className="whitespace-nowrap">الإنتاج</TableHead>
                           <TableHead className="whitespace-nowrap">تاريخ آخر نشاط</TableHead>
                         </TableRow>
@@ -401,6 +402,9 @@ export default function ManagerResults() {
                             <TableCell className="whitespace-nowrap">{stat.section}</TableCell>
                             <TableCell className="whitespace-nowrap text-center">{stat.question1YesCount}</TableCell>
                             <TableCell className="whitespace-nowrap text-center">{stat.question2YesCount}</TableCell>
+                            <TableCell className="whitespace-nowrap text-center text-red-500 font-bold">
+                              {stat.notAttendedCount || 0}
+                            </TableCell>
                             <TableCell>
                               <div className="max-w-[150px] sm:max-w-md overflow-x-auto whitespace-nowrap">
                                 {stat.allResponses}
