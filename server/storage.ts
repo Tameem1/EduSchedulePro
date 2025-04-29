@@ -276,75 +276,17 @@ export const storage = {
           return updatedAppointment[0];
         }
 
-        // Handle teacher assignment or removal
-        if (data.teacherId !== undefined) {
-          // Special handling for teacher removal (teacherId === null)
-          if (data.teacherId === null) {
-            console.log("REMOVING TEACHER - Setting teacherId to NULL for appointment", appointmentId);
-            console.log("DEBUG: teacherId in data:", data.teacherId);
-            console.log("DEBUG: typeof teacherId:", typeof data.teacherId);
-            
-            try {
-              // Explicitly set teacherId to NULL and status to PENDING
-              // Use direct SQL query to ensure NULL is properly set
-              const result = await db.execute(
-                `UPDATE appointments 
-                 SET teacher_id = NULL, 
-                     status = $1 
-                 WHERE id = $2 
-                 RETURNING *`,
-                [data.status || AppointmentStatus.PENDING, appointmentId]
-              );
-              
-              console.log("DEBUG: Direct SQL result:", result);
-              
-              // Format the result to match the expected structure
-              const updatedAppointment = result.rows && result.rows.length > 0 
-                ? [{ 
-                    id: result.rows[0].id,
-                    studentId: result.rows[0].student_id,
-                    teacherId: null, // Explicitly null after the update
-                    startTime: result.rows[0].start_time,
-                    status: result.rows[0].status,
-                    teacherAssignment: result.rows[0].teacher_assignment,
-                    createdByTeacherId: result.rows[0].created_by_teacher_id
-                  }] 
-                : [];
-
-              console.log("DEBUG: SQL executed successfully");
-              console.log("Teacher removed from appointment:", updatedAppointment[0]);
-              
-              // Double-check the update worked
-              const verifyAppointment = await db
-                .select()
-                .from(appointments)
-                .where(eq(appointments.id, appointmentId))
-                .limit(1);
-                
-              console.log("DEBUG: Verified appointment after update:", verifyAppointment[0]);
-              
-              return updatedAppointment[0];
-            } catch (error) {
-              console.error("DEBUG: Error when removing teacher:", error);
-              throw error;
-            }
-          } 
-          
-          // Handle teacher assignment (when teacherId is a valid ID)
-          const updateObj = {
-            teacherId: data.teacherId,
-            status: data.status || AppointmentStatus.REQUESTED
-          };
-          
-          console.log("Teacher assignment update:", updateObj);
-          
+        // Handle teacher assignment
+        if (data.teacherId) {
           const updatedAppointment = await db
             .update(appointments)
-            .set(updateObj)
+            .set({
+              teacherId: data.teacherId,
+              status: data.status || AppointmentStatus.REQUESTED,
+            })
             .where(eq(appointments.id, appointmentId))
             .returning();
 
-          console.log("Updated appointment with teacher assignment:", updatedAppointment[0]);
           return updatedAppointment[0];
         }
 

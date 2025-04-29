@@ -423,68 +423,6 @@ export default function ManagerAppointments() {
       });
     },
   });
-  
-  const removeTeacherMutation = useMutation({
-    mutationFn: async (appointmentId: number) => {
-      console.log(`Removing teacher from appointment ${appointmentId}`);
-      
-      const res = await apiRequest(
-        "PATCH",
-        `/api/appointments/${appointmentId}`,
-        {
-          teacherId: null,
-          status: AppointmentStatus.PENDING
-        },
-      );
-      
-      console.log("API response status:", res.status);
-      
-      if (!res.ok) {
-        console.error("Failed to remove teacher:", await res.text());
-        throw new Error("فشل في إزالة المعلم من الموعد");
-      }
-      
-      const data = await res.json();
-      console.log("API response data:", data);
-      return data;
-    },
-    onSuccess: (data, variables) => {
-      toast({
-        title: "تم إزالة المعلم",
-        description: "تم إزالة المعلم من الموعد بنجاح",
-      });
-      
-      // Forcefully update the local data cache with the updated appointment
-      // This ensures the UI updates immediately without waiting for a refetch
-      queryClient.setQueryData(["/api/appointments"], (oldData: Appointment[] | undefined) => {
-        if (!oldData) return undefined;
-        
-        return oldData.map(appointment => {
-          if (appointment.id === variables) {
-            // Return the appointment with teacherId set to null
-            return {
-              ...appointment,
-              teacherId: null,
-              status: AppointmentStatus.PENDING
-            };
-          }
-          return appointment;
-        });
-      });
-      
-      // Also invalidate the query to ensure we get fresh data from the server
-      queryClient.invalidateQueries({ queryKey: ["/api/appointments"] });
-      setIsAssignDialogOpen(false);
-      setSelectedAppointment(null);
-    },
-    onError: (error) => {
-      toast({
-        title: "خطأ في إزالة المعلم",
-        description: error.message,
-        variant: "destructive",
-      });
-    },
-  });
 
   const createIndependentAssignmentMutation = useMutation({
     mutationFn: async (data: {
@@ -742,11 +680,7 @@ export default function ManagerAppointments() {
                     {getUserName(appointment.studentId, "student")}
                   </TableCell>
                   <TableCell>
-                    {appointment.teacherId ? (
-                      getUserName(appointment.teacherId, "teacher")
-                    ) : (
-                      <span className="text-muted-foreground italic">غير معين</span>
-                    )}
+                    {getUserName(appointment.teacherId, "teacher")}
                   </TableCell>
                   <TableCell>
                     <Badge
@@ -1178,28 +1112,6 @@ export default function ManagerAppointments() {
                     </Button>
                   </div>
                 </div>
-                
-                {/* Button to remove teacher from appointment - only show if a teacher is assigned */}
-                {selectedAppointment.teacherId && (
-                  <div className="mt-4">
-                    <Button 
-                      variant="destructive"
-                      className="w-full"
-                      onClick={() => {
-                        if (confirm("هل أنت متأكد من إزالة المعلم من هذا الموعد؟")) {
-                          removeTeacherMutation.mutate(selectedAppointment.id);
-                        }
-                      }}
-                      disabled={removeTeacherMutation.isPending}
-                    >
-                      {removeTeacherMutation.isPending ? (
-                        <Loader2 className="h-4 w-4 animate-spin ml-2" />
-                      ) : (
-                        "إزالة المعلم من الموعد"
-                      )}
-                    </Button>
-                  </div>
-                )}
               </div>
             )}
           </div>

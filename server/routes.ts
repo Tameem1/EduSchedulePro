@@ -692,47 +692,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const appointmentId = parseInt(req.params.id);
       const { teacherId, status, teacherAssignment } = req.body;
-      
-      console.log("PATCH /api/appointments/:id - Raw request body:", req.body);
-      console.log("PATCH endpoint - Is teacherId null?", teacherId === null);
 
-      // Directly handle teacher removal case first
-      if (teacherId === null) {
-        console.log("DIRECT TEACHER REMOVAL CASE DETECTED!");
-        
-        // Use direct SQL for teacher removal
-        const pool = require('./db').pool;
-        const result = await pool.query(
-          `UPDATE appointments SET teacher_id = NULL, status = $1 WHERE id = $2 RETURNING *`,
-          [status || 'pending', appointmentId]
-        );
-        
-        if (result.rows && result.rows.length > 0) {
-          console.log("SQL TEACHER REMOVAL SUCCESS:", result.rows[0]);
-          
-          // Format the result to match the expected appointment structure
-          const updatedAppointment = {
-            id: result.rows[0].id,
-            studentId: result.rows[0].student_id,
-            teacherId: null, // Explicitly null
-            startTime: result.rows[0].start_time,
-            status: result.rows[0].status,
-            teacherAssignment: result.rows[0].teacher_assignment,
-            createdByTeacherId: result.rows[0].created_by_teacher_id
-          };
-          
-          // Broadcast the update
-          broadcastUpdate("appointmentUpdate", {
-            action: "update",
-            appointment: updatedAppointment,
-            timestamp: new Date().toISOString(),
-          });
-          
-          return res.json(updatedAppointment);
-        }
-      }
-      
-      // For non-removal cases, continue with the normal flow
       // Create update object with only defined values
       const updateData: any = {};
 
@@ -770,13 +730,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
       }
 
-      // Handle teacher assignment or removal (null means remove teacher)
-      if (teacherId !== undefined) {
-        console.log("DEBUG: teacherId in request:", teacherId);
-        console.log("DEBUG: typeof teacherId:", typeof teacherId);
-        
-        updateData.teacherId = teacherId === null ? null : teacherId;
-        console.log("DEBUG: teacherId value set in updateData:", updateData.teacherId);
+      if (teacherId !== undefined && teacherId !== null) {
+        updateData.teacherId = teacherId;
       }
 
       if (teacherAssignment !== undefined) {
