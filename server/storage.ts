@@ -278,10 +278,28 @@ export const storage = {
 
         // Handle teacher assignment or removal
         if (data.teacherId !== undefined) {
-          // If teacherId is null, we are removing the teacher
+          // Special handling for teacher removal (teacherId === null)
+          if (data.teacherId === null) {
+            console.log("REMOVING TEACHER - Setting teacherId to NULL for appointment", appointmentId);
+            
+            // Explicitly set teacherId to NULL and status to PENDING
+            const updatedAppointment = await db
+              .update(appointments)
+              .set({
+                teacherId: null,
+                status: data.status || AppointmentStatus.PENDING
+              })
+              .where(eq(appointments.id, appointmentId))
+              .returning();
+
+            console.log("Teacher removed from appointment:", updatedAppointment[0]);
+            return updatedAppointment[0];
+          } 
+          
+          // Handle teacher assignment (when teacherId is a valid ID)
           const updateObj = {
             teacherId: data.teacherId,
-            status: data.status || (data.teacherId === null ? AppointmentStatus.PENDING : AppointmentStatus.REQUESTED)
+            status: data.status || AppointmentStatus.REQUESTED
           };
           
           console.log("Teacher assignment update:", updateObj);
@@ -292,7 +310,7 @@ export const storage = {
             .where(eq(appointments.id, appointmentId))
             .returning();
 
-          console.log("Updated appointment with teacher change:", updatedAppointment[0]);
+          console.log("Updated appointment with teacher assignment:", updatedAppointment[0]);
           return updatedAppointment[0];
         }
 
