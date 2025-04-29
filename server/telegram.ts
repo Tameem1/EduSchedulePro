@@ -386,8 +386,10 @@ export async function notifyTeacherAboutAssignmentChange(
     const message = `تم تغيير المهمة المطلوبة للموعد مع ${studentName} الساعة ${appointmentTime} إلى (${newAssignment}).`;
 
     // Send notification
-    const notificationSent = await sendTelegramMessage(telegramContact, message);
-    return notificationSent;
+    console.log(`Attempting to send assignment change notification to ${telegramContact}: ${message}`);
+    const result = await sendTelegramNotification(telegramContact, message);
+    console.log(`Assignment change notification result:`, result);
+    return typeof result === "boolean" ? result : false;
   } catch (error) {
     console.error("Error notifying teacher about assignment change:", error);
     return false;

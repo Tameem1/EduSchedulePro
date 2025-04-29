@@ -84,10 +84,24 @@ export default function TeacherAppointments() {
     ws.onmessage = (event) => {
       try {
         const data = JSON.parse(event.data);
+        console.log("WebSocket message received:", data);
         if (data.type === 'appointmentUpdate') {
+          console.log("Appointment update received, refreshing appointments data");
           queryClient.invalidateQueries({ 
             queryKey: ["/api/teachers", user?.id, "appointments"] 
           });
+          
+          // Show a toast notification about the assignment change
+          if (data.data?.action === "update" && data.data?.appointment?.teacherAssignment) {
+            const appt = data.data.appointment;
+            if (appt.teacherId === user?.id) {
+              toast({
+                title: "تم تحديث المهمة المطلوبة",
+                description: `تم تغيير المهمة المطلوبة للموعد إلى: ${appt.teacherAssignment}`,
+                variant: "default",
+              });
+            }
+          }
         }
       } catch (error) {
         console.error("Error handling WebSocket message:", error);
