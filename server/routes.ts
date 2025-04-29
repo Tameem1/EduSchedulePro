@@ -16,6 +16,7 @@ import { users, availabilities, Section } from "@shared/schema";
 import {
   sendTelegramNotification,
   notifyTeacherAboutAppointment,
+  notifyTeacherAboutAssignmentChange,
   notifyManagerAboutAppointment,
 } from "./telegram";
 import { startOfDay, endOfDay, format } from "date-fns"; // Added format import
@@ -751,14 +752,39 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Send Telegram notification after successful update
       let notificationSent = false;
+      
+      // Check if we need to send teacher assignment update notification
+      if (teacherAssignment !== undefined && appointment.teacherId) {
+        try {
+          console.log(`Notifying teacher ${appointment.teacherId} about assignment change to "${teacherAssignment}"`);
+          const assignmentNotificationSent = await notifyTeacherAboutAssignmentChange(
+            appointmentId,
+            appointment.teacherId,
+            teacherAssignment
+          );
+          
+          if (assignmentNotificationSent) {
+            notificationSent = true;
+            console.log("Teacher assignment change notification sent successfully");
+          }
+        } catch (error) {
+          console.error("Failed to send assignment change notification:", error);
+        }
+      }
+      
+      // Check if we need to send new teacher assignment notification
       if (teacherId && status === AppointmentStatus.REQUESTED) {
         try {
-          notificationSent = await notifyTeacherAboutAppointment(
+          const teacherNotificationSent = await notifyTeacherAboutAppointment(
             appointmentId,
             teacherId,
           );
+          
+          if (teacherNotificationSent) {
+            notificationSent = true;
+          }
         } catch (error) {
-          console.error("Failed to send Telegram notification:", error);
+          console.error("Failed to send new teacher notification:", error);
         }
       }
 
