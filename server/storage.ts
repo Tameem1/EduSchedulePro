@@ -276,17 +276,23 @@ export const storage = {
           return updatedAppointment[0];
         }
 
-        // Handle teacher assignment
-        if (data.teacherId) {
+        // Handle teacher assignment or removal
+        if (data.teacherId !== undefined) {
+          // If teacherId is null, we are removing the teacher
+          const updateObj = {
+            teacherId: data.teacherId,
+            status: data.status || (data.teacherId === null ? AppointmentStatus.PENDING : AppointmentStatus.REQUESTED)
+          };
+          
+          console.log("Teacher assignment update:", updateObj);
+          
           const updatedAppointment = await db
             .update(appointments)
-            .set({
-              teacherId: data.teacherId,
-              status: data.status || AppointmentStatus.REQUESTED,
-            })
+            .set(updateObj)
             .where(eq(appointments.id, appointmentId))
             .returning();
 
+          console.log("Updated appointment with teacher change:", updatedAppointment[0]);
           return updatedAppointment[0];
         }
 

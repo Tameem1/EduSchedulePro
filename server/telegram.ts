@@ -383,10 +383,12 @@ export async function notifyTeacherAboutAssignmentChange(
     );
 
     // Prepare message text
-    const message = `تم تغيير المهمة المطلوبة للموعد مع ${studentName} الساعة ${appointmentTime} إلى (${newAssignment}).`;
+    const message = `المهمة المطلوبة للموعد مع ${studentName} الساعة ${appointmentTime} هي (${newAssignment}).`;
 
     // Send notification
-    console.log(`Attempting to send assignment change notification to ${telegramContact}: ${message}`);
+    console.log(
+      `Attempting to send assignment change notification to ${telegramContact}: ${message}`,
+    );
     const result = await sendTelegramNotification(telegramContact, message);
     console.log(`Assignment change notification result:`, result);
     return typeof result === "boolean" ? result : false;
