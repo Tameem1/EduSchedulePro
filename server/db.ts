@@ -1,4 +1,4 @@
-// add the following three comments
+// add the following three lines
 import pg from "pg"; // server line
 import { drizzle } from "drizzle-orm/node-postgres"; // server line
 import "dotenv/config"; //server line
