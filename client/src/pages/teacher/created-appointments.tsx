@@ -43,6 +43,9 @@ export default function TeacherCreatedAppointments() {
   const { user } = useAuth();
   const queryClient = useQueryClient();
   
+  // Track questionnaire responses
+  const [questionnaireResponses, setQuestionnaireResponses] = React.useState<Record<number, QuestionnaireResponse | null>>({});
+  
   // Debug log to track component mounting
   React.useEffect(() => {
     console.log("Created appointments page loaded successfully!");
@@ -52,59 +55,6 @@ export default function TeacherCreatedAppointments() {
     };
   }, [user]);
   
-  // Setup WebSocket connection for real-time updates
-  React.useEffect(() => {
-    if (!user?.id) return;
-    
-    console.log("Connecting to WebSocket:", `${window.location.protocol === "https:" ? "wss:" : "ws:"}//${window.location.host}/ws`);
-    
-    const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
-    const wsUrl = `${protocol}//${window.location.host}/ws`;
-    const socket = new WebSocket(wsUrl);
-    
-    socket.addEventListener("open", () => {
-      console.log("WebSocket connected");
-    });
-    
-    socket.addEventListener("message", (event) => {
-      try {
-        const data = JSON.parse(event.data);
-        
-        // Handle appointment updates
-        if (data.type === "appointmentUpdate") {
-          console.log("Received appointment update:", data);
-          
-          // Invalidate relevant queries to refresh data
-          queryClient.invalidateQueries({ 
-            queryKey: ["/api/teachers", user.id, "created-appointments"] 
-          });
-          
-          // If it's a status change to DONE, also refresh questionnaire data
-          if (data.data?.appointment?.status === AppointmentStatus.DONE) {
-            queryClient.invalidateQueries({ 
-              queryKey: ["/api/appointments", data.data.appointment.id, "questionnaire"] 
-            });
-          }
-        }
-      } catch (error) {
-        console.error("Error processing WebSocket message:", error);
-      }
-    });
-    
-    socket.addEventListener("close", () => {
-      console.log("WebSocket disconnected");
-    });
-    
-    socket.addEventListener("error", (error) => {
-      console.error("WebSocket error:", error);
-    });
-    
-    // Cleanup WebSocket on unmount
-    return () => {
-      socket.close();
-    };
-  }, [user?.id, queryClient]);
-
   // Get appointments created by the teacher
   const { data: createdAppointments, isLoading } = useQuery<Appointment[]>({
     queryKey: ["/api/teachers", user?.id, "created-appointments"],
@@ -162,7 +112,26 @@ export default function TeacherCreatedAppointments() {
       return null;
     }
   };
-
+  
+  // Helper function to fetch a single questionnaire response and update state
+  const fetchQuestionnaireForAppointment = async (appointmentId: number) => {
+    try {
+      console.log(`Fetching questionnaire for appointment ID: ${appointmentId}`);
+      const response = await getQuestionnaireResponse(appointmentId);
+      
+      setQuestionnaireResponses(prev => ({
+        ...prev,
+        [appointmentId]: response
+      }));
+      
+      console.log(`Updated questionnaire response for appointment ${appointmentId}:`, response);
+      return response;
+    } catch (error) {
+      console.error(`Error fetching questionnaire for appointment ${appointmentId}:`, error);
+      return null;
+    }
+  };
+  
   // Helper to get student name
   function getStudentName(id: number) {
     if (!students) return `طالب #${id}`;
@@ -176,9 +145,6 @@ export default function TeacherCreatedAppointments() {
     const teacher = teachers.find((t) => t.id === id);
     return teacher ? teacher.username : `معلم #${id}`;
   }
-
-  // Track questionnaire responses
-  const [questionnaireResponses, setQuestionnaireResponses] = React.useState<Record<number, QuestionnaireResponse | null>>({});
   
   // Fetch questionnaire responses for completed appointments
   React.useEffect(() => {
@@ -201,6 +167,71 @@ export default function TeacherCreatedAppointments() {
     
     fetchQuestionnaireResponses();
   }, [createdAppointments]);
+  
+  // Setup WebSocket connection for real-time updates
+  React.useEffect(() => {
+    if (!user?.id) return;
+    
+    console.log("Connecting to WebSocket:", `${window.location.protocol === "https:" ? "wss:" : "ws:"}//${window.location.host}/ws`);
+    
+    const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
+    const wsUrl = `${protocol}//${window.location.host}/ws`;
+    const socket = new WebSocket(wsUrl);
+    
+    socket.addEventListener("open", () => {
+      console.log("WebSocket connected");
+    });
+    
+    socket.addEventListener("message", (event) => {
+      try {
+        const data = JSON.parse(event.data);
+        console.log("WebSocket message received:", data);
+        
+        // Handle appointment updates
+        if (data.type === "appointmentUpdate") {
+          console.log("Received appointment update:", data);
+          
+          // Invalidate relevant queries to refresh data
+          queryClient.invalidateQueries({ 
+            queryKey: ["/api/teachers", user.id, "created-appointments"] 
+          });
+          
+          // For DONE appointments or if status is changed to DONE, refresh questionnaire data
+          const appointment = data.data?.appointment;
+          if (appointment) {
+            // Always fetch the questionnaire for the specific appointment
+            // This ensures we have the latest data when status changes or questionnaire is submitted
+            fetchQuestionnaireForAppointment(appointment.id);
+          }
+        }
+        
+        // Handle questionnaire response updates
+        if (data.type === "questionnaireResponse") {
+          console.log("Received questionnaire response update:", data);
+          
+          const appointmentId = data.data?.appointmentId;
+          if (appointmentId) {
+            fetchQuestionnaireForAppointment(appointmentId);
+          }
+        }
+      } catch (error) {
+        console.error("Error processing WebSocket message:", error);
+      }
+    });
+    
+    socket.addEventListener("close", () => {
+      console.log("WebSocket disconnected");
+    });
+    
+    socket.addEventListener("error", (error) => {
+      console.error("WebSocket error:", error);
+    });
+    
+    // Cleanup WebSocket on unmount
+    return () => {
+      socket.close();
+    };
+  }, [user?.id, queryClient, fetchQuestionnaireForAppointment]);
   
   // Filter appointments for today only
   const todayAppointments = React.useMemo(() => {
