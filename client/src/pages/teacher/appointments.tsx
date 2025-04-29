@@ -48,6 +48,7 @@ function getStatusColor(status: AppointmentStatusType) {
       [AppointmentStatus.RESPONDED]: "bg-green-500",
       [AppointmentStatus.DONE]: "bg-purple-500",
       [AppointmentStatus.REJECTED]: "bg-red-500",
+      [AppointmentStatus.NOT_ATTENDED]: "bg-orange-500",
     }[status] || "bg-gray-500"
   );
 }

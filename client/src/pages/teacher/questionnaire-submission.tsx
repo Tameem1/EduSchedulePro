@@ -49,6 +49,7 @@ const TeacherQuestionnaireSubmission = () => {
 
   // Local form data
   const [formData, setFormData] = React.useState({
+    attended: true, // Did the student attend? Default is yes
     question1: false,
     question2: false,
     question3: "",
@@ -105,18 +106,36 @@ const TeacherQuestionnaireSubmission = () => {
   // Handle form submission
   const submitQuestionnaireMutation = useMutation({
     mutationFn: async (data: {
+      attended: boolean;
       question1: boolean;
       question2: boolean;
       question3: string;
       question4: string;
       appointmentId: string;
     }) => {
+      // If the student didn't attend, update the appointment status
+      if (!data.attended && appointmentId) {
+        try {
+          await apiRequest(
+            "PATCH",
+            `/api/appointments/${appointmentId}`,
+            { status: AppointmentStatus.NOT_ATTENDED }
+          );
+        } catch (error) {
+          console.error("Failed to update appointment status to not attended", error);
+        }
+      }
+      
+      // For non-attending students, use placeholder values for required fields if empty
+      const question3 = !data.attended && !data.question3 ? "لم يحضر الطالب" : data.question3;
+      const question4 = !data.attended && !data.question4 ? "لم يحضر الطالب" : data.question4;
+      
       const res = await apiRequest("POST", "/api/questionnaire-responses", {
         appointmentId: parseInt(data.appointmentId),
         question1: data.question1 ? "نعم" : "لا",
         question2: data.question2 ? "نعم" : "لا",
-        question3: data.question3,
-        question4: data.question4,
+        question3: question3,
+        question4: question4,
       });
       if (!res.ok) {
         const errData = await res.json();
@@ -300,6 +319,18 @@ const TeacherQuestionnaireSubmission = () => {
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-4">
+              <label className="text-sm font-medium mb-1 sm:mb-0 font-semibold text-primary">
+                هل حضر الطالب الموعد؟
+              </label>
+              <Switch
+                checked={formData.attended}
+                onCheckedChange={(checked) =>
+                  setFormData((prev) => ({ ...prev, attended: checked }))
+                }
+              />
+            </div>
+
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-4">
               <label className="text-sm font-medium mb-1 sm:mb-0">
                 هل تمت متابعة الطالب؟
               </label>
@@ -327,7 +358,7 @@ const TeacherQuestionnaireSubmission = () => {
               </label>
               <Textarea
                 placeholder="مثال: سورة الإسراء..."
-                required
+                required={formData.attended}
                 value={formData.question3}
                 onChange={(e) =>
                   setFormData((prev) => ({
@@ -344,7 +375,7 @@ const TeacherQuestionnaireSubmission = () => {
               </label>
               <Textarea
                 placeholder="أي ملاحظات إضافية عن الجلسة"
-                required
+                required={formData.attended}
                 value={formData.question4}
                 onChange={(e) =>
                   setFormData((prev) => ({

@@ -907,13 +907,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
 
     try {
-      // Get all questionnaire responses
+      // Get all questionnaire responses and appointments
       const responses = await storage.getAllQuestionnaireResponses();
       const assignments = await storage.getIndependentAssignments();
       const students = await db
         .select()
         .from(users)
         .where(eq(users.role, "student"));
+      
+      // Get all appointments to track not_attended status
+      const allAppointments = await storage.getAllAppointments();
 
       // Create a map to store statistics by student
       const studentStats = new Map();
@@ -927,6 +930,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           section: student?.section || "غير محدد", // Add section information
           question1YesCount: 0,
           question2YesCount: 0,
+          notAttendedCount: 0,  // Track students who didn't attend
           question3Responses: [],
           assignmentResponses: [],
           createdAt: response.createdAt,
@@ -956,6 +960,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           section: student?.section || "غير محدد", // Add section information
           question1YesCount: 0,
           question2YesCount: 0,
+          notAttendedCount: 0,  // Track students who didn't attend
           question3Responses: [],
           assignmentResponses: [],
           createdAt: assignment.submittedAt,
@@ -977,6 +982,31 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
 
         studentStats.set(assignment.studentId, stats);
+      });
+
+      // Process not_attended appointments
+      allAppointments.forEach((appointment) => {
+        if (appointment.status === AppointmentStatus.NOT_ATTENDED && appointment.studentId) {
+          const student = students.find((s) => s.id === appointment.studentId);
+          if (student) {
+            const stats = studentStats.get(appointment.studentId) || {
+              studentId: appointment.studentId,
+              studentName: student.username,
+              section: student.section || "غير محدد",
+              question1YesCount: 0,
+              question2YesCount: 0,
+              notAttendedCount: 0,
+              question3Responses: [],
+              assignmentResponses: [],
+              createdAt: appointment.startTime,
+            };
+            
+            // Increment the not attended count
+            stats.notAttendedCount++;
+            
+            studentStats.set(appointment.studentId, stats);
+          }
+        }
       });
 
       // Convert map to array and format the response
