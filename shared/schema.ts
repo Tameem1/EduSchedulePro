@@ -5,7 +5,7 @@ import { relations } from "drizzle-orm";
 
 // Define enums using pgEnum
 export const userRoleEnum = pgEnum('user_role', ['student', 'teacher', 'manager']);
-export const appointmentStatusEnum = pgEnum('appointment_status', ['pending', 'requested', 'assigned', 'responded', 'done', 'rejected']);
+export const appointmentStatusEnum = pgEnum('appointment_status', ['pending', 'requested', 'assigned', 'responded', 'done', 'rejected', 'not_attended']);
 
 // Export const values for use in the application - make sure these match exactly with the enum values
 export const AppointmentStatus = {
@@ -14,7 +14,8 @@ export const AppointmentStatus = {
   ASSIGNED: 'assigned',
   RESPONDED: 'responded',
   DONE: 'done',
-  REJECTED: 'rejected'
+  REJECTED: 'rejected',
+  NOT_ATTENDED: 'not_attended'
 } as const;
 
 export const AppointmentStatusArabic = {
@@ -23,7 +24,8 @@ export const AppointmentStatusArabic = {
   assigned: 'تم التعيين',
   responded: 'تمت الاستجابة',
   done: 'مكتمل',
-  rejected: 'مرفوض'
+  rejected: 'مرفوض',
+  not_attended: 'لم يحضر'
 } as const;
 
 export const Section = {
