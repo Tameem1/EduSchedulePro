@@ -281,19 +281,37 @@ export const storage = {
           // Special handling for teacher removal (teacherId === null)
           if (data.teacherId === null) {
             console.log("REMOVING TEACHER - Setting teacherId to NULL for appointment", appointmentId);
+            console.log("DEBUG: teacherId in data:", data.teacherId);
+            console.log("DEBUG: typeof teacherId:", typeof data.teacherId);
             
-            // Explicitly set teacherId to NULL and status to PENDING
-            const updatedAppointment = await db
-              .update(appointments)
-              .set({
-                teacherId: null,
-                status: data.status || AppointmentStatus.PENDING
-              })
-              .where(eq(appointments.id, appointmentId))
-              .returning();
+            try {
+              // Explicitly set teacherId to NULL and status to PENDING
+              const updatedAppointment = await db
+                .update(appointments)
+                .set({
+                  teacherId: null,
+                  status: data.status || AppointmentStatus.PENDING
+                })
+                .where(eq(appointments.id, appointmentId))
+                .returning();
 
-            console.log("Teacher removed from appointment:", updatedAppointment[0]);
-            return updatedAppointment[0];
+              console.log("DEBUG: SQL executed successfully");
+              console.log("Teacher removed from appointment:", updatedAppointment[0]);
+              
+              // Double-check the update worked
+              const verifyAppointment = await db
+                .select()
+                .from(appointments)
+                .where(eq(appointments.id, appointmentId))
+                .limit(1);
+                
+              console.log("DEBUG: Verified appointment after update:", verifyAppointment[0]);
+              
+              return updatedAppointment[0];
+            } catch (error) {
+              console.error("DEBUG: Error when removing teacher:", error);
+              throw error;
+            }
           } 
           
           // Handle teacher assignment (when teacherId is a valid ID)

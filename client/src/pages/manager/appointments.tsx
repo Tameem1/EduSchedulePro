@@ -426,6 +426,8 @@ export default function ManagerAppointments() {
   
   const removeTeacherMutation = useMutation({
     mutationFn: async (appointmentId: number) => {
+      console.log(`Removing teacher from appointment ${appointmentId}`);
+      
       const res = await apiRequest(
         "PATCH",
         `/api/appointments/${appointmentId}`,
@@ -434,10 +436,17 @@ export default function ManagerAppointments() {
           status: AppointmentStatus.PENDING
         },
       );
+      
+      console.log("API response status:", res.status);
+      
       if (!res.ok) {
+        console.error("Failed to remove teacher:", await res.text());
         throw new Error("فشل في إزالة المعلم من الموعد");
       }
-      return res.json();
+      
+      const data = await res.json();
+      console.log("API response data:", data);
+      return data;
     },
     onSuccess: (data, variables) => {
       toast({

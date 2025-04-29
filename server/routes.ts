@@ -732,8 +732,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Handle teacher assignment or removal (null means remove teacher)
       if (teacherId !== undefined) {
-        updateData.teacherId = teacherId;
-        console.log("Setting teacherId in updateData:", teacherId);
+        console.log("DEBUG: teacherId in request:", teacherId);
+        console.log("DEBUG: typeof teacherId:", typeof teacherId);
+        
+        updateData.teacherId = teacherId === null ? null : teacherId;
+        console.log("DEBUG: teacherId value set in updateData:", updateData.teacherId);
       }
 
       if (teacherAssignment !== undefined) {
