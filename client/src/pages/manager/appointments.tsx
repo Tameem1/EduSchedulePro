@@ -387,6 +387,42 @@ export default function ManagerAppointments() {
       });
     },
   });
+  
+  const updateAssignmentMutation = useMutation({
+    mutationFn: async ({
+      appointmentId,
+      teacherAssignment,
+    }: {
+      appointmentId: number;
+      teacherAssignment: string;
+    }) => {
+      const res = await apiRequest(
+        "PATCH",
+        `/api/appointments/${appointmentId}`,
+        {
+          teacherAssignment,
+        },
+      );
+      if (!res.ok) {
+        throw new Error("فشل في تحديث المهمة المطلوبة");
+      }
+      return res.json();
+    },
+    onSuccess: () => {
+      toast({
+        title: "تم تحديث المهمة",
+        description: "تم تحديث المهمة المطلوبة بنجاح",
+      });
+      queryClient.invalidateQueries({ queryKey: ["/api/appointments"] });
+    },
+    onError: (error) => {
+      toast({
+        title: "خطأ في تحديث المهمة",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
 
   const createIndependentAssignmentMutation = useMutation({
     mutationFn: async (data: {
@@ -1047,17 +1083,34 @@ export default function ManagerAppointments() {
 
                 <div className="space-y-2">
                   <Label htmlFor="assignment">المهمة المطلوبة</Label>
-                  <Input
-                    id="assignment"
-                    value={selectedAppointment.teacherAssignment || ""}
-                    onChange={(e) => {
-                      setSelectedAppointment({
-                        ...selectedAppointment,
-                        teacherAssignment: e.target.value,
-                      });
-                    }}
-                    placeholder="أدخل المهمة المطلوبة من المعلم"
-                  />
+                  <div className="flex gap-2">
+                    <Input
+                      id="assignment"
+                      value={selectedAppointment.teacherAssignment || ""}
+                      onChange={(e) => {
+                        setSelectedAppointment({
+                          ...selectedAppointment,
+                          teacherAssignment: e.target.value,
+                        });
+                      }}
+                      placeholder="أدخل المهمة المطلوبة من المعلم"
+                    />
+                    <Button 
+                      onClick={() => {
+                        updateAssignmentMutation.mutate({
+                          appointmentId: selectedAppointment.id,
+                          teacherAssignment: selectedAppointment.teacherAssignment || "",
+                        });
+                      }}
+                      disabled={updateAssignmentMutation.isPending}
+                    >
+                      {updateAssignmentMutation.isPending ? (
+                        <Loader2 className="h-4 w-4 animate-spin ml-2" />
+                      ) : (
+                        "تغيير"
+                      )}
+                    </Button>
+                  </div>
                 </div>
               </div>
             )}
