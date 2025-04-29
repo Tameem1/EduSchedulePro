@@ -331,6 +331,69 @@ export async function sendTelegramNotification(
   }
 }
 
+export async function notifyTeacherAboutAssignmentChange(
+  appointmentId: number,
+  teacherId: number,
+  newAssignment: string,
+): Promise<boolean> {
+  try {
+    // Get teacher details
+    const teacher = await db
+      .select()
+      .from(users)
+      .where(eq(users.id, teacherId))
+      .limit(1);
+    if (!teacher.length) {
+      console.error(`Teacher ${teacherId} not found`);
+      return false;
+    }
+
+    const telegramContact = teacher[0].telegramUsername;
+    if (!telegramContact) {
+      console.error(`Teacher ${teacherId} has no Telegram username`);
+      return false;
+    }
+
+    // Get appointment details
+    const appointment = await db
+      .select()
+      .from(appointments)
+      .where(eq(appointments.id, appointmentId))
+      .limit(1);
+    if (!appointment.length) {
+      console.error(`Appointment ${appointmentId} not found`);
+      return false;
+    }
+
+    // Get student details
+    const student = await db
+      .select()
+      .from(users)
+      .where(eq(users.id, appointment[0].studentId))
+      .limit(1);
+    const studentName = student.length
+      ? student[0].username
+      : `طالب ${appointment[0].studentId}`;
+
+    // Format time in GMT+3
+    const appointmentTime = formatGMT3Time(
+      new Date(appointment[0].startTime),
+      "HH:mm",
+      { timeZone: "Africa/Cairo" },
+    );
+
+    // Prepare message text
+    const message = `تم تغيير المهمة المطلوبة للموعد مع ${studentName} الساعة ${appointmentTime} إلى (${newAssignment}).`;
+
+    // Send notification
+    const notificationSent = await sendTelegramMessage(telegramContact, message);
+    return notificationSent;
+  } catch (error) {
+    console.error("Error notifying teacher about assignment change:", error);
+    return false;
+  }
+}
+
 export async function notifyTeacherAboutAppointment(
   appointmentId: number,
   teacherId: number,
