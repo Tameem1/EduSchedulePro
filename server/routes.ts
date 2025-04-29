@@ -552,12 +552,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
     try {
       const parsedData = insertQuestionnaireSchema.parse(req.body);
-
-      // Update appointment status to done
+      
+      // Check if this response has a custom "attended" field (parsed before JSON creation)
+      const notAttended = req.body.isAbsent === true;
+      
+      // Set status based on attendance
+      const status = notAttended ? AppointmentStatus.NOT_ATTENDED : AppointmentStatus.DONE;
+      
+      // Update appointment with appropriate status
       const appointment = await storage.updateAppointment(
         parsedData.appointmentId,
         {
-          status: AppointmentStatus.DONE,
+          status: status,
         },
       );
 

@@ -114,18 +114,7 @@ const TeacherQuestionnaireSubmission = () => {
       question4: string;
       appointmentId: string;
     }) => {
-      // If the student didn't attend, update the appointment status
-      if (!data.attended && appointmentId) {
-        try {
-          await apiRequest(
-            "PATCH",
-            `/api/appointments/${appointmentId}`,
-            { status: "not_attended" } // Use string literal to avoid LSP issues
-          );
-        } catch (error) {
-          console.error("Failed to update appointment status to not attended", error);
-        }
-      }
+      // Status will be set automatically on the server side based on the isAbsent flag
       
       // For non-attending students, use placeholder values for required fields if empty
       const question3 = !data.attended && !data.question3 ? "لم يحضر الطالب" : data.question3;
@@ -137,6 +126,7 @@ const TeacherQuestionnaireSubmission = () => {
         question2: data.question2 ? "نعم" : "لا",
         question3: question3,
         question4: question4,
+        isAbsent: !data.attended // Pass the absence status to the server
       });
       if (!res.ok) {
         const errData = await res.json();
