@@ -98,8 +98,22 @@ function Router() {
           path="/"
           role="teacher"
           component={() => {
+            console.log("Teacher root redirect - redirecting to /teacher/appointments");
             window.location.href = "/teacher/appointments";
-            return null;
+            // Return an empty div to satisfy the return type requirement
+            return <div style={{ display: 'none' }}></div>;
+          }}
+        />
+        
+        {/* Add explicit redirect from /teacher to appointments */}
+        <ProtectedRoute
+          path="/teacher"
+          role="teacher"
+          component={() => {
+            console.log("Teacher base path redirect - redirecting to /teacher/appointments");
+            window.location.href = "/teacher/appointments";
+            // Return an empty div to satisfy the return type requirement
+            return <div style={{ display: 'none' }}></div>;
           }}
         />
 
