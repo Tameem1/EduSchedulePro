@@ -286,14 +286,30 @@ export const storage = {
             
             try {
               // Explicitly set teacherId to NULL and status to PENDING
-              const updatedAppointment = await db
-                .update(appointments)
-                .set({
-                  teacherId: null,
-                  status: data.status || AppointmentStatus.PENDING
-                })
-                .where(eq(appointments.id, appointmentId))
-                .returning();
+              // Use direct SQL query to ensure NULL is properly set
+              const result = await db.execute(
+                `UPDATE appointments 
+                 SET teacher_id = NULL, 
+                     status = $1 
+                 WHERE id = $2 
+                 RETURNING *`,
+                [data.status || AppointmentStatus.PENDING, appointmentId]
+              );
+              
+              console.log("DEBUG: Direct SQL result:", result);
+              
+              // Format the result to match the expected structure
+              const updatedAppointment = result.rows && result.rows.length > 0 
+                ? [{ 
+                    id: result.rows[0].id,
+                    studentId: result.rows[0].student_id,
+                    teacherId: null, // Explicitly null after the update
+                    startTime: result.rows[0].start_time,
+                    status: result.rows[0].status,
+                    teacherAssignment: result.rows[0].teacher_assignment,
+                    createdByTeacherId: result.rows[0].created_by_teacher_id
+                  }] 
+                : [];
 
               console.log("DEBUG: SQL executed successfully");
               console.log("Teacher removed from appointment:", updatedAppointment[0]);
