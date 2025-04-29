@@ -15,7 +15,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import type { Availability } from "@shared/schema";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
+import type { Availability, User } from "@shared/schema";
 
 // Start and end times for availability
 const START_HOUR = 7; // 7 AM
@@ -191,6 +200,70 @@ export default function TeacherAvailability() {
     },
     enabled: !!user?.id,
   });
+  
+  // Fetch all teachers
+  const { data: teachers, isLoading: isLoadingTeachers } = useQuery<User[]>({
+    queryKey: ["/api/users/teachers"],
+    queryFn: async () => {
+      const res = await apiRequest("GET", "/api/users/teachers");
+      if (!res.ok) {
+        throw new Error("Failed to fetch teachers");
+      }
+      return res.json();
+    },
+    enabled: !!user?.id,
+  });
+  
+  // Fetch all availabilities (today only)
+  const { data: allAvailabilities, isLoading: isLoadingAllAvailabilities } = useQuery<
+    Availability[]
+  >({
+    queryKey: ["/api/availabilities"],
+    queryFn: async () => {
+      const res = await apiRequest("GET", "/api/availabilities");
+      if (!res.ok) {
+        throw new Error("Failed to fetch all availabilities");
+      }
+      return res.json();
+    },
+    enabled: !!user?.id,
+  });
+  
+  // Prepare data for other teachers' availabilities table
+  const otherTeachersAvailabilityData = React.useMemo(() => {
+    if (!teachers || !allAvailabilities) return [];
+    
+    // Filter out the current teacher
+    const otherTeachers = teachers.filter(teacher => teacher.id !== user.id);
+    
+    return otherTeachers.map(teacher => {
+      // Find all availabilities for this teacher
+      const teacherAvailabilities = allAvailabilities.filter(
+        avail => avail.teacherId === teacher.id
+      );
+      
+      // Format availability time ranges
+      const availabilityRanges = teacherAvailabilities.map(avail => {
+        const start = new Date(avail.startTime);
+        const end = new Date(avail.endTime);
+        return {
+          id: avail.id,
+          timeRange: `${format(start, "h:mm a")} - ${format(end, "h:mm a")}`,
+          startDate: start,
+          endDate: end
+        };
+      });
+      
+      // Sort by start time
+      availabilityRanges.sort((a, b) => a.startDate.getTime() - b.startDate.getTime());
+
+      return {
+        teacher,
+        availabilityRanges,
+        hasAvailability: teacherAvailabilities.length > 0
+      };
+    });
+  }, [teachers, allAvailabilities, user?.id]);
 
   // Submit all valid time ranges
   const submitAvailabilities = async () => {
@@ -405,6 +478,88 @@ export default function TeacherAvailability() {
           ) : (
             <div className="mt-8 text-center text-muted-foreground">
               لا توجد فترات متاحة. أضف فترات جديدة باستخدام النموذج أعلاه.
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Other Teachers' Availabilities Table */}
+      <Card className="mt-8">
+        <CardHeader>
+          <CardTitle>توفر المعلمين الآخرين اليوم</CardTitle>
+        </CardHeader>
+        <CardContent>
+          {isLoadingTeachers || isLoadingAllAvailabilities ? (
+            <div className="flex items-center justify-center py-8">
+              <Loader2 className="h-8 w-8 animate-spin" />
+            </div>
+          ) : otherTeachersAvailabilityData.length === 0 ? (
+            <div className="text-center py-8 text-muted-foreground">
+              لا يوجد معلمون آخرون في النظام.
+            </div>
+          ) : (
+            <div className="rounded-md border">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="text-right">اسم المعلم</TableHead>
+                    <TableHead className="text-right">الحالة</TableHead>
+                    <TableHead className="text-right">أوقات التوفر</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {otherTeachersAvailabilityData.length > 0 ? (
+                    // Sort teachers with availability to appear first
+                    [...otherTeachersAvailabilityData]
+                      .sort((a, b) => {
+                        // Sort teachers with availability first
+                        if (a.hasAvailability === b.hasAvailability) {
+                          return 0;
+                        }
+                        return a.hasAvailability ? -1 : 1;
+                      })
+                      .map((item) => (
+                        <TableRow key={item.teacher.id}>
+                          <TableCell className="font-medium">
+                            {item.teacher.username}
+                          </TableCell>
+                          <TableCell>
+                            {item.hasAvailability ? (
+                              <Badge className="bg-green-100 text-green-800">
+                                متوفر
+                              </Badge>
+                            ) : (
+                              <Badge variant="secondary">
+                                غير متوفر
+                              </Badge>
+                            )}
+                          </TableCell>
+                          <TableCell>
+                            {item.availabilityRanges.length > 0 ? (
+                              <div className="flex flex-col gap-1">
+                                {item.availabilityRanges.map((range) => (
+                                  <div key={range.id} className="text-sm">
+                                    {range.timeRange}
+                                  </div>
+                                ))}
+                              </div>
+                            ) : (
+                              <span className="text-muted-foreground text-sm">
+                                لا توجد فترات متاحة
+                              </span>
+                            )}
+                          </TableCell>
+                        </TableRow>
+                      ))
+                  ) : (
+                    <TableRow>
+                      <TableCell colSpan={3} className="text-center py-6 text-muted-foreground">
+                        لا يوجد معلمون آخرون حاليًا
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
             </div>
           )}
         </CardContent>
