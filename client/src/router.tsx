@@ -10,7 +10,6 @@ import BookAppointment from "@/pages/student/book-appointment";
 import StudentAppointments from "@/pages/student/appointments";
 import TeacherAvailability from "@/pages/teacher/availability";
 import TeacherAppointments from "@/pages/teacher/appointments";
-import TempCreatedAppointments from "@/pages/teacher/temp-created-appointments";
 import TeacherCreatedAppointments from "@/pages/teacher/created-appointments";
 import TeacherQuestionnaireSubmission from "@/pages/teacher/questionnaire-submission";
 import ManagerAppointments from "@/pages/manager/appointments";
@@ -19,18 +18,6 @@ import ManagerQuestionnaire from "@/pages/manager/questionnaire";
 import ManagerTeachersAvailability from "@/pages/manager/teachers-availability";
 import Created from "@/pages/created";
 
-const TempCreatedAppointmentsRoute = () => {
-  console.log("Direct route component for /teacher/created-appointments activated");
-  const { user } = useAuth();
-  
-  if (!user || user.role !== "teacher") {
-    console.log("User not authenticated as teacher, redirecting to /auth");
-    return <Redirect to="/auth" />;
-  }
-  
-  console.log("Rendering TempCreatedAppointments component directly");
-  return <TempCreatedAppointments />;
-};
 
 export default function Router() {
   console.log("Router component initialized");
@@ -68,18 +55,11 @@ export default function Router() {
           role="teacher"
           component={TeacherAppointments}
         />
-        
-        {/* Protected route for created appointments */}
         <ProtectedRoute
           path="/teacher/created-appointments"
           role="teacher"
           component={TeacherCreatedAppointments}
         />
-        
-        {/* Simple test route */}
-        <Route path="/created" component={Created} />
-        
-        {/* Ensure component returns a valid element */}
         <ProtectedRoute
           path="/teacher/questionnaire-submission/:appointmentId"
           role="teacher"
