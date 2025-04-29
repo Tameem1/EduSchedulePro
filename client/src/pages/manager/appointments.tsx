@@ -423,6 +423,39 @@ export default function ManagerAppointments() {
       });
     },
   });
+  
+  const removeTeacherMutation = useMutation({
+    mutationFn: async (appointmentId: number) => {
+      const res = await apiRequest(
+        "PATCH",
+        `/api/appointments/${appointmentId}`,
+        {
+          teacherId: null,
+          status: AppointmentStatus.PENDING
+        },
+      );
+      if (!res.ok) {
+        throw new Error("فشل في إزالة المعلم من الموعد");
+      }
+      return res.json();
+    },
+    onSuccess: () => {
+      toast({
+        title: "تم إزالة المعلم",
+        description: "تم إزالة المعلم من الموعد بنجاح",
+      });
+      queryClient.invalidateQueries({ queryKey: ["/api/appointments"] });
+      setIsAssignDialogOpen(false);
+      setSelectedAppointment(null);
+    },
+    onError: (error) => {
+      toast({
+        title: "خطأ في إزالة المعلم",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
 
   const createIndependentAssignmentMutation = useMutation({
     mutationFn: async (data: {
