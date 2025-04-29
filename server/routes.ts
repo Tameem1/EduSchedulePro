@@ -730,8 +730,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
       }
 
-      if (teacherId !== undefined && teacherId !== null) {
+      // Handle teacher assignment or removal (null means remove teacher)
+      if (teacherId !== undefined) {
         updateData.teacherId = teacherId;
+        console.log("Setting teacherId in updateData:", teacherId);
       }
 
       if (teacherAssignment !== undefined) {
