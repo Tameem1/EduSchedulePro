@@ -1,7 +1,7 @@
 import * as React from "react";
 import { useAuth } from "@/hooks/use-auth";
 import { useQuery } from "@tanstack/react-query";
-import { format, parseISO } from "date-fns";
+import { format, parseISO, isToday } from "date-fns";
 import { apiRequest } from "@/lib/queryClient";
 import { formatGMT3Time } from "@/lib/date-utils";
 import { Loader2, CalendarIcon, ArrowLeft } from "lucide-react";
@@ -84,6 +84,19 @@ export default function TeacherCreatedAppointments() {
     enabled: !!user,
   });
   
+  // Get all teachers for displaying names 
+  const { data: teachers } = useQuery<User[]>({
+    queryKey: ["/api/users/teachers"],
+    queryFn: async () => {
+      const res = await apiRequest("GET", "/api/users/teachers");
+      if (!res.ok) {
+        throw new Error("Failed to fetch teachers");
+      }
+      return res.json();
+    },
+    enabled: !!user,
+  });
+  
   // Function to get questionnaire response for an appointment
   const getQuestionnaireResponse = async (appointmentId: number) => {
     try {
@@ -101,6 +114,13 @@ export default function TeacherCreatedAppointments() {
     if (!students) return `طالب #${id}`;
     const student = students.find((s) => s.id === id);
     return student ? student.username : `طالب #${id}`;
+  }
+  
+  // Helper to get teacher name
+  function getTeacherName(id: number) {
+    if (!teachers) return `معلم #${id}`;
+    const teacher = teachers.find((t) => t.id === id);
+    return teacher ? teacher.username : `معلم #${id}`;
   }
 
   // Track questionnaire responses
@@ -126,6 +146,14 @@ export default function TeacherCreatedAppointments() {
     };
     
     fetchQuestionnaireResponses();
+  }, [createdAppointments]);
+  
+  // Filter appointments for today only
+  const todayAppointments = React.useMemo(() => {
+    if (!createdAppointments) return [];
+    return createdAppointments.filter(appointment => 
+      isToday(new Date(appointment.startTime))
+    );
   }, [createdAppointments]);
 
   if (isLoading) {
@@ -176,22 +204,22 @@ export default function TeacherCreatedAppointments() {
         </div>
       </div>
 
-      {createdAppointments && createdAppointments.length > 0 ? (
+      {todayAppointments && todayAppointments.length > 0 ? (
         <Card className="border-t-4" style={{ borderTopColor: "hsl(222.2 47.4% 11.2%)" }}>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <CalendarIcon className="h-5 w-5" />
-              المواعيد التي قمت بإنشائها
+              المواعيد التي قمت بإنشائها اليوم
             </CardTitle>
             <CardDescription>
-              هنا يمكنك رؤية جميع المواعيد التي قمت بإنشائها للطلاب
+              هنا يمكنك رؤية المواعيد التي قمت بإنشائها للطلاب اليوم
             </CardDescription>
           </CardHeader>
           
           <CardContent>
             <div className="space-y-4">
-              {createdAppointments.length > 0 ? (
-                createdAppointments.map((appointment) => (
+              {todayAppointments.length > 0 ? (
+                todayAppointments.map((appointment) => (
                   <div
                     key={appointment.id}
                     className="p-4 border rounded-lg transition-colors duration-200"
@@ -200,7 +228,7 @@ export default function TeacherCreatedAppointments() {
                     onMouseOut={(e) => e.currentTarget.style.borderColor = "#e2e8f0"}
                   >
                     <div className="flex flex-col sm:flex-row justify-between gap-4">
-                      <div>
+                      <div className="w-full">
                         <div className="flex flex-col md:flex-row md:items-center md:gap-2">
                           <p className="font-medium text-lg">
                             {formatGMT3Time(new Date(appointment.startTime))}
@@ -210,9 +238,17 @@ export default function TeacherCreatedAppointments() {
                           </p>
                         </div>
                         
-                        <p className="text-sm mt-2">
-                          <span className="font-medium">الطالب:</span> {getStudentName(appointment.studentId)}
-                        </p>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mt-2">
+                          <p className="text-sm">
+                            <span className="font-medium">الطالب:</span> {getStudentName(appointment.studentId)}
+                          </p>
+                          
+                          {appointment.teacherId && (
+                            <p className="text-sm">
+                              <span className="font-medium">المعلم المعين:</span> {getTeacherName(appointment.teacherId)}
+                            </p>
+                          )}
+                        </div>
                         
                         {appointment.teacherAssignment && (
                           <p className="text-sm mt-1">
@@ -223,8 +259,8 @@ export default function TeacherCreatedAppointments() {
                         {/* Display questionnaire response question3 for completed appointments */}
                         {appointment.status === AppointmentStatus.DONE && 
                          questionnaireResponses[appointment.id]?.question3 && (
-                          <p className="text-sm mt-1">
-                            <span className="font-medium">ماذا سيفعل الطالب:</span> {questionnaireResponses[appointment.id]?.question3}
+                          <p className="text-sm mt-2 p-2 bg-muted rounded-md">
+                            <span className="font-medium">ماذا سمع الطالب:</span> {questionnaireResponses[appointment.id]?.question3}
                           </p>
                         )}
                         
@@ -234,25 +270,12 @@ export default function TeacherCreatedAppointments() {
                           </Badge>
                         </div>
                       </div>
-                      
-                      <div className="flex items-center gap-2">
-                        {appointment.status !== AppointmentStatus.REJECTED && (
-                          <Link href={`/teacher/questionnaire-submission/${appointment.id}`}>
-                            <Button 
-                              variant="outline" 
-                              size="sm"
-                            >
-                              استعراض الاستبيان
-                            </Button>
-                          </Link>
-                        )}
-                      </div>
                     </div>
                   </div>
                 ))
               ) : (
                 <div className="text-center py-6 text-muted-foreground">
-                  لا توجد مواعيد
+                  لا توجد مواعيد اليوم
                 </div>
               )}
             </div>
@@ -262,7 +285,7 @@ export default function TeacherCreatedAppointments() {
         <Card>
           <CardContent className="p-6 text-center">
             <CalendarIcon className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
-            <p className="text-muted-foreground">لم تقم بإنشاء أي مواعيد بعد</p>
+            <p className="text-muted-foreground">لم تقم بإنشاء أي مواعيد اليوم</p>
             <p className="mt-2">يمكنك إنشاء مواعيد جديدة من صفحة المواعيد</p>
             <Link href="/teacher/appointments">
               <Button 
