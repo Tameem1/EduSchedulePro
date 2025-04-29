@@ -382,8 +382,13 @@ export async function notifyTeacherAboutAssignmentChange(
       { timeZone: "Africa/Cairo" },
     );
 
+    // Get student section if available
+    const studentSection = student.length && student[0].section
+      ? ` (${student[0].section})`
+      : '';
+
     // Prepare message text
-    const message = `تم تغيير المهمة المطلوبة للموعد مع ${studentName} الساعة ${appointmentTime} إلى (${newAssignment}).`;
+    const message = `تم تغيير المهمة المطلوبة للموعد مع ${studentName}${studentSection} الساعة ${appointmentTime} إلى (${newAssignment}).`;
 
     // Send notification
     console.log(
@@ -451,8 +456,13 @@ export async function notifyTeacherAboutAppointment(
       { timeZone: "Africa/Cairo" },
     );
 
+    // Get student section if available
+    const studentSection = student.length && student[0].section
+      ? ` (${student[0].section})`
+      : '';
+
     // Prepare message text
-    const message = `تم تعيينك لموعد جديد مع ${studentName} الساعة ${appointmentTime}. الرجاء قبول الموعد في أقرب وقت.`;
+    const message = `تم تعيينك لموعد جديد مع ${studentName}${studentSection} الساعة ${appointmentTime}. الرجاء قبول الموعد في أقرب وقت.`;
 
     // Send notification
     const result = await sendTelegramNotification(
@@ -530,8 +540,13 @@ export async function notifyManagerAboutAppointment(
     // Create manager dashboard URL
     const callbackUrl = `https://online.evally.net/manager/appointments`;
 
+    // Get student section if available
+    const studentSection = student.length && student[0].section
+      ? student[0].section
+      : 'غير محدد';
+
     // Prepare message text
-    const message = `تم حجز موعد جديد!\n\nالطالب: ${studentName}\nالمعلم: ${teacherName}\nالوقت: ${appointmentTime}\nالمهمة: ${appointment[0].teacherAssignment || "لم يتم تحديد"}\n\nالرجاء الاطلاع على لوحة التحكم للمزيد من التفاصيل.`;
+    const message = `تم حجز موعد جديد!\n\nالطالب: ${studentName}\nالمجموعة: ${studentSection}\nالمعلم: ${teacherName}\nالوقت: ${appointmentTime}\nالمهمة: ${appointment[0].teacherAssignment || "لم يتم تحديد"}\n\nالرجاء الاطلاع على لوحة التحكم للمزيد من التفاصيل.`;
 
     // Send notifications to all managers with telegram username
     let anyNotificationSent = false;
