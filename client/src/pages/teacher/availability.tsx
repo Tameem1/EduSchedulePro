@@ -504,7 +504,7 @@ export default function TeacherAvailability() {
                   <TableRow>
                     <TableHead className="text-right">اسم المعلم</TableHead>
                     <TableHead className="text-right">الحالة</TableHead>
-                    <TableHead className="text-right">أوقات التوفر</TableHead>
+                    <TableHead dir="ltr" className="text-right">أوقات التوفر</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -534,7 +534,7 @@ export default function TeacherAvailability() {
                               </Badge>
                             )}
                           </TableCell>
-                          <TableCell>
+                          <TableCell dir="ltr" className="text-right">
                             {item.availabilityRanges.length > 0 ? (
                               <div className="flex flex-col gap-1">
                                 {item.availabilityRanges.map((range) => (
@@ -544,7 +544,7 @@ export default function TeacherAvailability() {
                                 ))}
                               </div>
                             ) : (
-                              <span className="text-muted-foreground text-sm">
+                              <span className="text-muted-foreground text-sm" dir="rtl">
                                 لا توجد فترات متاحة
                               </span>
                             )}
