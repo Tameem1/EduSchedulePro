@@ -70,6 +70,40 @@ To deploy your application with a custom domain:
 - Authentication: Passport.js
 - Real-time: WebSocket (ws)
 
+## Server Deployment Instructions
+
+Before pushing to the server, make the following changes to `server/db.ts`:
+
+1. Add these lines:
+```typescript
+import pg from "pg"; // server line
+import { drizzle } from "drizzle-orm/node-postgres"; // server line
+import "dotenv/config"; //server line
+```
+
+2. Remove these lines:
+```typescript
+import { Pool, neonConfig } from "@neondatabase/serverless"; // replit line
+import { drizzle } from "drizzle-orm/neon-serverless"; // replit line
+```
+
+3. Add:
+```typescript
+const { Pool } = pg; // server line
+```
+
+4. Remove:
+```typescript
+neonConfig.webSocketConstructor = ws;
+```
+
+After making these modifications, run the following commands on the server:
+
+1. `git pull`
+2. `npm run db:push`
+3. `npm run build`
+4. `pm2 start ecosystem.config.cjs`
+
 ## License
 
 This project is licensed under the MIT License.
