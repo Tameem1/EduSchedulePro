@@ -53,12 +53,20 @@ export const users = pgTable("users", {
   password: text("password").notNull(),
   role: userRoleEnum("role").notNull(),
   telegramUsername: text("telegram_username"),
+  telegramId: text("telegram_id"),
   section: text("section")  // Optional section field as text to support any values
 }, (table) => {
   return {
     // Make username unique only within a section
     usernameUniqueInSection: unique().on(table.username, table.section),
   }
+});
+
+// Add session table definition
+export const sessions = pgTable("session", {
+  sid: text("sid").primaryKey(),
+  sess: text("sess").notNull(),
+  expire: timestamp("expire", { mode: "string" }).notNull()
 });
 
 // Teacher availability slots
