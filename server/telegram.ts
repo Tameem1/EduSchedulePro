@@ -5,7 +5,7 @@ import { users, appointments } from "@shared/schema";
 import { Telegraf } from "telegraf";
 import { format } from "date-fns";
 import { format as formatGMT3Time } from "date-fns-tz";
-//import 'dotenv/config';
+import "dotenv/config"; //server line
 // Check if bot token is provided
 const botToken = process.env.TELEGRAM_BOT_TOKEN;
 
@@ -386,7 +386,9 @@ export async function notifyTeacherAboutAssignmentChange(
     const message = `تم تغيير المهمة المطلوبة للموعد مع ${studentName} الساعة ${appointmentTime} إلى (${newAssignment}).`;
 
     // Send notification
-    console.log(`Attempting to send assignment change notification to ${telegramContact}: ${message}`);
+    console.log(
+      `Attempting to send assignment change notification to ${telegramContact}: ${message}`,
+    );
     const result = await sendTelegramNotification(telegramContact, message);
     console.log(`Assignment change notification result:`, result);
     return typeof result === "boolean" ? result : false;

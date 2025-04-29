@@ -1,20 +1,20 @@
 // add the following three comments
-//import pg from 'pg';
-//import { drizzle } from 'drizzle-orm/node-postgres'
-//import 'dotenv/config';
-import { Pool, neonConfig } from "@neondatabase/serverless"; // replace the aboave comments with this line
-import { drizzle } from "drizzle-orm/neon-serverless"; // replace the aboave comments with this line
+import pg from "pg"; // server line
+import { drizzle } from "drizzle-orm/node-postgres"; // server line
+import "dotenv/config"; //server line
+//import { Pool, neonConfig } from "@neondatabase/serverless"; // replit line
+//import { drizzle } from "drizzle-orm/neon-serverless"; // replit line
 import ws from "ws";
 import * as schema from "@shared/schema";
 
-neonConfig.webSocketConstructor = ws; //delete when deploying on the server
+//neonConfig.webSocketConstructor = ws; //replit line: delete when deploying on the server
 
 if (!process.env.DATABASE_URL) {
   throw new Error(
     "DATABASE_URL must be set. Did you forget to provision a database?",
   );
 }
-//const { Pool } = pg; // add this line
+const { Pool } = pg; // server line
 export const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 export const db = drizzle({ client: pool, schema });
 
