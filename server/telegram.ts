@@ -545,8 +545,29 @@ export async function notifyManagerAboutAppointment(
       ? student[0].section
       : 'غير محدد';
 
+    // Get creator details if created by a teacher
+    let creatorInfo = "تم إنشاؤه بواسطة: النظام";
+    if (appointment[0].createdByTeacherId) {
+      const creator = await db
+        .select()
+        .from(users)
+        .where(eq(users.id, appointment[0].createdByTeacherId))
+        .limit(1);
+      
+      if (creator.length) {
+        // Format based on user role
+        const creatorRole = creator[0].role === "teacher" 
+          ? "المعلم" 
+          : creator[0].role === "student" 
+            ? "الطالب" 
+            : "المدير";
+        
+        creatorInfo = `تم إنشاؤه بواسطة: ${creatorRole} ${creator[0].username}`;
+      }
+    }
+
     // Prepare message text
-    const message = `تم حجز موعد جديد!\n\nالطالب: ${studentName}\nالمجموعة: ${studentSection}\nالمعلم: ${teacherName}\nالوقت: ${appointmentTime}\nالمهمة: ${appointment[0].teacherAssignment || "لم يتم تحديد"}\n\nالرجاء الاطلاع على لوحة التحكم للمزيد من التفاصيل.`;
+    const message = `تم حجز موعد جديد!\n\nالطالب: ${studentName}\nالمجموعة: ${studentSection}\nالمعلم: ${teacherName}\nالوقت: ${appointmentTime}\nالمهمة: ${appointment[0].teacherAssignment || "لم يتم تحديد"}\n${creatorInfo}\n\nالرجاء الاطلاع على لوحة التحكم للمزيد من التفاصيل.`;
 
     // Send notifications to all managers with telegram username
     let anyNotificationSent = false;
