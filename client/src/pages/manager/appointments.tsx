@@ -49,14 +49,16 @@ export default function ManagerAppointments() {
   const [isAssignDialogOpen, setIsAssignDialogOpen] = React.useState(false);
   const [isAddAppointmentDialogOpen, setIsAddAppointmentDialogOpen] =
     React.useState(false);
-  const [teacherSearchQuery, setTeacherSearchQuery] = React.useState<string>("");
+  const [teacherSearchQuery, setTeacherSearchQuery] =
+    React.useState<string>("");
   const [newAppointmentData, setNewAppointmentData] = React.useState({
     section: "",
     studentId: "",
     startTime: "",
     teacherAssignment: "",
   });
-  const [filteredStudentsForAppointment, setFilteredStudentsForAppointment] = React.useState<User[]>([]);
+  const [filteredStudentsForAppointment, setFilteredStudentsForAppointment] =
+    React.useState<User[]>([]);
   const { user } = useAuth();
   const [wsConnected, setWsConnected] = React.useState(false);
   const [wsRetries, setWsRetries] = React.useState(0);
@@ -75,7 +77,10 @@ export default function ManagerAppointments() {
       assignment: "",
       notes: "",
     });
-  const [filteredStudentsForIndependentAssignment, setFilteredStudentsForIndependentAssignment] = React.useState<User[]>([]);
+  const [
+    filteredStudentsForIndependentAssignment,
+    setFilteredStudentsForIndependentAssignment,
+  ] = React.useState<User[]>([]);
 
   const connectWebSocket = React.useCallback(() => {
     if (socketRef.current?.readyState === WebSocket.OPEN) return;
@@ -93,7 +98,10 @@ export default function ManagerAppointments() {
     const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
     const wsUrl = `${protocol}//${window.location.host}/ws`;
 
-    console.log(`Attempting WebSocket connection (attempt ${wsRetries + 1}):`, wsUrl);
+    console.log(
+      `Attempting WebSocket connection (attempt ${wsRetries + 1}):`,
+      wsUrl,
+    );
     const ws = new WebSocket(wsUrl);
 
     ws.onopen = () => {
@@ -126,7 +134,7 @@ export default function ManagerAppointments() {
       console.log(`Scheduling reconnection in ${timeout}ms`);
 
       reconnectTimeoutRef.current = setTimeout(() => {
-        setWsRetries(prev => prev + 1);
+        setWsRetries((prev) => prev + 1);
         connectWebSocket();
       }, timeout);
     };
@@ -202,7 +210,7 @@ export default function ManagerAppointments() {
     },
     enabled: !!user,
   });
-  
+
   const { data: sections, isLoading: isLoadingSections } = useQuery<string[]>({
     queryKey: ["/api/sections"],
     queryFn: async () => {
@@ -215,7 +223,10 @@ export default function ManagerAppointments() {
     enabled: !!user,
   });
 
-  const { data: independentAssignments, isLoading: isLoadingIndependentAssignments } = useQuery<IndependentAssignment[]>({
+  const {
+    data: independentAssignments,
+    isLoading: isLoadingIndependentAssignments,
+  } = useQuery<IndependentAssignment[]>({
     queryKey: ["/api/independent-assignments"],
     queryFn: async () => {
       const res = await apiRequest("GET", "/api/independent-assignments");
@@ -237,31 +248,36 @@ export default function ManagerAppointments() {
   });
 
   // Function to fetch students for a specific section
-  const fetchStudentsBySection = async (section: string, forForm: 'appointment' | 'independent') => {
+  const fetchStudentsBySection = async (
+    section: string,
+    forForm: "appointment" | "independent",
+  ) => {
     try {
       if (!section) {
-        if (forForm === 'appointment') {
+        if (forForm === "appointment") {
           setFilteredStudentsForAppointment([]);
         } else {
           setFilteredStudentsForIndependentAssignment([]);
         }
         return;
       }
-      
+
       const res = await apiRequest("GET", `/api/section/${section}/students`);
       if (!res.ok) {
         throw new Error(`Failed to fetch students for section ${section}`);
       }
-      
+
       const sectionStudents = await res.json();
-      console.log(`Fetched ${sectionStudents.length} students for section ${section}`);
-      
-      if (forForm === 'appointment') {
+      console.log(
+        `Fetched ${sectionStudents.length} students for section ${section}`,
+      );
+
+      if (forForm === "appointment") {
         setFilteredStudentsForAppointment(sectionStudents);
-        setNewAppointmentData(prev => ({ ...prev, studentId: "" }));
+        setNewAppointmentData((prev) => ({ ...prev, studentId: "" }));
       } else {
         setFilteredStudentsForIndependentAssignment(sectionStudents);
-        setNewIndependentAssignmentData(prev => ({ ...prev, studentId: "" }));
+        setNewIndependentAssignmentData((prev) => ({ ...prev, studentId: "" }));
       }
     } catch (error) {
       console.error("Error fetching students by section:", error);
@@ -459,14 +475,16 @@ export default function ManagerAppointments() {
   const getFilteredTeachers = React.useMemo(() => {
     if (!teachers) return [];
     if (!selectedAppointment) return teachers;
-    
+
     // First, filter based on search query if it exists
-    let filteredTeachers = teacherSearchQuery.trim() 
-      ? teachers.filter(teacher => 
-          teacher.username?.toLowerCase().includes(teacherSearchQuery.toLowerCase())
+    let filteredTeachers = teacherSearchQuery.trim()
+      ? teachers.filter((teacher) =>
+          teacher.username
+            ?.toLowerCase()
+            .includes(teacherSearchQuery.toLowerCase()),
         )
       : [...teachers];
-    
+
     // Now sort with complex prioritization:
     // 1. Teachers available at the exact appointment time (top priority)
     // 2. Teachers who have added any availability today (second priority)
@@ -477,50 +495,56 @@ export default function ManagerAppointments() {
       today.setHours(0, 0, 0, 0);
       const tomorrow = new Date(today);
       tomorrow.setDate(tomorrow.getDate() + 1);
-      
+
       // Find availabilities for teacher A for today
-      const aAvailabilities = availabilities?.filter(avail => {
-        const availDate = new Date(avail.startTime);
-        return (
-          avail.teacherId === a.id &&
-          availDate >= today && 
-          availDate < tomorrow
-        );
-      }) || [];
-      
+      const aAvailabilities =
+        availabilities?.filter((avail) => {
+          const availDate = new Date(avail.startTime);
+          return (
+            avail.teacherId === a.id &&
+            availDate >= today &&
+            availDate < tomorrow
+          );
+        }) || [];
+
       // Find availabilities for teacher B for today
-      const bAvailabilities = availabilities?.filter(avail => {
-        const availDate = new Date(avail.startTime);
-        return (
-          avail.teacherId === b.id &&
-          availDate >= today && 
-          availDate < tomorrow
-        );
-      }) || [];
-      
+      const bAvailabilities =
+        availabilities?.filter((avail) => {
+          const availDate = new Date(avail.startTime);
+          return (
+            avail.teacherId === b.id &&
+            availDate >= today &&
+            availDate < tomorrow
+          );
+        }) || [];
+
       // Check if available at the exact appointment time
-      const aIsAvailableForAppointment = aAvailabilities.some(avail => {
+      const aIsAvailableForAppointment = aAvailabilities.some((avail) => {
         const availStartTime = new Date(avail.startTime);
         const availEndTime = new Date(avail.endTime);
-        return appointmentTime >= availStartTime && appointmentTime <= availEndTime;
+        return (
+          appointmentTime >= availStartTime && appointmentTime <= availEndTime
+        );
       });
-      
-      const bIsAvailableForAppointment = bAvailabilities.some(avail => {
+
+      const bIsAvailableForAppointment = bAvailabilities.some((avail) => {
         const availStartTime = new Date(avail.startTime);
         const availEndTime = new Date(avail.endTime);
-        return appointmentTime >= availStartTime && appointmentTime <= availEndTime;
+        return (
+          appointmentTime >= availStartTime && appointmentTime <= availEndTime
+        );
       });
-      
+
       // Sort by availability for this exact appointment time (highest priority)
       if (aIsAvailableForAppointment !== bIsAvailableForAppointment) {
         return aIsAvailableForAppointment ? -1 : 1;
       }
-      
+
       // If both have same appointment time availability status, sort by having any availability today
       if (aAvailabilities.length > 0 !== bAvailabilities.length > 0) {
         return aAvailabilities.length > 0 ? -1 : 1;
       }
-      
+
       // For teachers with same availability statuses, sort alphabetically by username
       return (a.username || "").localeCompare(b.username || "");
     });
@@ -534,7 +558,8 @@ export default function ManagerAppointments() {
         [AppointmentStatus.ASSIGNED]: "bg-yellow-500",
         [AppointmentStatus.RESPONDED]: "bg-green-500",
         [AppointmentStatus.DONE]: "bg-purple-500",
-        [AppointmentStatus.REJECTED]: "bg-red-500",
+        [AppointmentStatus.REJECTED]: "bg-orange-500",
+        [AppointmentStatus.NOT_ATTENDED]: "bg-red-500",
       }[status] || "bg-gray-500"
     );
   };
@@ -557,28 +582,39 @@ export default function ManagerAppointments() {
   return (
     <div dir="rtl" className="container mx-auto p-4">
       {/* Show Telegram Guide if manager doesn't have telegramUsername */}
-      {user && user.role === 'manager' && !user.telegramUsername && (
+      {user && user.role === "manager" && !user.telegramUsername && (
         <TelegramGuide />
       )}
-      
+
       <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6">
-        <h1 className="text-xl md:text-2xl font-bold text-center sm:text-right">إدارة المواعيد</h1>
+        <h1 className="text-xl md:text-2xl font-bold text-center sm:text-right">
+          إدارة المواعيد
+        </h1>
         <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
-          <Button 
+          <Button
             className="w-full sm:w-auto"
-            onClick={() => setIsAddAppointmentDialogOpen(true)}>
+            onClick={() => setIsAddAppointmentDialogOpen(true)}
+          >
             إضافة موعد
           </Button>
-          <Button 
+          <Button
             className="w-full sm:w-auto"
-            onClick={() => setIsAddIndependentAssignmentDialogOpen(true)}>
+            onClick={() => setIsAddIndependentAssignmentDialogOpen(true)}
+          >
             إضافة مهمة مستقلة
           </Button>
           <Link href="/manager/results" className="w-full sm:w-auto">
-            <Button variant="outline" className="w-full sm:w-auto">عرض النتائج</Button>
+            <Button variant="outline" className="w-full sm:w-auto">
+              عرض النتائج
+            </Button>
           </Link>
-          <Link href="/manager/teachers-availability" className="w-full sm:w-auto">
-            <Button variant="outline" className="w-full sm:w-auto">توفر المعلمين</Button>
+          <Link
+            href="/manager/teachers-availability"
+            className="w-full sm:w-auto"
+          >
+            <Button variant="outline" className="w-full sm:w-auto">
+              توفر المعلمين
+            </Button>
           </Link>
         </div>
       </div>
@@ -632,22 +668,22 @@ export default function ManagerAppointments() {
                         تعيين معلم
                       </Button>
                     )}
-                    
+
                     {/* Show change teacher button for already assigned appointments */}
-                    {appointment.teacherId && 
-                     (appointment.status === AppointmentStatus.REQUESTED || 
-                      appointment.status === AppointmentStatus.ASSIGNED) && (
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => {
-                          setSelectedAppointment(appointment);
-                          setIsAssignDialogOpen(true);
-                        }}
-                      >
-                        تغيير المعلم
-                      </Button>
-                    )}
+                    {appointment.teacherId &&
+                      (appointment.status === AppointmentStatus.REQUESTED ||
+                        appointment.status === AppointmentStatus.ASSIGNED) && (
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => {
+                            setSelectedAppointment(appointment);
+                            setIsAssignDialogOpen(true);
+                          }}
+                        >
+                          تغيير المعلم
+                        </Button>
+                      )}
                   </TableCell>
                 </TableRow>
               ))}
@@ -710,7 +746,7 @@ export default function ManagerAppointments() {
                     section: value,
                     studentId: "", // Reset student selection when section changes
                   }));
-                  fetchStudentsBySection(value, 'appointment');
+                  fetchStudentsBySection(value, "appointment");
                 }}
               >
                 <SelectTrigger>
@@ -736,10 +772,19 @@ export default function ManagerAppointments() {
                     studentId: value,
                   }))
                 }
-                disabled={!newAppointmentData.section || filteredStudentsForAppointment.length === 0}
+                disabled={
+                  !newAppointmentData.section ||
+                  filteredStudentsForAppointment.length === 0
+                }
               >
                 <SelectTrigger>
-                  <SelectValue placeholder={!newAppointmentData.section ? "اختر الفصل أولاً" : "اختر الطالب"} />
+                  <SelectValue
+                    placeholder={
+                      !newAppointmentData.section
+                        ? "اختر الفصل أولاً"
+                        : "اختر الطالب"
+                    }
+                  />
                 </SelectTrigger>
                 <SelectContent>
                   {filteredStudentsForAppointment.map((student) => (
@@ -799,12 +844,12 @@ export default function ManagerAppointments() {
         <DialogContent className="max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>
-              {selectedAppointment && selectedAppointment.teacherId && 
-                (selectedAppointment.status === AppointmentStatus.REQUESTED || 
-                 selectedAppointment.status === AppointmentStatus.ASSIGNED) 
-                 ? "تغيير المعلم المعين للموعد" 
-                 : "تعيين معلم للموعد"
-              }
+              {selectedAppointment &&
+              selectedAppointment.teacherId &&
+              (selectedAppointment.status === AppointmentStatus.REQUESTED ||
+                selectedAppointment.status === AppointmentStatus.ASSIGNED)
+                ? "تغيير المعلم المعين للموعد"
+                : "تعيين معلم للموعد"}
             </DialogTitle>
           </DialogHeader>
           <div className="py-4">
@@ -819,18 +864,23 @@ export default function ManagerAppointments() {
                     الطالب:{" "}
                     {getUserName(selectedAppointment.studentId, "student")}
                   </p>
-                  {selectedAppointment.teacherId && 
-                   (selectedAppointment.status === AppointmentStatus.REQUESTED || 
-                    selectedAppointment.status === AppointmentStatus.ASSIGNED) && (
-                    <p>
-                      المعلم الحالي:{" "}
-                      <span className="font-medium text-primary">
-                        {getUserName(selectedAppointment.teacherId, "teacher")}
-                      </span>
-                    </p>
-                  )}
+                  {selectedAppointment.teacherId &&
+                    (selectedAppointment.status ===
+                      AppointmentStatus.REQUESTED ||
+                      selectedAppointment.status ===
+                        AppointmentStatus.ASSIGNED) && (
+                      <p>
+                        المعلم الحالي:{" "}
+                        <span className="font-medium text-primary">
+                          {getUserName(
+                            selectedAppointment.teacherId,
+                            "teacher",
+                          )}
+                        </span>
+                      </p>
+                    )}
                 </div>
-                
+
                 {/* Search input for teachers */}
                 <div className="mb-4">
                   <Label htmlFor="teacher-search">بحث عن معلم</Label>
@@ -846,11 +896,12 @@ export default function ManagerAppointments() {
                   </div>
                   {teachers && getFilteredTeachers.length < teachers.length && (
                     <p className="text-xs text-muted-foreground mt-1">
-                      تم عرض {getFilteredTeachers.length} من أصل {teachers.length} معلم
+                      تم عرض {getFilteredTeachers.length} من أصل{" "}
+                      {teachers.length} معلم
                     </p>
                   )}
                 </div>
-                
+
                 <div className="space-y-2 mb-4">
                   {getFilteredTeachers.length > 0 ? (
                     <>
@@ -864,44 +915,61 @@ export default function ManagerAppointments() {
                         tomorrow.setDate(tomorrow.getDate() + 1);
 
                         // Get all availabilities for this teacher today
-                        const teacherAvailabilities = availabilities?.filter(avail => {
-                          const availDate = new Date(avail.startTime);
-                          return (
-                            avail.teacherId === teacher.id &&
-                            availDate >= today && 
-                            availDate < tomorrow
-                          );
-                        }) || [];
+                        const teacherAvailabilities =
+                          availabilities?.filter((avail) => {
+                            const availDate = new Date(avail.startTime);
+                            return (
+                              avail.teacherId === teacher.id &&
+                              availDate >= today &&
+                              availDate < tomorrow
+                            );
+                          }) || [];
 
                         // Sort availabilities by start time
                         teacherAvailabilities.sort((a, b) => {
-                          return new Date(a.startTime).getTime() - new Date(b.startTime).getTime();
+                          return (
+                            new Date(a.startTime).getTime() -
+                            new Date(b.startTime).getTime()
+                          );
                         });
 
                         // Format availabilities for display
-                        const availabilitySlots = teacherAvailabilities.map(avail => {
-                          const start = format(new Date(avail.startTime), "h:mm a");
-                          const end = format(new Date(avail.endTime), "h:mm a");
-                          return `${start} - ${end}`;
-                        });
+                        const availabilitySlots = teacherAvailabilities.map(
+                          (avail) => {
+                            const start = format(
+                              new Date(avail.startTime),
+                              "h:mm a",
+                            );
+                            const end = format(
+                              new Date(avail.endTime),
+                              "h:mm a",
+                            );
+                            return `${start} - ${end}`;
+                          },
+                        );
 
                         // Check if available at appointment time
-                        const isAvailableForAppointment = teacherAvailabilities.some(avail => {
-                          const availStartTime = new Date(avail.startTime);
-                          const availEndTime = new Date(avail.endTime);
-                          return appointmentTime >= availStartTime && appointmentTime <= availEndTime;
-                        });
-                        
-                        const isCurrentTeacher = teacher.id === selectedAppointment.teacherId;
+                        const isAvailableForAppointment =
+                          teacherAvailabilities.some((avail) => {
+                            const availStartTime = new Date(avail.startTime);
+                            const availEndTime = new Date(avail.endTime);
+                            return (
+                              appointmentTime >= availStartTime &&
+                              appointmentTime <= availEndTime
+                            );
+                          });
+
+                        const isCurrentTeacher =
+                          teacher.id === selectedAppointment.teacherId;
 
                         return (
                           <div
                             key={teacher.id}
                             className={`p-3 border rounded-lg cursor-pointer hover:bg-muted ${
-                              isCurrentTeacher 
-                                ? "border-primary bg-primary/10" 
-                                : isAvailableForAppointment 
-                                  ? "border-green-500" 
+                              isCurrentTeacher
+                                ? "border-primary bg-primary/10"
+                                : isAvailableForAppointment
+                                  ? "border-green-500"
                                   : teacherAvailabilities.length > 0
                                     ? "border-yellow-500"
                                     : "border-gray-300"
@@ -920,29 +988,44 @@ export default function ManagerAppointments() {
                                 <div className="flex items-center gap-2">
                                   <span>{teacher.username}</span>
                                   {isCurrentTeacher && (
-                                    <Badge variant="outline" className="border-primary text-primary">
+                                    <Badge
+                                      variant="outline"
+                                      className="border-primary text-primary"
+                                    >
                                       المعلم الحالي
                                     </Badge>
                                   )}
                                 </div>
                                 {isAvailableForAppointment ? (
-                                  <Badge variant="default">متوفر لهذا الموعد</Badge>
+                                  <Badge variant="default">
+                                    متوفر لهذا الموعد
+                                  </Badge>
                                 ) : teacherAvailabilities.length > 0 ? (
-                                  <Badge variant="secondary" className="bg-yellow-100 text-yellow-800 hover:bg-yellow-200">متوفر اليوم</Badge>
+                                  <Badge
+                                    variant="secondary"
+                                    className="bg-yellow-100 text-yellow-800 hover:bg-yellow-200"
+                                  >
+                                    متوفر اليوم
+                                  </Badge>
                                 ) : (
                                   <Badge variant="secondary">غير متوفر</Badge>
                                 )}
                               </div>
-                              
+
                               {teacherAvailabilities.length > 0 && (
                                 <div className="text-sm text-muted-foreground mt-1">
                                   <p>أوقات التوفر اليوم:</p>
                                   <div className="flex flex-wrap gap-1 mt-1">
                                     {availabilitySlots.map((slot, index) => (
-                                      <Badge 
-                                        key={index} 
-                                        variant="outline" 
-                                        className={isAvailableForAppointment && index === 0 ? "border-green-500 text-green-700" : ""}
+                                      <Badge
+                                        key={index}
+                                        variant="outline"
+                                        className={
+                                          isAvailableForAppointment &&
+                                          index === 0
+                                            ? "border-green-500 text-green-700"
+                                            : ""
+                                        }
                                       >
                                         {slot}
                                       </Badge>
@@ -961,7 +1044,7 @@ export default function ManagerAppointments() {
                     </div>
                   )}
                 </div>
-                
+
                 <div className="space-y-2">
                   <Label htmlFor="assignment">المهمة المطلوبة</Label>
                   <Input
@@ -1001,7 +1084,7 @@ export default function ManagerAppointments() {
                     section: value,
                     studentId: "", // Reset student selection when section changes
                   }));
-                  fetchStudentsBySection(value, 'independent');
+                  fetchStudentsBySection(value, "independent");
                 }}
               >
                 <SelectTrigger>
@@ -1027,10 +1110,19 @@ export default function ManagerAppointments() {
                     studentId: value,
                   }))
                 }
-                disabled={!newIndependentAssignmentData.section || filteredStudentsForIndependentAssignment.length === 0}
+                disabled={
+                  !newIndependentAssignmentData.section ||
+                  filteredStudentsForIndependentAssignment.length === 0
+                }
               >
                 <SelectTrigger>
-                  <SelectValue placeholder={!newIndependentAssignmentData.section ? "اختر الفصل أولاً" : "اختر الطالب"} />
+                  <SelectValue
+                    placeholder={
+                      !newIndependentAssignmentData.section
+                        ? "اختر الفصل أولاً"
+                        : "اختر الطالب"
+                    }
+                  />
                 </SelectTrigger>
                 <SelectContent>
                   {filteredStudentsForIndependentAssignment.map((student) => (
