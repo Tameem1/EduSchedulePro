@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Switch, Route, Redirect } from "wouter";
+import { Switch, Route, Redirect, useLocation } from "wouter";
 import { UserRole } from "@shared/schema";
 import { useAuth } from "@/hooks/use-auth";
 import { ProtectedRoute } from "./lib/protected-route";
@@ -16,7 +16,6 @@ import ManagerAppointments from "@/pages/manager/appointments";
 import AssignTeacher from "@/pages/manager/assign-teacher";
 import ManagerQuestionnaire from "@/pages/manager/questionnaire";
 import ManagerTeachersAvailability from "@/pages/manager/teachers-availability";
-import Created from "@/pages/created";
 
 
 export default function Router() {
@@ -91,12 +90,19 @@ export default function Router() {
         {/* Redirect root to appropriate dashboard */}
         <Route path="/">
           {() => {
-            // Use a side effect to redirect
-            React.useEffect(() => {
-              window.location.href = "/teacher/appointments";
-            }, []);
-            // Return an empty div to satisfy TypeScript
-            return <div />;
+            const { user } = useAuth();
+            
+            if (user) {
+              if (user.role === UserRole.STUDENT) {
+                return <Redirect to="/student/appointments" />;
+              } else if (user.role === UserRole.TEACHER) {
+                return <Redirect to="/teacher/appointments" />;
+              } else if (user.role === UserRole.MANAGER) {
+                return <Redirect to="/manager/appointments" />;
+              }
+            }
+            
+            return <Redirect to="/auth" />;
           }}
         </Route>
 
