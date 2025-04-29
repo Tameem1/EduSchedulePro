@@ -564,8 +564,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Create questionnaire response
       const response = await storage.createQuestionnaireResponse(parsedData);
 
-      // Broadcast the update
-      broadcastUpdate("appointmentUpdate", { action: "update", appointment });
+      // Broadcast appointment update
+      broadcastUpdate("appointmentUpdate", { 
+        action: "update", 
+        appointment 
+      });
+      
+      // Also broadcast a specific questionnaire response update
+      broadcastUpdate("questionnaireResponse", {
+        action: "create",
+        appointmentId: parsedData.appointmentId,
+        response,
+        timestamp: new Date().toISOString()
+      });
 
       res.json(response);
     } catch (error) {
