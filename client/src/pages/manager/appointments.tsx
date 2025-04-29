@@ -1145,6 +1145,28 @@ export default function ManagerAppointments() {
                     </Button>
                   </div>
                 </div>
+                
+                {/* Button to remove teacher from appointment - only show if a teacher is assigned */}
+                {selectedAppointment.teacherId && (
+                  <div className="mt-4">
+                    <Button 
+                      variant="destructive"
+                      className="w-full"
+                      onClick={() => {
+                        if (confirm("هل أنت متأكد من إزالة المعلم من هذا الموعد؟")) {
+                          removeTeacherMutation.mutate(selectedAppointment.id);
+                        }
+                      }}
+                      disabled={removeTeacherMutation.isPending}
+                    >
+                      {removeTeacherMutation.isPending ? (
+                        <Loader2 className="h-4 w-4 animate-spin ml-2" />
+                      ) : (
+                        "إزالة المعلم من الموعد"
+                      )}
+                    </Button>
+                  </div>
+                )}
               </div>
             )}
           </div>
