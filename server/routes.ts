@@ -20,6 +20,7 @@ import {
   notifyManagerAboutAppointment,
   notifyTeacherAboutDeletedAppointment,
   notifyTeacherAboutReassignedAppointment,
+  notifyTeacherAboutTimeChange,
 } from "./telegram";
 import { startOfDay, endOfDay, format } from "date-fns"; // Added format import
 import { addHours } from "date-fns";
@@ -695,12 +696,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const appointmentId = parseInt(req.params.id);
       const { teacherId, status, teacherAssignment, startTime } = req.body;
 
+      // Get the current appointment before updating it
+      const currentAppointment = await storage.getAppointmentById(appointmentId);
+      if (!currentAppointment) {
+        return res.status(404).json({ error: "Appointment not found" });
+      }
+      
+      // Store the previous teacherId to send notification if it's being changed
+      const previousTeacherId = currentAppointment.teacherId;
+      
       // Create update object with only defined values
       const updateData: any = {};
       
       // Handle startTime if provided
+      let originalStartTime = null;
       if (startTime) {
         console.log("Updating appointment startTime to:", startTime);
+        // Store the original time for notification
+        if (currentAppointment && currentAppointment.startTime) {
+          originalStartTime = currentAppointment.startTime;
+        }
         updateData.startTime = startTime;
       }
 
@@ -737,15 +752,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
           }
         }
       }
-
-      // Get the current appointment before updating it
-      const currentAppointment = await storage.getAppointmentById(appointmentId);
-      if (!currentAppointment) {
-        return res.status(404).json({ error: "Appointment not found" });
-      }
-      
-      // Store the previous teacherId to send notification if it's being changed
-      const previousTeacherId = currentAppointment.teacherId;
       
       if (teacherId !== undefined && teacherId !== null) {
         updateData.teacherId = teacherId;
@@ -769,6 +775,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Send Telegram notification after successful update
       let notificationSent = false;
+      
+      // Handle appointment time change notification
+      if (originalStartTime && appointment.teacherId) {
+        try {
+          console.log(`Notifying teacher ${appointment.teacherId} about time change from ${originalStartTime} to ${appointment.startTime}`);
+          const timeChangeNotificationSent = await notifyTeacherAboutTimeChange(
+            appointment.teacherId,
+            appointmentId,
+            originalStartTime,
+            appointment.startTime
+          );
+          
+          if (timeChangeNotificationSent) {
+            notificationSent = true;
+            console.log("Teacher time change notification sent successfully");
+          }
+        } catch (error) {
+          console.error("Failed to send time change notification:", error);
+        }
+      }
       
       // Handle teacher reassignment notification
       if (teacherId && previousTeacherId && teacherId !== previousTeacherId) {

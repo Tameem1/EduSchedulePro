@@ -480,6 +480,76 @@ export async function notifyTeacherAboutAppointment(
   }
 }
 
+export async function notifyTeacherAboutTimeChange(
+  teacherId: number,
+  appointmentId: number,
+  oldTime: string,
+  newTime: string,
+): Promise<boolean> {
+  try {
+    // Get teacher details
+    const teacher = await db
+      .select()
+      .from(users)
+      .where(eq(users.id, teacherId))
+      .limit(1);
+    if (!teacher.length) {
+      console.error(`Teacher ${teacherId} not found`);
+      return false;
+    }
+
+    const telegramContact = teacher[0].telegramUsername;
+    if (!telegramContact) {
+      console.error(`Teacher ${teacherId} has no Telegram username`);
+      return false;
+    }
+
+    // Get appointment details
+    const appointment = await db
+      .select()
+      .from(appointments)
+      .where(eq(appointments.id, appointmentId))
+      .limit(1);
+    if (!appointment.length) {
+      console.error(`Appointment ${appointmentId} not found`);
+      return false;
+    }
+
+    // Get student details
+    const student = await db
+      .select()
+      .from(users)
+      .where(eq(users.id, appointment[0].studentId))
+      .limit(1);
+    const studentName = student.length
+      ? student[0].username
+      : `طالب ${appointment[0].studentId}`;
+
+    // Get student section if available
+    const studentSection = student.length && student[0].section
+      ? ` (${student[0].section})`
+      : '';
+
+    // Format times to better display format
+    const formattedOldTime = oldTime.substring(11, 16); // Extract HH:MM from ISO string
+    const formattedNewTime = newTime.substring(11, 16); // Extract HH:MM from ISO string
+
+    // Prepare message text
+    const message = `تم تغيير وقت الموعد مع ${studentName}${studentSection} من الساعة ${formattedOldTime} إلى الساعة ${formattedNewTime}.`;
+
+    // Send notification
+    console.log(
+      `Attempting to send appointment time change notification to ${telegramContact}: ${message}`,
+    );
+    const result = await sendTelegramNotification(telegramContact, message);
+    console.log(`Appointment time change notification result:`, result);
+    return typeof result === "boolean" ? result : false;
+  } catch (error) {
+    console.error("Error notifying teacher about appointment time change:", error);
+    return false;
+  }
+}
+
 export async function notifyTeacherAboutReassignedAppointment(
   previousTeacherId: number,
   appointmentId: number,
