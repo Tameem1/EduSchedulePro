@@ -19,6 +19,7 @@ import {
   notifyTeacherAboutAssignmentChange,
   notifyManagerAboutAppointment,
   notifyTeacherAboutDeletedAppointment,
+  notifyTeacherAboutReassignedAppointment,
 } from "./telegram";
 import { startOfDay, endOfDay, format } from "date-fns"; // Added format import
 import { addHours } from "date-fns";
@@ -737,6 +738,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
       }
 
+      // Get the current appointment before updating it
+      const currentAppointment = await storage.getAppointmentById(appointmentId);
+      if (!currentAppointment) {
+        return res.status(404).json({ error: "Appointment not found" });
+      }
+      
+      // Store the previous teacherId to send notification if it's being changed
+      const previousTeacherId = currentAppointment.teacherId;
+      
       if (teacherId !== undefined && teacherId !== null) {
         updateData.teacherId = teacherId;
       }
@@ -759,6 +769,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Send Telegram notification after successful update
       let notificationSent = false;
+      
+      // Handle teacher reassignment notification
+      if (teacherId && previousTeacherId && teacherId !== previousTeacherId) {
+        // This is a reassignment - notify the previous teacher
+        try {
+          console.log(`Notifying previous teacher ${previousTeacherId} about appointment reassignment to teacher ${teacherId}`);
+          const reassignmentNotificationSent = await notifyTeacherAboutReassignedAppointment(
+            previousTeacherId,
+            appointmentId,
+            teacherId
+          );
+          
+          if (reassignmentNotificationSent) {
+            notificationSent = true;
+            console.log("Teacher reassignment notification sent successfully");
+          }
+        } catch (error) {
+          console.error("Failed to send reassignment notification:", error);
+        }
+      }
       
       // Check if we need to send teacher assignment update notification
       if (teacherAssignment !== undefined && appointment.teacherId) {

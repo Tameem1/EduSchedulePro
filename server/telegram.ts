@@ -480,6 +480,88 @@ export async function notifyTeacherAboutAppointment(
   }
 }
 
+export async function notifyTeacherAboutReassignedAppointment(
+  previousTeacherId: number,
+  appointmentId: number,
+  newTeacherId: number,
+): Promise<boolean> {
+  try {
+    // Get previous teacher details
+    const previousTeacher = await db
+      .select()
+      .from(users)
+      .where(eq(users.id, previousTeacherId))
+      .limit(1);
+    if (!previousTeacher.length) {
+      console.error(`Previous teacher ${previousTeacherId} not found`);
+      return false;
+    }
+
+    const telegramContact = previousTeacher[0].telegramUsername;
+    if (!telegramContact) {
+      console.error(`Previous teacher ${previousTeacherId} has no Telegram username`);
+      return false;
+    }
+
+    // Get appointment details
+    const appointment = await db
+      .select()
+      .from(appointments)
+      .where(eq(appointments.id, appointmentId))
+      .limit(1);
+    if (!appointment.length) {
+      console.error(`Appointment ${appointmentId} not found`);
+      return false;
+    }
+
+    // Get student details
+    const student = await db
+      .select()
+      .from(users)
+      .where(eq(users.id, appointment[0].studentId))
+      .limit(1);
+    const studentName = student.length
+      ? student[0].username
+      : `طالب ${appointment[0].studentId}`;
+
+    // Get new teacher details
+    const newTeacher = await db
+      .select()
+      .from(users)
+      .where(eq(users.id, newTeacherId))
+      .limit(1);
+    const newTeacherName = newTeacher.length
+      ? newTeacher[0].username
+      : `معلم ${newTeacherId}`;
+
+    // Format time in GMT+3
+    const appointmentTime = formatGMT3Time(
+      new Date(appointment[0].startTime),
+      "HH:mm",
+      { timeZone: "Africa/Cairo" },
+    );
+
+    // Get student section if available
+    const studentSection = student.length && student[0].section
+      ? ` (${student[0].section})`
+      : '';
+
+    // Prepare message text
+    const message = `تم إعادة تعيين الموعد مع ${studentName}${studentSection} الساعة ${appointmentTime} إلى المعلم ${newTeacherName}. هذا الموعد لم يعد مخصصًا لك.`;
+
+    // Send notification
+    console.log(
+      `Attempting to send appointment reassignment notification to ${telegramContact}: ${message}`,
+    );
+    const result = await sendTelegramNotification(telegramContact, message);
+    console.log(`Appointment reassignment notification result:`, result);
+    return typeof result === "boolean" ? result : false;
+  } catch (error) {
+    console.error("Error notifying teacher about appointment reassignment:", error);
+    return false;
+  }
+}
+
 export async function notifyTeacherAboutDeletedAppointment(
   teacherId: number,
   studentName: string,
