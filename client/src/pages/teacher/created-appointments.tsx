@@ -1,10 +1,10 @@
 import * as React from "react";
 import { useAuth } from "@/hooks/use-auth";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { format, parseISO, isToday } from "date-fns";
 import { apiRequest } from "@/lib/queryClient";
 import { formatGMT3Time } from "@/lib/date-utils";
-import { Loader2, CalendarIcon, ArrowLeft } from "lucide-react";
+import { Loader2, CalendarIcon, ArrowLeft, Pencil } from "lucide-react";
 import { Link } from "wouter";
 import { 
   AppointmentStatus, 
@@ -26,6 +26,16 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
+import { 
+  Dialog, 
+  DialogContent, 
+  DialogHeader, 
+  DialogTitle, 
+  DialogFooter 
+} from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { useToast } from "@/hooks/use-toast";
 
 // Helper function to determine status color
 function getStatusColor(status: string) {
@@ -42,6 +52,15 @@ function getStatusColor(status: string) {
 export default function TeacherCreatedAppointments() {
   const { user } = useAuth();
   const queryClient = useQueryClient();
+  const { toast } = useToast();
+  
+  // Dialog state for editing appointment
+  const [isEditDialogOpen, setIsEditDialogOpen] = React.useState(false);
+  const [selectedAppointment, setSelectedAppointment] = React.useState<Appointment | null>(null);
+  const [editFormData, setEditFormData] = React.useState({
+    teacherAssignment: "",
+    startTime: ""
+  });
   
   // Track questionnaire responses
   const [questionnaireResponses, setQuestionnaireResponses] = React.useState<Record<number, QuestionnaireResponse | null>>({});
@@ -263,6 +282,94 @@ export default function TeacherCreatedAppointments() {
       socket.close();
     };
   }, [user?.id, queryClient, getQuestionnaireResponse]);
+  
+  // Mutation for updating appointments
+  const updateAppointmentMutation = useMutation({
+    mutationFn: async ({ appointmentId, data }: { appointmentId: number; data: any }) => {
+      const res = await apiRequest(
+        "PATCH",
+        `/api/appointments/${appointmentId}`,
+        data
+      );
+      if (!res.ok) {
+        const errJson = await res.json();
+        throw new Error(errJson.error || "Failed to update appointment");
+      }
+      return res.json();
+    },
+    onSuccess: () => {
+      toast({
+        title: "تم تحديث الموعد",
+        description: "تم تحديث تفاصيل الموعد بنجاح",
+      });
+      // Close the dialog and reset form
+      setIsEditDialogOpen(false);
+      setSelectedAppointment(null);
+      
+      // Refresh appointments list
+      queryClient.invalidateQueries({
+        queryKey: ["/api/teachers", user?.id, "created-appointments"]
+      });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "خطأ في تحديث الموعد",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
+  
+  // Handler for opening the edit dialog
+  const handleEditClick = (appointment: Appointment) => {
+    setSelectedAppointment(appointment);
+    
+    // Format the ISO time string to "yyyy-MM-ddTHH:mm" for datetime-local input
+    const date = new Date(appointment.startTime);
+    const localDateString = new Date(
+      date.getTime() - (date.getTimezoneOffset() * 60000)
+    ).toISOString().slice(0, 16);
+    
+    setEditFormData({
+      teacherAssignment: appointment.teacherAssignment || "",
+      startTime: localDateString
+    });
+    
+    setIsEditDialogOpen(true);
+  };
+  
+  // Handler for submitting the edit form
+  const handleEditSubmit = () => {
+    if (!selectedAppointment) return;
+    
+    const data: any = {};
+    
+    // Only include fields that have changed
+    if (editFormData.teacherAssignment !== selectedAppointment.teacherAssignment) {
+      data.teacherAssignment = editFormData.teacherAssignment;
+    }
+    
+    // Check if time has changed
+    const originalTime = new Date(selectedAppointment.startTime);
+    const newTime = new Date(editFormData.startTime);
+    if (originalTime.getTime() !== newTime.getTime()) {
+      data.startTime = newTime.toISOString();
+    }
+    
+    // Only proceed if there are changes
+    if (Object.keys(data).length === 0) {
+      toast({
+        title: "لم يتم إجراء أي تغييرات",
+        description: "لم تقم بتغيير أي من بيانات الموعد",
+      });
+      return;
+    }
+    
+    updateAppointmentMutation.mutate({
+      appointmentId: selectedAppointment.id,
+      data
+    });
+  };
   
   // Filter appointments for today only
   const todayAppointments = React.useMemo(() => {
