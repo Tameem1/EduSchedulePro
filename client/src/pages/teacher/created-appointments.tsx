@@ -324,15 +324,14 @@ export default function TeacherCreatedAppointments() {
   const handleEditClick = (appointment: Appointment) => {
     setSelectedAppointment(appointment);
     
-    // Format the ISO time string to "yyyy-MM-ddTHH:mm" for datetime-local input
-    const date = new Date(appointment.startTime);
-    const localDateString = new Date(
-      date.getTime() - (date.getTimezoneOffset() * 60000)
-    ).toISOString().slice(0, 16);
+    // Format the time string to "yyyy-MM-ddTHH:mm" for datetime-local input
+    // The database stores time as "YYYY-MM-DD HH:MM:SS" format
+    const startTimeStr = String(appointment.startTime); // Ensure it's a string
+    const formattedTime = startTimeStr.replace(' ', 'T').slice(0, 16);
     
     setEditFormData({
       teacherAssignment: appointment.teacherAssignment || "",
-      startTime: localDateString
+      startTime: formattedTime
     });
     
     setIsEditDialogOpen(true);
@@ -349,11 +348,14 @@ export default function TeacherCreatedAppointments() {
       data.teacherAssignment = editFormData.teacherAssignment;
     }
     
-    // Check if time has changed
-    const originalTime = new Date(selectedAppointment.startTime);
-    const newTime = new Date(editFormData.startTime);
-    if (originalTime.getTime() !== newTime.getTime()) {
-      data.startTime = newTime.toISOString();
+    // Check if time has changed - we compare the formatted strings
+    const startTimeStr = String(selectedAppointment.startTime);
+    const originalFormatted = startTimeStr.replace(' ', 'T').slice(0, 16);
+    
+    if (editFormData.startTime !== originalFormatted) {
+      // Just pass the datetime-local value directly
+      data.startTime = editFormData.startTime;
+      console.log("Time changed from", originalFormatted, "to", editFormData.startTime);
     }
     
     // Only proceed if there are changes
