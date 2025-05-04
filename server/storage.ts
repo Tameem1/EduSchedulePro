@@ -309,10 +309,23 @@ export const storage = {
         // Handle startTime update
         if (data.startTime) {
           console.log("Updating appointment startTime to:", data.startTime);
+          
+          // If this is an ISO string from datetime-local input, format it appropriately
+          // for the database to maintain consistent time representation
+          let formattedTime = data.startTime;
+          
+          // If it's a datetime-local input value (YYYY-MM-DDTHH:MM format)
+          if (data.startTime.includes('T') && !data.startTime.includes('Z')) {
+            // Create a date object and format it as a standard timestamp
+            const dateObj = new Date(data.startTime);
+            formattedTime = dateObj.toISOString().slice(0, 19).replace('T', ' ');
+            console.log("Formatted time for database:", formattedTime);
+          }
+          
           const updatedAppointment = await db
             .update(appointments)
             .set({
-              startTime: data.startTime,
+              startTime: formattedTime,
             })
             .where(eq(appointments.id, appointmentId))
             .returning();

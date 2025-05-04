@@ -401,20 +401,15 @@ export default function ManagerAppointments() {
       appointmentId: number;
       startTime: string;
     }) => {
-      // Convert local time to UTC ISO string
-      const localDate = new Date(startTime);
-      const year = localDate.getFullYear();
-      const month = localDate.getMonth();
-      const day = localDate.getDate();
-      const hours = localDate.getHours();
-      const minutes = localDate.getMinutes();
-      const utcDate = new Date(Date.UTC(year, month, day, hours, minutes, 0));
+      // This is a direct input from datetime-local
+      // We'll send it directly to the backend which will handle it properly
+      console.log("Updating appointment time to:", startTime);
       
       const res = await apiRequest(
         "PATCH",
         `/api/appointments/${appointmentId}`,
         {
-          startTime: utcDate.toISOString(),
+          startTime: startTime,
         }
       );
       
@@ -1373,14 +1368,14 @@ export default function ManagerAppointments() {
                 <Button
                   onClick={() => {
                     if (selectedAppointment && changeTimeData.startTime) {
-                      // Convert local time string to Date object and get ISO string
-                      const localDate = new Date(changeTimeData.startTime);
-                      console.log("Local date selected:", localDate);
+                      // Instead of directly passing the ISO string, 
+                      // we pass the datetime-local input value to our mutation 
+                      // which will do the proper timezone handling
+                      console.log("Time selected:", changeTimeData.startTime);
                       
-                      // Use the created Date to get UTC ISO string
                       updateAppointmentTimeMutation.mutate({
                         appointmentId: selectedAppointment.id,
-                        startTime: localDate.toISOString()
+                        startTime: changeTimeData.startTime
                       });
                     }
                   }}
