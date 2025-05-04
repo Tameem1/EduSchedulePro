@@ -12,12 +12,13 @@ import {
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, sql, inArray, desc } from "drizzle-orm";
-import { users, availabilities, Section } from "@shared/schema";
+import { users, availabilities, appointments, Section } from "@shared/schema";
 import {
   sendTelegramNotification,
   notifyTeacherAboutAppointment,
   notifyTeacherAboutAssignmentChange,
   notifyManagerAboutAppointment,
+  notifyTeacherAboutDeletedAppointment,
 } from "./telegram";
 import { startOfDay, endOfDay, format } from "date-fns"; // Added format import
 import { addHours } from "date-fns";
@@ -826,40 +827,41 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
       // Get the appointment details before deletion
-      const appointment = await db
+      const appointmentResult = await db
         .select()
         .from(appointments)
         .where(eq(appointments.id, appointmentId))
         .limit(1);
         
-      if (!appointment.length) {
+      if (!appointmentResult.length) {
         return res.status(404).json({ error: "Appointment not found" });
       }
       
+      const appointment = appointmentResult[0];
+      
       // If there's a teacher assigned, notify them about the deletion
       let notificationSent = false;
-      if (appointment[0].teacherId) {
+      if (appointment.teacherId) {
         try {
           // Get student name
           const student = await db
             .select()
             .from(users)
-            .where(eq(users.id, appointment[0].studentId))
+            .where(eq(users.id, appointment.studentId))
             .limit(1);
             
           const studentName = student.length
             ? student[0].username
-            : `طالب ${appointment[0].studentId}`;
+            : `طالب ${appointment.studentId}`;
             
           // Format time in GMT+3
           const appointmentTime = format(
-            new Date(appointment[0].startTime),
-            "h:mm a",
-            { timeZone: "Africa/Cairo" }
+            new Date(appointment.startTime),
+            "h:mm a"
           );
           
           notificationSent = await notifyTeacherAboutDeletedAppointment(
-            appointment[0].teacherId,
+            appointment.teacherId,
             studentName,
             appointmentTime
           );

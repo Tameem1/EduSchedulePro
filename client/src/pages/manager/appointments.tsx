@@ -436,6 +436,40 @@ export default function ManagerAppointments() {
     },
   });
   
+  const deleteAppointmentMutation = useMutation({
+    mutationFn: async (appointmentId: number) => {
+      console.log("Deleting appointment:", appointmentId);
+      
+      const res = await apiRequest(
+        "DELETE",
+        `/api/appointments/${appointmentId}`
+      );
+      
+      if (!res.ok) {
+        throw new Error("Failed to delete appointment");
+      }
+      return res.json();
+    },
+    onSuccess: (data) => {
+      const notificationMessage = data.notificationSent
+        ? "تم حذف الموعد وإرسال إشعار للمعلم عبر تيليجرام بنجاح"
+        : "تم حذف الموعد";
+        
+      toast({
+        title: "تم حذف الموعد",
+        description: notificationMessage,
+      });
+      queryClient.invalidateQueries({ queryKey: ["/api/appointments"] });
+    },
+    onError: (error) => {
+      toast({
+        title: "خطأ في حذف الموعد",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
+  
   const updateAssignmentMutation = useMutation({
     mutationFn: async ({
       appointmentId,
@@ -791,6 +825,20 @@ export default function ManagerAppointments() {
                       }}
                     >
                       تغيير الوقت
+                    </Button>
+                    
+                    {/* Add Delete Appointment Button */}
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="ml-2 bg-red-100 hover:bg-red-200 text-red-700"
+                      onClick={() => {
+                        if (window.confirm("هل أنت متأكد من حذف هذا الموعد؟")) {
+                          deleteAppointmentMutation.mutate(appointment.id);
+                        }
+                      }}
+                    >
+                      حذف الموعد
                     </Button>
                   </TableCell>
                 </TableRow>
