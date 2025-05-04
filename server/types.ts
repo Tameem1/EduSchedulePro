@@ -16,4 +16,5 @@ export interface IStorage {
   getAppointmentsByStudent(studentId: number): Promise<Appointment[]>;
   createQuestionnaireResponse(response: Omit<QuestionnaireResponse, "id">): Promise<QuestionnaireResponse>;
   getQuestionnaireResponse(appointmentId: number): Promise<QuestionnaireResponse | undefined>;
+  deleteAppointment(appointmentId: number): Promise<void>;
 }

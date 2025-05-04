@@ -478,4 +478,11 @@ export const storage = {
         .orderBy(desc(independentAssignments.completionTime));
     });
   },
+
+  async deleteAppointment(appointmentId: number): Promise<void> {
+    return await withRetry(async () => {
+      await db.delete(appointments).where(eq(appointments.id, appointmentId));
+      return;
+    });
+  },
 };
