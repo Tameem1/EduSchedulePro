@@ -487,10 +487,24 @@ export default function TeacherCreatedAppointments() {
                           </p>
                         )}
                         
-                        <div className="mt-3">
+                        <div className="mt-3 flex flex-wrap gap-2 items-center">
                           <Badge className={`text-white ${getStatusColor(appointment.status)}`}>
                             {AppointmentStatusArabic[appointment.status]}
                           </Badge>
+                          
+                          {/* Add Edit Button */}
+                          <Button 
+                            size="sm" 
+                            variant="outline" 
+                            className="mr-2 flex items-center gap-1"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleEditClick(appointment);
+                            }}
+                          >
+                            <Pencil className="h-3 w-3" />
+                            تعديل
+                          </Button>
                         </div>
                       </div>
                     </div>
@@ -521,6 +535,60 @@ export default function TeacherCreatedAppointments() {
           </CardContent>
         </Card>
       )}
+      
+      {/* Edit Appointment Dialog */}
+      <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>تعديل تفاصيل الموعد</DialogTitle>
+          </DialogHeader>
+          
+          <div className="space-y-4 pt-4">
+            <div className="space-y-2">
+              <Label htmlFor="startTime">الوقت</Label>
+              <Input
+                id="startTime"
+                type="datetime-local"
+                value={editFormData.startTime}
+                onChange={(e) => setEditFormData(prev => ({
+                  ...prev,
+                  startTime: e.target.value
+                }))}
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="teacherAssignment">المهمة</Label>
+              <Input
+                id="teacherAssignment"
+                value={editFormData.teacherAssignment}
+                onChange={(e) => setEditFormData(prev => ({
+                  ...prev,
+                  teacherAssignment: e.target.value
+                }))}
+                placeholder="المهمة للطالب"
+              />
+            </div>
+          </div>
+          
+          <DialogFooter className="mt-4">
+            <Button 
+              type="button" 
+              variant="outline" 
+              onClick={() => setIsEditDialogOpen(false)}
+            >
+              إلغاء
+            </Button>
+            <Button 
+              type="button" 
+              onClick={handleEditSubmit} 
+              disabled={updateAppointmentMutation.isPending}
+            >
+              {updateAppointmentMutation.isPending ? "جاري الحفظ..." : "حفظ التغييرات"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

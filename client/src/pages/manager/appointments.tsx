@@ -47,6 +47,7 @@ export default function ManagerAppointments() {
   const [selectedAppointment, setSelectedAppointment] =
     React.useState<Appointment | null>(null);
   const [isAssignDialogOpen, setIsAssignDialogOpen] = React.useState(false);
+  const [isChangeTimeDialogOpen, setIsChangeTimeDialogOpen] = React.useState(false);
   const [isAddAppointmentDialogOpen, setIsAddAppointmentDialogOpen] =
     React.useState(false);
   const [teacherSearchQuery, setTeacherSearchQuery] =
@@ -56,6 +57,9 @@ export default function ManagerAppointments() {
     studentId: "",
     startTime: "",
     teacherAssignment: "",
+  });
+  const [changeTimeData, setChangeTimeData] = React.useState({
+    startTime: "",
   });
   const [filteredStudentsForAppointment, setFilteredStudentsForAppointment] =
     React.useState<User[]>([]);
@@ -382,6 +386,55 @@ export default function ManagerAppointments() {
     onError: (error) => {
       toast({
         title: "خطأ في تعيين المعلم",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
+  
+  // Mutation for changing appointment time
+  const updateAppointmentTimeMutation = useMutation({
+    mutationFn: async ({
+      appointmentId,
+      startTime,
+    }: {
+      appointmentId: number;
+      startTime: string;
+    }) => {
+      // Convert local time to UTC ISO string
+      const localDate = new Date(startTime);
+      const year = localDate.getFullYear();
+      const month = localDate.getMonth();
+      const day = localDate.getDate();
+      const hours = localDate.getHours();
+      const minutes = localDate.getMinutes();
+      const utcDate = new Date(Date.UTC(year, month, day, hours, minutes, 0));
+      
+      const res = await apiRequest(
+        "PATCH",
+        `/api/appointments/${appointmentId}`,
+        {
+          startTime: utcDate.toISOString(),
+        }
+      );
+      
+      if (!res.ok) {
+        throw new Error("Failed to update appointment time");
+      }
+      return res.json();
+    },
+    onSuccess: () => {
+      toast({
+        title: "تم تحديث الموعد",
+        description: "تم تغيير وقت الموعد بنجاح",
+      });
+      setIsChangeTimeDialogOpen(false);
+      setSelectedAppointment(null);
+      queryClient.invalidateQueries({ queryKey: ["/api/appointments"] });
+    },
+    onError: (error) => {
+      toast({
+        title: "خطأ في تحديث الموعد",
         description: error.message,
         variant: "destructive",
       });
@@ -716,10 +769,34 @@ export default function ManagerAppointments() {
                             setSelectedAppointment(appointment);
                             setIsAssignDialogOpen(true);
                           }}
+                          className="ml-2"
                         >
                           تغيير المعلم
                         </Button>
                       )}
+                      
+                    {/* Add Time Change Button */}
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        setSelectedAppointment(appointment);
+                        
+                        // Format the ISO time string to "yyyy-MM-ddTHH:mm" for datetime-local input
+                        const date = new Date(appointment.startTime);
+                        const localDateString = new Date(
+                          date.getTime() - (date.getTimezoneOffset() * 60000)
+                        ).toISOString().slice(0, 16);
+                        
+                        setChangeTimeData({
+                          startTime: localDateString
+                        });
+                        
+                        setIsChangeTimeDialogOpen(true);
+                      }}
+                    >
+                      تغيير الوقت
+                    </Button>
                   </TableCell>
                 </TableRow>
               ))}
@@ -1244,6 +1321,73 @@ export default function ManagerAppointments() {
                 : "إضافة المهمة"}
             </Button>
           </div>
+        </DialogContent>
+      </Dialog>
+      
+      {/* Time Change Dialog */}
+      <Dialog
+        open={isChangeTimeDialogOpen}
+        onOpenChange={setIsChangeTimeDialogOpen}
+      >
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>تغيير وقت الموعد</DialogTitle>
+          </DialogHeader>
+          
+          {selectedAppointment && (
+            <div className="py-4 space-y-4">
+              <div className="text-sm space-y-1">
+                <p>
+                  <span className="font-medium">الطالب:</span> {getUserName(selectedAppointment.studentId, "student")}
+                </p>
+                {selectedAppointment.teacherId && (
+                  <p>
+                    <span className="font-medium">المعلم:</span> {getUserName(selectedAppointment.teacherId, "teacher")}
+                  </p>
+                )}
+                <p>
+                  <span className="font-medium">الوقت الحالي:</span> {format(new Date(selectedAppointment.startTime), "yyyy/MM/dd h:mm a")}
+                </p>
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="new-time">الوقت الجديد</Label>
+                <Input
+                  id="new-time"
+                  type="datetime-local"
+                  value={changeTimeData.startTime}
+                  onChange={(e) => setChangeTimeData(prev => ({
+                    ...prev,
+                    startTime: e.target.value
+                  }))}
+                />
+              </div>
+              
+              <div className="flex justify-end gap-2 pt-2">
+                <Button
+                  variant="outline"
+                  onClick={() => setIsChangeTimeDialogOpen(false)}
+                >
+                  إلغاء
+                </Button>
+                <Button
+                  onClick={() => {
+                    if (selectedAppointment && changeTimeData.startTime) {
+                      updateAppointmentTimeMutation.mutate({
+                        appointmentId: selectedAppointment.id,
+                        startTime: changeTimeData.startTime
+                      });
+                    }
+                  }}
+                  disabled={updateAppointmentTimeMutation.isPending}
+                >
+                  {updateAppointmentTimeMutation.isPending
+                    ? "جاري الحفظ..."
+                    : "تغيير الوقت"}
+                </Button>
+              </div>
+            </div>
+          )}
         </DialogContent>
       </Dialog>
     </div>
