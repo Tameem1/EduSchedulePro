@@ -894,8 +894,8 @@ export default function ManagerAppointments() {
                       </Button>
                     )}
 
-                    {/* Show change teacher button for appointments with assigned teachers */}
-                    {appointment.teacherId && (
+                    {/* Show change teacher button for appointments with assigned teachers that are not DONE */}
+                    {appointment.teacherId && appointment.status !== AppointmentStatus.DONE && (
                         <Button
                           variant="outline"
                           size="sm"
@@ -909,55 +909,61 @@ export default function ManagerAppointments() {
                         </Button>
                       )}
                       
-                    {/* Add Time Change Button */}
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => {
-                        setSelectedAppointment(appointment);
-                        
-                        // Format the ISO time string to "yyyy-MM-ddTHH:mm" for datetime-local input
-                        const date = new Date(appointment.startTime);
-                        const localDateString = new Date(
-                          date.getTime() - (date.getTimezoneOffset() * 60000)
-                        ).toISOString().slice(0, 16);
-                        
-                        setChangeTimeData({
-                          startTime: localDateString
-                        });
-                        
-                        setIsChangeTimeDialogOpen(true);
-                      }}
-                    >
-                      تغيير الوقت
-                    </Button>
+                    {/* Add Time Change Button - only if not DONE */}
+                    {appointment.status !== AppointmentStatus.DONE && (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => {
+                          setSelectedAppointment(appointment);
+                          
+                          // Format the ISO time string to "yyyy-MM-ddTHH:mm" for datetime-local input
+                          const date = new Date(appointment.startTime);
+                          const localDateString = new Date(
+                            date.getTime() - (date.getTimezoneOffset() * 60000)
+                          ).toISOString().slice(0, 16);
+                          
+                          setChangeTimeData({
+                            startTime: localDateString
+                          });
+                          
+                          setIsChangeTimeDialogOpen(true);
+                        }}
+                      >
+                        تغيير الوقت
+                      </Button>
+                    )}
                     
-                    {/* Add Status Change Button */}
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="ml-2 bg-blue-100 hover:bg-blue-200 text-blue-700"
-                      onClick={() => {
-                        setSelectedAppointment(appointment);
-                        setIsStatusUpdateDialogOpen(true);
-                      }}
-                    >
-                      تغيير الحالة
-                    </Button>
+                    {/* Add Status Change Button - only if not DONE */}
+                    {appointment.status !== AppointmentStatus.DONE && (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="ml-2 bg-blue-100 hover:bg-blue-200 text-blue-700"
+                        onClick={() => {
+                          setSelectedAppointment(appointment);
+                          setIsStatusUpdateDialogOpen(true);
+                        }}
+                      >
+                        تغيير الحالة
+                      </Button>
+                    )}
                     
-                    {/* Add Delete Appointment Button */}
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="ml-2 bg-red-100 hover:bg-red-200 text-red-700"
-                      onClick={() => {
-                        if (window.confirm("هل أنت متأكد من حذف هذا الموعد؟")) {
-                          deleteAppointmentMutation.mutate(appointment.id);
-                        }
-                      }}
-                    >
-                      حذف الموعد
-                    </Button>
+                    {/* Add Delete Appointment Button - only if not DONE */}
+                    {appointment.status !== AppointmentStatus.DONE && (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="ml-2 bg-red-100 hover:bg-red-200 text-red-700"
+                        onClick={() => {
+                          if (window.confirm("هل أنت متأكد من حذف هذا الموعد؟")) {
+                            deleteAppointmentMutation.mutate(appointment.id);
+                          }
+                        }}
+                      >
+                        حذف الموعد
+                      </Button>
+                    )}
                   </TableCell>
                 </TableRow>
               ))}
