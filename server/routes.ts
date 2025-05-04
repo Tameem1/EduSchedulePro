@@ -809,6 +809,99 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
     }
   });
+  
+  // Delete appointment endpoint
+  app.delete("/api/appointments/:id", async (req, res) => {
+    try {
+      if (
+        !req.isAuthenticated() ||
+        req.user.role !== "manager"
+      ) {
+        return res.sendStatus(403);
+      }
+
+      const appointmentId = parseInt(req.params.id);
+      if (isNaN(appointmentId)) {
+        return res.status(400).json({ error: "Invalid appointment ID" });
+      }
+      
+      // Get the appointment details before deletion
+      const appointment = await db
+        .select()
+        .from(appointments)
+        .where(eq(appointments.id, appointmentId))
+        .limit(1);
+        
+      if (!appointment.length) {
+        return res.status(404).json({ error: "Appointment not found" });
+      }
+      
+      // If there's a teacher assigned, notify them about the deletion
+      let notificationSent = false;
+      if (appointment[0].teacherId) {
+        try {
+          // Get student name
+          const student = await db
+            .select()
+            .from(users)
+            .where(eq(users.id, appointment[0].studentId))
+            .limit(1);
+            
+          const studentName = student.length
+            ? student[0].username
+            : `طالب ${appointment[0].studentId}`;
+            
+          // Format time in GMT+3
+          const appointmentTime = format(
+            new Date(appointment[0].startTime),
+            "h:mm a",
+            { timeZone: "Africa/Cairo" }
+          );
+          
+          notificationSent = await notifyTeacherAboutDeletedAppointment(
+            appointment[0].teacherId,
+            studentName,
+            appointmentTime
+          );
+          
+          console.log(`Teacher notification status: ${notificationSent ? 'Sent' : 'Failed'}`);
+        } catch (error) {
+          console.error("Failed to send teacher notification:", error);
+        }
+      }
+
+      // Delete the appointment
+      await storage.deleteAppointment(appointmentId);
+      
+      // Notify all connected clients about the deletion
+      const message = JSON.stringify({
+        type: "appointmentUpdate",
+        data: {
+          action: "delete",
+          appointmentId,
+          timestamp: new Date().toISOString(),
+        },
+        timestamp: new Date().toISOString(),
+      });
+      
+      clients.forEach((client) => {
+        if (client.readyState === WebSocket.OPEN) {
+          client.send(message);
+        }
+      });
+      
+      return res.json({ 
+        success: true, 
+        deleted: true, 
+        notificationSent 
+      });
+    } catch (error) {
+      console.error("Error deleting appointment:", error);
+      return res
+        .status(500)
+        .json({ error: "Failed to delete appointment" });
+    }
+  });
 
   // Get teacher's appointments
   app.get("/api/teachers/:id/appointments", async (req, res) => {

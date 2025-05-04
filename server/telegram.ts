@@ -480,6 +480,45 @@ export async function notifyTeacherAboutAppointment(
   }
 }
 
+export async function notifyTeacherAboutDeletedAppointment(
+  teacherId: number,
+  studentName: string,
+  appointmentTime: string,
+): Promise<boolean> {
+  try {
+    // Get teacher details
+    const teacher = await db
+      .select()
+      .from(users)
+      .where(eq(users.id, teacherId))
+      .limit(1);
+    if (!teacher.length) {
+      console.error(`Teacher ${teacherId} not found`);
+      return false;
+    }
+
+    const telegramContact = teacher[0].telegramUsername;
+    if (!telegramContact) {
+      console.error(`Teacher ${teacherId} has no Telegram username`);
+      return false;
+    }
+
+    // Prepare message text
+    const message = `تم حذف الموعد مع ${studentName} الساعة ${appointmentTime}.`;
+
+    // Send notification
+    console.log(
+      `Attempting to send appointment deletion notification to ${telegramContact}: ${message}`,
+    );
+    const result = await sendTelegramNotification(telegramContact, message);
+    console.log(`Appointment deletion notification result:`, result);
+    return typeof result === "boolean" ? result : false;
+  } catch (error) {
+    console.error("Error notifying teacher about deleted appointment:", error);
+    return false;
+  }
+}
+
 export async function notifyManagerAboutAppointment(
   appointmentId: number,
 ): Promise<boolean> {
