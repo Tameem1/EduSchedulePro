@@ -691,10 +691,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
     try {
       const appointmentId = parseInt(req.params.id);
-      const { teacherId, status, teacherAssignment } = req.body;
+      const { teacherId, status, teacherAssignment, startTime } = req.body;
 
       // Create update object with only defined values
       const updateData: any = {};
+      
+      // Handle startTime if provided
+      if (startTime) {
+        console.log("Updating appointment startTime to:", startTime);
+        updateData.startTime = startTime;
+      }
 
       // Validate status if provided
       if (status) {
