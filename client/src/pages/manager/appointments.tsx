@@ -14,6 +14,8 @@ import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2, Search } from "lucide-react";
 import { apiRequest, queryClient } from "@/lib/queryClient";
+import { Switch } from "@/components/ui/switch";
+import { Textarea } from "@/components/ui/textarea";
 import type {
   User,
   Availability,
@@ -932,6 +934,19 @@ export default function ManagerAppointments() {
                       تغيير الوقت
                     </Button>
                     
+                    {/* Add Status Change Button */}
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="ml-2 bg-blue-100 hover:bg-blue-200 text-blue-700"
+                      onClick={() => {
+                        setSelectedAppointment(appointment);
+                        setIsStatusUpdateDialogOpen(true);
+                      }}
+                    >
+                      تغيير الحالة
+                    </Button>
+                    
                     {/* Add Delete Appointment Button */}
                     <Button
                       variant="outline"
@@ -1539,6 +1554,167 @@ export default function ManagerAppointments() {
                     : "تغيير الوقت"}
                 </Button>
               </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Status Update Dialog */}
+      <Dialog open={isStatusUpdateDialogOpen} onOpenChange={setIsStatusUpdateDialogOpen}>
+        <DialogContent className="max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>تغيير حالة الموعد</DialogTitle>
+          </DialogHeader>
+          <div className="py-4">
+            {selectedAppointment && (
+              <div className="space-y-4">
+                <div className="text-sm">
+                  <p>
+                    الوقت: {format(new Date(selectedAppointment.startTime), "yyyy/MM/dd HH:mm")}
+                  </p>
+                  <p>
+                    الطالب: {getUserName(selectedAppointment.studentId, "student")}
+                  </p>
+                  <p>
+                    المعلم: {getUserName(selectedAppointment.teacherId, "teacher")}
+                  </p>
+                  <p>
+                    الحالة الحالية: 
+                    <Badge className={`mr-2 ${getStatusColor(selectedAppointment.status)} text-white`}>
+                      {AppointmentStatusArabic[selectedAppointment.status]}
+                    </Badge>
+                  </p>
+                </div>
+
+                <div>
+                  <Label>اختر الحالة الجديدة</Label>
+                  <Select
+                    value={statusToUpdate}
+                    onValueChange={(value: AppointmentStatusType) => {
+                      setStatusToUpdate(value);
+                      // If the selected status is "done" (مكتمل), open the questionnaire dialog
+                      if (value === AppointmentStatus.DONE) {
+                        setIsStatusUpdateDialogOpen(false);
+                        setIsQuestionnaireDialogOpen(true);
+                      }
+                    }}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="اختر الحالة الجديدة" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {Object.entries(AppointmentStatus).map(([key, value]) => (
+                        <SelectItem key={value} value={value}>
+                          {AppointmentStatusArabic[value]}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <Button
+                  className="w-full"
+                  onClick={() => {
+                    if (statusToUpdate && statusToUpdate !== AppointmentStatus.DONE) {
+                      updateStatusMutation.mutate({
+                        appointmentId: selectedAppointment.id,
+                        status: statusToUpdate,
+                      });
+                    }
+                  }}
+                  disabled={!statusToUpdate || statusToUpdate === AppointmentStatus.DONE || updateStatusMutation.isPending}
+                >
+                  {updateStatusMutation.isPending
+                    ? "جاري التحديث..."
+                    : "تحديث الحالة"}
+                </Button>
+                <p className="text-xs text-muted-foreground text-center">
+                  ملاحظة: عند اختيار حالة "مكتمل" سيتم نقلك إلى نموذج تقييم المعلم
+                </p>
+              </div>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Questionnaire Dialog */}
+      <Dialog open={isQuestionnaireDialogOpen} onOpenChange={setIsQuestionnaireDialogOpen}>
+        <DialogContent className="max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>استبيان المعلم</DialogTitle>
+          </DialogHeader>
+          {selectedAppointment && (
+            <div className="space-y-4 py-4">
+              <div className="text-sm mb-4">
+                <p>
+                  الطالب: {getUserName(selectedAppointment.studentId, "student")}
+                </p>
+                <p>
+                  الوقت: {format(new Date(selectedAppointment.startTime), "yyyy/MM/dd HH:mm")}
+                </p>
+              </div>
+
+              <form className="space-y-4" onSubmit={(e) => {
+                e.preventDefault();
+                submitQuestionnaireMutation.mutate({
+                  appointmentId: selectedAppointment.id,
+                  ...questionnaireData,
+                });
+              }}>
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-4">
+                  <Label className="mb-1 sm:mb-0">هل تمت متابعة الطالب؟</Label>
+                  <Switch
+                    checked={questionnaireData.question1}
+                    onCheckedChange={(checked) =>
+                      setQuestionnaireData((prev) => ({ ...prev, question1: checked }))
+                    }
+                  />
+                </div>
+
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-4">
+                  <Label className="mb-1 sm:mb-0">هل استجاب الطالب للمتابعة؟</Label>
+                  <Switch
+                    checked={questionnaireData.question2}
+                    onCheckedChange={(checked) =>
+                      setQuestionnaireData((prev) => ({ ...prev, question2: checked }))
+                    }
+                  />
+                </div>
+
+                <div>
+                  <Label>ماذا سمع؟</Label>
+                  <Textarea
+                    placeholder="مثال: سورة الإسراء..."
+                    value={questionnaireData.question3}
+                    onChange={(e) =>
+                      setQuestionnaireData((prev) => ({ ...prev, question3: e.target.value }))
+                    }
+                    required
+                  />
+                </div>
+
+                <div>
+                  <Label>ملاحظات الجلسة</Label>
+                  <Textarea
+                    placeholder="أي ملاحظات إضافية عن الجلسة"
+                    value={questionnaireData.question4}
+                    onChange={(e) =>
+                      setQuestionnaireData((prev) => ({ ...prev, question4: e.target.value }))
+                    }
+                    required
+                  />
+                </div>
+
+                <Button
+                  type="submit"
+                  className="w-full"
+                  disabled={submitQuestionnaireMutation.isPending}
+                >
+                  {submitQuestionnaireMutation.isPending
+                    ? "جاري الإرسال..."
+                    : "إرسال وإكمال الموعد"}
+                </Button>
+              </form>
             </div>
           )}
         </DialogContent>
