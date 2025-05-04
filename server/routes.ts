@@ -814,10 +814,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Delete appointment endpoint
   app.delete("/api/appointments/:id", async (req, res) => {
     try {
-      if (
-        !req.isAuthenticated() ||
-        req.user.role !== "manager"
-      ) {
+      if (!req.isAuthenticated() || req.user.role !== "manager") {
         return res.sendStatus(403);
       }
 
@@ -826,50 +823,39 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ error: "Invalid appointment ID" });
       }
       
-      // Import the appointments schema from shared directory
-      const { appointments } = await import('@shared/schema');
+      // Get the appointment details from storage before deletion
+      const appointment = await storage.getAppointmentById(appointmentId);
       
-      // Get the appointment details before deletion
-      const appointmentResult = await db
-        .select()
-        .from(appointments)
-        .where(eq(appointments.id, appointmentId))
-        .limit(1);
-        
-      if (!appointmentResult.length) {
+      if (!appointment) {
         return res.status(404).json({ error: "Appointment not found" });
       }
       
-      const appointment = appointmentResult[0];
-      
       // If there's a teacher assigned, notify them about the deletion
       let notificationSent = false;
-      if (appointmentResult[0].teacherId) {
+      if (appointment.teacherId) {
         try {
           // Get student name
           const student = await db
             .select()
             .from(users)
-            .where(eq(users.id, appointmentResult[0].studentId))
+            .where(eq(users.id, appointment.studentId))
             .limit(1);
             
           const studentName = student.length
             ? student[0].username
-            : `طالب ${appointmentResult[0].studentId}`;
+            : `طالب ${appointment.studentId}`;
             
-          // Format time in GMT+3
+          // Format time
           const appointmentTime = format(
-            new Date(appointmentResult[0].startTime),
+            new Date(appointment.startTime),
             "h:mm a"
           );
           
-          if (appointmentResult[0].teacherId) {
-            notificationSent = await notifyTeacherAboutDeletedAppointment(
-              appointmentResult[0].teacherId,
-              studentName,
-              appointmentTime
-            );
-          }
+          notificationSent = await notifyTeacherAboutDeletedAppointment(
+            appointment.teacherId,
+            studentName,
+            appointmentTime
+          );
           
           console.log(`Teacher notification status: ${notificationSent ? 'Sent' : 'Failed'}`);
         } catch (error) {
