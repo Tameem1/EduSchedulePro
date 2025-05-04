@@ -826,6 +826,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ error: "Invalid appointment ID" });
       }
       
+      // Import the appointments schema from shared directory
+      const { appointments } = await import('@shared/schema');
+      
       // Get the appointment details before deletion
       const appointmentResult = await db
         .select()
@@ -841,30 +844,32 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       // If there's a teacher assigned, notify them about the deletion
       let notificationSent = false;
-      if (appointment.teacherId) {
+      if (appointmentResult[0].teacherId) {
         try {
           // Get student name
           const student = await db
             .select()
             .from(users)
-            .where(eq(users.id, appointment.studentId))
+            .where(eq(users.id, appointmentResult[0].studentId))
             .limit(1);
             
           const studentName = student.length
             ? student[0].username
-            : `طالب ${appointment.studentId}`;
+            : `طالب ${appointmentResult[0].studentId}`;
             
           // Format time in GMT+3
           const appointmentTime = format(
-            new Date(appointment.startTime),
+            new Date(appointmentResult[0].startTime),
             "h:mm a"
           );
           
-          notificationSent = await notifyTeacherAboutDeletedAppointment(
-            appointment.teacherId,
-            studentName,
-            appointmentTime
-          );
+          if (appointmentResult[0].teacherId) {
+            notificationSent = await notifyTeacherAboutDeletedAppointment(
+              appointmentResult[0].teacherId,
+              studentName,
+              appointmentTime
+            );
+          }
           
           console.log(`Teacher notification status: ${notificationSent ? 'Sent' : 'Failed'}`);
         } catch (error) {
