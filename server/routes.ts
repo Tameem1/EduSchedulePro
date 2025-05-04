@@ -550,7 +550,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Questionnaire routes
   app.post("/api/questionnaire-responses", async (req, res) => {
-    if (!req.isAuthenticated() || req.user.role !== "teacher") {
+    if (!req.isAuthenticated() || (req.user.role !== "teacher" && req.user.role !== "manager")) {
       return res.sendStatus(403);
     }
 
