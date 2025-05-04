@@ -50,6 +50,8 @@ export default function ManagerAppointments() {
   const [isChangeTimeDialogOpen, setIsChangeTimeDialogOpen] = React.useState(false);
   const [isAddAppointmentDialogOpen, setIsAddAppointmentDialogOpen] =
     React.useState(false);
+  const [isStatusUpdateDialogOpen, setIsStatusUpdateDialogOpen] = React.useState(false);
+  const [isQuestionnaireDialogOpen, setIsQuestionnaireDialogOpen] = React.useState(false);
   const [teacherSearchQuery, setTeacherSearchQuery] =
     React.useState<string>("");
   const [newAppointmentData, setNewAppointmentData] = React.useState({
@@ -61,6 +63,13 @@ export default function ManagerAppointments() {
   const [changeTimeData, setChangeTimeData] = React.useState({
     startTime: "",
   });
+  const [questionnaireData, setQuestionnaireData] = React.useState({
+    question1: false, // هل تمت متابعة الطالب
+    question2: false, // هل استجاب الطالب للمتابعة
+    question3: "", // ماذا سمع
+    question4: "", // ملاحظات الجلسة
+  });
+  const [statusToUpdate, setStatusToUpdate] = React.useState<AppointmentStatusType | "">("");
   const [filteredStudentsForAppointment, setFilteredStudentsForAppointment] =
     React.useState<User[]>([]);
   const { user } = useAuth();
@@ -500,6 +509,102 @@ export default function ManagerAppointments() {
     onError: (error) => {
       toast({
         title: "خطأ في تحديث المهمة",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
+  
+  // Update appointment status mutation
+  const updateStatusMutation = useMutation({
+    mutationFn: async ({
+      appointmentId,
+      status,
+    }: {
+      appointmentId: number;
+      status: AppointmentStatusType;
+    }) => {
+      const res = await apiRequest(
+        "PATCH",
+        `/api/appointments/${appointmentId}`,
+        {
+          status,
+        },
+      );
+      if (!res.ok) {
+        throw new Error("فشل في تحديث حالة الموعد");
+      }
+      return res.json();
+    },
+    onSuccess: (_, variables) => {
+      toast({
+        title: "تم تحديث الحالة",
+        description: `تم تحديث حالة الموعد إلى ${AppointmentStatusArabic[variables.status]}`,
+      });
+      setIsStatusUpdateDialogOpen(false);
+      setSelectedAppointment(null);
+      setStatusToUpdate("");
+      queryClient.invalidateQueries({ queryKey: ["/api/appointments"] });
+    },
+    onError: (error) => {
+      toast({
+        title: "خطأ في تحديث الحالة",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
+  
+  // Submit questionnaire mutation
+  const submitQuestionnaireMutation = useMutation({
+    mutationFn: async (data: {
+      appointmentId: number;
+      question1: boolean;
+      question2: boolean;
+      question3: string;
+      question4: string;
+    }) => {
+      // Create questionnaire response
+      const res = await apiRequest("POST", "/api/questionnaire-responses", {
+        appointmentId: data.appointmentId,
+        question1: data.question1 ? "نعم" : "لا",
+        question2: data.question2 ? "نعم" : "لا",
+        question3: data.question3,
+        question4: data.question4,
+      });
+
+      if (!res.ok) {
+        const errJson = await res.json();
+        throw new Error(errJson.error || "Failed to submit questionnaire");
+      }
+
+      // Update the appointment status to DONE
+      await apiRequest(
+        "PATCH",
+        `/api/appointments/${data.appointmentId}`,
+        { status: AppointmentStatus.DONE }
+      );
+
+      return res.json();
+    },
+    onSuccess: () => {
+      toast({
+        title: "تم إرسال التقييم",
+        description: "تم حفظ إجابات الاستبيان بنجاح",
+      });
+      setIsQuestionnaireDialogOpen(false);
+      setSelectedAppointment(null);
+      setQuestionnaireData({
+        question1: false,
+        question2: false,
+        question3: "",
+        question4: "",
+      });
+      queryClient.invalidateQueries({ queryKey: ["/api/appointments"] });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "خطأ في إرسال التقييم",
         description: error.message,
         variant: "destructive",
       });
