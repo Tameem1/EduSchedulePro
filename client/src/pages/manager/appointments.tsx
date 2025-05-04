@@ -1373,9 +1373,14 @@ export default function ManagerAppointments() {
                 <Button
                   onClick={() => {
                     if (selectedAppointment && changeTimeData.startTime) {
+                      // Convert local time string to Date object and get ISO string
+                      const localDate = new Date(changeTimeData.startTime);
+                      console.log("Local date selected:", localDate);
+                      
+                      // Use the created Date to get UTC ISO string
                       updateAppointmentTimeMutation.mutate({
                         appointmentId: selectedAppointment.id,
-                        startTime: changeTimeData.startTime
+                        startTime: localDate.toISOString()
                       });
                     }
                   }}

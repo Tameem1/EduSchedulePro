@@ -305,6 +305,26 @@ export const storage = {
 
           return updatedAppointment[0];
         }
+        
+        // Handle startTime update
+        if (data.startTime) {
+          console.log("Updating appointment startTime to:", data.startTime);
+          const updatedAppointment = await db
+            .update(appointments)
+            .set({
+              startTime: data.startTime,
+            })
+            .where(eq(appointments.id, appointmentId))
+            .returning();
+            
+          console.log("Appointment time updated:", updatedAppointment[0]);
+          return updatedAppointment[0];
+        }
+
+        // Check if there are any fields to update
+        if (Object.keys(data).length === 0) {
+          throw new Error("No update data provided");
+        }
 
         // Default update for any other changes
         const updatedAppointment = await db
