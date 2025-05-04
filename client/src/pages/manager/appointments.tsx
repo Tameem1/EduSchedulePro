@@ -894,10 +894,8 @@ export default function ManagerAppointments() {
                       </Button>
                     )}
 
-                    {/* Show change teacher button for already assigned appointments */}
-                    {appointment.teacherId &&
-                      (appointment.status === AppointmentStatus.REQUESTED ||
-                        appointment.status === AppointmentStatus.ASSIGNED) && (
+                    {/* Show change teacher button for appointments with assigned teachers */}
+                    {appointment.teacherId && (
                         <Button
                           variant="outline"
                           size="sm"
@@ -1120,10 +1118,7 @@ export default function ManagerAppointments() {
         <DialogContent className="max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>
-              {selectedAppointment &&
-              selectedAppointment.teacherId &&
-              (selectedAppointment.status === AppointmentStatus.REQUESTED ||
-                selectedAppointment.status === AppointmentStatus.ASSIGNED)
+              {selectedAppointment && selectedAppointment.teacherId
                 ? "تغيير المعلم المعين للموعد"
                 : "تعيين معلم للموعد"}
             </DialogTitle>
@@ -1140,11 +1135,7 @@ export default function ManagerAppointments() {
                     الطالب:{" "}
                     {getUserName(selectedAppointment.studentId, "student")}
                   </p>
-                  {selectedAppointment.teacherId &&
-                    (selectedAppointment.status ===
-                      AppointmentStatus.REQUESTED ||
-                      selectedAppointment.status ===
-                        AppointmentStatus.ASSIGNED) && (
+                  {selectedAppointment.teacherId && (
                       <p>
                         المعلم الحالي:{" "}
                         <span className="font-medium text-primary">
