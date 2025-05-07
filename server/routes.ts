@@ -23,6 +23,7 @@ import {
   notifyTeacherAboutTimeChange,
   notifyManagerAboutRejectedAppointment,
   notifyManagerAboutAcceptedAppointment,
+  notifyManagerAboutCompletedAppointment,
 } from "./telegram";
 import { startOfDay, endOfDay, format } from "date-fns"; // Added format import
 import { addHours } from "date-fns";
@@ -710,6 +711,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Flags to track appointment status changes (will be updated in the status check below)
       let isRejection = false;
       let isAcceptance = false;
+      let isCompletion = false;
       
       // Create update object with only defined values
       const updateData: any = {};
@@ -754,6 +756,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
           
           // Store the acceptance flag to send notification later after the update is completed
           isAcceptance = true;
+        }
+        // Special case for completed appointment (DONE status)
+        else if (status === AppointmentStatus.DONE || status === "done") {
+          // Use literal string exactly as in database enum
+          updateData.status = "done";
+          console.log(
+            "Appointment completion detected, using direct enum value:",
+            updateData.status,
+          );
+          
+          // Store the completion flag to send notification later after the update is completed
+          isCompletion = true;
         } else {
           // For other statuses, find the matching enum value
           const matchedStatus = Object.entries(AppointmentStatus).find(
@@ -905,6 +919,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
           }
         } catch (error) {
           console.error("Failed to send acceptance notification to managers:", error);
+        }
+      }
+      
+      // Check if this is a completion and notify managers
+      if (isCompletion && currentAppointment.teacherId) {
+        try {
+          console.log(`Notifying managers about appointment ${appointmentId} completed by teacher ${currentAppointment.teacherId}`);
+          const completionNotificationSent = await notifyManagerAboutCompletedAppointment(
+            appointmentId,
+            currentAppointment.teacherId
+          );
+          
+          if (completionNotificationSent) {
+            notificationSent = true;
+            console.log("Manager completion notification sent successfully");
+          }
+        } catch (error) {
+          console.error("Failed to send completion notification to managers:", error);
         }
       }
 
