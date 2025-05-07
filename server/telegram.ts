@@ -763,6 +763,98 @@ export async function notifyManagerAboutRejectedAppointment(
   }
 }
 
+export async function notifyManagerAboutAcceptedAppointment(
+  appointmentId: number,
+  teacherId: number,
+): Promise<boolean> {
+  try {
+    // Get appointment details
+    const appointment = await db
+      .select()
+      .from(appointments)
+      .where(eq(appointments.id, appointmentId))
+      .limit(1);
+    if (!appointment.length) {
+      console.error(`Appointment ${appointmentId} not found`);
+      return false;
+    }
+
+    // Get student details
+    const student = await db
+      .select()
+      .from(users)
+      .where(eq(users.id, appointment[0].studentId))
+      .limit(1);
+    const studentName = student.length
+      ? student[0].username
+      : `طالب ${appointment[0].studentId}`;
+
+    // Get teacher details
+    const teacher = await db
+      .select()
+      .from(users)
+      .where(eq(users.id, teacherId))
+      .limit(1);
+    const teacherName = teacher.length
+      ? teacher[0].username
+      : `معلم ${teacherId}`;
+
+    // Get all managers with telegram username
+    const managers = await db
+      .select()
+      .from(users)
+      .where(eq(users.role, "manager"))
+      .execute();
+
+    if (!managers.length) {
+      console.error("No managers found in the system");
+      return false;
+    }
+
+    // Format time in GMT+3
+    const appointmentTime = formatGMT3Time(
+      new Date(appointment[0].startTime),
+      "HH:mm",
+      { timeZone: "Africa/Cairo" },
+    );
+
+    // Create manager dashboard URL
+    const callbackUrl = `https://online.evally.net/manager/appointments`;
+
+    // Get student section if available
+    const studentSection = student.length && student[0].section
+      ? student[0].section
+      : 'غير محدد';
+
+    // Prepare message text with attention-grabbing emojis - using green check marks for acceptance
+    const message = `✅ تم قبول موعد! ✅\n\n👨‍🎓 الطالب: ${studentName}\n📚 المجموعة: ${studentSection}\n👨‍🏫 المعلم: ${teacherName}\n🕒 الوقت: ${appointmentTime}\n📝 المهمة: ${appointment[0].teacherAssignment || "لم يتم تحديد"}\n\n🟢 تم جدولة الموعد بنجاح! 🟢`;
+
+    // Send notifications to all managers with telegram username
+    let anyNotificationSent = false;
+    for (const manager of managers) {
+      if (manager.telegramUsername) {
+        const sent = (await sendTelegramNotification(
+          manager.telegramUsername,
+          message,
+          callbackUrl,
+        )) as boolean;
+        if (sent) {
+          anyNotificationSent = true;
+          console.log(`Acceptance notification sent to manager ${manager.username}`);
+        }
+      }
+    }
+
+    return anyNotificationSent;
+  } catch (error: unknown) {
+    console.error(
+      "Failed to notify managers about accepted appointment:",
+      error instanceof Error ? error.message : String(error),
+    );
+    return false;
+  }
+}
+
 export async function notifyManagerAboutAppointment(
   appointmentId: number,
 ): Promise<boolean> {
