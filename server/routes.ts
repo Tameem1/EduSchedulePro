@@ -22,6 +22,7 @@ import {
   notifyTeacherAboutReassignedAppointment,
   notifyTeacherAboutTimeChange,
   notifyManagerAboutRejectedAppointment,
+  notifyManagerAboutAcceptedAppointment,
 } from "./telegram";
 import { startOfDay, endOfDay, format } from "date-fns"; // Added format import
 import { addHours } from "date-fns";
@@ -706,8 +707,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Store the previous teacherId to send notification if it's being changed
       const previousTeacherId = currentAppointment.teacherId;
       
-      // Flag to track if this is a rejection (will be updated in the status check below)
+      // Flags to track appointment status changes (will be updated in the status check below)
       let isRejection = false;
+      let isAcceptance = false;
       
       // Create update object with only defined values
       const updateData: any = {};
@@ -740,6 +742,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
           
           // Store the rejection flag to send notification later after the update is completed
           isRejection = true;
+        } 
+        // Special case for accepting appointment (ASSIGNED status)
+        else if (status === AppointmentStatus.ASSIGNED || status === "assigned") {
+          // Use literal string exactly as in database enum
+          updateData.status = "assigned";
+          console.log(
+            "Appointment acceptance detected, using direct enum value:",
+            updateData.status,
+          );
+          
+          // Store the acceptance flag to send notification later after the update is completed
+          isAcceptance = true;
         } else {
           // For other statuses, find the matching enum value
           const matchedStatus = Object.entries(AppointmentStatus).find(
@@ -873,6 +887,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
           }
         } catch (error) {
           console.error("Failed to send rejection notification to managers:", error);
+        }
+      }
+      
+      // Check if this is an acceptance and notify managers
+      if (isAcceptance && currentAppointment.teacherId) {
+        try {
+          console.log(`Notifying managers about appointment ${appointmentId} accepted by teacher ${currentAppointment.teacherId}`);
+          const acceptanceNotificationSent = await notifyManagerAboutAcceptedAppointment(
+            appointmentId,
+            currentAppointment.teacherId
+          );
+          
+          if (acceptanceNotificationSent) {
+            notificationSent = true;
+            console.log("Manager acceptance notification sent successfully");
+          }
+        } catch (error) {
+          console.error("Failed to send acceptance notification to managers:", error);
         }
       }
 
