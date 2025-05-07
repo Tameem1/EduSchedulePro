@@ -2,7 +2,7 @@ import { Switch, Route, Redirect } from "wouter";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
-import { AuthProvider } from "@/hooks/use-auth";
+import { AuthProvider, useAuth } from "@/hooks/use-auth";
 import NotFound from "@/pages/not-found";
 import AuthPage from "@/pages/auth";
 import BookAppointment from "@/pages/student/book-appointment";
@@ -93,15 +93,13 @@ function Router() {
           component={ManagerTeachersAvailability}
         />
         
-        {/* Redirect root to appropriate dashboard */}
+        {/* Teacher root redirect */}
         <ProtectedRoute
           path="/"
           role="teacher"
           component={() => {
             console.log("Teacher root redirect - redirecting to /teacher/appointments");
-            window.location.href = "/teacher/appointments";
-            // Return an empty div to satisfy the return type requirement
-            return <div style={{ display: 'none' }}></div>;
+            return <Redirect to="/teacher/appointments" />;
           }}
         />
         
@@ -111,9 +109,7 @@ function Router() {
           role="teacher"
           component={() => {
             console.log("Teacher base path redirect - redirecting to /teacher/appointments");
-            window.location.href = "/teacher/appointments";
-            // Return an empty div to satisfy the return type requirement
-            return <div style={{ display: 'none' }}></div>;
+            return <Redirect to="/teacher/appointments" />;
           }}
         />
 

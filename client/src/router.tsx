@@ -105,6 +105,20 @@ export default function Router() {
             return <Redirect to="/auth" />;
           }}
         </Route>
+        
+        {/* Add explicit redirect from /teacher to appointments */}
+        <Route path="/teacher">
+          {() => {
+            const { user } = useAuth();
+            
+            if (user && user.role === UserRole.TEACHER) {
+              return <Redirect to="/teacher/appointments" />;
+            }
+            
+            // If not a teacher, redirect to auth
+            return <Redirect to="/auth" />;
+          }}
+        </Route>
 
         <Route component={NotFound} />
       </Switch>
