@@ -11,7 +11,7 @@ export function ProtectedRoute({
 }: {
   path: string;
   role: UserRoleType;
-  component: () => React.JSX.Element;
+  component: () => React.JSX.Element | null;
 }) {
   console.log(`ProtectedRoute initialized for path: ${path}, role: ${role}`);
   const { user, isLoading } = useAuth();

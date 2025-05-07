@@ -1,8 +1,10 @@
-import { Switch, Route, Redirect } from "wouter";
+import * as React from "react";
+import { Switch, Route, Redirect, useLocation } from "wouter";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { AuthProvider, useAuth } from "@/hooks/use-auth";
+import { UserRole } from "@shared/schema";
 import NotFound from "@/pages/not-found";
 import AuthPage from "@/pages/auth";
 import BookAppointment from "@/pages/student/book-appointment";
@@ -93,25 +95,38 @@ function Router() {
           component={ManagerTeachersAvailability}
         />
         
-        {/* Teacher root redirect */}
-        <ProtectedRoute
-          path="/"
-          role="teacher"
-          component={() => {
-            console.log("Teacher root redirect - redirecting to /teacher/appointments");
-            return <Redirect to="/teacher/appointments" />;
+        {/* Root path handling based on user role */}
+        <Route path="/">
+          {() => {
+            const { user } = useAuth();
+            console.log("Root path handler, user:", user?.username, "role:", user?.role);
+            
+            if (user) {
+              if (user.role === UserRole.TEACHER) {
+                // Critical redirection for teachers to appointments page
+                console.log("Teacher detected, redirecting to /teacher/appointments");
+                window.location.href = "/teacher/appointments";
+                return <div style={{ display: 'none' }}>Redirecting...</div>;
+              } else if (user.role === UserRole.STUDENT) {
+                return <Redirect to="/student/appointments" />;
+              } else if (user.role === UserRole.MANAGER) {
+                return <Redirect to="/manager/appointments" />;
+              }
+            }
+            
+            console.log("No user or unrecognized role, redirecting to /auth");
+            return <Redirect to="/auth" />;
           }}
-        />
+        </Route>
         
-        {/* Add explicit redirect from /teacher to appointments */}
-        <ProtectedRoute
-          path="/teacher"
-          role="teacher"
-          component={() => {
-            console.log("Teacher base path redirect - redirecting to /teacher/appointments");
-            return <Redirect to="/teacher/appointments" />;
+        {/* Explicit redirect from /teacher to appointments */}
+        <Route path="/teacher">
+          {() => {
+            console.log("Teacher path handler - redirecting to /teacher/appointments");
+            window.location.href = "/teacher/appointments";
+            return <div style={{ display: 'none' }}>Redirecting...</div>;
           }}
-        />
+        </Route>
 
         <Route component={NotFound} />
       </Switch>

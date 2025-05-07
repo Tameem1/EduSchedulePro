@@ -136,14 +136,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           
           // Auto redirect to appropriate dashboard based on role
           const currentPath = window.location.pathname;
-          if (currentPath === '/' || currentPath === '/auth') {
+          if (currentPath === '/' || currentPath === '/auth' || currentPath === '/teacher') {
             console.log("[Auth Debug] Auto-redirecting to dashboard based on stored user role");
             switch (parsedUser.role) {
               case "teacher":
+                console.log("[Auth Debug] Teacher role detected, redirecting to /teacher/appointments");
                 setLocation("/teacher/appointments");
                 break;
               case "student":
-                setLocation("/student/book-appointment");
+                setLocation("/student/appointments");
                 break;
               case "manager":
                 setLocation("/manager/appointments");
