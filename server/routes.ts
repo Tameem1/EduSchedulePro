@@ -591,6 +591,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
         timestamp: new Date().toISOString()
       });
 
+      // Send notification to manager if appointment was completed (not marked as not_attended)
+      if (status === AppointmentStatus.DONE && appointment.teacherId) {
+        try {
+          console.log(`Sending completion notification for appointment ${parsedData.appointmentId} after questionnaire submission`);
+          const notificationSent = await notifyManagerAboutCompletedAppointment(
+            parsedData.appointmentId,
+            appointment.teacherId
+          );
+          
+          if (notificationSent) {
+            console.log(`Successfully sent completion notification to managers`);
+          } else {
+            console.log(`Failed to send completion notification to managers`);
+          }
+        } catch (error) {
+          console.error("Error sending completion notification:", error);
+        }
+      }
+
       res.json(response);
     } catch (error) {
       console.error("Error creating questionnaire response:", error);
