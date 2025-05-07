@@ -21,6 +21,7 @@ import {
   notifyTeacherAboutDeletedAppointment,
   notifyTeacherAboutReassignedAppointment,
   notifyTeacherAboutTimeChange,
+  notifyManagerAboutRejectedAppointment,
 } from "./telegram";
 import { startOfDay, endOfDay, format } from "date-fns"; // Added format import
 import { addHours } from "date-fns";
@@ -705,6 +706,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Store the previous teacherId to send notification if it's being changed
       const previousTeacherId = currentAppointment.teacherId;
       
+      // Flag to track if this is a rejection (will be updated in the status check below)
+      let isRejection = false;
+      
       // Create update object with only defined values
       const updateData: any = {};
       
@@ -733,6 +737,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
             "Rejection status detected, using direct enum value:",
             updateData.status,
           );
+          
+          // Store the rejection flag to send notification later after the update is completed
+          isRejection = true;
         } else {
           // For other statuses, find the matching enum value
           const matchedStatus = Object.entries(AppointmentStatus).find(
@@ -848,6 +855,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
           }
         } catch (error) {
           console.error("Failed to send new teacher notification:", error);
+        }
+      }
+      
+      // Check if this is a rejection and notify managers
+      if (isRejection && currentAppointment.teacherId) {
+        try {
+          console.log(`Notifying managers about appointment ${appointmentId} rejected by teacher ${currentAppointment.teacherId}`);
+          const rejectionNotificationSent = await notifyManagerAboutRejectedAppointment(
+            appointmentId,
+            currentAppointment.teacherId
+          );
+          
+          if (rejectionNotificationSent) {
+            notificationSent = true;
+            console.log("Manager rejection notification sent successfully");
+          }
+        } catch (error) {
+          console.error("Failed to send rejection notification to managers:", error);
         }
       }
 
