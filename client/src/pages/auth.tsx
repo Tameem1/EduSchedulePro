@@ -21,7 +21,7 @@ export default function AuthPage() {
     if (user.role === "manager") {
       return <Redirect to="/manager/appointments" />;
     } else if (user.role === "teacher") {
-      return <Redirect to="/teacher/availability" />;
+      return <Redirect to="/teacher/appointments" />;
     } else {
       return <Redirect to="/student/book-appointment" />;
     }
