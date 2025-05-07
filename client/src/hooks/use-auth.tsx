@@ -136,12 +136,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           
           // Auto redirect to appropriate dashboard based on role
           const currentPath = window.location.pathname;
-          if (currentPath === '/' || currentPath === '/auth' || currentPath === '/teacher') {
+          console.log("[Auth Debug] Current path:", currentPath);
+          if (currentPath === '/' || currentPath === '/auth' || currentPath === '/teacher' || currentPath === '/teacher/availability') {
             console.log("[Auth Debug] Auto-redirecting to dashboard based on stored user role");
             switch (parsedUser.role) {
               case "teacher":
                 console.log("[Auth Debug] Teacher role detected, redirecting to /teacher/appointments");
-                setLocation("/teacher/appointments");
+                window.location.href = "/teacher/appointments";
                 break;
               case "student":
                 setLocation("/student/appointments");
@@ -185,7 +186,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       // Redirect based on user role
       switch (user.role) {
         case "teacher":
-          setLocation("/teacher/appointments");
+          console.log("[Auth Debug] Teacher login successful, redirecting to /teacher/appointments using window.location");
+          window.location.href = "/teacher/appointments";
           break;
         case "student":
           setLocation("/student/book-appointment");
@@ -228,7 +230,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       // Redirect based on user role after registration
       switch (user.role) {
         case "teacher":
-          setLocation("/teacher/appointments");
+          console.log("[Auth Debug] Teacher registration successful, redirecting to /teacher/appointments using window.location");
+          window.location.href = "/teacher/appointments";
           break;
         case "student":
           setLocation("/student/book-appointment");
