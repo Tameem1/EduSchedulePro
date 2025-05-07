@@ -918,8 +918,8 @@ export async function notifyManagerAboutCompletedAppointment(
       ? student[0].section
       : 'غير محدد';
 
-    // Prepare message text with attention-grabbing emojis - using blue stars for completion
-    const message = `🌟 تم الانتهاء من موعد! 🌟\n\n👨‍🎓 الطالب: ${studentName}\n📚 المجموعة: ${studentSection}\n👨‍🏫 المعلم: ${teacherName}\n🕒 الوقت: ${appointmentTime}\n📝 المهمة: ${appointment[0].teacherAssignment || "لم يتم تحديد"}\n\n🔷 تم إكمال الموعد بنجاح! 🔷`;
+    // Prepare message text with attention-grabbing emojis - using blue star emojis for completion
+    const message = `🌟 تم إكمال موعد! 🌟\n\n👨‍🎓 الطالب: ${studentName}\n📚 المجموعة: ${studentSection}\n👨‍🏫 المعلم: ${teacherName}\n🕒 الوقت: ${appointmentTime}\n📝 المهمة: ${appointment[0].teacherAssignment || "لم يتم تحديد"}\n\n🔷 تم إكمال الموعد بنجاح! 🔷`;
 
     // Send notifications to all managers with telegram username
     let anyNotificationSent = false;

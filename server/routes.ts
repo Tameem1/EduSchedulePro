@@ -757,8 +757,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
           // Store the acceptance flag to send notification later after the update is completed
           isAcceptance = true;
         }
-        // Special case for completed appointment (DONE status)
-        else if (status === AppointmentStatus.DONE || status === "done") {
+        // Special case for completed appointment (DONE status) - check both English and Arabic values
+        else if (status === AppointmentStatus.DONE || status === "done" || status === "مكتمل" || status === AppointmentStatusArabic.done) {
           // Use literal string exactly as in database enum
           updateData.status = "done";
           console.log(
