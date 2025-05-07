@@ -388,7 +388,7 @@ export async function notifyTeacherAboutAssignmentChange(
       : '';
 
     // Prepare message text
-    const message = `تم تغيير المهمة المطلوبة للموعد مع ${studentName}${studentSection} الساعة ${appointmentTime} إلى (${newAssignment}).`;
+    const message = ` المهمة المطلوبة للموعد مع ${studentName}${studentSection} الساعة ${appointmentTime} إلى (${newAssignment}).`;
 
     // Send notification
     console.log(
