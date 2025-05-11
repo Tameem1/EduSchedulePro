@@ -16,7 +16,7 @@ import { format, isWithinInterval, startOfDay, endOfDay } from "date-fns";
 import { arSA } from "date-fns/locale";
 import { apiRequest } from "@/lib/queryClient";
 import { Loader2 } from "lucide-react";
-import { DatePicker } from "@/components/ui/date-picker";
+import { DateRangePicker } from "@/components/ui/date-range-picker";
 import { useAuth } from "@/hooks/use-auth";
 import {
   Select,
@@ -357,14 +357,20 @@ export default function ManagerResults() {
               <CardTitle>إحصائيات الطلاب</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="flex flex-col sm:flex-row items-center justify-start sm:justify-end gap-4 mb-6">
-                <div className="w-full sm:w-auto">
-                  <div className="w-full">
+              <div className="mb-6 bg-muted/20 p-4 rounded-lg">
+                <h3 className="text-base font-medium mb-4">تصفية النتائج</h3>
+                
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium mb-1">اختر القسم</label>
                     <Select
                       value={selectedSection}
-                      onValueChange={(value) => setSelectedSection(value)}
+                      onValueChange={(value) => {
+                        setSelectedSection(value);
+                        handleFilter();
+                      }}
                     >
-                      <SelectTrigger className="w-full sm:w-[200px]">
+                      <SelectTrigger className="w-full">
                         <SelectValue placeholder="اختر القسم" />
                       </SelectTrigger>
                       <SelectContent>
@@ -377,29 +383,34 @@ export default function ManagerResults() {
                       </SelectContent>
                     </Select>
                   </div>
-                </div>
-                
-                <div className="w-full sm:w-auto">
-                  <DatePicker
-                    selected={dateRange}
-                    onSelect={(range) => {
-                      if (range) {
-                        setDateRange(range);
-                      }
-                    }}
-                    locale={arSA}
-                    className="w-full"
-                  />
-                </div>
-                
-                <div className="w-full sm:w-auto">
-                  <Button
-                    onClick={handleFilter}
-                    disabled={!dateRange.from || !dateRange.to}
-                    className="w-full"
-                  >
-                    تصفية
-                  </Button>
+                  
+                  <div className="lg:col-span-2">
+                    <label className="block text-sm font-medium mb-1">اختر نطاق التاريخ</label>
+                    <div className="flex flex-col sm:flex-row gap-2">
+                      <div className="flex-grow">
+                        <DateRangePicker
+                          startDate={dateRange.from}
+                          endDate={dateRange.to}
+                          onChange={(startDate, endDate) => {
+                            setDateRange({
+                              from: startDate,
+                              to: endDate
+                            });
+                          }}
+                          locale={arSA}
+                          className="w-full"
+                        />
+                      </div>
+                      
+                      <Button
+                        onClick={handleFilter}
+                        disabled={!dateRange.from || !dateRange.to}
+                        className="h-10 mt-2 sm:mt-0"
+                      >
+                        تطبيق التصفية
+                      </Button>
+                    </div>
+                  </div>
                 </div>
               </div>
 
