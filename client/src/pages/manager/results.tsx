@@ -16,7 +16,7 @@ import { format, isWithinInterval, startOfDay, endOfDay } from "date-fns";
 import { arSA } from "date-fns/locale";
 import { apiRequest } from "@/lib/queryClient";
 import { Loader2 } from "lucide-react";
-import { DateRangePicker } from "@/components/ui/date-range-picker";
+import { ImprovedDateRangePicker } from "@/components/ui/improved-date-range-picker";
 import { useAuth } from "@/hooks/use-auth";
 import {
   Select,
@@ -386,12 +386,12 @@ export default function ManagerResults() {
                   
                   <div className="lg:col-span-2">
                     <label className="block text-sm font-medium mb-1">اختر نطاق التاريخ</label>
-                    <div className="flex flex-col sm:flex-row gap-2">
+                    <div className="flex flex-col gap-2">
                       <div className="flex-grow">
-                        <DateRangePicker
+                        <ImprovedDateRangePicker
                           startDate={dateRange.from}
                           endDate={dateRange.to}
-                          onChange={(startDate, endDate) => {
+                          onChange={(startDate: Date, endDate: Date) => {
                             setDateRange({
                               from: startDate,
                               to: endDate
@@ -405,7 +405,7 @@ export default function ManagerResults() {
                       <Button
                         onClick={handleFilter}
                         disabled={!dateRange.from || !dateRange.to}
-                        className="h-10 mt-2 sm:mt-0"
+                        className="h-10 mt-2"
                       >
                         تطبيق التصفية
                       </Button>
