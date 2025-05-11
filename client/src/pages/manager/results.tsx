@@ -365,7 +365,7 @@ export default function ManagerResults() {
                   
                   <div className="lg:col-span-2">
                     <label className="block text-sm font-medium mb-1">اختر نطاق التاريخ</label>
-                    <div className="flex flex-col gap-2">
+                    <div className="flex flex-col sm:flex-row gap-2 items-end">
                       <div className="flex-grow">
                         <ImprovedDateRangePicker
                           startDate={dateRange.from}
@@ -384,7 +384,7 @@ export default function ManagerResults() {
                       <Button
                         onClick={handleFilter}
                         disabled={!dateRange.from || !dateRange.to}
-                        className="h-10 mt-2"
+                        className="h-10"
                       >
                         تطبيق التصفية
                       </Button>

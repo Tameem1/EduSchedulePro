@@ -170,115 +170,40 @@ export function ImprovedDateRangePicker({
   };
 
   return (
-    <div className={cn("space-y-4", className)}>
-      <div className="flex flex-col md:flex-row gap-2">
-        {/* Preset range dropdown */}
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button 
-              variant="outline" 
-              className="w-full md:w-auto justify-between"
-            >
-              <span>فترات زمنية مسبقة</span>
-              <ChevronDown className="h-4 w-4 mr-2" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="start" className="w-56">
-            {presetRanges.slice(0, 4).map((preset, index) => (
-              <DropdownMenuItem key={index} onClick={preset.onSelect}>
-                {preset.label}
-              </DropdownMenuItem>
-            ))}
-            <DropdownMenuSeparator />
-            {presetRanges.slice(4).map((preset, index) => (
-              <DropdownMenuItem key={index + 4} onClick={preset.onSelect}>
-                {preset.label}
-              </DropdownMenuItem>
-            ))}
-          </DropdownMenuContent>
-        </DropdownMenu>
-
-        {/* Calendar picker for both dates */}
-        <Popover>
-          <PopoverTrigger asChild>
-            <Button
-              variant="outline"
-              className="w-full md:w-auto justify-start"
-            >
-              <CalendarIcon className="ml-2 h-4 w-4" />
-              {dateRange.from ? (
-                dateRange.to ? (
-                  <>
-                    {formatDate(dateRange.from)} - {formatDate(dateRange.to)}
-                  </>
-                ) : (
-                  formatDate(dateRange.from)
-                )
+    <div className={cn("", className)}>
+      {/* Calendar picker for both dates */}
+      <Popover>
+        <PopoverTrigger asChild>
+          <Button
+            variant="outline"
+            className="w-full justify-start"
+          >
+            <CalendarIcon className="ml-2 h-4 w-4" />
+            {dateRange.from ? (
+              dateRange.to ? (
+                <>
+                  {formatDate(dateRange.from)} - {formatDate(dateRange.to)}
+                </>
               ) : (
-                "اختر التاريخ..."
-              )}
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent className="w-auto p-0" align="center">
-            <Calendar
-              initialFocus
-              mode="range"
-              defaultMonth={dateRange.from}
-              selected={dateRange}
-              onSelect={handleDateRangeChange}
-              numberOfMonths={2}
-              locale={locale}
-            />
-          </PopoverContent>
-        </Popover>
-      </div>
-
-      {/* Start/End Date adjustments */}
-      <div className="flex flex-col md:flex-row gap-2">
-        <div className="flex flex-col gap-2 w-full md:w-1/2">
-          <div className="text-sm font-medium mb-1">تاريخ البداية: {dateRange.from ? formatDate(dateRange.from) : "-"}</div>
-          <div className="flex gap-1">
-            <Button variant="outline" size="sm" onClick={() => adjustDateRange('start-back', 7)}>
-              <ChevronLeft className="h-4 w-4" />
-              <span className="mr-1">7 أيام</span>
-            </Button>
-            <Button variant="outline" size="sm" onClick={() => adjustDateRange('start-back', 1)}>
-              <ChevronLeft className="h-4 w-4" />
-              <span className="mr-1">يوم</span>
-            </Button>
-            <Button variant="outline" size="sm" onClick={() => adjustDateRange('start-forward', 1)}>
-              <span className="ml-1">يوم</span>
-              <ChevronRight className="h-4 w-4" />
-            </Button>
-            <Button variant="outline" size="sm" onClick={() => adjustDateRange('start-forward', 7)}>
-              <span className="ml-1">7 أيام</span>
-              <ChevronRight className="h-4 w-4" />
-            </Button>
-          </div>
-        </div>
-        
-        <div className="flex flex-col gap-2 w-full md:w-1/2">
-          <div className="text-sm font-medium mb-1">تاريخ النهاية: {dateRange.to ? formatDate(dateRange.to) : "-"}</div>
-          <div className="flex gap-1">
-            <Button variant="outline" size="sm" onClick={() => adjustDateRange('end-back', 7)}>
-              <ChevronLeft className="h-4 w-4" />
-              <span className="mr-1">7 أيام</span>
-            </Button>
-            <Button variant="outline" size="sm" onClick={() => adjustDateRange('end-back', 1)}>
-              <ChevronLeft className="h-4 w-4" />
-              <span className="mr-1">يوم</span>
-            </Button>
-            <Button variant="outline" size="sm" onClick={() => adjustDateRange('end-forward', 1)}>
-              <span className="ml-1">يوم</span>
-              <ChevronRight className="h-4 w-4" />
-            </Button>
-            <Button variant="outline" size="sm" onClick={() => adjustDateRange('end-forward', 7)}>
-              <span className="ml-1">7 أيام</span>
-              <ChevronRight className="h-4 w-4" />
-            </Button>
-          </div>
-        </div>
-      </div>
+                formatDate(dateRange.from)
+              )
+            ) : (
+              "اختر التاريخ..."
+            )}
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent className="w-auto p-0" align="center">
+          <Calendar
+            initialFocus
+            mode="range"
+            defaultMonth={dateRange.from}
+            selected={dateRange}
+            onSelect={handleDateRangeChange}
+            numberOfMonths={2}
+            locale={locale}
+          />
+        </PopoverContent>
+      </Popover>
     </div>
   );
 }
