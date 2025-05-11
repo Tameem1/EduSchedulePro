@@ -29,12 +29,17 @@ import {
 export default function ManagerResults() {
   const { user, isLoading: isAuthLoading } = useAuth();
   const [, setLocation] = useLocation();
+  // Initialize date range with last 3 months by default
+  const today = new Date();
+  const threeMonthsAgo = new Date();
+  threeMonthsAgo.setMonth(today.getMonth() - 3);
+  
   const [dateRange, setDateRange] = React.useState<{
     from: Date;
     to: Date;
   }>({
-    from: new Date(),
-    to: new Date(),
+    from: threeMonthsAgo,
+    to: today,
   });
   const [selectedSection, setSelectedSection] = React.useState<string>("all");
 
@@ -68,13 +73,14 @@ export default function ManagerResults() {
     return Array.from(uniqueSections);
   }, [allStatistics]);
 
-  // Set initial filtered statistics when data is loaded
+  // Set initial filtered statistics when data is loaded and run filter
   React.useEffect(() => {
     if (allStatistics) {
       console.log("Initial statistics loaded:", allStatistics);
-      setFilteredStatistics(allStatistics);
+      // Apply initial filtering - this will show all students for the default date range
+      handleFilter();
     }
-  }, [allStatistics]);
+  }, [allStatistics]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Handle filter button click - filter data client-side
   const handleFilter = () => {
@@ -91,11 +97,18 @@ export default function ManagerResults() {
 
     const filtered = allStatistics
       .filter((stat: any) => {
-        // First apply section filter if a specific section is selected
+        // First apply section filter
         if (selectedSection !== "all" && stat.section !== selectedSection) {
           return false;
         }
 
+        // When filtering by section only (all dates), don't filter by date
+        if (selectedSection !== "all") {
+          // When a specific section is selected, show all students in that section
+          return true;
+        }
+
+        // Otherwise apply date range filtering
         let hasActivityInRange = false;
 
         // Check questionnaire responses date if exists
@@ -244,42 +257,54 @@ export default function ManagerResults() {
 
         filteredStat.allResponses = allResponses;
 
-        // For both questions and assignments, we'll calculate what percentage is in the date range
-        const originalQuestionResponseCount = stat.question3Responses.length;
-        const filteredQuestionResponseCount =
-          filteredStat.question3Responses.length;
-
-        // This approach considers all responses (questions and assignments) for calculation
-        const totalOriginalCount =
-          originalQuestionResponseCount + stat.assignmentResponses.length;
-        const totalFilteredCount =
-          filteredQuestionResponseCount +
-          filteredStat.assignmentResponses.length;
-
-        if (totalOriginalCount > 0) {
-          // Calculate what percentage of all activities is in the filtered range
-          const filterRatio = totalFilteredCount / totalOriginalCount;
-
-          // Apply the ratio to the original counts
-          // Makes sure to at least include the minimum number of actual responses we found in the date range
-          filteredStat.question1YesCount = Math.min(
-            stat.question1YesCount,
-            Math.max(
-              filteredQuestionResponseCount,
-              Math.round(stat.question1YesCount * filterRatio),
-            ),
-          );
-
-          filteredStat.question2YesCount = Math.min(
-            stat.question2YesCount,
-            Math.max(
-              filteredQuestionResponseCount,
-              Math.round(stat.question2YesCount * filterRatio),
-            ),
-          );
+        // When filtering by section only, show full data without date filtering
+        if (selectedSection !== "all") {
+          // Keep all original values
+          filteredStat.question1YesCount = stat.question1YesCount;
+          filteredStat.question2YesCount = stat.question2YesCount;
+          
+          // If we're not filtering by date, restore the original responses
+          filteredStat.question3Responses = stat.question3Responses;
+          filteredStat.assignmentResponses = stat.assignmentResponses;
+          filteredStat.allResponses = stat.allResponses;
         } else {
-          filteredStat.question1YesCount = 0;
-          filteredStat.question2YesCount = 0;
+          // For both questions and assignments, we'll calculate what percentage is in the date range
+          const originalQuestionResponseCount = stat.question3Responses.length;
+          const filteredQuestionResponseCount =
+            filteredStat.question3Responses.length;
+
+          // This approach considers all responses (questions and assignments) for calculation
+          const totalOriginalCount =
+            originalQuestionResponseCount + stat.assignmentResponses.length;
+          const totalFilteredCount =
+            filteredQuestionResponseCount +
+            filteredStat.assignmentResponses.length;
+
+          if (totalOriginalCount > 0) {
+            // Calculate what percentage of all activities is in the filtered range
+            const filterRatio = totalFilteredCount / totalOriginalCount;
+
+            // Apply the ratio to the original counts
+            // Makes sure to at least include the minimum number of actual responses we found in the date range
+            filteredStat.question1YesCount = Math.min(
+              stat.question1YesCount,
+              Math.max(
+                filteredQuestionResponseCount,
+                Math.round(stat.question1YesCount * filterRatio),
+              ),
+            );
+
+            filteredStat.question2YesCount = Math.min(
+              stat.question2YesCount,
+              Math.max(
+                filteredQuestionResponseCount,
+                Math.round(stat.question2YesCount * filterRatio),
+              ),
+            );
+          } else {
+            filteredStat.question1YesCount = 0;
+            filteredStat.question2YesCount = 0;
+          }
         }
 
         return filteredStat;
@@ -344,11 +369,11 @@ export default function ManagerResults() {
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="all">الكل</SelectItem>
-                        <SelectItem value="bader">بدر</SelectItem>
-                        <SelectItem value="mahmoud">محمود</SelectItem>
-                        <SelectItem value="motaa">مطاع</SelectItem>
-                        <SelectItem value="omar">عمر</SelectItem>
-                        <SelectItem value="aasem">عاصم</SelectItem>
+                        {sections.map((section) => (
+                          <SelectItem key={section} value={section}>
+                            {section}
+                          </SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                   </div>
