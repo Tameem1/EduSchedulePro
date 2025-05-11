@@ -102,13 +102,7 @@ export default function ManagerResults() {
           return false;
         }
 
-        // When filtering by section only (all dates), don't filter by date
-        if (selectedSection !== "all") {
-          // When a specific section is selected, show all students in that section
-          return true;
-        }
-
-        // Otherwise apply date range filtering
+        // Apply date range filtering for all sections
         let hasActivityInRange = false;
 
         // Check questionnaire responses date if exists
@@ -257,54 +251,39 @@ export default function ManagerResults() {
 
         filteredStat.allResponses = allResponses;
 
-        // When filtering by section only, show full data without date filtering
-        if (selectedSection !== "all") {
-          // Keep all original values
-          filteredStat.question1YesCount = stat.question1YesCount;
-          filteredStat.question2YesCount = stat.question2YesCount;
-          
-          // If we're not filtering by date, restore the original responses
-          filteredStat.question3Responses = stat.question3Responses;
-          filteredStat.assignmentResponses = stat.assignmentResponses;
-          filteredStat.allResponses = stat.allResponses;
+        // Always apply date range filtering for both selectedSection="all" and specific sections
+        // For both questions and assignments, we'll calculate what percentage is in the date range
+        const originalQuestionResponseCount = stat.question3Responses.length;
+        const filteredQuestionResponseCount = filteredStat.question3Responses.length;
+
+        // This approach considers all responses (questions and assignments) for calculation
+        const totalOriginalCount = originalQuestionResponseCount + stat.assignmentResponses.length;
+        const totalFilteredCount = filteredQuestionResponseCount + filteredStat.assignmentResponses.length;
+
+        if (totalOriginalCount > 0) {
+          // Calculate what percentage of all activities is in the filtered range
+          const filterRatio = totalFilteredCount / totalOriginalCount;
+
+          // Apply the ratio to the original counts
+          // Makes sure to at least include the minimum number of actual responses we found in the date range
+          filteredStat.question1YesCount = Math.min(
+            stat.question1YesCount,
+            Math.max(
+              filteredQuestionResponseCount,
+              Math.round(stat.question1YesCount * filterRatio),
+            ),
+          );
+
+          filteredStat.question2YesCount = Math.min(
+            stat.question2YesCount,
+            Math.max(
+              filteredQuestionResponseCount,
+              Math.round(stat.question2YesCount * filterRatio),
+            ),
+          );
         } else {
-          // For both questions and assignments, we'll calculate what percentage is in the date range
-          const originalQuestionResponseCount = stat.question3Responses.length;
-          const filteredQuestionResponseCount =
-            filteredStat.question3Responses.length;
-
-          // This approach considers all responses (questions and assignments) for calculation
-          const totalOriginalCount =
-            originalQuestionResponseCount + stat.assignmentResponses.length;
-          const totalFilteredCount =
-            filteredQuestionResponseCount +
-            filteredStat.assignmentResponses.length;
-
-          if (totalOriginalCount > 0) {
-            // Calculate what percentage of all activities is in the filtered range
-            const filterRatio = totalFilteredCount / totalOriginalCount;
-
-            // Apply the ratio to the original counts
-            // Makes sure to at least include the minimum number of actual responses we found in the date range
-            filteredStat.question1YesCount = Math.min(
-              stat.question1YesCount,
-              Math.max(
-                filteredQuestionResponseCount,
-                Math.round(stat.question1YesCount * filterRatio),
-              ),
-            );
-
-            filteredStat.question2YesCount = Math.min(
-              stat.question2YesCount,
-              Math.max(
-                filteredQuestionResponseCount,
-                Math.round(stat.question2YesCount * filterRatio),
-              ),
-            );
-          } else {
-            filteredStat.question1YesCount = 0;
-            filteredStat.question2YesCount = 0;
-          }
+          filteredStat.question1YesCount = 0;
+          filteredStat.question2YesCount = 0;
         }
 
         return filteredStat;
