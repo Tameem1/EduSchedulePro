@@ -159,10 +159,11 @@ const TeacherIndependentQuestionnaire = () => {
         return { success: true };
       }
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
+      console.log("Independent questionnaire successfully submitted:", data);
       toast({
-        title: "تم إرسال التقييم",
-        description: "تم حفظ إجاباتك بنجاح",
+        title: "تم إنشاء التقييم المستقل",
+        description: "تم حفظ الموعد والإجابات بنجاح",
       });
       setLocation("/teacher/appointments");
     },
@@ -176,6 +177,17 @@ const TeacherIndependentQuestionnaire = () => {
   });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
+    console.log("Submitting independent questionnaire for:", {
+      section: values.section,
+      studentId: values.studentId,
+      date: values.date,
+      questions: {
+        question1: values.question1,
+        question2: values.question2,
+        question3: values.question3,
+        question4: values.question4
+      }
+    });
     submitIndependentQuestionnaireMutation.mutate(values);
   }
 

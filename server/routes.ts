@@ -1185,16 +1185,30 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ error: "Missing required fields" });
       }
 
-      // Create a temporary appointment
+      console.log("Creating independent questionnaire with data:", {
+        studentId,
+        teacherId: req.user.id,
+        date,
+        createdByTeacherId: req.user.id,
+        question1,
+        question2,
+        question3,
+        question4
+      });
+
+      // First, create a new appointment record
       const appointment = await storage.createAppointment({
-        studentId: studentId,
+        studentId: parseInt(studentId),
         teacherId: req.user.id,
         startTime: date,
         status: AppointmentStatus.DONE,
+        teacherAssignment: "",
         createdByTeacherId: req.user.id
       });
 
-      // Create questionnaire response linked to the new appointment
+      console.log("Created appointment:", appointment);
+
+      // Now create the questionnaire response linked to the appointment
       const response = await storage.createQuestionnaireResponse({
         appointmentId: appointment.id,
         question1: question1,
@@ -1202,6 +1216,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         question3: question3,
         question4: question4
       });
+
+      console.log("Created questionnaire response:", response);
 
       // Return the response with the appointment ID
       res.setHeader('Content-Type', 'application/json');
