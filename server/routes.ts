@@ -1171,6 +1171,52 @@ export async function registerRoutes(app: Express): Promise<Server> {
         .json({ error: "Failed to create independent assignment" });
     }
   });
+  
+  // Independent questionnaire endpoint for teachers
+  app.post("/api/independent-questionnaire", async (req, res) => {
+    if (!req.isAuthenticated() || req.user.role !== "teacher") {
+      return res.sendStatus(403);
+    }
+
+    try {
+      const { studentId, date, question1, question2, question3, question4 } = req.body;
+      
+      if (!studentId || !date || !question3 || !question4) {
+        return res.status(400).json({ error: "Missing required fields" });
+      }
+
+      // Create a temporary appointment
+      const appointment = await storage.createAppointment({
+        studentId: studentId,
+        teacherId: req.user.id,
+        startTime: date,
+        status: AppointmentStatus.DONE,
+        createdByTeacherId: req.user.id
+      });
+
+      // Create questionnaire response linked to the new appointment
+      const response = await storage.createQuestionnaireResponse({
+        appointmentId: appointment.id,
+        question1: question1,
+        question2: question2,
+        question3: question3,
+        question4: question4
+      });
+
+      // Return the response with the appointment ID
+      res.json({ 
+        success: true, 
+        response,
+        appointment
+      });
+    } catch (error: any) {
+      console.error("Error creating independent questionnaire:", error);
+      res.status(400).json({ 
+        error: "Failed to submit independent questionnaire", 
+        details: error.message || "Unknown error" 
+      });
+    }
+  });
 
   app.get("/api/independent-assignments", async (req, res) => {
     if (!req.isAuthenticated() || req.user.role !== "manager") {

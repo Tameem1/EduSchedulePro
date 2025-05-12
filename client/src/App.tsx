@@ -10,6 +10,7 @@ import AuthPage from "@/pages/auth";
 import BookAppointment from "@/pages/student/book-appointment";
 import TeacherAvailability from "@/pages/teacher/availability";
 import TeacherQuestionnaireSubmission from "@/pages/teacher/questionnaire-submission";
+import TeacherIndependentQuestionnaire from "@/pages/teacher/independent-questionnaire";
 import AcceptAppointment from "@/pages/teacher/accept-appointment";
 import TeacherAppointments from "@/pages/teacher/appointments";
 import TeacherCreatedAppointments from "@/pages/teacher/created-appointments";
@@ -66,6 +67,11 @@ function Router() {
           path="/teacher/created-appointments"
           role="teacher"
           component={TeacherCreatedAppointments}
+        />
+        <ProtectedRoute
+          path="/teacher/independent-questionnaire"
+          role="teacher"
+          component={TeacherIndependentQuestionnaire}
         />
 
         {/* Manager routes */}
