@@ -1196,36 +1196,56 @@ export async function registerRoutes(app: Express): Promise<Server> {
         question4
       });
 
-      // First, create a new appointment record
-      const appointment = await storage.createAppointment({
-        studentId: parseInt(studentId),
-        teacherId: req.user.id,
-        startTime: date,
-        status: AppointmentStatus.DONE,
-        teacherAssignment: "",
-        createdByTeacherId: req.user.id
-      });
+      try {
+        // First, create a new appointment record
+        const appointment = await storage.createAppointment({
+          studentId: parseInt(studentId),
+          teacherId: req.user.id,
+          startTime: date,
+          status: AppointmentStatus.DONE,
+          teacherAssignment: "",
+          createdByTeacherId: req.user.id
+        });
 
-      console.log("Created appointment:", appointment);
+        console.log("Created appointment:", appointment);
 
-      // Now create the questionnaire response linked to the appointment
-      const response = await storage.createQuestionnaireResponse({
-        appointmentId: appointment.id,
-        question1: question1,
-        question2: question2,
-        question3: question3,
-        question4: question4
-      });
+        if (!appointment || !appointment.id) {
+          throw new Error("Failed to create appointment record");
+        }
 
-      console.log("Created questionnaire response:", response);
+        // Now create the questionnaire response linked to the appointment
+        // Make sure all required fields are provided
+        const responseData = {
+          appointmentId: appointment.id,
+          question1: question1 || "نعم",  // Default if not provided
+          question2: question2 || "نعم",  // Default if not provided
+          question3: question3,           // Required from validation above
+          question4: question4            // Required from validation above
+        };
 
-      // Return the response with the appointment ID
-      res.setHeader('Content-Type', 'application/json');
-      res.json({ 
-        success: true, 
-        response,
-        appointment
-      });
+        console.log("Creating questionnaire response with data:", responseData);
+        
+        const response = await storage.createQuestionnaireResponse(responseData);
+        console.log("Created questionnaire response:", response);
+
+        if (!response) {
+          throw new Error("Failed to create questionnaire response");
+        }
+
+        // Return the response with the appointment ID
+        res.setHeader('Content-Type', 'application/json');
+        return res.json({ 
+          success: true, 
+          response,
+          appointment
+        });
+      } catch (dbError: any) {
+        console.error("Database error:", dbError);
+        return res.status(500).json({ 
+          error: "Database error", 
+          details: dbError.message || "Unknown database error"
+        });
+      }
     } catch (error: any) {
       console.error("Error creating independent questionnaire:", error);
       res.setHeader('Content-Type', 'application/json');
