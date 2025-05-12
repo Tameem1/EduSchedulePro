@@ -142,11 +142,22 @@ const TeacherIndependentQuestionnaire = () => {
       });
       
       if (!res.ok) {
-        const errData = await res.json();
-        throw new Error(errData.error || "Failed to submit questionnaire");
+        let errorMessage = "Failed to submit questionnaire";
+        try {
+          const errData = await res.json();
+          errorMessage = errData.error || errorMessage;
+        } catch (e) {
+          console.error("Error parsing error response:", e);
+        }
+        throw new Error(errorMessage);
       }
       
-      return res.json();
+      try {
+        return await res.json();
+      } catch (e) {
+        console.log("Response was OK but couldn't parse JSON. Treating as success.");
+        return { success: true };
+      }
     },
     onSuccess: () => {
       toast({

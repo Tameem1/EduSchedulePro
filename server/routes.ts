@@ -1204,6 +1204,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
 
       // Return the response with the appointment ID
+      res.setHeader('Content-Type', 'application/json');
       res.json({ 
         success: true, 
         response,
@@ -1211,6 +1212,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
     } catch (error: any) {
       console.error("Error creating independent questionnaire:", error);
+      res.setHeader('Content-Type', 'application/json');
       res.status(400).json({ 
         error: "Failed to submit independent questionnaire", 
         details: error.message || "Unknown error" 
