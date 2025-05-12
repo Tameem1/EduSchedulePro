@@ -393,19 +393,45 @@ export const storage = {
 
   async createQuestionnaireResponse(data: any) {
     return await withRetry(async () => {
+      console.log("Creating questionnaire response with raw data:", data);
+      
+      // Validate all required fields are present
+      if (!data.appointmentId) {
+        console.error("Missing appointmentId in questionnaire response data");
+        throw new Error("appointmentId is required for questionnaire response");
+      }
+      
+      // Ensure all fields are present with defaults if necessary
+      const validatedData = {
+        appointmentId: data.appointmentId,
+        question1: data.question1 || "نعم",
+        question2: data.question2 || "نعم",
+        question3: data.question3 || "",
+        question4: data.question4 || "",
+      };
+      
+      console.log("Validated questionnaire data:", validatedData);
+      
       const submissionTime = new Date();
       // Adjust to GMT+3
       submissionTime.setHours(submissionTime.getHours() + 3);
-
-      const newResponse = await db
-        .insert(questionnaireResponses)
-        .values({
-          ...data,
-          submittedAt: submissionTime.toISOString()
-        })
-        .returning();
-
-      return newResponse[0];
+      
+      try {
+        console.log("Inserting questionnaire response into database...");
+        const newResponse = await db
+          .insert(questionnaireResponses)
+          .values({
+            ...validatedData,
+            submittedAt: submissionTime.toISOString()
+          })
+          .returning();
+        
+        console.log("Successfully created questionnaire response:", newResponse[0]);
+        return newResponse[0];
+      } catch (error) {
+        console.error("Failed to insert questionnaire response:", error);
+        throw error;
+      }
     });
   },
 
